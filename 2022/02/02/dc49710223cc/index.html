@@ -1,0 +1,841 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.2.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css" integrity="sha256-mUZM63G8m73Mcidfrv5E+Y61y7a12O5mW4ezU3bxqW4=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"blog.fantast.top","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.9.0","exturl":false,"sidebar":{"position":"left","width":250,"display":"always","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":true,"color":"#222","save":"manual"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"utterances","storage":true,"lazyload":false,"nav":null,"activeClass":"utterances"},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+<meta name="description" content="本篇笔记为java系列笔记关于正则表达式相关的内容。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="java系列笔记11——java正则表达式">
+<meta property="og:url" content="https://blog.fantast.top/2022/02/02/dc49710223cc/index.html">
+<meta property="og:site_name" content="Fantast&#39;s Blog">
+<meta property="og:description" content="本篇笔记为java系列笔记关于正则表达式相关的内容。">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2022-02-02T01:54:19.000Z">
+<meta property="article:modified_time" content="2022-07-17T12:05:39.000Z">
+<meta property="article:author" content="Fantast">
+<meta property="article:tag" content="java">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://blog.fantast.top/2022/02/02/dc49710223cc/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://blog.fantast.top/2022/02/02/dc49710223cc/","path":"2022/02/02/dc49710223cc/","title":"java系列笔记11——java正则表达式"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>java系列笔记11——java正则表达式 | Fantast's Blog</title>
+  
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<link rel="alternate" href="/atom.xml" title="Fantast's Blog" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Fantast's Blog</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li>
+        <li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li>
+        <li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li>
+        <li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li>
+        <li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%80%E4%BB%80%E4%B9%88%E6%98%AF%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F"><span class="nav-text">一、什么是正则表达式：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BA%8C%E5%8C%B9%E9%85%8D%E8%A7%84%E5%88%99"><span class="nav-text">二、匹配规则：</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%B2%BE%E7%A1%AE%E5%8C%B9%E9%85%8D"><span class="nav-text">1、精确匹配：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%A8%A1%E7%B3%8A%E5%8C%B9%E9%85%8D."><span class="nav-text">2、模糊匹配：(.)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%8C%B9%E9%85%8D%E6%95%B0%E5%AD%97"><span class="nav-text">3、匹配数字：（</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%8C%B9%E9%85%8D%E5%B8%B8%E7%94%A8%E5%AD%97%E7%AC%A6"><span class="nav-text">4、匹配常用字符：()</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%8C%B9%E9%85%8D%E7%A9%BA%E6%A0%BC%E5%AD%97%E7%AC%A6"><span class="nav-text">5、 匹配空格字符()</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%8C%B9%E9%85%8D%E9%9D%9E%E6%95%B0%E5%AD%97"><span class="nav-text">6、匹配非数字：（）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%87%8D%E5%A4%8D%E5%8C%B9%E9%85%8D"><span class="nav-text">7、重复匹配：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%8C%B9%E9%85%8D%E8%A7%84%E5%88%99%E5%BF%AB%E9%80%9F%E6%9F%A5%E6%89%BE"><span class="nav-text">8、匹配规则快速查找：</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%89%E5%A4%8D%E6%9D%82%E5%8C%B9%E9%85%8D%E8%A7%84%E5%88%99"><span class="nav-text">三、复杂匹配规则：</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%8C%B9%E9%85%8D%E5%BC%80%E5%A4%B4%E7%BB%93%E5%B0%BE"><span class="nav-text">1、匹配开头结尾：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%8C%B9%E9%85%8D%E6%8C%87%E5%AE%9A%E8%8C%83%E5%9B%B4"><span class="nav-text">2、匹配指定范围：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%88%96%E8%A7%84%E5%88%99%E5%8C%B9%E9%85%8D"><span class="nav-text">3、或规则匹配：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8%E6%8B%AC%E5%8F%B7"><span class="nav-text">4、使用括号:</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%A7%84%E5%88%99%E6%80%BB%E7%BB%93"><span class="nav-text">5、规则总结：</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9B%9B%E5%88%86%E7%BB%84%E5%8C%B9%E9%85%8D-%E6%8F%90%E5%8F%96%E5%AD%90%E4%B8%B2"><span class="nav-text">四、分组匹配 + 提取子串：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BA%94%E9%9D%9E%E8%B4%AA%E5%A9%AA%E5%8C%B9%E9%85%8D"><span class="nav-text">五、非贪婪匹配：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%AD%E6%90%9C%E7%B4%A2%E5%92%8C%E6%9B%BF%E6%8D%A2"><span class="nav-text">六、搜索和替换：</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%88%86%E5%89%B2%E5%AD%97%E7%AC%A6%E4%B8%B2"><span class="nav-text">1、分割字符串：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%90%9C%E7%B4%A2%E5%AD%97%E7%AC%A6%E4%B8%B2"><span class="nav-text">2、搜索字符串：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%9B%BF%E6%8D%A2%E5%AD%97%E7%AC%A6%E4%B8%B2"><span class="nav-text">3、替换字符串：</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Fantast"
+      src="/images/avatar.webp">
+  <p class="site-author-name" itemprop="name">Fantast</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">161</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">40</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">97</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/fantast416" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;fantast416" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:fantast416@gmail.com" title="E-Mail → mailto:fantast416@gmail.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll site-overview-item animated">
+    <div class="links-of-blogroll-title"><i class="fa fa-globe fa-fw"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://www.zhihu.com/people/shuo-shuo-3-41" title="https:&#x2F;&#x2F;www.zhihu.com&#x2F;people&#x2F;shuo-shuo-3-41" rel="noopener" target="_blank">ZhiHu</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="http://www.next.zju.edu.cn/" title="http:&#x2F;&#x2F;www.next.zju.edu.cn&#x2F;" rel="noopener" target="_blank">NextLab</a>
+        </li>
+    </ul>
+  </div>
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://blog.fantast.top/2022/02/02/dc49710223cc/">
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.webp">
+      <meta itemprop="name" content="Fantast">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Fantast's Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          java系列笔记11——java正则表达式
+        </h1>
+
+        <div class="post-meta-container">
+          
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2022-02-02 09:54:19" itemprop="dateCreated datePublished" datetime="2022-02-02T09:54:19+08:00">2022-02-02</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2022-07-17 20:05:39" itemprop="dateModified" datetime="2022-07-17T20:05:39+08:00">2022-07-17</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E2%93%B8-%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80%E7%B1%BB%E7%AC%94%E8%AE%B0/" itemprop="url" rel="index"><span itemprop="name">⓸ 编程语言类笔记</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E2%93%B8-%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80%E7%B1%BB%E7%AC%94%E8%AE%B0/java%E5%85%A5%E9%97%A8%E7%B3%BB%E5%88%97%E7%AC%94%E8%AE%B0/" itemprop="url" rel="index"><span itemprop="name">java入门系列笔记</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>7.6k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>21 分钟</span>
+    </span>
+</div>
+
+            <div class="post-description">本篇笔记为java系列笔记关于正则表达式相关的内容。</div>
+            <div class="post-remind">Google Chrome is recommended, otherwise the image size may be wrong</div>
+            <div class="post-remind">FireFox is not recommended,Because it does not support the image zoom property</div>
+        </div>
+        
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p>参考教程网址：https://www.liaoxuefeng.com/wiki/1252599548343744/1304066130968610</p>
+<h3 id="一什么是正则表达式">一、什么是正则表达式：</h3>
+<p>​
+正则表达式可以用字符串来描述规则，并用来匹配字符串。例如，判断手机号，我们用正则表达式<code>\d&#123;11&#125;</code>：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">boolean</span> <span class="title function_">isValidMobileNumber</span><span class="params">(String s)</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> s.matches(<span class="string">&quot;\\d&#123;11&#125;&quot;</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>​
+使用正则表达式的好处有哪些？一个正则表达式就是一个描述规则的字符串，所以，只需要编写正确的规则，我们就可以让正则表达式引擎去判断目标字符串是否符合规则。</p>
+<p>​
+正则表达式是用字符串描述的一个匹配规则，使用正则表达式可以快速判断给定的字符串是否符合匹配规则。<strong>Java标准库<code>java.util.regex</code>内建了正则表达式引擎。</strong></p>
+<h3 id="二匹配规则">二、匹配规则：</h3>
+<p>正则表达式的匹配规则是从左到右按规则匹配。</p>
+<h4 id="精确匹配">1、精确匹配：</h4>
+<p>​
+对于正则表达式<code>abc</code>来说，它只能精确地匹配字符串<code>"abc"</code>，不能匹配<code>"ab"</code>，<code>"Abc"</code>，<code>"abcd"</code>等其他任何字符串。</p>
+<p>​
+如果正则表达式有特殊字符，那就需要用<code>\</code>转义。例如，正则表达式<code>a\&amp;c</code>，其中<code>\&amp;</code>是用来匹配特殊字符<code>&amp;</code>的，它能精确匹配字符串<code>"a&amp;c"</code>，但不能匹配<code>"ac"</code>、<code>"a-c"</code>、<code>"a&amp;&amp;c"</code>等。</p>
+<p>​
+如果想匹配非ASCII字符，例如中文，那就用<code>\u####</code>的十六进制表示，例如：<code>a\u548cc</code>匹配字符串<code>"a和c"</code>，中文字符<code>和</code>的Unicode编码是<code>548c</code>。</p>
+<h4 id="模糊匹配.">2、模糊匹配：(.)</h4>
+<p>​
+正则表达式<code>a.c</code>中间的<code>.</code>可以匹配一个任意字符</p>
+<p>​ <code>.</code>匹配一个字符且仅限一个字符</p>
+<h4 id="匹配数字">3、匹配数字：（</h4>
+<p>​
+如果我们只想匹配<code>0</code>~<code>9</code>这样的数字，可以用<code>\d</code>匹配。例如，正则表达式<code>00\d</code>可以匹配：</p>
+<ul>
+<li><code>"007"</code>，因为<code>\d</code>可以匹配字符<code>7</code>；</li>
+<li><code>"008"</code>，因为<code>\d</code>可以匹配字符<code>8</code>。</li>
+</ul>
+<p>​
+它不能匹配<code>"00A"</code>，<code>"0077"</code>，因为<code>\d</code>仅限单个数字字符。</p>
+<h4 id="匹配常用字符">4、匹配常用字符：()</h4>
+<p>用<code>\w</code>可以匹配一个字母、数字或下划线，w的意思是word。例如，<code>java\w</code>可以匹配：</p>
+<ul>
+<li><code>"javac"</code>，因为<code>\w</code>可以匹配英文字符<code>c</code>；</li>
+<li><code>"java9"</code>，因为<code>\w</code>可以匹配数字字符<code>9</code>；。</li>
+<li><code>"java_"</code>，因为<code>\w</code>可以匹配下划线<code>_</code>。</li>
+</ul>
+<p>因为<code>\w</code>不能匹配<code>#</code>、空格等字符。</p>
+<h4 id="匹配空格字符">5、 匹配空格字符()</h4>
+<p>用<code>\s</code>可以匹配一个空格字符，注意空格字符不但包括空格`<code>，还包括tab字符（在Java中用</code>表示）。例如，<code>a\sc</code>可以匹配：</p>
+<ul>
+<li><code>"a c"</code>，因为<code>\s</code>可以匹配空格字符``；</li>
+<li><code>"a c"</code>，因为<code>\s</code>可以匹配tab字符<code>\t</code>。</li>
+</ul>
+<p>它不能匹配<code>"ac"</code>，<code>"abc"</code>等。</p>
+<h4 id="匹配非数字">6、匹配非数字：（）</h4>
+<p>​ <code>\D</code>匹配一个非数字</p>
+<p>​
+类似的，<code>\W</code>可以匹配<code>\w</code>不能匹配的字符，<code>\S</code>可以匹配<code>\s</code>不能匹配的字符，这几个正好是反着来的。</p>
+<h4 id="重复匹配">7、重复匹配：</h4>
+<ul>
+<li><p>修饰符<code>*</code>可以匹配任意个字符，包括0个字符。我们用<code>A\d*</code>可以匹配：</p>
+<ul>
+<li><p><code>A</code>：因为<code>\d*</code>可以匹配0个数字；</p></li>
+<li><p><code>A0</code>：因为<code>\d*</code>可以匹配1个数字<code>0</code>；</p></li>
+<li><p><code>A380</code>：因为<code>\d*</code>可以匹配多个数字<code>380</code>。</p></li>
+</ul></li>
+<li><p>修饰符<code>+</code>可以匹配至少一个字符。我们用<code>A\d+</code>可以匹配：</p>
+<ul>
+<li><code>A0</code>：因为<code>\d+</code>可以匹配1个数字<code>0</code>；</li>
+<li><code>A380</code>：因为<code>\d+</code>可以匹配多个数字<code>380</code>。</li>
+</ul></li>
+<li><p>修饰符<code>?</code>可以匹配0个或一个字符。我们用<code>A\d?</code>可以匹配：</p>
+<ul>
+<li><code>A</code>：因为<code>\d?</code>可以匹配0个数字；</li>
+<li><code>A0</code>：因为<code>\d?</code>可以匹配1个数字<code>0</code>。</li>
+</ul></li>
+<li><p>用修饰符<code>&#123;n&#125;</code>精确指定n个字符,<code>A\d&#123;3&#125;</code>可以精确匹配：</p>
+<ul>
+<li><code>A380</code>：因为<code>\d&#123;3&#125;</code>可以匹配3个数字<code>380</code>。</li>
+</ul></li>
+<li><p>用修饰符<code>&#123;n,m&#125;</code>指定匹配n~m个字符,
+<code>A\d&#123;3,5&#125;</code>可以精确匹配：</p>
+<ul>
+<li><code>A380</code>：因为<code>\d&#123;3,5&#125;</code>可以匹配3个数字<code>380</code>；</li>
+<li><code>A3800</code>：因为<code>\d&#123;3,5&#125;</code>可以匹配4个数字<code>3800</code>；</li>
+<li><code>A38000</code>：因为<code>\d&#123;3,5&#125;</code>可以匹配5个数字<code>38000</code>。</li>
+</ul></li>
+<li><p>如果没有上限，那么修饰符<code>&#123;n,&#125;</code>就可以匹配至少n个字符。</p></li>
+</ul>
+<h4 id="匹配规则快速查找">8、匹配规则快速查找：</h4>
+<p>单个字符的匹配规则如下：</p>
+<table>
+<colgroup>
+<col style="width: 15%" />
+<col style="width: 37%" />
+<col style="width: 46%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>正则表达式</th>
+<th>规则</th>
+<th>可以匹配</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>A</code></td>
+<td>指定字符</td>
+<td><code>A</code></td>
+</tr>
+<tr class="even">
+<td><code>\u548c</code></td>
+<td>指定Unicode字符</td>
+<td><code>和</code></td>
+</tr>
+<tr class="odd">
+<td><code>.</code></td>
+<td>任意字符</td>
+<td><code>a</code>，<code>b</code>，<code>&amp;</code>，<code>0</code></td>
+</tr>
+<tr class="even">
+<td><code>\d</code></td>
+<td>数字0~9</td>
+<td><code>0</code>~<code>9</code></td>
+</tr>
+<tr class="odd">
+<td><code>\w</code></td>
+<td>大小写字母，数字和下划线</td>
+<td><code>a</code><sub><code>z</code>，<code>A</code></sub><code>Z</code>，<code>0</code>~<code>9</code>，<code>_</code></td>
+</tr>
+<tr class="even">
+<td><code>\s</code></td>
+<td>空格、Tab键</td>
+<td>空格，Tab</td>
+</tr>
+<tr class="odd">
+<td><code>\D</code></td>
+<td>非数字</td>
+<td><code>a</code>，<code>A</code>，<code>&amp;</code>，<code>_</code>，……</td>
+</tr>
+<tr class="even">
+<td><code>\W</code></td>
+<td>非</td>
+<td><code>&amp;</code>，<code>@</code>，<code>中</code>，……</td>
+</tr>
+<tr class="odd">
+<td><code>\S</code></td>
+<td>非</td>
+<td><code>a</code>，<code>A</code>，<code>&amp;</code>，<code>_</code>，……</td>
+</tr>
+</tbody>
+</table>
+<p>多个字符的匹配规则如下：</p>
+<table>
+<thead>
+<tr class="header">
+<th>正则表达式</th>
+<th>规则</th>
+<th>可以匹配</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>A*</code></td>
+<td>任意个数字符</td>
+<td>空，<code>A</code>，<code>AA</code>，<code>AAA</code>，……</td>
+</tr>
+<tr class="even">
+<td><code>A+</code></td>
+<td>至少1个字符</td>
+<td><code>A</code>，<code>AA</code>，<code>AAA</code>，……</td>
+</tr>
+<tr class="odd">
+<td><code>A?</code></td>
+<td>0个或1个字符</td>
+<td>空，<code>A</code></td>
+</tr>
+<tr class="even">
+<td><code>A&#123;3&#125;</code></td>
+<td>指定个数字符</td>
+<td><code>AAA</code></td>
+</tr>
+<tr class="odd">
+<td><code>A&#123;2,3&#125;</code></td>
+<td>指定范围个数字符</td>
+<td><code>AA</code>，<code>AAA</code></td>
+</tr>
+<tr class="even">
+<td><code>A&#123;2,&#125;</code></td>
+<td>至少n个字符</td>
+<td><code>AA</code>，<code>AAA</code>，<code>AAAA</code>，……</td>
+</tr>
+<tr class="odd">
+<td><code>A&#123;0,3&#125;</code></td>
+<td>最多n个字符</td>
+<td>空，<code>A</code>，<code>AA</code>，<code>AAA</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="三复杂匹配规则">三、复杂匹配规则：</h3>
+<h4 id="匹配开头结尾">1、匹配开头结尾：</h4>
+<p>​
+进行多行匹配时，用<code>^</code>表示开头，<code>$</code>表示结尾。例如，<code>^A\d&#123;3&#125;$</code>，可以匹配<code>"A001"</code>、<code>"A380"</code>。</p>
+<h4 id="匹配指定范围">2、匹配指定范围：</h4>
+<p>​
+<strong>使用<code>[...]</code>可以匹配范围内的字符</strong>，例如，<code>[123456789]</code>可以匹配<code>1</code>~<code>9</code>，这样就可以写出上述电话号码的规则：<code>[123456789]\d&#123;6,7&#125;</code>。</p>
+<p>​
+把所有字符全列出来太麻烦，<code>[...]</code>还有一种写法，直接写<code>[1-9]</code>就可以。</p>
+<p>​
+<strong>要匹配大小写不限的十六进制数，比如<code>1A2b3c</code>，我们可以这样写：<code>[0-9a-fA-F]</code>，它表示一共可以匹配以下任意范围的字符：</strong></p>
+<ul>
+<li><code>0-9</code>：字符<code>0</code>~<code>9</code>；</li>
+<li><code>a-f</code>：字符<code>a</code>~<code>f</code>；</li>
+<li><code>A-F</code>：字符<code>A</code>~<code>F</code>。</li>
+</ul>
+<p>​
+<strong><code>[...]</code>还有一种排除法，即不包含指定范围的字符。假设我们要匹配任意字符，但不包括数字，可以写<code>[^1-9]&#123;3&#125;</code>：</strong></p>
+<ul>
+<li>可以匹配<code>"ABC"</code>，因为不包含字符<code>1</code>~<code>9</code>；</li>
+<li>可以匹配<code>"A00"</code>，因为不包含字符<code>1</code>~<code>9</code>；</li>
+<li>不能匹配<code>"A01"</code>，因为包含字符<code>1</code>；</li>
+<li>不能匹配<code>"A05"</code>，因为包含字符<code>5</code>。</li>
+</ul>
+<h4 id="或规则匹配">3、或规则匹配：</h4>
+<p>​
+用<code>|</code>连接的两个正则规则是<em>或</em>规则，例如，<code>AB|CD</code>表示可以匹配<code>AB</code>或<code>CD</code>。</p>
+<h4 id="使用括号">4、使用括号:</h4>
+<p>​
+现在我们想要匹配字符串<code>learn java</code>、<code>learn php</code>和<code>learn go</code>怎么办？一个最简单的规则是<code>learn\sjava|learn\sphp|learn\sgo</code>，但是这个规则太复杂了，可以把公共部分提出来，然后用<code>(...)</code>把子规则括起来表示成<code>learn\\s(java|php|go)</code>。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">String</span> <span class="variable">re</span> <span class="operator">=</span> <span class="string">&quot;learn\\s(java|php|go)&quot;</span>;</span><br></pre></td></tr></table></figure>
+<h4 id="规则总结">5、规则总结：</h4>
+<p>复杂匹配规则主要有：</p>
+<table>
+<colgroup>
+<col style="width: 15%" />
+<col style="width: 30%" />
+<col style="width: 54%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>正则表达式</th>
+<th>规则</th>
+<th>可以匹配</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>^</td>
+<td>开头</td>
+<td>字符串开头</td>
+</tr>
+<tr class="even">
+<td>$</td>
+<td>结尾</td>
+<td>字符串结束</td>
+</tr>
+<tr class="odd">
+<td>[ABC]</td>
+<td>[…]内任意字符</td>
+<td>A，B，C</td>
+</tr>
+<tr class="even">
+<td>[A-F0-9xy]</td>
+<td>指定范围的字符</td>
+<td><code>A</code>，……，<code>F</code>，<code>0</code>，……，<code>9</code>，<code>x</code>，<code>y</code></td>
+</tr>
+<tr class="odd">
+<td>[^A-F]</td>
+<td>指定范围外的任意字符</td>
+<td>非<code>A</code>~<code>F</code></td>
+</tr>
+<tr class="even">
+<td>AB|CD|EF</td>
+<td>AB或CD或EF</td>
+<td><code>AB</code>，<code>CD</code>，<code>EF</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="四分组匹配-提取子串">四、分组匹配 + 提取子串：</h3>
+<p>​ <code>(...)</code>还有一个重要作用，就是分组匹配。</p>
+<p>​
+我们来看一下如何用正则匹配<code>区号-电话号</code>码这个规则。利用前面讲到的匹配规则，写出来很容易：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">\d&#123;3,4&#125;\-\d&#123;6,8&#125;</span><br></pre></td></tr></table></figure>
+<p>​
+虽然这个正则匹配规则很简单，但是往往匹配成功后，下一步是提取区号和电话号码，分别存入数据库。于是问题来了：<strong>如何提取匹配的子串</strong>？</p>
+<p>​
+当然可以用<code>String</code>提供的<code>indexOf()</code>和<code>substring()</code>这些方法，但它们从正则匹配的字符串中提取子串没有通用性，下一次要提取<code>learn\s(java|php)</code>还得改代码。</p>
+<p>​
+<strong>正确的方法是用<code>(...)</code>先把要提取的规则分组，把上述正则表达式变为<code>(\d&#123;3,4&#125;)\-(\d&#123;6,8&#125;)</code></strong>。然后引入<code>java.util.regex</code>包，用<code>Pattern</code>对象匹配，匹配后获得一个<code>Matcher</code>对象，如果匹配成功，就可以直接从<code>Matcher.group(index)</code>返回子串：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Main</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;</span><br><span class="line">        <span class="type">Pattern</span> <span class="variable">p</span> <span class="operator">=</span> Pattern.compile(<span class="string">&quot;(\\d&#123;3,4&#125;)\\-(\\d&#123;7,8&#125;)&quot;</span>);</span><br><span class="line">        <span class="type">Matcher</span> <span class="variable">m</span> <span class="operator">=</span> p.matcher(<span class="string">&quot;010-12345678&quot;</span>);</span><br><span class="line">        <span class="keyword">if</span> (m.matches()) &#123;</span><br><span class="line">            <span class="type">String</span> <span class="variable">g1</span> <span class="operator">=</span> m.group(<span class="number">1</span>);</span><br><span class="line">            <span class="type">String</span> <span class="variable">g2</span> <span class="operator">=</span> m.group(<span class="number">2</span>);</span><br><span class="line">            System.out.println(g1);</span><br><span class="line">            System.out.println(g2);</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            System.out.println(<span class="string">&quot;匹配失败!&quot;</span>);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>运行上述代码，会得到两个匹配上的子串<code>010</code>和<code>12345678</code>。</p>
+<p>​
+要特别注意，<code>Matcher.group(index)</code>方法的参数用1表示第一个子串，2表示第二个子串。如果我们传入0会得到什么呢？答案是<code>010-12345678</code>，即整个正则匹配到的字符串。</p>
+<p>​
+我们在前面的代码中用到的正则表达式代码是<code>String.matches()</code>方法，而我们在分组提取的代码中用的是<code>java.util.regex</code>包里面的<code>Pattern</code>类和<code>Matcher</code>类。实际上这两种代码本质上是一样的，因为<code>String.matches()</code>方法内部调用的就是<code>Pattern</code>和<code>Matcher</code>类的方法。</p>
+<p>​
+但是反复使用<code>String.matches()</code>对同一个正则表达式进行多次匹配效率较低，因为每次都会创建出一样的<code>Pattern</code>对象。完全可以先创建出一个<code>Pattern</code>对象，然后反复使用，就可以实现编译一次，多次匹配：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Main</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;</span><br><span class="line">        <span class="type">Pattern</span> <span class="variable">pattern</span> <span class="operator">=</span> Pattern.compile(<span class="string">&quot;(\\d&#123;3,4&#125;)\\-(\\d&#123;7,8&#125;)&quot;</span>);</span><br><span class="line">        pattern.matcher(<span class="string">&quot;010-12345678&quot;</span>).matches(); <span class="comment">// true</span></span><br><span class="line">        pattern.matcher(<span class="string">&quot;021-123456&quot;</span>).matches(); <span class="comment">// false</span></span><br><span class="line">        pattern.matcher(<span class="string">&quot;022#1234567&quot;</span>).matches(); <span class="comment">// false</span></span><br><span class="line">        <span class="comment">// 获得Matcher对象:</span></span><br><span class="line">        <span class="type">Matcher</span> <span class="variable">matcher</span> <span class="operator">=</span> pattern.matcher(<span class="string">&quot;010-12345678&quot;</span>);</span><br><span class="line">        <span class="keyword">if</span> (matcher.matches()) &#123;</span><br><span class="line">            <span class="type">String</span> <span class="variable">whole</span> <span class="operator">=</span> matcher.group(<span class="number">0</span>); <span class="comment">// &quot;010-12345678&quot;, 0表示匹配的整个字符串</span></span><br><span class="line">            <span class="type">String</span> <span class="variable">area</span> <span class="operator">=</span> matcher.group(<span class="number">1</span>); <span class="comment">// &quot;010&quot;, 1表示匹配的第1个子串</span></span><br><span class="line">            <span class="type">String</span> <span class="variable">tel</span> <span class="operator">=</span> matcher.group(<span class="number">2</span>); <span class="comment">// &quot;12345678&quot;, 2表示匹配的第2个子串</span></span><br><span class="line">            System.out.println(area);</span><br><span class="line">            System.out.println(tel);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>​
+使用<code>Matcher</code>时，必须首先调用<code>matches()</code>判断是否匹配成功，匹配成功后，才能调用<code>group()</code>提取子串。</p>
+<p>​ 利用提取子串的功能，我们轻松获得了区号和号码两部分。</p>
+<h3 id="五非贪婪匹配">五、非贪婪匹配：</h3>
+<p>先看一个简单的问题：</p>
+<p>给定一个字符串表示的数字，判断该数字末尾<code>0</code>的个数。例如：</p>
+<ul>
+<li><code>"123000"</code>：3个<code>0</code></li>
+<li><code>"10100"</code>：2个<code>0</code></li>
+<li><code>"1001"</code>：0个<code>0</code></li>
+</ul>
+<p>可以很容易地写出该正则表达式：<code>(\d+)(0*)</code>，Java代码如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Main</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;</span><br><span class="line">        <span class="type">Pattern</span> <span class="variable">pattern</span> <span class="operator">=</span> Pattern.compile(<span class="string">&quot;(\\d+)(0*)&quot;</span>);</span><br><span class="line">        <span class="type">Matcher</span> <span class="variable">matcher</span> <span class="operator">=</span> pattern.matcher(<span class="string">&quot;1230000&quot;</span>);</span><br><span class="line">        <span class="keyword">if</span> (matcher.matches()) &#123;</span><br><span class="line">            System.out.println(<span class="string">&quot;group1=&quot;</span> + matcher.group(<span class="number">1</span>)); <span class="comment">// &quot;1230000&quot;</span></span><br><span class="line">            System.out.println(<span class="string">&quot;group2=&quot;</span> + matcher.group(<span class="number">2</span>)); <span class="comment">// &quot;&quot;</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>然而打印的第二个子串是空字符串<code>""</code>。</p>
+<p>实际上，我们期望分组匹配结果是：</p>
+<table>
+<thead>
+<tr class="header">
+<th>input</th>
+<th><code>\d+</code></th>
+<th><code>0*</code></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>123000</td>
+<td>"123"</td>
+<td>"000"</td>
+</tr>
+<tr class="even">
+<td>10100</td>
+<td>"101"</td>
+<td>"00"</td>
+</tr>
+<tr class="odd">
+<td>1001</td>
+<td>"1001"</td>
+<td>""</td>
+</tr>
+</tbody>
+</table>
+<p>但实际的分组匹配结果是这样的：</p>
+<table>
+<thead>
+<tr class="header">
+<th>input</th>
+<th><code>\d+</code></th>
+<th><code>0*</code></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>123000</td>
+<td>"123000"</td>
+<td>""</td>
+</tr>
+<tr class="even">
+<td>10100</td>
+<td>"10100"</td>
+<td>""</td>
+</tr>
+<tr class="odd">
+<td>1001</td>
+<td>"1001"</td>
+<td>""</td>
+</tr>
+</tbody>
+</table>
+<p>​
+仔细观察上述实际匹配结果，实际上它是完全合理的，因为<code>\d+</code>确实可以匹配后面任意个<code>0</code>。</p>
+<p>​
+<strong>这是因为正则表达式默认使用贪婪匹配：任何一个规则，它总是尽可能多地向后匹配，因此，<code>\d+</code>总是会把后面的<code>0</code>包含进来。</strong></p>
+<p>​
+<strong>要让<code>\d+</code>尽量少匹配，让<code>0*</code>尽量多匹配，我们就必须让<code>\d+</code>使用非贪婪匹配。在规则<code>\d+</code>后面加个<code>?</code>即可表示非贪婪匹配。我们改写正则表达式如下：</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Main</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;</span><br><span class="line">        <span class="type">Pattern</span> <span class="variable">pattern</span> <span class="operator">=</span> Pattern.compile(<span class="string">&quot;(\\d+?)(0*)&quot;</span>);</span><br><span class="line">        <span class="type">Matcher</span> <span class="variable">matcher</span> <span class="operator">=</span> pattern.matcher(<span class="string">&quot;1230000&quot;</span>);</span><br><span class="line">        <span class="keyword">if</span> (matcher.matches()) &#123;</span><br><span class="line">            System.out.println(<span class="string">&quot;group1=&quot;</span> + matcher.group(<span class="number">1</span>)); <span class="comment">// &quot;123&quot;</span></span><br><span class="line">            System.out.println(<span class="string">&quot;group2=&quot;</span> + matcher.group(<span class="number">2</span>)); <span class="comment">// &quot;0000&quot;</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>​
+<strong>因此，给定一个匹配规则，加上<code>?</code>后就变成了非贪婪匹配。</strong></p>
+<p>​
+<strong>我们再来看这个正则表达式<code>(\d??)(9*)</code>，注意<code>\d?</code>表示匹配0个或1个数字，后面第二个<code>?</code>表示非贪婪匹配，因此，给定字符串<code>"9999"</code>，匹配到的两个子串分别是<code>""</code>和<code>"9999"</code>，因为对于<code>\d?</code>来说，可以匹配1个<code>9</code>，也可以匹配0个<code>9</code>，但是因为后面的<code>?</code>表示非贪婪匹配，它就会尽可能少的匹配，结果是匹配了0个<code>9</code>。</strong></p>
+<h3 id="六搜索和替换">六、搜索和替换：</h3>
+<h4 id="分割字符串">1、分割字符串：</h4>
+<p>​
+使用正则表达式分割字符串可以实现更加灵活的功能。<code>String.split()</code>方法传入的正是正则表达式。我们来看下面的代码：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&quot;a b c&quot;.split(&quot;\\s&quot;); // &#123; &quot;a&quot;, &quot;b&quot;, &quot;c&quot; &#125;</span><br><span class="line">&quot;a b  c&quot;.split(&quot;\\s&quot;); // &#123; &quot;a&quot;, &quot;b&quot;, &quot;&quot;, &quot;c&quot; &#125;</span><br><span class="line">&quot;a, b ;; c&quot;.split(&quot;[\\,\\;\\s]+&quot;); // &#123; &quot;a&quot;, &quot;b&quot;, &quot;c&quot; &#125;</span><br></pre></td></tr></table></figure>
+<p>​
+如果我们想让用户输入一组标签，然后把标签提取出来，因为用户的输入往往是不规范的，这时，使用合适的正则表达式，就可以消除多个空格、混合<code>,</code>和<code>;</code>这些不规范的输入，直接提取出规范的字符串。</p>
+<h4 id="搜索字符串">2、搜索字符串：</h4>
+<p>​ 使用正则表达式还可以搜索字符串，我们来看例子：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Main</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;</span><br><span class="line">        <span class="type">String</span> <span class="variable">s</span> <span class="operator">=</span> <span class="string">&quot;the quick brown fox jumps over the lazy dog.&quot;</span>;</span><br><span class="line">        <span class="type">Pattern</span> <span class="variable">p</span> <span class="operator">=</span> Pattern.compile(<span class="string">&quot;\\wo\\w&quot;</span>);</span><br><span class="line">        <span class="type">Matcher</span> <span class="variable">m</span> <span class="operator">=</span> p.matcher(s);</span><br><span class="line">        <span class="keyword">while</span> (m.find()) &#123;</span><br><span class="line">            <span class="type">String</span> <span class="variable">sub</span> <span class="operator">=</span> s.substring(m.start(), m.end());</span><br><span class="line">            System.out.println(sub);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>​
+我们获取到<code>Matcher</code>对象后，不需要调用<code>matches()</code>方法（因为匹配整个串肯定返回false），而是反复调用<code>find()</code>方法，在整个串中搜索能匹配上<code>\\wo\\w</code>规则的子串，并打印出来。<strong>这种方式比<code>String.indexOf()</code>要灵活得多，因为我们搜索的规则是3个字符：中间必须是<code>o</code>，前后两个必须是字符<code>[A-Za-z0-9_]</code>。</strong></p>
+<h4 id="替换字符串">3、替换字符串：</h4>
+<p>​
+使用正则表达式替换字符串可以直接调用<code>String.replaceAll()</code>，它的第一个参数是正则表达式，第二个参数是待替换的字符串。我们还是来看例子：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Main</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;</span><br><span class="line">        <span class="type">String</span> <span class="variable">s</span> <span class="operator">=</span> <span class="string">&quot;The     quick\t\t brown   fox  jumps   over the  lazy dog.&quot;</span>;</span><br><span class="line">        <span class="type">String</span> <span class="variable">r</span> <span class="operator">=</span> s.replaceAll(<span class="string">&quot;\\s+&quot;</span>, <span class="string">&quot; &quot;</span>);</span><br><span class="line">        System.out.println(r); <span class="comment">// &quot;The quick brown fox jumps over the lazy dog.&quot;</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+    </div>
+
+    
+    
+    
+      
+  <div class="popular-posts-header">相关文章</div>
+  <ul class="popular-posts">
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2022\08\13\d7802ff9ffde\" rel="bookmark">java精简系列笔记8——网络编程</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2022\08\05\baf467f2b931\" rel="bookmark">java精简系列笔记7——并发</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2022\08\02\ef5062ee24ca\" rel="bookmark">java精简系列笔记6——集合</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2022\08\02\86bf4f2de889\" rel="bookmark">java精简系列笔记5——异常、断言和日志</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2022\07\21\4c15134889df\" rel="bookmark">java精简系列笔记4——java接口、lambda表达式、内部类</a></div>
+    </li>
+  </ul>
+
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/java/" rel="tag"># java</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2022/02/02/e8aa8ccaa4fe/" rel="prev" title="java系列笔记10——java单元测试JUnit">
+                  <i class="fa fa-chevron-left"></i> java系列笔记10——java单元测试JUnit
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2022/02/02/e7e76d98fb52/" rel="next" title="LeetCode 算法解题Tricks（持续更新）">
+                  LeetCode 算法解题Tricks（持续更新） <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments utterances-container"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Fantast</span>
+</div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+    <span title="站点总字数">725k</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">33:33</span>
+  </span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script><script src="/js/bookmark.js"></script>
+
+  
+<script src="https://cdn.jsdelivr.net/npm/hexo-generator-searchdb@1.4.0/dist/search.js" integrity="sha256-vXZMYLEqsROAXkEw93GGIvaB2ab+QW6w3+1ahD9nXXA=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdn.jsdelivr.net/npm/mathjax@3.2.0/es5/tex-mml-chtml.js","integrity":"sha256-r+3itOMtGGjap0x+10hu6jW/gZCzxHsoKrOd7gyRSGY="}}</script>
+<script src="/js/third-party/math/mathjax.js"></script>
+
+
+<script class="next-config" data-name="utterances" type="application/json">{"enable":true,"repo":"Fantast416/myblog-comment","issue_term":"pathname","theme":"github-light"}</script>
+<script src="/js/third-party/comments/utterances.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,624 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.2.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css" integrity="sha256-mUZM63G8m73Mcidfrv5E+Y61y7a12O5mW4ezU3bxqW4=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"blog.fantast.top","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.9.0","exturl":false,"sidebar":{"position":"left","width":250,"display":"always","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":true,"color":"#222","save":"manual"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"utterances","storage":true,"lazyload":false,"nav":null,"activeClass":"utterances"},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+<meta name="description" content="Chap3——Mysql DDL操作、增删改与数据类型">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Mysql DDL与DCL操作、增删改与数据类型">
+<meta property="og:url" content="https://blog.fantast.top/2022/09/07/60ff079d7c8c/index.html">
+<meta property="og:site_name" content="Fantast&#39;s Blog">
+<meta property="og:description" content="Chap3——Mysql DDL操作、增删改与数据类型">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220910112143456.png">
+<meta property="article:published_time" content="2022-09-07T10:09:19.000Z">
+<meta property="article:modified_time" content="2022-09-10T14:15:01.000Z">
+<meta property="article:author" content="Fantast">
+<meta property="article:tag" content="Database">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220910112143456.png">
+
+
+<link rel="canonical" href="https://blog.fantast.top/2022/09/07/60ff079d7c8c/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://blog.fantast.top/2022/09/07/60ff079d7c8c/","path":"2022/09/07/60ff079d7c8c/","title":"Mysql DDL与DCL操作、增删改与数据类型"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Mysql DDL与DCL操作、增删改与数据类型 | Fantast's Blog</title>
+  
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<link rel="alternate" href="/atom.xml" title="Fantast's Blog" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Fantast's Blog</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li>
+        <li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li>
+        <li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li>
+        <li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li>
+        <li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%80%E4%B8%80%E4%BA%9Bddl%E4%B8%8Edcl%E6%93%8D%E4%BD%9C"><span class="nav-text">一、一些DDL与DCL操作：</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E5%BA%93%E7%9B%B8%E5%85%B3%E6%93%8D%E4%BD%9C"><span class="nav-text">1、数据库相关操作：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E8%A1%A8%E7%9B%B8%E5%85%B3%E6%93%8D%E4%BD%9C"><span class="nav-text">2、数据表相关操作：</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BA%8Cddl-%E5%92%8C-dml%E7%9A%84%E8%AF%B4%E6%98%8E"><span class="nav-text">二、DDL 和 DML的说明</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%89mysql8-ddl%E7%9A%84%E5%8E%9F%E5%AD%90%E5%8C%96"><span class="nav-text">三、MYSQL8 ——DDL的原子化：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9B%9B%E5%A2%9E%E5%88%A0%E6%94%B9"><span class="nav-text">四、增删改</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%A2%9E"><span class="nav-text">1、增</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%88%A0"><span class="nav-text">2、删</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%94%B9"><span class="nav-text">3、改</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#mysql8-%E8%AE%A1%E7%AE%97%E5%88%97"><span class="nav-text">4、MYSQL8 计算列：</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BA%94%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B%E8%AF%A6%E8%A7%A3"><span class="nav-text">五、数据类型详解：</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%95%B4%E5%9E%8B"><span class="nav-text">1、整型</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%B5%AE%E7%82%B9%E7%B1%BB%E5%9E%8B"><span class="nav-text">2、浮点类型</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%AE%9A%E7%82%B9%E6%95%B0%E7%B1%BB%E5%9E%8B"><span class="nav-text">3、定点数类型：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BD%8D%E7%B1%BB%E5%9E%8B"><span class="nav-text">4、位类型</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%97%A5%E6%9C%9F%E4%B8%8E%E6%97%B6%E9%97%B4%E7%B1%BB%E5%9E%8B"><span class="nav-text">5、日期与时间类型</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%96%87%E6%9C%AC%E5%AD%97%E7%AC%A6%E4%B8%B2%E7%B1%BB%E5%9E%8B"><span class="nav-text">6、文本字符串类型</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BA%8C%E8%BF%9B%E5%88%B6%E5%AD%97%E7%AC%A6%E4%B8%B2"><span class="nav-text">7、二进制字符串</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#json%E7%B1%BB%E5%9E%8B"><span class="nav-text">8、JSON类型：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%A9%BA%E9%97%B4%E7%B1%BB%E5%9E%8B"><span class="nav-text">9、空间类型：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-text">10、总结：</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Fantast"
+      src="/images/avatar.webp">
+  <p class="site-author-name" itemprop="name">Fantast</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">161</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">40</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">97</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/fantast416" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;fantast416" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:fantast416@gmail.com" title="E-Mail → mailto:fantast416@gmail.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll site-overview-item animated">
+    <div class="links-of-blogroll-title"><i class="fa fa-globe fa-fw"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://www.zhihu.com/people/shuo-shuo-3-41" title="https:&#x2F;&#x2F;www.zhihu.com&#x2F;people&#x2F;shuo-shuo-3-41" rel="noopener" target="_blank">ZhiHu</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="http://www.next.zju.edu.cn/" title="http:&#x2F;&#x2F;www.next.zju.edu.cn&#x2F;" rel="noopener" target="_blank">NextLab</a>
+        </li>
+    </ul>
+  </div>
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://blog.fantast.top/2022/09/07/60ff079d7c8c/">
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.webp">
+      <meta itemprop="name" content="Fantast">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Fantast's Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Mysql DDL与DCL操作、增删改与数据类型
+        </h1>
+
+        <div class="post-meta-container">
+          
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2022-09-07 18:09:19" itemprop="dateCreated datePublished" datetime="2022-09-07T18:09:19+08:00">2022-09-07</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2022-09-10 22:15:01" itemprop="dateModified" datetime="2022-09-10T22:15:01+08:00">2022-09-10</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E2%93%B9-%E5%9F%BA%E7%A1%80%E7%B1%BB%E7%AC%94%E8%AE%B0/" itemprop="url" rel="index"><span itemprop="name">⓹ 基础类笔记</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E2%93%B9-%E5%9F%BA%E7%A1%80%E7%B1%BB%E7%AC%94%E8%AE%B0/%E6%95%B0%E6%8D%AE%E5%BA%93%E7%B2%BE%E7%AE%80%E7%AC%94%E8%AE%B0/" itemprop="url" rel="index"><span itemprop="name">数据库精简笔记</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>4.9k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>14 分钟</span>
+    </span>
+</div>
+
+            <div class="post-description">Chap3——Mysql DDL操作、增删改与数据类型</div>
+            <div class="post-remind">Google Chrome is recommended, otherwise the image size may be wrong</div>
+            <div class="post-remind">FireFox is not recommended,Because it does not support the image zoom property</div>
+        </div>
+        
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h3 id="一一些ddl与dcl操作">一、一些DDL与DCL操作：</h3>
+<h4 id="数据库相关操作">1、数据库相关操作：</h4>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">CREATE DATABASE mytest1 CHARACTER SET &#x27;utf8&#x27;;</span><br><span class="line">ALTER DATABASE mytest1 CHARACTER SET &#x27;utf8mb4&#x27;;</span><br><span class="line">DROP DATABASE IF EXISTS mytest1;  //删除数据库</span><br></pre></td></tr></table></figure>
+<h4 id="数据表相关操作">2、数据表相关操作：</h4>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br></pre></td><td class="code"><pre><span class="line">CREATE TABLE IF NOT EXISTS myempl(</span><br><span class="line">id INT,</span><br><span class="line">emp_name VARCHAR(15),</span><br><span class="line">hire_date DATE); # 创建表</span><br><span class="line"></span><br><span class="line">DESC myempl;  # 查看表结构</span><br><span class="line"></span><br><span class="line"># 通过现有表建立新表，会导入现有表数据</span><br><span class="line">CREATE TABLE myemp3</span><br><span class="line">AS </span><br><span class="line">SELECT *</span><br><span class="line">FROM employees</span><br><span class="line"></span><br><span class="line"># 结合子查询，通过现有表执行</span><br><span class="line">CREATE TABLE myemp3</span><br><span class="line">AS </span><br><span class="line">SELECT e.employee_id emp_id,e.last_name lname,d.department name</span><br><span class="line">FROM employees e JOIN departments d</span><br><span class="line">ON e.department id = d. department id;</span><br><span class="line"></span><br><span class="line"># 修改表</span><br><span class="line"># ====== 添加一个字段 ====== </span><br><span class="line">ALTER TABLE myemp1</span><br><span class="line">ADD salary DOUBLE(10,2);  # 默认添加到表中的最后一个字段</span><br><span class="line"></span><br><span class="line">ALTER TABLE myemp1</span><br><span class="line">ADD salary DOUBLE(10,2) FIRST;  # 添加到表中的第一个字段</span><br><span class="line"></span><br><span class="line"># 修改一个字段</span><br><span class="line">ALTER TABLE myemp1</span><br><span class="line">MODIFY salary DOUBLE(10,2) DEFAULT &#x27;aaa&#x27;;  # 添加到表中的第一个字段</span><br><span class="line"></span><br><span class="line"># 重命名一个字段</span><br><span class="line">ALTER TABLE dept80</span><br><span class="line">CHANGE department_name dept_name varchar(15);</span><br><span class="line"></span><br><span class="line"># 删除一个字段</span><br><span class="line">ALTER TABLE myemp1 DROP salary</span><br><span class="line"></span><br><span class="line"># 重命名表</span><br><span class="line">RENAME TABLE myemp1</span><br><span class="line">TO myemp11</span><br><span class="line"></span><br><span class="line"># 删除表</span><br><span class="line">DROP TABLE myemp1 IF EXISTS</span><br><span class="line"></span><br><span class="line"># 清空表</span><br><span class="line">TRUNCATE TABLE myemp1;</span><br><span class="line">#【参考】TRUNCATE TABLE 比 DELETE 速度快，且使用的系统和事务日志资源少，但 TRUNCATE 无事务且不触发 TRIGGER，有可能造成事故，故不建议在开发代码中使用此语句。</span><br></pre></td></tr></table></figure>
+<h3 id="二ddl-和-dml的说明">二、DDL 和 DML的说明</h3>
+<p>​ DDL的操作一旦执行，就不可回滚。</p>
+<p>​
+DML的操作默认情况，一旦执行，也是不可回滚的。但是，如果在执行DL之前，执行了SET
+autocommit=FALSE，则执行的DML操作就可以实现回滚。</p>
+<h3 id="三mysql8-ddl的原子化">三、MYSQL8 ——DDL的原子化：</h3>
+<p>​
+在MySQL8.0版本中，InnoDB表的DDL支持事务完整性，即DDL操作要么成功要么回滚。DDL操作回滚日志写入到data
+dictionary数据字典表mysql.innodb_ddlIlog（该表是隐藏的表，通过show
+tables无法看到）中，用于回滚操作。通过设置参数，可将DDL操作日志打印输出到MySQL错误日志中。</p>
+<h3 id="四增删改">四、增删改</h3>
+<h4 id="增">1、增</h4>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">INSERT INTO departments(department_id, department_name)</span><br><span class="line">VALUES (80, &#x27;IT&#x27;);</span><br><span class="line"></span><br><span class="line">INSERT INTO emp(emp_id,emp_name)</span><br><span class="line">VALUES (1001,&#x27;shkstart&#x27;),</span><br><span class="line">(1002,&#x27;atguigu&#x27;),</span><br><span class="line">(1003,&#x27;Tom&#x27;);</span><br><span class="line"></span><br><span class="line"># 通过SELECT来增加</span><br><span class="line">INSERT INTO sales_reps(id, name, salary, commission_pct)</span><br><span class="line">SELECT employee_id, last_name, salary, commission_pct</span><br><span class="line">FROM employees</span><br><span class="line">WHERE job_id LIKE &#x27;%REP%&#x27;;</span><br></pre></td></tr></table></figure>
+<h4 id="删">2、删</h4>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">DELETE FROM departments</span><br><span class="line">WHERE department_name = &#x27;Finance&#x27;;</span><br></pre></td></tr></table></figure>
+<h4 id="改">3、改</h4>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">UPDATE employees</span><br><span class="line">SET department_id = 70</span><br><span class="line">WHERE employee_id = 113;</span><br></pre></td></tr></table></figure>
+<h4 id="mysql8-计算列">4、MYSQL8 计算列：</h4>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">CREATE TABLE tb1(</span><br><span class="line">    id INT,</span><br><span class="line">    a INT,</span><br><span class="line">    b INT,</span><br><span class="line">    c INT GENERATED ALWAYS AS (a + b) VIRTUAL</span><br><span class="line">);</span><br></pre></td></tr></table></figure>
+<h3 id="五数据类型详解">五、数据类型详解：</h3>
+<p><img src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220910112143456.png" style="zoom:67%;" /></p>
+<h4 id="整型">1、整型</h4>
+<ul>
+<li><p>TINYINT 1字节
+一般用于枚举数据，比如系统设定取值范围很小且固定的场景</p></li>
+<li><p>SMALLINT 2字节
+可以用于较小范围的统计数据，比如统计工厂的固定资产库存数量</p></li>
+<li><p>MEDUIMINT 3字节 用于较大整数的计算，比如车站每日的客流量</p></li>
+<li><p>INT4字节
+取值范围足够大，一般情况下不用考虑超限问题，用得最多。比如商品编号</p></li>
+<li><p>BIGINT 8字节
+只有当你处理特别巨大的整数时才会用到。比如双十一的交易量、大型门户网站点击量、证
+券公司衍生产品持仓等</p></li>
+<li><p>可选属性</p>
+<ul>
+<li>UNSIGNED 无符号属性</li>
+<li>ZEROFILL 零填充</li>
+</ul></li>
+</ul>
+<h4 id="浮点类型">2、浮点类型</h4>
+<ul>
+<li>FLOAT</li>
+<li>DOUBLE</li>
+</ul>
+<p>​
+如果用到浮点数，要特别注意误差问题，因为浮点数是不准确的，所以我们要避免使用“=”来
+​
+判断两个数是否相等。同时，在一些对精确度要求较高的项目中，千万不要使用浮点数，不然会导致结
+果错误，甚至是造成不可挽回的损失</p>
+<h4 id="定点数类型">3、定点数类型：</h4>
+<ul>
+<li><p>DECIMAL(M,D)</p></li>
+<li><p>表示高精度小数。其中，M被称为精度，D被称为标度。0&lt;=M&lt;=65，
+0&lt;=D&lt;=30，D&lt;M。例如，定义DECIMAL（5,2）的类型，表示该列取值范围是-999.99~999.99。</p></li>
+<li><p>DECIMAL
+的存储空间并不是固定的，由精度值M决定，总共占用的存储空间为M+2个字节。也就是
+说，在一些对精度要求不高的场景下，比起占用同样字节长度的定点数，浮点数表达的数值范围可
+以更大一些。</p></li>
+<li><p>定点数在MySQL内部是以字符串的形式进行存储，这就决定了<strong>它一定是精准的</strong>。</p></li>
+</ul>
+<h4 id="位类型">4、位类型</h4>
+<ul>
+<li>BIT(M)</li>
+<li>如果没有指定(M)，默认是1位。这个1位，表示只能存1位的二进制值。这里(M)是表示二进制的
+位数，位数最小值为1，最大值为64。</li>
+</ul>
+<h4 id="日期与时间类型">5、日期与时间类型</h4>
+<ul>
+<li><p>YEAR 类型通常用来表示年</p></li>
+<li><p>DATE 类型通常用来表示年、月、日</p></li>
+<li><p>TIME 类型通常用来表示时、分、秒</p></li>
+<li><p>DATETIME 类型通常用来表示年、月、日、时、分、秒</p></li>
+<li><p>TIMESTAMP 类型通常用来表示带时区的年、月、日、时、分、秒</p></li>
+<li><p>DATETIME占用8个字节</p></li>
+<li><p>TIMESTAMP占用4个字节，TIMESTAMP底层存储的是毫秒值</p></li>
+<li><p>DATETIME 和 TIMESTAMP差别：</p>
+<ul>
+<li>TIMESTAMP存储的时间范围比DATETIME要小很多，只能存储“1970-01-01
+00:00:01 UTC”到“2038-01-19 03:14:07
+UTC”之间的时间。存储数据的时候需要对当前时间所在的时区进行转换，查询数据的时候再将时间转换回当前的时
+区。因此，使用TIMESTAMP存储的同一个时间值，在不同的时区查询时会显示不同的时间</li>
+<li>TIMESTAMP会根据用户的时区不同，显示不同的结果。而DATETIME则只能
+反映出插入时当地的时区，其他时区的人查看数据必然会有误差的,需要额外做处理</li>
+</ul></li>
+</ul>
+<h4 id="文本字符串类型">6、文本字符串类型</h4>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220910143332516.png" /></p>
+<ul>
+<li>何时使用CHAR？何时使用VARCHAR？
+<ul>
+<li><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220910143612992.png" /></li>
+<li>情况1：存储很短的信息。比如门牌号码101，201....这样很短的信息应该用char，因为varchar还要占个byte用于
+存储信息长度，本来打算节约存储的，结果得不偿失。</li>
+<li>情况2：固定长度的。比如使用uuid作为主键，那用char应该更合适。因为他固定长度，varchar动态根据长度的特性就消失了，而且还要占个长度信息。</li>
+<li>情况3：十分频繁改变的列，因为varchar的每次存储都需要有额外的计算，得到长度等工作。如果一个非常频繁改变的话，会又较多的小号用于计算。</li>
+<li>情况4：具体存储引擎的情况：
+<ul>
+<li>InnoDB
+存储引擎，建议使用VARCHAR类型。因为对于InnoDB数据表，内部的行存储格式并没有区
+分固定长度和可变长度列（所有数据行都使用指向数据列值的头指针），而且主要影响性能的因素
+是数据行使用的存储总量，由于char平均占用的空间多于varchar，所以除了简短并且固定长度的，
+其他考虑varchar。这样节省空间，对磁盘I/O和数据存储总量比较好。</li>
+</ul></li>
+</ul></li>
+<li>关于TEXT字段：
+<ul>
+<li>TEXT文本类型，可以存比较大的文本段，搜索速度稍慢，因此如果不是特别大的内容，建议使用CHAR，
+VARCHAR来代替。还有TEXT类型不用加默认值，加了也没用。而且text和blob类型的数据删除后容易导致
+“空洞”，使得文件碎片比较多，所以频繁使用的表不建议包含TEXT类型字段，建议单独分出去，单独用
+一个表。</li>
+</ul></li>
+<li>关于ENUM和SET
+<ul>
+<li>设置字段值时，ENUM类型只允许从成员中选取单个值，不能一次选取多个值。</li>
+<li>SET类型在选取成员时，可以一次选择多个成员，这一点与ENUM类型不同。</li>
+</ul></li>
+</ul>
+<h4 id="二进制字符串">7、二进制字符串</h4>
+<p>BINARY VARBINARY BLOB</p>
+<ul>
+<li>使用TEXT和BLOB时的注意事项：
+<ul>
+<li>BLOB和TEXT值也会引起自己的一些问题，特别是执行了大量的删除或更新操作的时候。删除这种值
+会在数据表中留下很大的"
+空洞"，以后填入这些"空洞"的记录可能长度不同。为了提高性能，建议定期 使用
+OPTIMIZE TABLE 功能对这类表进行碎片整理。</li>
+<li>如果需要对大文本字段进行模糊查询，MySQL
+提供了前缀索引。但是仍然要在不必要的时候避免检
+索大型的BLOB或TEXT值。例如，SELECT *
+查询就不是很好的想法，除非你能够确定作为约束条件的
+WHERE子句只会找到所需要的数据行。否则，你可能毫无目的地在网络上传输大量的值。</li>
+<li>把BLOB或TEXT列分离到单独的表中。在某些环境中，如果把这些数据列移动到第二张数据表中，可
+以让你把原数据表中的数据列转换为固定长度的数据行格式，那么它就是有意义的。这会减少主表中的
+碎片，使你得到固定长度数据行的性能优势。它还使你在主数据表上运行 SELECT
+* 查询的时候不会通过 网络传输大量的BLOB或TEXT值。</li>
+</ul></li>
+</ul>
+<h4 id="json类型">8、JSON类型：</h4>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">INSERT INTO test_json (js)</span><br><span class="line">VALUES (&#x27;&#123;&quot;name&quot;:&quot;songhk&quot;, &quot;age&quot;:18, &quot;address&quot;:&#123;&quot;province&quot;:&quot;beijing&quot;,</span><br><span class="line">&quot;city&quot;:&quot;beijing&quot;&#125;&#125;&#x27;);</span><br></pre></td></tr></table></figure>
+<h4 id="空间类型">9、空间类型：</h4>
+<p>​ MySQL
+空间类型扩展支持地理特征的生成、存储和分析。这里的地理特征表示世界上具有位置的任何东
+西，可以是一个实体，例如一座山；可以是空间，例如一座办公楼；也可以是一个可定义的位置，例如
+一个十字路口等等。MySQL中使用Geometry（几何）
+来表示所有地理特征。Geometry指一个点或点的
+集合，代表世界上任何具有位置的事物。</p>
+<h4 id="总结">10、总结：</h4>
+<ul>
+<li>任何字段如果为非负数，必须是 UNSIGNED</li>
+<li>【强制】小数类型为 DECIMAL，禁止使用 FLOAT 和
+DOUBLE。说明：在存储的时候，FLOAT 和 DOUBLE
+都存在精度损失的问题，很可能在比较值的时候，得到不正确的结果。如果存储的数据范围超过
+DECIMAL 的范围，建议将数据拆成整数和小数并分开存储。</li>
+<li>【强制】如果存储的字符串长度几乎相等，使用 CHAR
+定长字符串类型。</li>
+<li>【强制】VARCHAR 是可变长字符串，不预先分配存储空间，长度不要超过
+5000。如果存储长度大 于此值，定义字段类型为
+TEXT，独立出来一张表，用主键来对应，避免影响其它字段索引效率。</li>
+</ul>
+
+    </div>
+
+    
+    
+    
+      
+  <div class="popular-posts-header">相关文章</div>
+  <ul class="popular-posts">
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2022\09\13\26db2c268982\" rel="bookmark">Mysql 架构相关</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2022\09\13\5dad16fcb018\" rel="bookmark">Mysql 架构相关</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2022\09\12\108274e25ef3\" rel="bookmark">Mysql 视图，存储过程与函数</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2022\09\12\2c85f3f81b49\" rel="bookmark">Mysql 变量与游标.触发器</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2022\09\10\ee0ee8e192df\" rel="bookmark">Mysql 约束</a></div>
+    </li>
+  </ul>
+
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Database/" rel="tag"># Database</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2022/09/05/22f2ef21dade/" rel="prev" title="Mysql各类函数与子查询">
+                  <i class="fa fa-chevron-left"></i> Mysql各类函数与子查询
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2022/09/09/66d597ae86a9/" rel="next" title="2022-2023秋冬大计基答疑整理——沈睿班">
+                  2022-2023秋冬大计基答疑整理——沈睿班 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments utterances-container"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Fantast</span>
+</div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+    <span title="站点总字数">725k</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">33:33</span>
+  </span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script><script src="/js/bookmark.js"></script>
+
+  
+<script src="https://cdn.jsdelivr.net/npm/hexo-generator-searchdb@1.4.0/dist/search.js" integrity="sha256-vXZMYLEqsROAXkEw93GGIvaB2ab+QW6w3+1ahD9nXXA=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdn.jsdelivr.net/npm/mathjax@3.2.0/es5/tex-mml-chtml.js","integrity":"sha256-r+3itOMtGGjap0x+10hu6jW/gZCzxHsoKrOd7gyRSGY="}}</script>
+<script src="/js/third-party/math/mathjax.js"></script>
+
+
+<script class="next-config" data-name="utterances" type="application/json">{"enable":true,"repo":"Fantast416/myblog-comment","issue_term":"pathname","theme":"github-light"}</script>
+<script src="/js/third-party/comments/utterances.js"></script>
+
+</body>
+</html>

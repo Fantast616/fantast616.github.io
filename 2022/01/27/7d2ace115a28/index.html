@@ -1,0 +1,657 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.2.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css" integrity="sha256-mUZM63G8m73Mcidfrv5E+Y61y7a12O5mW4ezU3bxqW4=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"blog.fantast.top","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.9.0","exturl":false,"sidebar":{"position":"left","width":250,"display":"always","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":true,"color":"#222","save":"manual"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"utterances","storage":true,"lazyload":false,"nav":null,"activeClass":"utterances"},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+<meta name="description" content="提出了UniFormer，将3D卷积和时空自注意力机制结合在一个简洁的transformer结构中。能够同时处理局部冗余和全局依赖，其主要包括三个模块：Dynamic Position Embedding( DPE )\Multi-Head Relation Aggregator ( MHRA )\Feed-Forward Network( FFN )">
+<meta property="og:type" content="article">
+<meta property="og:title" content="《UniFormer:Unifying Convolution and Self-attention for Visual Recognition》">
+<meta property="og:url" content="https://blog.fantast.top/2022/01/27/7d2ace115a28/index.html">
+<meta property="og:site_name" content="Fantast&#39;s Blog">
+<meta property="og:description" content="提出了UniFormer，将3D卷积和时空自注意力机制结合在一个简洁的transformer结构中。能够同时处理局部冗余和全局依赖，其主要包括三个模块：Dynamic Position Embedding( DPE )\Multi-Head Relation Aggregator ( MHRA )\Feed-Forward Network( FFN )">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2022-01-27T10:12:19.000Z">
+<meta property="article:modified_time" content="2022-08-07T14:48:40.000Z">
+<meta property="article:author" content="Fantast">
+<meta property="article:tag" content="CNN">
+<meta property="article:tag" content="Transformer">
+<meta property="article:tag" content="Visual Recognition">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://blog.fantast.top/2022/01/27/7d2ace115a28/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://blog.fantast.top/2022/01/27/7d2ace115a28/","path":"2022/01/27/7d2ace115a28/","title":"《UniFormer:Unifying Convolution and Self-attention for Visual Recognition》"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>《UniFormer:Unifying Convolution and Self-attention for Visual Recognition》 | Fantast's Blog</title>
+  
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<link rel="alternate" href="/atom.xml" title="Fantast's Blog" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Fantast's Blog</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li>
+        <li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li>
+        <li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li>
+        <li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li>
+        <li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%AE%BA%E6%96%87%E5%90%8D%E7%A7%B0uniformer-unifying-convolution-and-self-attention-for-visual-recognition"><span class="nav-text">论文名称：《UniFormer:
+Unifying Convolution and Self-attention for Visual Recognition》</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%AE%BA%E6%96%87%E5%9C%B0%E5%9D%80-httpsarxiv.orgpdf2201.09450.pdf"><span class="nav-text">论文地址：
+https:&#x2F;&#x2F;arxiv.org&#x2F;pdf&#x2F;2201.09450.pdf</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%B3%E9%94%AE%E8%AF%8D"><span class="nav-text">1、关键词：</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%A2%86%E5%9F%9F%E8%83%8C%E6%99%AFvisual-recognition"><span class="nav-text">2、领域背景—Visual
+Recognition：</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%88%E5%89%8D%E5%B7%A5%E4%BD%9C%E6%8F%8F%E8%BF%B0%E4%B8%8E%E6%AF%94%E8%BE%83"><span class="nav-text">3、先前工作描述与比较：</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%BB%E8%A6%81%E8%AE%BE%E8%AE%A1%E6%80%9D%E6%83%B3"><span class="nav-text">4、主要设计思想：</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%B7%E4%BD%93%E6%96%B9%E6%B3%95%E4%B8%8E%E7%BD%91%E7%BB%9C%E6%9E%B6%E6%9E%84"><span class="nav-text">5、具体方法与网络架构：</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#uniformer-block"><span class="nav-text">1) UniFormer Block</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#multi-head-relation-aggregator"><span class="nav-text">2) Multi-Head Relation
+Aggregator</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#dynamic-position-embedding"><span class="nav-text">3) Dynamic Position Embedding</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%A1%8D%E7%94%9F%E6%A1%86%E6%9E%B6-framework"><span class="nav-text">6、衍生框架 FrameWork</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9B%BE%E5%83%8F%E5%88%86%E7%B1%BB%E6%A1%86%E6%9E%B6"><span class="nav-text">1) 图像分类框架：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%A7%86%E9%A2%91%E5%88%86%E7%B1%BB-%E5%AF%86%E9%9B%86%E9%A2%84%E6%B5%8B-%E7%AD%89%E5%85%B6%E4%BB%96%E6%A1%86%E6%9E%B6%E8%AF%A6%E8%A7%81%E8%AE%BA%E6%96%87%E4%B8%BB%E4%BD%93"><span class="nav-text">2） 视频分类
+&amp;&amp; 密集预测 等其他框架详见论文主体</span></a></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Fantast"
+      src="/images/avatar.webp">
+  <p class="site-author-name" itemprop="name">Fantast</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">161</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">40</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">97</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/fantast416" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;fantast416" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:fantast416@gmail.com" title="E-Mail → mailto:fantast416@gmail.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll site-overview-item animated">
+    <div class="links-of-blogroll-title"><i class="fa fa-globe fa-fw"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://www.zhihu.com/people/shuo-shuo-3-41" title="https:&#x2F;&#x2F;www.zhihu.com&#x2F;people&#x2F;shuo-shuo-3-41" rel="noopener" target="_blank">ZhiHu</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="http://www.next.zju.edu.cn/" title="http:&#x2F;&#x2F;www.next.zju.edu.cn&#x2F;" rel="noopener" target="_blank">NextLab</a>
+        </li>
+    </ul>
+  </div>
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://blog.fantast.top/2022/01/27/7d2ace115a28/">
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.webp">
+      <meta itemprop="name" content="Fantast">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Fantast's Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          《UniFormer:Unifying Convolution and Self-attention for Visual Recognition》
+        </h1>
+
+        <div class="post-meta-container">
+          
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2022-01-27 18:12:19" itemprop="dateCreated datePublished" datetime="2022-01-27T18:12:19+08:00">2022-01-27</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2022-08-07 22:48:40" itemprop="dateModified" datetime="2022-08-07T22:48:40+08:00">2022-08-07</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E2%93%B6-%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB%E7%AC%94%E8%AE%B0/" itemprop="url" rel="index"><span itemprop="name">⓶ 论文阅读笔记</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E2%93%B6-%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB%E7%AC%94%E8%AE%B0/CV%E7%9B%B8%E5%85%B3%E8%AE%BA%E6%96%87/" itemprop="url" rel="index"><span itemprop="name">CV相关论文</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>4.4k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>12 分钟</span>
+    </span>
+</div>
+
+            <div class="post-description">提出了UniFormer，将3D卷积和时空自注意力机制结合在一个简洁的transformer结构中。能够同时处理局部冗余和全局依赖，其主要包括三个模块：Dynamic Position Embedding( DPE )\Multi-Head Relation Aggregator ( MHRA )\Feed-Forward Network( FFN )</div>
+            <div class="post-remind">Google Chrome is recommended, otherwise the image size may be wrong</div>
+            <div class="post-remind">FireFox is not recommended,Because it does not support the image zoom property</div>
+        </div>
+        
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h4
+id="论文名称uniformer-unifying-convolution-and-self-attention-for-visual-recognition">论文名称：《UniFormer:
+Unifying Convolution and Self-attention for Visual Recognition》</h4>
+<h4 id="论文地址-httpsarxiv.orgpdf2201.09450.pdf">论文地址：
+https://arxiv.org/pdf/2201.09450.pdf</h4>
+<h2 id="关键词">1、关键词：</h2>
+<p>​ Visual Recognition、CNN、SelfAttention、Transformer</p>
+<h2 id="领域背景visual-recognition">2、领域背景—Visual
+Recognition：</h2>
+<p>​
+表征学习一直是视觉识别领域的比较基本的研究。主要在面临向图像以及视频数据的时候，会存在两个问题：</p>
+<ul>
+<li>1、局部区域（空间、时间、时空）中的视觉内容往往是相似的，也就意味着局部冗余会比较大，这会导致不必要的计算量</li>
+<li>2、全局的依赖关系比较复杂，在不同区域的目标物体之间都会存在一些动态的关系。</li>
+</ul>
+<h2 id="先前工作描述与比较">3、先前工作描述与比较：</h2>
+<p>​
+基于领域背景中的两个主要问题，主流的解决方案就是CNN和ViT，但是它们都只针对上述问题中的某一个做出了解决，而忽略了另一个。如下所示：</p>
+<ul>
+<li><p>CNN能够通过小范围的卷积，降低局部冗余，减小计算量，但在捕获全局依赖中很有限制。</p></li>
+<li><p>ViT能够通过Self-Attention很有效的捕获长距离的依赖，但是盲目的去计算所有tokens之间的相似关系，会带来很大的计算冗余。其在浅层网络上很难有效的去编码局部的特征。</p>
+<ul>
+<li>本文的作者进行了一个实验：如下图所示，显示的是ViT网络的第三层的Attention图，我们发现虽然Attention机制计算了全局的token之间的关系，但最终在锚点（绿色方框）学习到的有效信息均来源于其很小的一个邻域范围（红色填充方框）。所以,ViT花费了非常大的计算复杂度，去编码了一个局部的视觉表示特征。</li>
+<li><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220129104342853.png" /></li>
+</ul></li>
+</ul>
+<h2 id="主要设计思想">4、主要设计思想：</h2>
+<p>​
+基于上述的工作描述，作者提出了UniFormer，将3D卷积和时空自注意力机制结合在一个简洁的<a
+target="_blank" rel="noopener" href="https://so.csdn.net/so/search?q=transformer&amp;spm=1001.2101.3001.7020">transformer</a>结构中，能够同时处理局部冗余和全局依赖，其主要包括三个模块：</p>
+<ul>
+<li>Dynamic Position Embedding( DPE )</li>
+<li>Multi-Head Relation Aggregator ( MHRA )
+<strong>【和CNN与ViT的主要不同所在】</strong></li>
+<li>Feed-Forward Network ( FFN )</li>
+</ul>
+<p>UniFormer与其他transformer的区别主要在于MHRA模块：</p>
+<ul>
+<li><p>在浅层，aggregator利用一个小的learnable
+matrix学习局部的token之间的相似性关系，通过聚合小的3D邻域的token信息极大地减少计算量。在深层，aggregator学习全局token之间的相似性关系，可以灵活的建立远距离图像区域或视频帧的token之间的长程依赖关系。</p></li>
+<li><p>最后，通过以分层方式逐步堆叠局部和全局 UniFormer
+块，我们可以灵活地整合它们的协作能力来促进Representation Learning。
+最后，我们为视觉识别提供了一个通用且强大的主干，并通过简单而精细的适应成功地解决了各种下游视觉任务。</p></li>
+</ul>
+<h2 id="具体方法与网络架构">5、具体方法与网络架构：</h2>
+<h3 id="uniformer-block">1) UniFormer Block</h3>
+<p>​ 下面图片就是UniFormer
+Block的整体架构，其中在标注维度的地方，所有标红的字符都是仅对于视频输入有效，代表了输入视频的帧数，如果输入是个图像，那么这些标红的值应该都
+= 1.</p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220127163758510.png" /></p>
+<ul>
+<li><strong>概述</strong>：Uniformer Block
+的整体架构如上所示，分割成了几个阶段，每个阶段中由三个核心的模块重复堆叠L次组成，下面就是单词堆叠中，所有的模块的大致介绍：
+<ul>
+<li>Dynamic Position Embedding( DPE )</li>
+<li>Multi-Head Relation Aggregator ( MHRA )</li>
+<li>Feed-Forward Network ( FFN )</li>
+<li>我们首先引入 DPE
+将位置信息动态集成到所有Tokens（等式1）。它支持任意输入分辨率，并充分利用Tokens的顺序以获得更好的视觉识别效果。
+然后，我们使用 MHRA
+，其利用每个Token的上下文token，通过关系学习的方式，来增强每个Token（等式
+2）。 通过在浅层和深层灵活设计Token的相似性，我们的 MHRA
+可以巧妙地统一卷积和自注意力机制，以减少局部冗余并学习全局依赖性。
+最后，我们像传统的 ViTs 一样添加
+FFN，它由两个线性层和一个非线性函数GELU组成（等式 3）。
+通道数先扩大4倍再恢复，因此每个token会被单独增强.</li>
+</ul></li>
+<li><strong>输入</strong>：<span class="math inline">\(X_{in} \in R^{C
+\times T \times H \times W}\)</span>, T 为视频帧数，当输入为图像时，T =
+1</li>
+<li><strong>输出</strong>：<span
+class="math inline">\(Z\)</span>特征空间向量</li>
+<li><strong>公式表达</strong>：
+<ul>
+<li><span class="math inline">\(X = DPE(X_{in}) + X_{in}\)</span></li>
+<li><span class="math inline">\(Y = MHRA(Norm(X)) + X\)</span></li>
+<li><span class="math inline">\(Z = FFN(Norm(Y)) + Y\)</span></li>
+</ul></li>
+</ul>
+<h3 id="multi-head-relation-aggregator">2) Multi-Head Relation
+Aggregator</h3>
+<ul>
+<li><p><strong>概述</strong>：该模块可以巧妙地统一卷积和自注意力机制，以减少局部冗余并学习全局依赖性。MHRA使用multi-head机制来计算token间的关系，公式表达如下：</p></li>
+<li><p><strong>公式表达</strong>：</p>
+<ul>
+<li><strong>MHRA模块的第n个head</strong>： <span
+class="math inline">\(R_n(X) = A_nV_n(X)\)</span>，输入向量<span
+class="math inline">\(X \in R^{C \times T \times H \times
+W}\)</span>，我们会将其首先Reshape成一个token的序列<span
+class="math inline">\(X \in R^{L \times C}\)</span>, 其中 <span
+class="math inline">\(L = T \times H \times W\)</span></li>
+<li><strong>总体</strong>： <span class="math inline">\(MHRA(X) =
+Concat(R_1(X);R_2(X);...;R_N(X))U\)</span>，<span
+class="math inline">\(U \in R^{C \times
+C}\)</span>是一个可学习矩阵，用于聚合N个Head的内容</li>
+</ul></li>
+<li><p><strong>单个Head内部变换细节介绍</strong>：</p>
+<ul>
+<li>每个RA包含<strong>token context encoding </strong>和 <strong>token
+affinity learning</strong>两步</li>
+<li>1、我们应用<strong>线性变换</strong>将<strong>原始标记</strong>编码为<strong>上下文标记</strong>：<span
+class="math inline">\(V_n(X) \in R^{L \times \frac{C}{N}}\)</span></li>
+<li>2、An是
+<strong>token相似度</strong>，RA可以在其指导下来概括上下文信息，进行总结</li>
+</ul></li>
+<li><p><strong>浅层网络中的Local MHRA</strong>:</p>
+<ul>
+<li><p><strong>概述：</strong>在先前的比较中，我们发现：在浅层网络计算全局Self-Attention最终学到的也只是局部的信息，所以我们在浅层网络中，现在只在局部区域内来进行计算。因此，在浅层网络中，我们将Local
+Affinity作为一个<strong>可学习参数的矩阵</strong>。</p></li>
+<li><p><strong>具体而言：</strong>给定anchor token <span
+class="math inline">\(X_i\)</span> , 局部RA学习该token和一个小邻域<span
+class="math inline">\(\Omega_i^{t \times h \times
+w}\)</span>内的其他token的相似性。<img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220129110111062.png"
+alt="image-20220129110111062" /></p>
+<p><span class="math inline">\(a_n \in R^{t \times h \times w}\)</span>
+, <span class="math inline">\(X_j\)</span>
+代表邻域内的任一一个token，<span class="math inline">\(i-j\)</span>
+表示token i和j的相对位置关系</p></li>
+<li><p><strong>注意</strong>：因为tokens的感受野很小，相邻token之间的视觉内容在浅层中会发生微妙的变化。在这种情况下，没有必要去让token相似度动态的进行变化，因此我们使用一个可学习的参数矩阵来描述局部的token相似度，token的相似度仅取决于两个token之间的相对位置关系。</p></li>
+<li><p><strong>与CNN的比较</strong>：其可以视为是
+PWConv-DWConv-PWConv的组合，但是该论文中的Uniformer块是基于一个通用的Transformer的格式进行设计的，也就是说除了MHRA之外，还带有DPE和FFN，这一简单的继承能够非常有效的加强token的表示能力。</p></li>
+</ul></li>
+<li><p><strong>深层网络中的Global MHRA</strong>:</p>
+<ul>
+<li><p><strong>概述</strong>：在深层网络中，在更广阔的空间中获取长距离依赖很重要。因此，我们通过在全局条件下比较内容来进行token相似度的计算。</p></li>
+<li><p><strong>具体而言</strong>：给定anchor token <span
+class="math inline">\(X_i\)</span> , 局部RA学习该token和所有其他token
+的相似性</p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220129111415083.png" /></p>
+<p><span class="math inline">\(X_j\)</span> 代表全局范围<span
+class="math inline">\(size = T \times H \times
+W\)</span>内的任意一个token，<span class="math inline">\(Q_n 和
+K_n\)</span>是两个不同的线性变换。</p></li>
+<li><p><strong>与Transformer的比较</strong>：</p>
+<p>可以被实例化为一个时空self-attention，<span class="math inline">\(Q_n
+、K_n、V_n\)</span>代表Query、Key、Value.但是，UniformerBlock又和传统的ViT块不同：</p>
+<ul>
+<li>1、以往的video
+tranformer在视频域中分割开了时间和空间的attention，为了减少在计算token相似度比较时候的计算量。但是这会不可避免地恶化token之间的时空关系。相比之下，我们的模块联合编码时空token关系以生成更具辨别力的视频表示以进行识别。因为我们在浅层的时候大大的节省了token比较的计算量，所以整体模型上还是能到达一个计算量-准确度比较好的一个平衡。</li>
+<li>2、其次，我们在 UniFormer 中采用动态位置嵌入 (DPE)
+代替绝对位置嵌入。它是卷积风格的（见下节），可以克服排列不变性，对不同输入长度的视觉tokens友好</li>
+</ul></li>
+</ul></li>
+</ul>
+<h3 id="dynamic-position-embedding">3) Dynamic Position Embedding</h3>
+<ul>
+<li><p><strong>概述：</strong>先前绝大多数的位置编码都采用<strong>绝对或相对位置嵌入</strong>，然而绝对位置嵌入必须通过微调对各种输入大小进行插值，而相对位置嵌入由于自注意力机制的修改容易无法很好地工作。最近，有人提出了卷积位置编码，具体而言，卷积位置编码CPE，可以隐式地将位置信息通过卷积操作进行编码，这样可以让Transformer去处理任意的输入大小，并且提高识别性能。鉴于其即插即用地性质，我们将其拿过来作为我们的DPE模块：</p></li>
+<li><p><span class="math inline">\(DPE(X_{in})= DWConv(X_in)\)</span> ,
+DWConv 代表 depth-wise 卷积，zero padding</p></li>
+<li><p><strong>原因</strong>：</p>
+<ul>
+<li><p>1、depthwise 卷积对任意的输入大小很友好（使用其时空版本对视频中的
+3D 位置信息进行编码很简单）</p></li>
+<li><p>2、很轻量化，能够较好的平衡计算量与准确性的平衡。</p></li>
+<li><p>3、增加Zero
+padding，它可以通过逐步查询它们的邻居来帮助token了解它们的绝对位置</p>
+<p>（Finally, we add extra zero paddings, since it can help tokens be
+aware of their absolute positions by querying their neighbors
+progressively 论文3.3最后一句话 ）</p></li>
+</ul>
+<!-- Zero Padding ？ 如何逐步查询令居进而帮助token了解绝对位置？ --></li>
+</ul>
+<h2 id="衍生框架-framework">6、衍生框架 FrameWork</h2>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220129115021079.png" /></p>
+<h3 id="图像分类框架">1) 图像分类框架：</h3>
+<ul>
+<li>Stage1 和 Stage2 用的是 Local Uniformer Blocks
+<ul>
+<li>使用 PWConv-DWConv-PWConv 进行实例化</li>
+</ul></li>
+<li>Stage3 和 Stage4 用的是 Global Uniformer Blocks
+<ul>
+<li>使用 multi-head self-attention 进行实例化，heads = 64</li>
+</ul></li>
+<li>DPE 都实例化成 DWConv， spatial size = 3 x 3</li>
+<li>FFN 的 Expand Ratio = 4</li>
+<li>卷积 用 BN， self-attention 用 LN</li>
+<li>特征降维：
+<ul>
+<li>Stage1前： $ 4 ， stride = 4 $</li>
+<li>其他Stage前： $ 2 ， stride = 2 $</li>
+</ul></li>
+</ul>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220127163758510.png" /></p>
+<h3 id="视频分类-密集预测-等其他框架详见论文主体">2） 视频分类
+&amp;&amp; 密集预测 等其他框架详见论文主体</h3>
+
+    </div>
+
+    
+    
+    
+      
+  <div class="popular-posts-header">相关文章</div>
+  <ul class="popular-posts">
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2022\03\21\58ee25c0143c\" rel="bookmark">《StyTr2 Unbiased Image Style Transfer with Transformers》</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2021\12\20\cedd3c9597c5\" rel="bookmark">ML2021课程系列笔记3——卷积神经网络CNN</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2022\04\24\503bff4618b7\" rel="bookmark">《Vision Transformer with Deformable Attention》</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2022\04\24\22e32ee5ba59\" rel="bookmark">《Not All Tokens Are Equal Human-centric Visual Analysis via Token Clustering Transformer》</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2022\04\22\1076c1e77e53\" rel="bookmark">论文略读笔记——CVPR2022 Transformer相关（1）</a></div>
+    </li>
+  </ul>
+
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/CNN/" rel="tag"># CNN</a>
+              <a href="/tags/Transformer/" rel="tag"># Transformer</a>
+              <a href="/tags/Visual-Recognition/" rel="tag"># Visual Recognition</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2022/01/26/8f68bd6cb4f4/" rel="prev" title="《HandWritting Transformers》(更新中)">
+                  <i class="fa fa-chevron-left"></i> 《HandWritting Transformers》(更新中)
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2022/01/28/3f464858b7bd/" rel="next" title="java系列笔记1——java基础">
+                  java系列笔记1——java基础 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments utterances-container"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Fantast</span>
+</div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+    <span title="站点总字数">725k</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">33:33</span>
+  </span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script><script src="/js/bookmark.js"></script>
+
+  
+<script src="https://cdn.jsdelivr.net/npm/hexo-generator-searchdb@1.4.0/dist/search.js" integrity="sha256-vXZMYLEqsROAXkEw93GGIvaB2ab+QW6w3+1ahD9nXXA=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdn.jsdelivr.net/npm/mathjax@3.2.0/es5/tex-mml-chtml.js","integrity":"sha256-r+3itOMtGGjap0x+10hu6jW/gZCzxHsoKrOd7gyRSGY="}}</script>
+<script src="/js/third-party/math/mathjax.js"></script>
+
+
+<script class="next-config" data-name="utterances" type="application/json">{"enable":true,"repo":"Fantast416/myblog-comment","issue_term":"pathname","theme":"github-light"}</script>
+<script src="/js/third-party/comments/utterances.js"></script>
+
+</body>
+</html>

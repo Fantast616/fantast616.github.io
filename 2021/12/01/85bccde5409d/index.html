@@ -1,0 +1,712 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.2.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css" integrity="sha256-mUZM63G8m73Mcidfrv5E+Y61y7a12O5mW4ezU3bxqW4=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"blog.fantast.top","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.9.0","exturl":false,"sidebar":{"position":"left","width":250,"display":"always","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":true,"color":"#222","save":"manual"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"utterances","storage":true,"lazyload":false,"nav":null,"activeClass":"utterances"},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+<meta name="description" content="本篇笔记为观看李宏毅老师的GAN相关课程后所记录，文中所有图片及内容均来源于李宏毅老师的课程，此处只是搬运+以自己的理解进行记录。全文讲述了一些常见的GAN的变种，以及它们的一些核心的思想，包括Conditional GAN用于Text-To-Image和Image-To-Image的任务，期间有提及一些改进诸如Patch GAN。然后简单讲述了StackGAN的思想以及应用场景。之后，是对非监督">
+<meta property="og:type" content="article">
+<meta property="og:title" content="GAN系列笔记2——常见GAN变种（ConditionalGAN，PatchGAN，CycleGAN等）">
+<meta property="og:url" content="https://blog.fantast.top/2021/12/01/85bccde5409d/index.html">
+<meta property="og:site_name" content="Fantast&#39;s Blog">
+<meta property="og:description" content="本篇笔记为观看李宏毅老师的GAN相关课程后所记录，文中所有图片及内容均来源于李宏毅老师的课程，此处只是搬运+以自己的理解进行记录。全文讲述了一些常见的GAN的变种，以及它们的一些核心的思想，包括Conditional GAN用于Text-To-Image和Image-To-Image的任务，期间有提及一些改进诸如Patch GAN。然后简单讲述了StackGAN的思想以及应用场景。之后，是对非监督">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2021-12-01T12:31:19.000Z">
+<meta property="article:modified_time" content="2022-08-07T14:47:04.000Z">
+<meta property="article:author" content="Fantast">
+<meta property="article:tag" content="GAN">
+<meta property="article:tag" content="ConditionalGAN">
+<meta property="article:tag" content="PatchGAN">
+<meta property="article:tag" content="CycleGAN">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://blog.fantast.top/2021/12/01/85bccde5409d/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://blog.fantast.top/2021/12/01/85bccde5409d/","path":"2021/12/01/85bccde5409d/","title":"GAN系列笔记2——常见GAN变种（ConditionalGAN，PatchGAN，CycleGAN等）"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>GAN系列笔记2——常见GAN变种（ConditionalGAN，PatchGAN，CycleGAN等） | Fantast's Blog</title>
+  
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<link rel="alternate" href="/atom.xml" title="Fantast's Blog" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Fantast's Blog</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li>
+        <li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li>
+        <li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li>
+        <li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li>
+        <li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%89%8D%E8%A8%80"><span class="nav-text">前言：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%80conditional-gan"><span class="nav-text">一、Conditional GAN</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#text-to-image%E4%BB%BB%E5%8A%A1"><span class="nav-text">1、Text-To-Image任务</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%9E%B6%E6%9E%841%E6%9C%80%E4%B8%BA%E5%B8%B8%E8%A7%81"><span class="nav-text">1、架构1：最为常见</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%9E%B6%E6%9E%842%E6%9C%89%E9%83%A8%E5%88%86%E8%AE%BA%E6%96%87%E9%87%87%E7%94%A8%E4%BD%86%E6%98%AF%E4%B9%9F%E6%98%AF%E8%9B%AE%E6%9C%89%E9%81%93%E7%90%86%E7%9A%84%E4%B8%80%E4%B8%AA%E6%9E%B6%E6%9E%84"><span class="nav-text">2、架构2：有部分论文采用，但是也是蛮有道理的一个架构</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#image-to-image-%E4%BB%BB%E5%8A%A1"><span class="nav-text">2、Image-To-Image 任务</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BA%8Cstack-gan"><span class="nav-text">二、Stack GAN</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%89unsupervised-conditional-generation"><span class="nav-text">三、Unsupervised
+Conditional Generation</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#direct-transformation%E5%86%85%E5%90%ABcyclegan%E7%BD%91%E7%BB%9C%E8%AE%B2%E8%A7%A3"><span class="nav-text">1、Direct
+Transformation（内含CycleGAN网络讲解）</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%881%E4%B8%8D%E7%AE%A1%E8%BF%99%E4%B8%AA%E9%97%AE%E9%A2%98"><span class="nav-text">1）解决方案1：不管这个问题</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%882%E5%88%A9%E7%94%A8%E9%A2%84%E8%AE%AD%E7%BB%83%E7%9A%84%E7%BC%96%E7%A0%81%E5%99%A8%E7%BD%91%E7%BB%9C%E5%A6%82%E4%B8%8B%E5%9B%BE%E6%89%80%E7%A4%BA"><span class="nav-text">2）解决方案2：利用预训练的编码器网络，如下图所示：</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%883cyclegan"><span class="nav-text">3）解决方案3：CycleGAN</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#projection-to-common-space"><span class="nav-text">2、Projection to Common Space</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%881%E5%85%B1%E7%94%A8%E9%83%A8%E5%88%86%E9%9A%90%E8%97%8F%E5%B1%82%E5%8F%82%E6%95%B0"><span class="nav-text">1）解决方案1：共用部分隐藏层参数</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%882domain-discriminator"><span class="nav-text">2）解决方案2：Domain
+Discriminator</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%883%E5%88%A9%E7%94%A8cycle-consistency%E7%9A%84%E7%B1%BB%E4%BC%BC%E6%80%9D%E6%83%B3"><span class="nav-text">3）解决方案3：利用Cycle
+Consistency的类似思想</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%884%E5%88%A9%E7%94%A8semantic-consistency%E7%9A%84%E7%B1%BB%E4%BC%BC%E6%80%9D%E6%83%B3"><span class="nav-text">4）解决方案4：利用Semantic
+Consistency的类似思想</span></a></li></ol></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Fantast"
+      src="/images/avatar.webp">
+  <p class="site-author-name" itemprop="name">Fantast</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">161</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">40</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">97</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/fantast416" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;fantast416" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:fantast416@gmail.com" title="E-Mail → mailto:fantast416@gmail.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll site-overview-item animated">
+    <div class="links-of-blogroll-title"><i class="fa fa-globe fa-fw"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://www.zhihu.com/people/shuo-shuo-3-41" title="https:&#x2F;&#x2F;www.zhihu.com&#x2F;people&#x2F;shuo-shuo-3-41" rel="noopener" target="_blank">ZhiHu</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="http://www.next.zju.edu.cn/" title="http:&#x2F;&#x2F;www.next.zju.edu.cn&#x2F;" rel="noopener" target="_blank">NextLab</a>
+        </li>
+    </ul>
+  </div>
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://blog.fantast.top/2021/12/01/85bccde5409d/">
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.webp">
+      <meta itemprop="name" content="Fantast">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Fantast's Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          GAN系列笔记2——常见GAN变种（ConditionalGAN，PatchGAN，CycleGAN等）
+        </h1>
+
+        <div class="post-meta-container">
+          
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2021-12-01 20:31:19" itemprop="dateCreated datePublished" datetime="2021-12-01T20:31:19+08:00">2021-12-01</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2022-08-07 22:47:04" itemprop="dateModified" datetime="2022-08-07T22:47:04+08:00">2022-08-07</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E2%93%B5-%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" itemprop="url" rel="index"><span itemprop="name">⓵ 深度学习笔记</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E2%93%B5-%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/GAN%E7%B3%BB%E5%88%97%E7%AC%94%E8%AE%B0/" itemprop="url" rel="index"><span itemprop="name">GAN系列笔记</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>8.2k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>23 分钟</span>
+    </span>
+</div>
+
+            <div class="post-description">本篇笔记为观看李宏毅老师的GAN相关课程后所记录，文中所有图片及内容均来源于李宏毅老师的课程，此处只是搬运+以自己的理解进行记录。全文讲述了一些常见的GAN的变种，以及它们的一些核心的思想，包括Conditional GAN用于Text-To-Image和Image-To-Image的任务，期间有提及一些改进诸如Patch GAN。然后简单讲述了StackGAN的思想以及应用场景。之后，是对非监督学习条件生成领域的一些探讨，这一部分最常见的就是风格迁移的应用。讲述了两大类实现非监督学习条件生成的方法思想，第一类是直接生成，其中介绍了CycleGAN和变体StarGAN。第二类是投射至相同公共空间的方法，其中包含了解决此方法中一个关键问题的各种思想方案。看完本篇笔记，你应当会对Conditinal GAN和Unsupervised Conditional Generation领域及该领域下的CycleGAN思想有一个大概的了解，随后你可以选择感兴趣的GAN网络，再去详细的阅读原论文，研究细节部分。</div>
+            <div class="post-remind">Google Chrome is recommended, otherwise the image size may be wrong</div>
+            <div class="post-remind">FireFox is not recommended,Because it does not support the image zoom property</div>
+        </div>
+        
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h3 id="前言">前言：</h3>
+<p>​
+本篇笔记为观看李宏毅老师的GAN相关课程后所记录，文中所有图片及内容均来源于李宏毅老师的课程，此处只是搬运+以自己的理解进行记录。全文讲述了一些常见的GAN的变种，以及它们的一些核心的思想，包括Conditional
+GAN用于Text-To-Image和Image-To-Image的任务，期间有提及一些改进诸如Patch
+GAN。然后简单讲述了StackGAN的思想以及应用场景。之后，是对非监督学习条件生成领域的一些探讨，这一部分最常见的就是风格迁移的应用。讲述了两大类实现非监督学习条件生成的方法思想，第一类是直接生成，其中介绍了CycleGAN和变体StarGAN。第二类是投射至相同公共空间的方法，其中包含了解决此方法中一个关键问题的各种思想方案。看完本篇笔记，你应当会对Conditinal
+GAN和Unsupervised Conditional
+Generation领域及该领域下的CycleGAN思想有一个大概的了解，随后你可以选择感兴趣的GAN网络，再去详细的阅读原论文，研究细节部分。</p>
+<h3 id="一conditional-gan">一、Conditional GAN</h3>
+<p>​
+条件GAN所要完成的目标就是你可以通过一些限制条件，来让GAN网络生成的图像符合你的要求。比较经典的就是Text-To-Image和Image-To-Image两种任务。</p>
+<h4 id="text-to-image任务">1、Text-To-Image任务</h4>
+<p>​
+该任务目标是，你输入一段话，然后根据输入的语义来生成一张图片。这样一个任务其实我们可以用传统的监督学习方法来完成它，如下所示：</p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220114223140981.png" /></p>
+<p>​
+但是使用这种传统的方法，会出现一些问题，比如说，训练网络完成以后你输入文字"train"，而在我们的训练集里面，关于"train"的图片有很多种，比如说一些正面的火车照片，或者是一些侧面的火车照片。最后会导致的结果就是，这个监督学习生成的结果又要像正面的火车，又要像侧面的火车，最后就会变成一个很多图片的平均，也就是会生成一个非常模糊的图像。</p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220114223153376.png" /></p>
+<p>​ 所以我们需要用到Conditional
+GAN的技术。在前一篇文章中讲过，GAN本身最后实现的一个效果是，输入一个随机的分布向量，或者说Noise，然后其会生成一个对象（图片或其他）。那么在Conditional
+GAN中呢，从最终实现的效果而言，其实就是多吃了一个内容c，这个内容c也就是我们所指定的条件。在Text-To-Image的任务中，内容c也就是我们所指定的文本信息。</p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220114223205025.png" /></p>
+<p>​
+那么Discriminator方面，跟普通的GAN又需要有啥区别呢？如下图所示，对于判别器而言，其输入也需要新增一个内容，也就是我们指定的条件c。</p>
+<p>​
+我们为什么需要这么干呢？如果判别器仍然和原来一样，那么其实你会发现，因为判别器只会看生成的图片x是否够真实，而不会看x和内容c匹不匹配。也就是说，如果你输入”cat“作为内容c，但是生成器画了一个很好很真实的火车图片，判别器仍然会给高分。这样到最后的结果其实就是，你会发现你指定的条件c和生成出来的图片完全不匹配，虽然这些生成的图片都很真实。</p>
+<p>​ Ok，所以我们回到Conditional
+GAN判别器的架构，最后输出的值里面，其实含有两部分信息的含义。一个是图像x是不是够真实，一个是内容条件c和图像x是否匹配。</p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220114223223659.png" /></p>
+<p>​
+所以在这种判定条件下，什么样的情况要给高分呢？什么样的情况要给低分呢？</p>
+<p>​ Case1 : x真实 + c 和 x 匹配 【高分】</p>
+<p>​ Case2 : x虚假 【低分】</p>
+<p>​ Case3 : x真实 + c 和 x 不匹配 【低分】</p>
+<p>​
+所以你会发现，相比普通GAN中的判别器，它多了一种要给低分的情况，这个在之后整个的伪代码中会有所体会。伪代码如下所示：</p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220114223235243.png" /></p>
+<p>​
+整体而言整个过程还是比较好理解的，首先也是从数据库里拿m个正面的样例，然后采样m个noise信号，将这m个信号和生成器生成的数据组合成一组数据。然后再随机的从数据库中取m个图片。注意，这一步目的是取一组真实的图片，但是给这些图片贴上不正确的标签c，后面在目标函数中会有所体现。</p>
+<p>​
+整个目标函数有3项，第一项和第二项与GAN类似，也就是刚才上面提到的Case1和Case2。第三项其实就是对应上面提到的Case3，如果向Discriminator中投入ci和随机取的与ci并不匹配的图像，那么判别器也应当给其低分。然后用梯度上升，最大化目标函数即可，这就完成了训练判别器的部分。</p>
+<p>​ 在训练生成器的部分，就和GAN几乎一样了，我们就此省略不再细谈。</p>
+<p>​ 说完Conditional GAN的整体的训练算法伪代码，再来讨论一下Conditinal
+GAN 的判别器部分的网络架构应该如何搭建，Conditinal
+GAN的判别器部分有以下两种常见的网络架构：</p>
+<h5 id="架构1最为常见">1、架构1：最为常见</h5>
+<p>​
+如下图所示的架构是最为常见的一种架构，先有两个网络，分别将x和c做embedding编码，然后将两个编码输入判别器网络中，其会输出一个分数，就代表我们先前说的x是否真实，或者c和x是否匹配。但是这种架构其实并不能分清楚，到底是因为哪种问题，所以才导致了低分。</p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220115002938439.png" /></p>
+<h5
+id="架构2有部分论文采用但是也是蛮有道理的一个架构">2、架构2：有部分论文采用，但是也是蛮有道理的一个架构</h5>
+<p>​
+此种架构，先把对象x输入一个判别器网络中，然后直接输出一个分数，这个分数代表x是否真实。然后再将条件c和对象x输入另一个判别器网络中，输出一个分数，代表c和x是否匹配。最后再将两个分数综合起来，得到最终判别器的分数。这样子的话，我们就可以知道，到底导致低分是什么原因。</p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220115002950662.png" /></p>
+<h4 id="image-to-image-任务">2、Image-To-Image 任务</h4>
+<p>​ 和这个任务相关的一篇论文其实是非常经典的一篇论文，CVPR
+2017的《Image-to-Image Translation with Conditional Adversarial
+NetWorks》，有兴趣也可以去阅读原论文。下图是原论文中的一些应用的截图：</p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220115003023803.png" /></p>
+<p>​
+和先前的Text-To-Image的任务一样，如果采用传统的监督学习的方法，很有可能产生的图像会非常模糊，所以就需要Conditional
+GAN来完成。</p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220115003031956.png" /></p>
+<p>​ 如下所示就是使用Conditional
+GAN的生成器和判别器的一个示意结果图，其实跟Text-To-Image是一样的，此处就不多赘述了。</p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220115003040918.png" /></p>
+<p>​
+但是其实以这种方法生成出来的图片，也会存在一些小的问题，参见之后的第二幅图。就是比如说它可能会在图像的某些地方产生奇奇怪怪的内容。你可以仔细观察GAN生成图像的左上角，出现了奇怪的内容。这是由于什么产生的呢？就是Generator其实只关心一个是我产生出来的图像好不好，另一个是和输入图像是不是匹配，但不太会关心一个点：就是说和产生的图片和原来的有监督学习中的目标图像是不是相似。</p>
+<p>​
+所以，我们往往会加上一个额外的限制，就是我们希望Generator生成的图片和原来的图像越接近越好，也就是说既考虑了原来监督学习中的as
+close as possible，也考虑了GAN的评分机制。如下所示：</p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220115003054587.png" /></p>
+<p>​ 下面这个就是上面所讲的三种方法不同的生成效果示意图</p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220115003103515.png" /></p>
+<p>​ 同时，在《Image-to-Image Translation with Conditional Adversarial
+NetWorks》这篇论文中，它的Discriminator经过了一些额外的设计。这就是其引入的Patch
+GAN。Patch GAN解决了一件什么事情呢？</p>
+<p>​ 如果你要用Conditional
+GAN产生的图片非常的大，很有可能产生的结果会很差。原因是什么呢？如果图片很大，代表其展开后维度非常的高，那就需要有非常多的参数去训练它，参数一旦非常多，训练以后很容易导致过拟合的情况发生。所以，作者提出了PatchGAN的想法，如下图所示，左边是传统的Discriminator，右边是PatchGAN的。</p>
+<p>​
+PatchGAN的Discriminator并不是直接检查整张图像，而是只检查一个小窗口内的图像。得出一个分数。然后再综合所有窗口得出的分数。至于检查的小窗口的尺寸为多大，是一个需要调整的超参数，原论文中也对其有一定的分析，此处不多赘述。</p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220115003123825.png" /></p>
+<h3 id="二stack-gan">二、Stack GAN</h3>
+<p>​ StackGAN来源于这篇论文：ICCV2017《StackGAN: Text to Photo-Realistic
+Image Synthesis with Stacked Generative Adversarial
+Networks》。简单而言，其只是将Conditional
+GAN的生成分成了好几个阶段，用于能够生成分辨率更高的图片。这是原论文中所显示的流程图</p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220115003145750.png" /></p>
+<p>​
+简单而言，步骤如下，首先输入一段文本描述，通过Embedding嵌入层后，经过一系列的Conditioning
+Augmentation的处理，将各种信息连接在一起，然后在生成器部分，首先生成第一阶段的结果图片。然后在输入到第一阶段的判别器中。当第一阶段的生成器和判别器完成训练以后，我们再将第一阶段的生成结果，与描述文本作为输入，开始训练第二阶段的GAN网络。步骤与第一阶段的GAN网络类似，最终可以得到更高分辨率的第二阶段的结果图像。具体细节部分，我暂时也没有完整的阅读过原论文，暂且只是领会一下这种方法的大致思路。</p>
+<h3 id="三unsupervised-conditional-generation">三、Unsupervised
+Conditional Generation</h3>
+<p>​
+非监督的条件生成，通常用于风格迁移。在风格迁移的应用场景中，我们往往能够收集到许多Domain
+X的信息，也能收集到许多Domain Y的信息，但是不一定能够拥有Domian
+X和Domain Y的一一对应的pair
+数据。像类似这样子的场景中，非监督的条件生成就是一个非常好的解决方案。</p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220115003209328.png" /></p>
+<p>​ 非监督的条件生成，我们往往会有两种方法思路去完成，如下所示：</p>
+<p>​ 方法1是Direct Transformation
+直接转换，此种直接通过一个生成器进行转换的方法，往往两个域内的图像不能够有太过巨大的差距，通常用于做纹理或者颜色上的一些改变，以达到风格的变化。</p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220115003225024.png" /></p>
+<p>​ 方法2是Projection to Common Space
+投射到公共空间，此种方法通过将两个Domain投射到一个公共空间中，完成转换。具体而言，对于下述的任务来说，先将DomainX真实人脸的信息通过一个Domain
+X的编码器转换到公共空间，也就是我们的脸部属性空间，然后再将脸部属性空间，通过一个Domain
+Y的解码器，解码出我们的DomainY动漫人脸的信息。</p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220115003237748.png" /></p>
+<p>接下去我们会对两种方法进行详细的讨论：</p>
+<h4 id="direct-transformation内含cyclegan网络讲解"><strong>1、Direct
+Transformation（内含CycleGAN网络讲解）</strong></h4>
+<p>​
+我们要训练一个生成器，能够完成将图片从DomainX直接转换至DomainY的任务，但是该生成器产生的图片我们怎么去评价呢？在有监督学习中，我们有一对一的数据，但是在无监督学习中，对于这个输入而言，我们并没有pair可以提供给它。所以此时，我们需要一个Discriminator，这个判别器用于判断一个图片，是否属于DomainY，然后输出一个分数。</p>
+<p>​
+那么这样一来，Generator的目标就是如何将DomainX的图片转换成一个新的图片，能够骗过Discriminator，而Discriminator也要努力鉴别这个图像到底是不是属于DomainY。下图，就是整个过程的一个直观的示意图。</p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220115003304210.png" /></p>
+<p>​
+在这样一个过程中，好像问题已经解决了，实则不然。你会发现，生成器只学会了怎么生成一个DomainY的图片去骗过判别器，但是我们并没有给它限制，说要让这个生成器生成的DomainY的图片和原来的DomainX的图片要相似啊。那万一，输入是一张DomainX的风景图，生成器输出了一张DomainY的人像图，不照样能够获得很高的分数，这当然就不对啦。</p>
+<p>​
+所以，我们就希望生成器生成的DomainY的输出，应该和DomainX的输入应当会存在一定的关系才对，而不是毫无关系可言。针对于这个问题而言，有许多解决方案，叙述如下，其中最著名的就是熟知的cycleGAN。</p>
+<h5 id="解决方案1不管这个问题">1）解决方案1：不管这个问题</h5>
+<p>​
+听上去这个解决方案非常的扯淡，但其实在某种条件下它确实work。具体而言是什么意思呢？当我们的网络层数不是很深的时候，其实网络本身也倾向于不对input做太大的改变，有人也做过实验，不去管这个问题，在某些情况下也不会得到太差的结果，得到的结果和input其实也类似。</p>
+<p>​
+但是，如果我们的网络比较深的话，经过非常多的非线性变换与线性变换，其实就并不好说，最后输出的output，会和input相差不大了。这个时候的话，我们可能就需要其他的解决方案。</p>
+<h5
+id="解决方案2利用预训练的编码器网络如下图所示">2）解决方案2：利用预训练的编码器网络，如下图所示：</h5>
+<p>​
+我们利用两个预训练好的DomainX和DomainY的编码器网络，在GAN训练的时候呢，生成器训练的目标任务又多了一项。之前生成器只需要生成图片，努力的去骗过Discriminator就可以，也就是说只要生成的图片越来越像DomainY的图片就可以，但是我现在希望生成器生成的图片，经过DomainY预训练的编码器网络后，生成的特征向量A，和原图经过DomainX预训练的编码器网络后生成的特征向量B，也尽可能地相似。这样一来，你会发现，如果两个编码后的内容越接近越好的话，DomainX在转换至DomainY的时候，产生的图片，应该是保留了原来DomainX图片的某些特征的。</p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220115003341802.png" /></p>
+<h5 id="解决方案3cyclegan">3）解决方案3：CycleGAN</h5>
+<p>​ 原论文题目为《Unpaired Image-to-Image Translation using
+Cycle-Consistent Adversarial
+Networks》，有兴趣的同学可以看原论文，其主要大致思想如下图所示：</p>
+<p>​
+我们不仅训练一个DomainX到DomainY的生成器，同时也训练一个DomainY到DomainX的生成器，生成器X-&gt;Y在原有的需要骗过Dy的基础上，还需要使得原始输入图像和经过两个生成器后产生的图像越接近越好，这也就是我们常说的Cycle
+consistency，循环一致性。</p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220115003358128.png" /></p>
+<p>​ 对于CycleGAN来说，我们可以训练双向的一个网络，两个一起去做训练。</p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220115003406257.png" /></p>
+<p>​ 其实CycleGAN也存在一些问题，在论文《CycleGAN, a Master of
+Steganography》中，其作者提到，在DomianX的输入图像经过两个生成器的过程中，出现问题。具体而言，输入的图像的有些信息会在经过第一个生成器的时候被隐藏起来，此处的被隐藏起来也就是指人肉眼观察不到，而当其经过第二个生成器的时候，又会被还原出来。如下图红色方框中所示。这就意味着，生成器网络有隐藏信息的能力，我们如果只控制input和经过两个生成器的output的一致性，中间产生的我们真正要的图像还是有可能丢失原图的部分信息。这是一个尚待研究的问题。</p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220115003414078.png" /></p>
+<p>​
+此处的话补充一下另外一个网络，是在CycleGAN的基础上进行的一个升级，叫做StarGAN。其应用领域在于，当你需要多个Domain的信息风格互相转换的时候，怎么进行网络的学习与处理。</p>
+<p>​
+按照之前CycleGAN的思路，如果我们想要在4个Domain内做互相转换，需要在两两之间训练一组生成器。StarGAN就是可以之训练一个生成器，就完成在多个Domain之间的信息互相转换。</p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220115003422218.png" /></p>
+<p>​ 原论文为《StarGAN: Unified Generative Adversarial Networks for
+Multi-Domain Image-to-Image
+Translation》，其主要思想及训练过程如下：</p>
+<ul>
+<li><p>A)步骤，首先训练判别器，判别器会完成两件事，一是要判别这个图像他是真实的还是虚假的，二是要做一个分类的问题，它是属于哪一个Domain，给出两个结果。</p></li>
+<li><p>B)C)步骤,
+在训练生成器时，要完成这样一个任务。首先输入我们的输入图片，以及目标Domain，然后生成器会生成一个Fake
+Image，我们将这个Fake
+Image和原来的Domain作为输入，再次送入生成器中，会得到一张Reconstructed
+Image，我们希望这张重建的图像和输入的图像之间的差距越小越好，其实这就是Cycle
+Consistency类似的思想。</p></li>
+</ul>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220115003432585.png" /></p>
+<ul>
+<li><ol start="4" type="A">
+<li>步骤，同时在训练生成器的时候，还有一个目标，就是要让这个Fake
+Image骗过我们之前训练好的Discriminator，使得Discriminator的输出越大越好。</li>
+</ol></li>
+</ul>
+<p>​
+下图是一个训练应用实例的示意图，在StarGAN的实际训练过程中，其实域可以是由一组编码决定的。就比如说00101代表一个域，10011也代表一个域。然后00101有一个参照表，也就是label，代表相对的含义。</p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220115003446510.png" /></p>
+<h4 id="projection-to-common-space">2、Projection to Common Space</h4>
+<p>​
+在此类方法，如果我们想要完成DomainX和DomainY两种风格的互相转换，我们其实需要的就是如下图所示的2个Encoder和2个Decoder。例如，如果要从X转换至Y，那么图像应当先通过EncoderX，得到一个Face
+Attribute，应该是一个Latent
+Vector，然后再经过DecoderY，最终得到DomainY的图像。</p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220115003534380.png" /></p>
+<p>​
+这样来看，如果我们拥有一对一的pair数据，那么其实完成这个任务非常的容易，只需要正常的监督学习训练即可。但是我们现在是无监督场景下的训练，应当如何完成训练呢？</p>
+<p>​
+我们可以像下图所示这样进行训练，其实就是训练了两个自动编码器，通过最小化重建误差来进行优化。然后在此基础上我们可以加两个判别器。</p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220115003544456.png" /></p>
+<p>​
+如此而言，我们确实可以得到2个Encoder和2个Decoder。但是这两组AutoEncoder（VAEGAN）是完全没有关系的。这意味着什么呢？你看上图中，中间的这个Latent
+vector，两边共用一个，其实来说，两边训练出来以后，得到的中间的这个特征向量，每一个维度所代表的含义会是完全不同的。其实就变成了如下图所示的这样子一个效果。</p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220115003552083.png" /></p>
+<p>​
+所以最终导致的结果就是：你将一个DomainX的图片丢入X编码器，得到一个向量，然后将向量丢入Y解码器，可能生成的是一个完全不相关的DomainY的图片。</p>
+<p>​ 接下来我们就是要解决这个问题，也会有比较多的文献解决方案：</p>
+<h5
+id="解决方案1共用部分隐藏层参数">1）解决方案1：共用部分隐藏层参数</h5>
+<p>​
+共用EncoderX和EncoderY的后面几层，同时也共用DecoderX和DecoderY的前面几层。这样子做其实就是希望，接近中间这个特征向量的层共用参数以后，两边的编码能够在中间的特征向量的维度上达成一致。</p>
+<p>​
+这种解决方案比较极端的情况时，可以让EncoderX和EncoderY共用所有参数，DecoderX和DecoderY共用所有参数，只是在训练和使用的时候，我输入一个标签，代表这个是X
+Domain还是Y Domain。这个方法用于CoupleGAN和UNIT</p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220115003616483.png" /></p>
+<h5 id="解决方案2domain-discriminator">2）解决方案2：Domain
+Discriminator</h5>
+<p>​ 我们在网络架构中，新增一个Domain
+Discriminator。在训练的过程中，EncoderX和EncoderY还有一个任务，就是说他们所生成的中间的特征向量，还要能骗过Domain
+Discriminator，让这个判别器无法鉴别，这个特征向量到底是从EncoderX来的，还是从EncoderY来的。如此一来，完成训练后，相当于说是两个编码器产生的中间的特征向量应该遵循着类似的分布，能够在中间的特征向量的维度表示上达成一致。</p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220115003651260.png" /></p>
+<h5
+id="解决方案3利用cycle-consistency的类似思想">3）解决方案3：利用Cycle
+Consistency的类似思想</h5>
+<p>​
+如图红线路径所示，图像经过EncoderX，产生特征向量，经过DecoderY产生Image，再将这个Image作为输入进入EncoderY，产生特征向量，经过DecoderX产生output，然后最小化input和output的重建误差即可。该方法被用于ComboGAN。</p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220115003717264.png" /></p>
+<h5
+id="解决方案4利用semantic-consistency的类似思想">4）解决方案4：利用Semantic
+Consistency的类似思想</h5>
+<p>​
+按照图中红线路径，input输入经过EncoderX，产生特征向量A，经过DecoderY产生Image，再将这个Image作为输入进入EncoderY，产生特征向量B。然后最小化A和B的差别即可。相比于CycleConsistency，此种思想直接在特征向量的空间中去考虑相似度，避免了比如说可能input和output表象上很像，但其实中间特征向量代表维度仍然不同这种问题。该种思想在DTN和XGAN网络中使用。</p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220115003743216.png" /></p>
+
+    </div>
+
+    
+    
+    
+      
+  <div class="popular-posts-header">相关文章</div>
+  <ul class="popular-posts">
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2022\01\26\8f68bd6cb4f4\" rel="bookmark">《HandWritting Transformers》(更新中)</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2021\12\05\59cf77767a4c\" rel="bookmark">GAN系列笔记6——评估GAN的相关方法指标</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2021\12\04\554e29d255b4\" rel="bookmark">GAN系列笔记5——GAN应用于特征提取（InfoGAN，VAEGAN，BiGAN）</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2021\12\03\ce02100bd0a0\" rel="bookmark">GAN系列笔记4——GAN训练过程中的一些Tips与改进的GAN网络（含LSGAN、WGAN、EBGAN）</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2021\12\02\147dd3a9b3ed\" rel="bookmark">GAN系列笔记3——GAN的数学理论支撑</a></div>
+    </li>
+  </ul>
+
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/GAN/" rel="tag"># GAN</a>
+              <a href="/tags/ConditionalGAN/" rel="tag"># ConditionalGAN</a>
+              <a href="/tags/PatchGAN/" rel="tag"># PatchGAN</a>
+              <a href="/tags/CycleGAN/" rel="tag"># CycleGAN</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2021/11/30/9fbfb5044884/" rel="prev" title="GAN系列笔记1——GAN的基本理念与思想">
+                  <i class="fa fa-chevron-left"></i> GAN系列笔记1——GAN的基本理念与思想
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2021/12/02/147dd3a9b3ed/" rel="next" title="GAN系列笔记3——GAN的数学理论支撑">
+                  GAN系列笔记3——GAN的数学理论支撑 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments utterances-container"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Fantast</span>
+</div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+    <span title="站点总字数">725k</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">33:33</span>
+  </span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script><script src="/js/bookmark.js"></script>
+
+  
+<script src="https://cdn.jsdelivr.net/npm/hexo-generator-searchdb@1.4.0/dist/search.js" integrity="sha256-vXZMYLEqsROAXkEw93GGIvaB2ab+QW6w3+1ahD9nXXA=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdn.jsdelivr.net/npm/mathjax@3.2.0/es5/tex-mml-chtml.js","integrity":"sha256-r+3itOMtGGjap0x+10hu6jW/gZCzxHsoKrOd7gyRSGY="}}</script>
+<script src="/js/third-party/math/mathjax.js"></script>
+
+
+<script class="next-config" data-name="utterances" type="application/json">{"enable":true,"repo":"Fantast416/myblog-comment","issue_term":"pathname","theme":"github-light"}</script>
+<script src="/js/third-party/comments/utterances.js"></script>
+
+</body>
+</html>

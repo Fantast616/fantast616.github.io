@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.2.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css" integrity="sha256-mUZM63G8m73Mcidfrv5E+Y61y7a12O5mW4ezU3bxqW4=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"blog.fantast.top","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.9.0","exturl":false,"sidebar":{"position":"left","width":250,"display":"always","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":true,"color":"#222","save":"manual"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"utterances","storage":true,"lazyload":false,"nav":null,"activeClass":"utterances"},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+<meta name="description" content="本文提及的是四种不同形式的卷积操作，分别介绍了1x1卷积&amp;部分卷积&amp;空洞卷积&amp;可变形卷积的形式以及它们的作用">
+<meta property="og:type" content="article">
+<meta property="og:title" content="机器学习基础系列笔记5——1x1卷积 &amp; 部分卷积 &amp; 空洞卷积 &amp; 可变形卷积">
+<meta property="og:url" content="https://blog.fantast.top/2022/01/07/3664afb64da5/index.html">
+<meta property="og:site_name" content="Fantast&#39;s Blog">
+<meta property="og:description" content="本文提及的是四种不同形式的卷积操作，分别介绍了1x1卷积&amp;部分卷积&amp;空洞卷积&amp;可变形卷积的形式以及它们的作用">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220114211950684.png">
+<meta property="article:published_time" content="2022-01-07T13:17:19.000Z">
+<meta property="article:modified_time" content="2022-08-07T14:46:29.000Z">
+<meta property="article:author" content="Fantast">
+<meta property="article:tag" content="Machine Learning">
+<meta property="article:tag" content="Convolution">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220114211950684.png">
+
+
+<link rel="canonical" href="https://blog.fantast.top/2022/01/07/3664afb64da5/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://blog.fantast.top/2022/01/07/3664afb64da5/","path":"2022/01/07/3664afb64da5/","title":"机器学习基础系列笔记5——1x1卷积 & 部分卷积 & 空洞卷积 & 可变形卷积"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>机器学习基础系列笔记5——1x1卷积 & 部分卷积 & 空洞卷积 & 可变形卷积 | Fantast's Blog</title>
+  
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<link rel="alternate" href="/atom.xml" title="Fantast's Blog" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Fantast's Blog</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li>
+        <li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li>
+        <li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li>
+        <li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li>
+        <li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%801-x-1-%E5%8D%B7%E7%A7%AF"><span class="nav-text">一、1 X 1 卷积</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%AE%9E%E7%8E%B0%E7%89%B9%E5%BE%81%E7%9A%84%E5%8D%87%E9%99%8D%E7%BB%B4"><span class="nav-text">1、实现特征的升降维</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%87%8F%E5%B0%91%E6%A8%A1%E5%9E%8B%E5%8F%82%E6%95%B0%E9%87%8F"><span class="nav-text">2、减少模型参数量</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BA%8C%E7%A9%BA%E6%B4%9E%E5%8D%B7%E7%A7%AFdilated-convolution"><span class="nav-text">二、空洞卷积（Dilated
+Convolution）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%89%E9%83%A8%E5%88%86%E5%8D%B7%E7%A7%AFpartial-convolution"><span class="nav-text">三、部分卷积（Partial
+Convolution）</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%83%A8%E5%88%86%E5%8D%B7%E7%A7%AF%E5%85%AC%E5%BC%8F"><span class="nav-text">1、部分卷积公式：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%87%AA%E5%8A%A8%E6%9B%B4%E6%96%B0mask%E8%A7%84%E5%88%99"><span class="nav-text">2、自动更新Mask规则</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9B%9B%E5%8F%AF%E5%8F%98%E5%BD%A2%E5%8D%B7%E7%A7%AFdeformable-convolution"><span class="nav-text">四、可变形卷积（Deformable
+Convolution）</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Fantast"
+      src="/images/avatar.webp">
+  <p class="site-author-name" itemprop="name">Fantast</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">161</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">40</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">97</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/fantast416" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;fantast416" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:fantast416@gmail.com" title="E-Mail → mailto:fantast416@gmail.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll site-overview-item animated">
+    <div class="links-of-blogroll-title"><i class="fa fa-globe fa-fw"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://www.zhihu.com/people/shuo-shuo-3-41" title="https:&#x2F;&#x2F;www.zhihu.com&#x2F;people&#x2F;shuo-shuo-3-41" rel="noopener" target="_blank">ZhiHu</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="http://www.next.zju.edu.cn/" title="http:&#x2F;&#x2F;www.next.zju.edu.cn&#x2F;" rel="noopener" target="_blank">NextLab</a>
+        </li>
+    </ul>
+  </div>
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://blog.fantast.top/2022/01/07/3664afb64da5/">
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.webp">
+      <meta itemprop="name" content="Fantast">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Fantast's Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          机器学习基础系列笔记5——1x1卷积 & 部分卷积 & 空洞卷积 & 可变形卷积
+        </h1>
+
+        <div class="post-meta-container">
+          
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2022-01-07 21:17:19" itemprop="dateCreated datePublished" datetime="2022-01-07T21:17:19+08:00">2022-01-07</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2022-08-07 22:46:29" itemprop="dateModified" datetime="2022-08-07T22:46:29+08:00">2022-08-07</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E2%93%B5-%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" itemprop="url" rel="index"><span itemprop="name">⓵ 深度学习笔记</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E2%93%B5-%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/Basic%E7%B3%BB%E5%88%97%E7%AC%94%E8%AE%B0/" itemprop="url" rel="index"><span itemprop="name">Basic系列笔记</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>2.7k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>8 分钟</span>
+    </span>
+</div>
+
+            <div class="post-description">本文提及的是四种不同形式的卷积操作，分别介绍了1x1卷积&部分卷积&空洞卷积&可变形卷积的形式以及它们的作用</div>
+            <div class="post-remind">Google Chrome is recommended, otherwise the image size may be wrong</div>
+            <div class="post-remind">FireFox is not recommended,Because it does not support the image zoom property</div>
+        </div>
+        
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h3 id="一1-x-1-卷积">一、1 X 1 卷积</h3>
+<h4 id="实现特征的升降维">1、实现特征的升降维</h4>
+<p>​
+当1*1卷积出现时，在大多数情况下它作用是升/降特征的维度，这里的维度指的是通道数（厚度），而不改变图片的宽和高。</p>
+<p>​
+因为1*1的卷积核，并不会改变图像的宽和高，但是其能够通过卷积核的数量，来调节输出的feature
+map的通道数。同时，其对不同通道上的像素点进行线性组合，有助于通道间信息的交互和整合过程</p>
+<h4 id="减少模型参数量">2、减少模型参数量</h4>
+<p>​ 这一想法最早在GoogleNet中被提出，比如说如下两个Inception模块：</p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220114211201756.png" /></p>
+<p>​
+从直观上来看，感觉像是只有3*3卷积的模块会拥有更少的训练数据，实则不然，我们可以计算一下训练数据个数：</p>
+<p><strong>情况1:</strong></p>
+<ol type="1">
+<li><p>1 * 1卷积部分： 96 * 32 * 1 * 1= 3072个</p></li>
+<li><p>3 * 3卷积部分： 32 * 48 * 3 * 3= 13824个</p>
+<p>总计16896个训练参数</p></li>
+</ol>
+<p><strong>情况2:</strong> 总计 96*48*3*3 = 41472个训练参数</p>
+<p>​ 从实际上来看，带1 *
+1卷积的模型参数量更少，本质原因是因为1*1的卷积对数据的特征向量进行了降维的处理，使得特征通道数目先有了一定的减少。</p>
+<p>​ 如下所示：在ResNet中的残差模块使用1*1的卷积核的意义也在于此：</p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220114211323250.png" /></p>
+<h3 id="二空洞卷积dilated-convolution">二、空洞卷积（Dilated
+Convolution）</h3>
+<p>​
+顾名思义，其做法就是在卷积map中加入空洞的部分，以此增加感受域。如下图所示，</p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220114211417135.png" /></p>
+<p>​ 右侧为普通卷积，左侧为空洞卷积。</p>
+<p>​
+这个做法起源于最开始的语义分割领域，主要问题在于CNN本身可能存在一些致命性的缺陷，比如up-sampling和pooling
+layer的设计。问题主要在于：</p>
+<p>​ 1、上采样和池化层是人为设计好的，是不可学习的。</p>
+<p>​ 2、容易丢失内部数据结构与空间的层次化信息</p>
+<p>​ 3、小物体的信息无法重建，假设有多个pooling
+layer，那么从理论上来讲在一定小的范围内的像素的物体是无法被重建的。</p>
+<p>​
+所以有人提出了空洞卷积的思想。其本身避免了一部分上述讲到的2、3的问题，但是其也存在一些潜在问题，具体可以参考：<a
+target="_blank" rel="noopener" href="https://www.zhihu.com/question/54149221">如何理解空洞卷积（dilated
+convolution）？</a></p>
+<p>​
+最终，图森组提出了一个HDC的设计结构，来满足整个基于空洞卷积的设计。较为具体的内容也可以参考上述的文章。</p>
+<h3 id="三部分卷积partial-convolution">三、部分卷积（Partial
+Convolution）</h3>
+<p>​ 部分卷积在这篇论文中被提出，用于进行图像补全的任务，《Image
+Inpainting for Irregular Holes Using Partial Convolutions》</p>
+<p>​
+在图像补全领域中，这篇论文前通常使用卷积层对有效像素和mask像素无差别的做卷积，容易导致颜色差异和伪影。而且先前的工作都是聚焦于一个图像中心的规则区域，并且都需要很昂贵的后处理机制。</p>
+<p>​
+相比于人们以前使用的非神经网络的方法（PatchMatch等），使用神经网络的方法容易学习到语义的优点和有意义的隐藏表示信息，对于图像补全有很大的意义。但是这些网络使用卷积核的时候，使用一个固定的值将输入图像中被mask的地方代替，然后去卷积，这样就很容易导致孔洞区域内的纹理缺失，或者是边缘出现伪影。（就比如说使用经典卷积的U-Net架构。</p>
+<p>​
+具体一点，如下图所示：先使用固定值m替换掉mask为0的区域，然后进行卷积。</p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220114211456573.png" /></p>
+<p>​
+而在这篇论文中提出了部分卷积的概念，只针对于有有效像素的部分进行卷积，并且能够自动的更新mask。</p>
+<h4 id="部分卷积公式">1、部分卷积公式：</h4>
+<p>​ 首先如下所示为部分卷积的公式：</p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220114211521396.png" /></p>
+<p>​
+仍然以如下所示为例：红色代表图像数据，蓝色代表mask数据，绿色代表卷积核。</p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220114211532929.png" /></p>
+<p>我们选择其中红色图像中的两个蓝色框起来的部分做卷积，作为示例：</p>
+<p>首先公式中各个运算符号的含义如下英文描述所示，总体的步骤主要就是：</p>
+<p>​ 1）将被卷积的区域先展开，形成X</p>
+<p>​ 2）将mask对应的区域展开，形成M</p>
+<p>​
+3）X和M做点对点乘积⊙，然后再乘上一个缩放因子，来调整有效输入的变化量。</p>
+<p>​
+4）SUM(1)代表区域大小和卷积核一致，但值都是1的区域，所以在此处SUM(1)为9，而SUM(M)为7，因为该对应区域的mask中有7个1.</p>
+<p>​ 5）最后再将卷积核展开形成W，两个向量相乘就完成了该区域的卷积。</p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/图片2.png" /></p>
+<p>​ 另外一个区域，由于mask内的值都是0，所以最终输出的值直接为0.</p>
+<h4 id="自动更新mask规则">2、自动更新Mask规则</h4>
+<p>​
+具体更新规则描述如下：如果卷积能够根据至少一个有效输入值来计算输出输出，那么我们在下一步中，就把此像素点的mask标记为1.再讲的通俗一点，其实就是该范围的mask内只要有1，那就在下一层的卷积中，更新mask在此点的值至1.</p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220114211755555.png" /></p>
+<p>​ 具体的示例如下所示：</p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/图片3.png" /></p>
+<p>​
+所以你会发现，在部分卷积的自动更新mask的过程中，只要部分卷积层叠加的足够多，最后任何mask都会逐渐变为所有都是1的形式，从而计算出需填补区域的内容。</p>
+<p>​
+所以最终该论文在图像边界使用带有适当掩码的部分卷积来代替典型的填充。这确保了图像mask边缘处的修复内容不会受到图像外部无效值的影响。</p>
+<h3 id="四可变形卷积deformable-convolution">四、可变形卷积（Deformable
+Convolution）</h3>
+<p>​
+普通的卷积在应对一些物体复杂形变的场景的时候，往往无法得到好的结果。这个时候就有人提出了可变性卷积。</p>
+<p>​ 简单而言，Deformable Conv
+在感受野中引入了偏移量，而且这偏移量是可学习的，这样可以使得感受野不再是单一的方形，而是能够尽可能与物体的实际形状贴近，于是卷积区域便始终覆盖在物体形状周围，无论物体如何形变，加入可学习的偏移量后都可以搞定。</p>
+<p><img src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220114211950684.png" alt="image-20220114211950684" style="zoom:150%;" /></p>
+<p>​</p>
+<p>​ 一个二维的卷积通常由两步组成，第一步是使用一个grid
+R去到输入的特征图上进行采样。第二步是根据卷积核的权重，对所有采样的点进行加权求和。比如说像下述这样一个就定义了一个3*3的方形的被卷积区域。</p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220114212003778.png" /></p>
+<p>​
+那么对于一个普通的卷积而言，可以用如下公式来进行表示，p0就是当前点，pn是R中的值。</p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220114212010083.png" /></p>
+<p>​ 在可变形卷积中，如下所示，R被加强了，还多了一个offset。</p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220114212018393.png" /></p>
+<p>​
+这样的话呢，采样就在一个不规则的并且带有偏移的位置上进行了。通常而言这个offset
+∆pn
+是小数，所以通常需要通过线性插值来计算像素的值，公式如下所示：其实就是x(p)的值要由其周围整数像素x(q)加权得到。</p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220114212038364.png" /></p>
+<p>​
+那么，关键的问题来了：这个offset怎么得到呢？<strong>这个offset是通过另一个在相同的输入图像上的卷积得到的。这个卷积的卷积核与当前的可变形卷积的卷积核有相同的空间分辨率。同时，经过这个卷积后得到的offest的输出域，和输入也有同样的空间分辨率。输出维度为2N，分别对应N个2维的offsets。</strong></p>
+<p>​
+在训练过程中，用来生成输出特征的卷积核和用来计算offsets的卷积核是同时进行学习的。下图是一个3*3的可变形卷积的示意图。</p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220114212046759.png" /></p>
+<p>​ 至于更为详细的可变形卷积思想以及实验，可以更深入的精读《Deformable
+Convolutional Networks》这篇论文。</p>
+
+    </div>
+
+    
+    
+    
+      
+  <div class="popular-posts-header">相关文章</div>
+  <ul class="popular-posts">
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2022\01\05\d37a1913ba03\" rel="bookmark">机器学习基础系列笔记4——Depth-wise卷积 & Point-wise卷积</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2022\01\12\8c9b3da724b3\" rel="bookmark">机器学习基础系列笔记6——全卷积网络FCN & U-Net结构</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2022\01\04\16c9f87609b5\" rel="bookmark">机器学习基础系列笔记3——反卷积Deconvolution</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2021\12\23\9bb28e693fc9\" rel="bookmark">ML2021课程系列笔记4——海森矩阵计算（课程作业）</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2021\12\20\cedd3c9597c5\" rel="bookmark">ML2021课程系列笔记3——卷积神经网络CNN</a></div>
+    </li>
+  </ul>
+
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Machine-Learning/" rel="tag"># Machine Learning</a>
+              <a href="/tags/Convolution/" rel="tag"># Convolution</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2022/01/05/d37a1913ba03/" rel="prev" title="机器学习基础系列笔记4——Depth-wise卷积 & Point-wise卷积">
+                  <i class="fa fa-chevron-left"></i> 机器学习基础系列笔记4——Depth-wise卷积 & Point-wise卷积
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2022/01/12/8c9b3da724b3/" rel="next" title="机器学习基础系列笔记6——全卷积网络FCN & U-Net结构">
+                  机器学习基础系列笔记6——全卷积网络FCN & U-Net结构 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments utterances-container"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Fantast</span>
+</div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+    <span title="站点总字数">725k</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">33:33</span>
+  </span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script><script src="/js/bookmark.js"></script>
+
+  
+<script src="https://cdn.jsdelivr.net/npm/hexo-generator-searchdb@1.4.0/dist/search.js" integrity="sha256-vXZMYLEqsROAXkEw93GGIvaB2ab+QW6w3+1ahD9nXXA=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdn.jsdelivr.net/npm/mathjax@3.2.0/es5/tex-mml-chtml.js","integrity":"sha256-r+3itOMtGGjap0x+10hu6jW/gZCzxHsoKrOd7gyRSGY="}}</script>
+<script src="/js/third-party/math/mathjax.js"></script>
+
+
+<script class="next-config" data-name="utterances" type="application/json">{"enable":true,"repo":"Fantast416/myblog-comment","issue_term":"pathname","theme":"github-light"}</script>
+<script src="/js/third-party/comments/utterances.js"></script>
+
+</body>
+</html>

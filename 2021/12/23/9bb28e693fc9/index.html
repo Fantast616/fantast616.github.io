@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.2.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css" integrity="sha256-mUZM63G8m73Mcidfrv5E+Y61y7a12O5mW4ezU3bxqW4=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"blog.fantast.top","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.9.0","exturl":false,"sidebar":{"position":"left","width":250,"display":"always","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":true,"color":"#222","save":"manual"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"utterances","storage":true,"lazyload":false,"nav":null,"activeClass":"utterances"},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+<meta name="description" content="该篇记录了海森矩阵相关计算的代码">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ML2021课程系列笔记4——海森矩阵计算（课程作业）">
+<meta property="og:url" content="https://blog.fantast.top/2021/12/23/9bb28e693fc9/index.html">
+<meta property="og:site_name" content="Fantast&#39;s Blog">
+<meta property="og:description" content="该篇记录了海森矩阵相关计算的代码">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2021-12-23T02:29:19.000Z">
+<meta property="article:modified_time" content="2022-08-07T14:47:31.000Z">
+<meta property="article:author" content="Fantast">
+<meta property="article:tag" content="Machine Learning">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://blog.fantast.top/2021/12/23/9bb28e693fc9/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://blog.fantast.top/2021/12/23/9bb28e693fc9/","path":"2021/12/23/9bb28e693fc9/","title":"ML2021课程系列笔记4——海森矩阵计算（课程作业）"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>ML2021课程系列笔记4——海森矩阵计算（课程作业） | Fantast's Blog</title>
+  
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<link rel="alternate" href="/atom.xml" title="Fantast's Blog" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Fantast's Blog</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li>
+        <li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li>
+        <li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li>
+        <li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li>
+        <li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#hung-yi-lee-%E6%9D%8E%E5%AE%8F%E6%AF%85-machine-learning-2021-spring%E8%AF%BE%E7%A8%8B-hw2.2%E7%AC%94%E8%AE%B0"><span class="nav-text">Hung-yi
+Lee (李宏毅) MACHINE LEARNING 2021 SPRING课程 HW2.2笔记</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#step1-%E5%AE%9A%E4%B9%89%E4%B8%80%E4%B8%AA%E7%AE%80%E5%8D%95%E7%9A%84%E6%A8%A1%E5%9E%8B"><span class="nav-text">Step1: 定义一个简单的模型</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#step2-%E5%8A%A0%E8%BD%BD%E5%B1%9E%E4%BA%8E%E8%AF%A5%E6%A8%A1%E5%9E%8B%E7%9A%84%E9%A2%84%E5%85%88%E5%87%86%E5%A4%87%E5%A5%BD%E7%9A%84%E6%9F%90%E8%AE%AD%E7%BB%83%E7%82%B9%E4%BB%A5%E5%8F%8A%E7%94%A8%E4%BA%8E%E8%AE%AD%E7%BB%83%E7%9A%84%E6%95%B0%E6%8D%AE%E5%92%8C%E6%A0%87%E7%AD%BE"><span class="nav-text">Step2:
+加载属于该模型的预先准备好的某训练点以及用于训练的数据和标签</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#step3-%E5%AE%9A%E4%B9%89%E8%AE%A1%E7%AE%97%E8%AF%A5%E8%AE%AD%E7%BB%83%E8%BF%9B%E5%BA%A6%E5%BD%93%E5%89%8D%E6%89%80%E5%9C%A8%E4%BD%8D%E7%BD%AEloss%E5%87%BD%E6%95%B0%E7%9A%84%E6%A2%AF%E5%BA%A6"><span class="nav-text">Step3:
+定义计算该训练进度当前所在位置Loss函数的梯度</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#step4-%E8%AE%A1%E7%AE%97hession-%E7%9F%A9%E9%98%B5"><span class="nav-text">Step4: 计算Hession 矩阵</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#step5-%E8%AE%A1%E7%AE%97minimal-ratio"><span class="nav-text">Step5: 计算Minimal Ratio</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Fantast"
+      src="/images/avatar.webp">
+  <p class="site-author-name" itemprop="name">Fantast</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">161</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">40</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">97</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/fantast416" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;fantast416" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:fantast416@gmail.com" title="E-Mail → mailto:fantast416@gmail.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll site-overview-item animated">
+    <div class="links-of-blogroll-title"><i class="fa fa-globe fa-fw"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://www.zhihu.com/people/shuo-shuo-3-41" title="https:&#x2F;&#x2F;www.zhihu.com&#x2F;people&#x2F;shuo-shuo-3-41" rel="noopener" target="_blank">ZhiHu</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="http://www.next.zju.edu.cn/" title="http:&#x2F;&#x2F;www.next.zju.edu.cn&#x2F;" rel="noopener" target="_blank">NextLab</a>
+        </li>
+    </ul>
+  </div>
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://blog.fantast.top/2021/12/23/9bb28e693fc9/">
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.webp">
+      <meta itemprop="name" content="Fantast">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Fantast's Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          ML2021课程系列笔记4——海森矩阵计算（课程作业）
+        </h1>
+
+        <div class="post-meta-container">
+          
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2021-12-23 10:29:19" itemprop="dateCreated datePublished" datetime="2021-12-23T10:29:19+08:00">2021-12-23</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2022-08-07 22:47:31" itemprop="dateModified" datetime="2022-08-07T22:47:31+08:00">2022-08-07</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E2%93%B5-%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" itemprop="url" rel="index"><span itemprop="name">⓵ 深度学习笔记</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E2%93%B5-%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/ML2021%E8%AF%BE%E7%A8%8B%E7%B3%BB%E5%88%97%E7%AC%94%E8%AE%B0/" itemprop="url" rel="index"><span itemprop="name">ML2021课程系列笔记</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>5k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>14 分钟</span>
+    </span>
+</div>
+
+            <div class="post-description">该篇记录了海森矩阵相关计算的代码</div>
+            <div class="post-remind">Google Chrome is recommended, otherwise the image size may be wrong</div>
+            <div class="post-remind">FireFox is not recommended,Because it does not support the image zoom property</div>
+        </div>
+        
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h3
+id="hung-yi-lee-李宏毅-machine-learning-2021-spring课程-hw2.2笔记">Hung-yi
+Lee (李宏毅) MACHINE LEARNING 2021 SPRING课程 HW2.2笔记</h3>
+<p>​
+https://link.zhihu.com/?target=https%3A//speech.ee.ntu.edu.tw/~hylee/ml/2021-spring.html</p>
+<p>​ 先给出课程中助教提供的代码链接：</p>
+<p>​
+https://colab.research.google.com/github/ga642381/ML2021-Spring/blob/main/HW02/HW02-2.ipynb</p>
+<p>​
+先前在系列笔记2中——机器学习任务攻略笔记中，已经提及了在数学理论上，当我们训练不下去的时候，如何分辨是达到了一个Local
+Minimal还是一个Saddle Point。</p>
+<p>​ https://zhuanlan.zhihu.com/p/447280599</p>
+<p>​
+此篇笔记从实际的角度进行记录，通过一个实例，讲解如何去进行分辨，整理出的这个框架在今后如果遇到了训练不下去的时候，可以采用此计算，分辨到底是碰到了何种情况：</p>
+<p>​
+首先，在实际的训练过程中，我们很难找到梯度为0的点，并且也很难找到一个真正的Local
+Minimal（也就是海森矩阵特征值全大于0），所以我们首先需要做一些近似：</p>
+<ul>
+<li><p>我们将gradient小于1^-3即视为近似为0</p></li>
+<li><p>如果minimum ratio 大于0.5 且 gradient 小于 1^-3
+，我们即认为其为一个Local Minimal。</p></li>
+<li><p>附： Minimum ratio = 海森矩阵的所有特征值中正的特征值的数量 /
+海森矩阵的所有特征值的数量</p></li>
+</ul>
+<p>​
+然后就开始通过代码来实现计算过程：首先我们需要有一个用来作为示例的网络和训练点,这个在助教给的代码中已经准备好了，我此处把重要的东西抽出来记录</p>
+<h4 id="step1-定义一个简单的模型">Step1: 定义一个简单的模型</h4>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">MathRegressor</span>(nn.Module):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, num_hidden=<span class="number">128</span></span>):</span><br><span class="line">        <span class="built_in">super</span>().__init__()</span><br><span class="line">        self.regressor = nn.Sequential(</span><br><span class="line">            nn.Linear(<span class="number">1</span>, num_hidden),</span><br><span class="line">            nn.ReLU(),</span><br><span class="line">            nn.Linear(num_hidden, <span class="number">1</span>)</span><br><span class="line">        )</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">forward</span>(<span class="params">self, x</span>):</span><br><span class="line">        x = self.regressor(x)</span><br><span class="line">        <span class="keyword">return</span> x</span><br></pre></td></tr></table></figure>
+<h4
+id="step2-加载属于该模型的预先准备好的某训练点以及用于训练的数据和标签">Step2:
+加载属于该模型的预先准备好的某训练点以及用于训练的数据和标签</h4>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">model = MathRegressor()</span><br><span class="line">model.load_state_dict(<span class="string">&#x27;xxxx&#x27;</span>)  <span class="comment"># xxxx为事先准备好的训练到某一个点的模型文件路径</span></span><br><span class="line">train = Tensor([[<span class="number">0.2400</span>],  <span class="comment"># 然后feature和target(label)也加载进来</span></span><br><span class="line">        [<span class="number">0.2500</span>],</span><br><span class="line">        [<span class="number">0.2600</span>],</span><br><span class="line">        [<span class="number">0.2700</span>],</span><br><span class="line">        [<span class="number">0.2800</span>],</span><br><span class="line">        [<span class="number">0.2900</span>]])</span><br><span class="line">target = Tensor([[-<span class="number">0.1559</span>],</span><br><span class="line">        [-<span class="number">0.1801</span>],</span><br><span class="line">        [-<span class="number">0.1981</span>],</span><br><span class="line">        [-<span class="number">0.2101</span>],</span><br><span class="line">        [-<span class="number">0.2162</span>],</span><br><span class="line">        [-<span class="number">0.2168</span>]])</span><br></pre></td></tr></table></figure>
+<h4 id="step3-定义计算该训练进度当前所在位置loss函数的梯度">Step3:
+定义计算该训练进度当前所在位置Loss函数的梯度</h4>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># function to compute gradient norm</span></span><br><span class="line"><span class="comment"># model 代表模型实例 ，例如为 MathRegressor()</span></span><br><span class="line"><span class="comment"># criterion为损失函数,例如为 nn.MSELoss()</span></span><br><span class="line"><span class="comment"># train 为训练数据feature 见上</span></span><br><span class="line"><span class="comment"># target为训练数据label 见上</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">compute_gradient_norm</span>(<span class="params">model, criterion, train, target</span>):</span><br><span class="line">    model.train()</span><br><span class="line">    model.zero_grad()</span><br><span class="line">    output = model(train)</span><br><span class="line">    loss = criterion(output, target)</span><br><span class="line">    loss.backward()  <span class="comment"># 通过反向传播计算该点梯度</span></span><br><span class="line"></span><br><span class="line">    grads = []</span><br><span class="line">    <span class="keyword">for</span> p <span class="keyword">in</span> model.regressor.children():</span><br><span class="line">        <span class="keyword">if</span> <span class="built_in">isinstance</span>(p, nn.Linear):</span><br><span class="line">            param_norm = p.weight.grad.norm(<span class="number">2</span>).item()</span><br><span class="line">            grads.append(param_norm)</span><br><span class="line">		</span><br><span class="line">    grad_mean = np.mean(grads) <span class="comment"># compute mean of gradient norms</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> grad_mean</span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">对于内容的一些注解：</span></span><br><span class="line"><span class="string">	前半部分比较好理解，就是做了前向计算以后，然后通过反向传播计算梯度</span></span><br><span class="line"><span class="string">	后半部分，其实是对所有的层的参数的梯度做了一个平均的计算：</span></span><br><span class="line"><span class="string">	1、model.regressor 输出的内容如下</span></span><br><span class="line"><span class="string">    Sequential(</span></span><br><span class="line"><span class="string">      (0): Linear(in_features=1, out_features=128, bias=True)</span></span><br><span class="line"><span class="string">      (1): ReLU()</span></span><br><span class="line"><span class="string">      (2): Linear(in_features=128, out_features=1, bias=True)</span></span><br><span class="line"><span class="string">    )</span></span><br><span class="line"><span class="string">	2、代码中的p在三次循环中分别为：</span></span><br><span class="line"><span class="string">    第一遍循环：Linear(in_features=1, out_features=128, bias=True)</span></span><br><span class="line"><span class="string">    第二遍循环：ReLU()</span></span><br><span class="line"><span class="string">    第三遍循环：Linear(in_features=128, out_features=1, bias=True)</span></span><br><span class="line"><span class="string">    故而我们知道 for p 那个循环其实就是在： 如果该层是全连接层，那么我们就要计算所有权重参数的梯度，如果不是（言外之意是如果是ReLU层，因为ReLU层是激活函数，无权重参数，所以我们不需要考虑）。所以需要注意，如果我们需要计算的模型是一个含有除了Linear以外的 带权重参数的网络模型，这个地方就要有所更改了</span></span><br><span class="line"><span class="string">  3、如果p是Linear层，应当如何计算：</span></span><br><span class="line"><span class="string">  	p.weight 是一个Tensor，为所有的权重参数</span></span><br><span class="line"><span class="string">  	p.weight.grad 是一个Tensor，为所有的权重参数对应当前点的导数（梯度）</span></span><br><span class="line"><span class="string">  	p.weight.grad.norm(2) 是一个仅有一个元素的Tensor，计算了先前的Tensor的二阶范式，其实就是平方和开更号。</span></span><br><span class="line"><span class="string">    p.weight.grad.norm(2).item() 是一个数值，即从Tensor中取出数值来。</span></span><br><span class="line"><span class="string">    最后将该层的 梯度的二阶范式 append 至 grads数组中</span></span><br><span class="line"><span class="string">  4、最后返回值是什么？</span></span><br><span class="line"><span class="string">  	最后grads中有 n个元素，n为所有带权重参数的层的个数（示例中的网络为2个），然后在用np.mean计算即得到最后的返回值，即所有层的梯度的平均值。</span></span><br><span class="line"><span class="string">  	</span></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br></pre></td></tr></table></figure>
+<h4 id="step4-计算hession-矩阵">Step4: 计算Hession 矩阵</h4>
+<p>https://github.com/cybertronai/autograd-lib</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 我们使用autograd-lib 这个python库计算Hession矩阵</span></span><br><span class="line">pip install autograd-lib</span><br><span class="line"><span class="comment"># 在github的链接中，作者给出了Hessian矩阵的计算示例，其使用的是高斯牛顿法，我们在此不进行赘述，有兴趣的可以看github链接的计算源码。</span></span><br><span class="line"><span class="comment"># 以下是两个依赖函数，下面用得到，也是github源码中给出的</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">save_activations</span>(<span class="params">layer, A, _</span>):</span><br><span class="line">    <span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"><span class="string">    A is the input of the layer, we use batch size of 6 here</span></span><br><span class="line"><span class="string">    layer 1: A has size of (6, 1)</span></span><br><span class="line"><span class="string">    layer 2: A has size of (6, 128)</span></span><br><span class="line"><span class="string">    &#x27;&#x27;&#x27;</span></span><br><span class="line">    activations[layer] = A</span><br><span class="line"></span><br><span class="line"><span class="comment"># helper function to compute Hessian matrix</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">compute_hess</span>(<span class="params">layer, _, B</span>):</span><br><span class="line">    <span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"><span class="string">    B is the backprop value of the layer</span></span><br><span class="line"><span class="string">    layer 1: B has size of (6, 128)</span></span><br><span class="line"><span class="string">    layer 2: B ahs size of (6, 1)</span></span><br><span class="line"><span class="string">    &#x27;&#x27;&#x27;</span></span><br><span class="line">    A = activations[layer]</span><br><span class="line">    BA = torch.einsum(<span class="string">&#x27;nl,ni-&gt;nli&#x27;</span>, B, A) <span class="comment"># do batch-wise outer product</span></span><br><span class="line"></span><br><span class="line">    <span class="comment"># full Hessian</span></span><br><span class="line">    hess[layer] += torch.einsum(<span class="string">&#x27;nli,nkj-&gt;likj&#x27;</span>, BA, BA) <span class="comment"># do batch-wise outer product, then sum over the batch</span></span><br></pre></td></tr></table></figure>
+<h4 id="step5-计算minimal-ratio">Step5: 计算Minimal Ratio</h4>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># function to compute the minimum ratio</span></span><br><span class="line"><span class="comment"># model 代表模型实例 ，例如为 MathRegressor()</span></span><br><span class="line"><span class="comment"># criterion为损失函数,例如为 nn.MSELoss()</span></span><br><span class="line"><span class="comment"># train 为训练数据feature 见上</span></span><br><span class="line"><span class="comment"># target为训练数据label 见上</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">compute_minimum_ratio</span>(<span class="params">model, criterion, train, target</span>):</span><br><span class="line">    model.zero_grad() </span><br><span class="line">    <span class="comment"># 1、计算Hessian矩阵</span></span><br><span class="line">    <span class="keyword">with</span> autograd_lib.module_hook(save_activations):</span><br><span class="line">        output = model(train)</span><br><span class="line">        loss = criterion(output, target)</span><br><span class="line">    <span class="keyword">with</span> autograd_lib.module_hook(compute_hess):</span><br><span class="line">        autograd_lib.backward_hessian(output, loss=<span class="string">&#x27;LeastSquares&#x27;</span>)</span><br><span class="line">		</span><br><span class="line">    layer_hess = <span class="built_in">list</span>(hess.values())</span><br><span class="line">    <span class="comment"># 2、计算minimum_ratio</span></span><br><span class="line">    minimum_ratio = []</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> h <span class="keyword">in</span> layer_hess:</span><br><span class="line">        size = h.shape[<span class="number">0</span>] * h.shape[<span class="number">1</span>]</span><br><span class="line">        h = h.reshape(size, size)</span><br><span class="line">        h_eig = torch.symeig(h).eigenvalues </span><br><span class="line">        <span class="comment"># torch.symeig() returns eigenvalues and eigenvectors of a real symmetric matrix</span></span><br><span class="line">        num_greater = torch.<span class="built_in">sum</span>(h_eig &gt; <span class="number">0</span>).item()</span><br><span class="line">        minimum_ratio.append(num_greater / <span class="built_in">len</span>(h_eig))</span><br><span class="line"></span><br><span class="line">    ratio_mean = np.mean(minimum_ratio) <span class="comment"># compute mean of minimum ratio</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> ratio_mean</span><br><span class="line">  </span><br><span class="line">activations = defaultdict(<span class="built_in">int</span>)</span><br><span class="line">hess = defaultdict(<span class="built_in">float</span>)</span><br><span class="line">gradient_norm = compute_gradient_norm(model, criterion, train, target)</span><br><span class="line"></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">	在上述代码中，有些许部分与理论不同。代码实现中是分层计算海森矩阵的，即针对于神经网络的每个层计算海森矩阵，而后再求解特征值。然后将每层的结果做一个平均。而理论上，应当计算一个所有参数的大的海森矩阵，对其求解特征值。</span></span><br><span class="line"><span class="string">	即在上述的案例中，我们原本应该得到一个256*256的海森矩阵，但实际上得到了2个128*128的海森矩阵，并且应当是理论上256*256海森矩阵的左上角部分与右下角部分。即下述所示的A和B，剩下的两块的？是L对两层参数交叉求微分的部分，没有计算。</span></span><br><span class="line"><span class="string">	                              [ A   ? ]</span></span><br><span class="line"><span class="string">	                              [ ?   B ]</span></span><br><span class="line"><span class="string">	如此做的原因我思索了很久也没有得出一个结论，有两个合理的可能猜测：</span></span><br><span class="line"><span class="string">		可能1:完整的海森矩阵计算难度过大，故而我们单独计算L对每一层参数的海森矩阵，来作为近似。</span></span><br><span class="line"><span class="string">		可能2:由于某些性质，剩下的没有计算的两块的值，不会影响最终判定海森矩阵是否正定的结果，但是我并没有实际进行证实。</span></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br></pre></td></tr></table></figure>
+
+    </div>
+
+    
+    
+    
+      
+  <div class="popular-posts-header">相关文章</div>
+  <ul class="popular-posts">
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2022\01\12\8c9b3da724b3\" rel="bookmark">机器学习基础系列笔记6——全卷积网络FCN & U-Net结构</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2022\01\07\3664afb64da5\" rel="bookmark">机器学习基础系列笔记5——1x1卷积 & 部分卷积 & 空洞卷积 & 可变形卷积</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2022\01\05\d37a1913ba03\" rel="bookmark">机器学习基础系列笔记4——Depth-wise卷积 & Point-wise卷积</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2022\01\04\16c9f87609b5\" rel="bookmark">机器学习基础系列笔记3——反卷积Deconvolution</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2021\12\20\cedd3c9597c5\" rel="bookmark">ML2021课程系列笔记3——卷积神经网络CNN</a></div>
+    </li>
+  </ul>
+
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Machine-Learning/" rel="tag"># Machine Learning</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2021/12/20/cedd3c9597c5/" rel="prev" title="ML2021课程系列笔记3——卷积神经网络CNN">
+                  <i class="fa fa-chevron-left"></i> ML2021课程系列笔记3——卷积神经网络CNN
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2022/01/04/16c9f87609b5/" rel="next" title="机器学习基础系列笔记3——反卷积Deconvolution">
+                  机器学习基础系列笔记3——反卷积Deconvolution <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments utterances-container"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Fantast</span>
+</div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+    <span title="站点总字数">725k</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">33:33</span>
+  </span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script><script src="/js/bookmark.js"></script>
+
+  
+<script src="https://cdn.jsdelivr.net/npm/hexo-generator-searchdb@1.4.0/dist/search.js" integrity="sha256-vXZMYLEqsROAXkEw93GGIvaB2ab+QW6w3+1ahD9nXXA=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdn.jsdelivr.net/npm/mathjax@3.2.0/es5/tex-mml-chtml.js","integrity":"sha256-r+3itOMtGGjap0x+10hu6jW/gZCzxHsoKrOd7gyRSGY="}}</script>
+<script src="/js/third-party/math/mathjax.js"></script>
+
+
+<script class="next-config" data-name="utterances" type="application/json">{"enable":true,"repo":"Fantast416/myblog-comment","issue_term":"pathname","theme":"github-light"}</script>
+<script src="/js/third-party/comments/utterances.js"></script>
+
+</body>
+</html>

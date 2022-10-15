@@ -1,0 +1,727 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.2.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css" integrity="sha256-mUZM63G8m73Mcidfrv5E+Y61y7a12O5mW4ezU3bxqW4=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"blog.fantast.top","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.9.0","exturl":false,"sidebar":{"position":"left","width":250,"display":"always","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":true,"color":"#222","save":"manual"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"utterances","storage":true,"lazyload":false,"nav":null,"activeClass":"utterances"},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+<meta name="description" content="本文是最近回顾深度学习的基础概念时，想要更深一步的了解框架内部的实现方法的实践系列笔记1，该部分文中先对深度学习训练的逻辑框架做了简单的梳理，然后对计算图、反向传播、自动微分理论部分做了详细的介绍。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Python搭建深度学习框架系列笔记1——计算图、梯度下降、反向传播、自动微分的理论部分">
+<meta property="og:url" content="https://blog.fantast.top/2022/02/10/f5cccb7aefe2/index.html">
+<meta property="og:site_name" content="Fantast&#39;s Blog">
+<meta property="og:description" content="本文是最近回顾深度学习的基础概念时，想要更深一步的了解框架内部的实现方法的实践系列笔记1，该部分文中先对深度学习训练的逻辑框架做了简单的梳理，然后对计算图、反向传播、自动微分理论部分做了详细的介绍。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://pic2.zhimg.com/80/v2-464ea7ee4475f3c7f08c389f65fd3e89_1440w.jpg">
+<meta property="og:image" content="c:/Users/14012/Desktop/屏幕捕获_2022_02_26_21_49_36_307.png">
+<meta property="og:image" content="https://pytorch.org/tutorials/_images/comp-graph.png">
+<meta property="og:image" content="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/dsa98uyc89dsahkj.jpg">
+<meta property="og:image" content="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/3FFA54BF58ADB73E2AB2959E12132F27.jpg">
+<meta property="og:image" content="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/C3DB7AD3158C70B1352C05AB2B03B655.jpg">
+<meta property="article:published_time" content="2022-02-10T04:19:19.000Z">
+<meta property="article:modified_time" content="2022-08-07T14:46:29.000Z">
+<meta property="article:author" content="Fantast">
+<meta property="article:tag" content="Framework">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://pic2.zhimg.com/80/v2-464ea7ee4475f3c7f08c389f65fd3e89_1440w.jpg">
+
+
+<link rel="canonical" href="https://blog.fantast.top/2022/02/10/f5cccb7aefe2/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://blog.fantast.top/2022/02/10/f5cccb7aefe2/","path":"2022/02/10/f5cccb7aefe2/","title":"Python搭建深度学习框架系列笔记1——计算图、梯度下降、反向传播、自动微分的理论部分"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Python搭建深度学习框架系列笔记1——计算图、梯度下降、反向传播、自动微分的理论部分 | Fantast's Blog</title>
+  
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<link rel="alternate" href="/atom.xml" title="Fantast's Blog" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Fantast's Blog</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li>
+        <li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li>
+        <li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li>
+        <li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li>
+        <li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%80%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E8%AE%AD%E7%BB%83%E9%80%BB%E8%BE%91%E6%A1%86%E6%9E%B6%E6%A2%B3%E7%90%86"><span class="nav-text">一、深度学习训练逻辑框架梳理：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BA%8C%E8%AE%A1%E7%AE%97%E5%9B%BE%E5%8F%8D%E5%90%91%E4%BC%A0%E6%92%AD%E8%87%AA%E5%8A%A8%E5%BE%AE%E5%88%86%E8%AF%A6%E8%A7%A3"><span class="nav-text">二、计算图、反向传播、自动微分详解：</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%9C%80%E5%9F%BA%E6%9C%AC%E7%9A%84%E8%AE%A1%E7%AE%97%E5%9B%BE"><span class="nav-text">1、最基本的计算图：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%AE%A1%E7%AE%97%E5%9B%BE%E4%B8%AD%E7%9A%84%E4%B8%80%E4%BA%9B%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5"><span class="nav-text">2、计算图中的一些基本概念：</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%8F%98%E9%87%8F%E8%8A%82%E7%82%B9"><span class="nav-text">1）变量节点：</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%86%85%E7%A7%AF%E8%8A%82%E7%82%B9"><span class="nav-text">2）内积节点：</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%89%8D%E5%90%91%E4%BC%A0%E6%92%AD"><span class="nav-text">3）前向传播：</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%8C%BA%E5%88%86%E9%9D%99%E6%80%81%E5%9B%BE%E5%92%8C%E5%8A%A8%E6%80%81%E5%9B%BE"><span class="nav-text">3、区分静态图和动态图：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%96%B9%E5%90%91%E5%AF%BC%E6%95%B0%E5%92%8C%E6%A2%AF%E5%BA%A6"><span class="nav-text">4、方向导数和梯度</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%96%B9%E5%90%91%E5%AF%BC%E6%95%B0"><span class="nav-text">1）方向导数：</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%A2%AF%E5%BA%A6"><span class="nav-text">2) 梯度：</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%A2%AF%E5%BA%A6%E4%B8%8E%E6%96%B9%E5%90%91%E5%AF%BC%E6%95%B0%E7%9A%84%E5%85%B3%E7%B3%BB"><span class="nav-text">3）梯度与方向导数的关系：</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%A2%AF%E5%BA%A6%E4%B8%8B%E9%99%8D"><span class="nav-text">5、梯度下降：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF%E5%8F%8D%E5%90%91%E4%BC%A0%E6%92%AD%E5%92%8C%E8%87%AA%E5%8A%A8%E5%BE%AE%E5%88%86"><span class="nav-text">6、什么是反向传播和自动微分？</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E8%AE%AD%E7%BB%83%E6%97%B6%E8%87%AA%E5%8A%A8%E5%BE%AE%E5%88%86%E5%9C%A8%E5%93%AA%E9%87%8C%E5%BA%94%E7%94%A8"><span class="nav-text">1）训练时自动微分在哪里应用？</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%8F%8D%E5%90%91%E4%BC%A0%E6%92%AD%E7%9A%84%E6%95%B0%E5%AD%A6%E5%8E%9F%E7%90%86%E6%89%A9%E5%B1%95"><span class="nav-text">2）反向传播的数学原理扩展：</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E8%87%AA%E5%8A%A8%E5%BE%AE%E5%88%86%E7%9A%84%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86%E8%A7%A3%E6%9E%90"><span class="nav-text">3）自动微分的工作原理解析：</span></a></li></ol></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Fantast"
+      src="/images/avatar.webp">
+  <p class="site-author-name" itemprop="name">Fantast</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">161</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">40</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">97</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/fantast416" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;fantast416" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:fantast416@gmail.com" title="E-Mail → mailto:fantast416@gmail.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll site-overview-item animated">
+    <div class="links-of-blogroll-title"><i class="fa fa-globe fa-fw"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://www.zhihu.com/people/shuo-shuo-3-41" title="https:&#x2F;&#x2F;www.zhihu.com&#x2F;people&#x2F;shuo-shuo-3-41" rel="noopener" target="_blank">ZhiHu</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="http://www.next.zju.edu.cn/" title="http:&#x2F;&#x2F;www.next.zju.edu.cn&#x2F;" rel="noopener" target="_blank">NextLab</a>
+        </li>
+    </ul>
+  </div>
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://blog.fantast.top/2022/02/10/f5cccb7aefe2/">
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.webp">
+      <meta itemprop="name" content="Fantast">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Fantast's Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Python搭建深度学习框架系列笔记1——计算图、梯度下降、反向传播、自动微分的理论部分
+        </h1>
+
+        <div class="post-meta-container">
+          
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2022-02-10 12:19:19" itemprop="dateCreated datePublished" datetime="2022-02-10T12:19:19+08:00">2022-02-10</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2022-08-07 22:46:29" itemprop="dateModified" datetime="2022-08-07T22:46:29+08:00">2022-08-07</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E2%93%B5-%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" itemprop="url" rel="index"><span itemprop="name">⓵ 深度学习笔记</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E2%93%B5-%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/Basic%E7%B3%BB%E5%88%97%E7%AC%94%E8%AE%B0/" itemprop="url" rel="index"><span itemprop="name">Basic系列笔记</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E2%93%B5-%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/Python%E6%90%AD%E5%BB%BA%E7%AE%80%E6%98%93%E6%A1%86%E6%9E%B6%E7%AC%94%E8%AE%B0/" itemprop="url" rel="index"><span itemprop="name">Python搭建简易框架笔记</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>7.5k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>21 分钟</span>
+    </span>
+</div>
+
+            <div class="post-description">本文是最近回顾深度学习的基础概念时，想要更深一步的了解框架内部的实现方法的实践系列笔记1，该部分文中先对深度学习训练的逻辑框架做了简单的梳理，然后对计算图、反向传播、自动微分理论部分做了详细的介绍。</div>
+            <div class="post-remind">Google Chrome is recommended, otherwise the image size may be wrong</div>
+            <div class="post-remind">FireFox is not recommended,Because it does not support the image zoom property</div>
+        </div>
+        
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h3 id="一深度学习训练逻辑框架梳理">一、深度学习训练逻辑框架梳理：</h3>
+<p>​
+我们以解决一个简单的问题的深度学习训练逻辑为例，梳理一下在框架内部发生的整体步骤：</p>
+<ul>
+<li>1、构建模型函数
+F（此步其实就是对应着用户传入的<strong>构建的深度学习模型model，深度学习模型model中又可能含有许多层layer</strong>）</li>
+<li>2、确定损失函数 L
+（用户传入的损失函数，常见的有交叉熵、L1、L2等损失函数，还可能是混合损失函数）</li>
+<li>3、依据 F 和 L 构建<strong>计算图 Graph</strong>（ 框架内部完成
+）</li>
+<li>4、在each update中，干如下两件事情
+<ul>
+<li>将输入的数据，<strong>根据计算图</strong>进行前向传播计算，得到Loss值</li>
+<li><strong>根据计算图</strong>，进行反向传播计算，获得 损失函数L 对
+模型参数 w 的
+梯度向量（具体采用的技术就是<strong>自动微分</strong>）</li>
+</ul></li>
+<li>5、将 梯度向量信息与 每个模型参数w 信息
+传入<strong>优化器</strong>中，更新参数，然后回到步骤4，循环往复。（优化器往往也是框架在内部提前写好的，几个比较通用的优化器：Adam，Adagrad等）</li>
+</ul>
+<p><strong>注意</strong>：实际上，如果对于一些简单的模型函数，比如 wx +
+b ,
+我们是可以不定义计算图的，只要我们人工的实现了该模型的forward函数，以及该模型的backward函数，框架应当就会在前向传播和反向传播的过程中，调用这两个函数来进行计算。</p>
+<p>​
+那么，计算图和自动微分的作用是什么呢？我们知道，在pytorch中，我们在一个模型中只需要定义forward函数即可，是不需要定义backward函数的，那么模型又应当怎么去定义反向传播的过程呢？这个时候就是计算图和自动微分起作用了。因为现在的模型函数F都非常复杂，人工求导是不现实的，所以我们就需要依据前向传播过程和损失函数，构建计算图，然后依据自动微分技术，用反向传播的形式，计算损失函数L
+对 模型参数 w，最终实现梯度下降优化。</p>
+<h3
+id="二计算图反向传播自动微分详解">二、计算图、反向传播、自动微分详解：</h3>
+<h4 id="最基本的计算图">1、最基本的计算图：</h4>
+<p>​ 计算图是用来描述运算的有向无环图，有两个主要元素：节点 (Node) 和边
+(Edge)。节点表示数据，如向量、矩阵、张量。边表示运算，如加减乘除卷积等。计算图中节点有不同的类型，不同类型的节点执行不同的计算。</p>
+<p><img src="https://pic2.zhimg.com/80/v2-464ea7ee4475f3c7f08c389f65fd3e89_1440w.jpg" alt="img" style="zoom:50%;" /></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> torch</span><br><span class="line">w = torch.tensor([<span class="number">1.</span>], requires_grad=<span class="literal">True</span>)</span><br><span class="line">x = torch.tensor([<span class="number">2.</span>], requires_grad=<span class="literal">True</span>)</span><br><span class="line"><span class="comment"># y=(x+w)*(w+1)</span></span><br><span class="line">a = torch.add(w, x)     <span class="comment"># retain_grad()</span></span><br><span class="line">b = torch.add(w, <span class="number">1</span>)</span><br><span class="line">y = torch.mul(a, b)</span><br><span class="line"><span class="comment"># y 求导</span></span><br><span class="line">y.backward()</span><br><span class="line"><span class="comment"># 打印 w 的梯度，就是 y 对 w 的导数</span></span><br><span class="line"><span class="built_in">print</span>(w.grad)</span><br></pre></td></tr></table></figure>
+<p>​ 在上面的例子中，x 和 w
+是叶子节点，其他所有节点都依赖于叶子节点。叶子节点的概念主要是为了节省内存，<strong>在计算图中的一轮反向传播结束之后，非叶子节点的梯度是会被释放的。</strong></p>
+<p>代码示例：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 查看叶子结点</span></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;is_leaf:\n&quot;</span>, w.is_leaf, x.is_leaf, a.is_leaf, b.is_leaf, y.is_leaf)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 查看梯度</span></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;gradient:\n&quot;</span>, w.grad, x.grad, a.grad, b.grad, y.grad)</span><br></pre></td></tr></table></figure>
+<p>结果为：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">is_leaf:</span><br><span class="line"> True True False False False</span><br><span class="line">gradient:</span><br><span class="line"> tensor([5.]) tensor([2.]) None None None</span><br></pre></td></tr></table></figure>
+<h4 id="计算图中的一些基本概念">2、计算图中的一些基本概念：</h4>
+<h5 id="变量节点">1）变量节点：</h5>
+<p>​
+这些节点没有父节点，它们的值不是计算出来的，而是被赋予的。具体到模型中，一般会是模型的输入、参数或者标签。</p>
+<h5 id="内积节点">2）内积节点：</h5>
+<p>​
+由于节点的值既可以是一个数，也可以是一个向量。内积节点就是将两个父节点视为向量，然后计算两个父节点的内积。</p>
+<h5 id="前向传播">3）前向传播：</h5>
+<p>​
+输入信息被赋予变量节点，沿着网络向前流动，最终流动到所要计算的结果节点，这就是计算图的前向传播过程。</p>
+<h4 id="区分静态图和动态图">3、区分静态图和动态图：</h4>
+<p>​ PyTorch 采用的是动态图机制 (Dynamic Computational Graph)，而
+Tensorflow 采用的是静态图机制 (Static Computational Graph)。</p>
+<ul>
+<li><p><strong>动态图</strong>是运算和搭建同时进行，也就是可以先计算前面的节点的值，再根据这些值搭建后面的计算图。优点是灵活，易调节，易调试</p></li>
+<li><p><strong>静态图</strong>是先搭建图，然后再输入数据进行运算。优点是高效，因为静态计算是通过先定义后运行的方式，之后再次运行的时候就不再需要重新构建计算图，所以速度会比动态图更快。但是不灵活。TensorFlow
+每次运行的时候图都是一样的，是不能够改变的</p></li>
+</ul>
+<p>​
+所以，其实在pytorch中，比如你定义的一个继承自nn.Module的网络类中，你会重载这个类的forward函数，然后在网络训练运行的过程中，其就会根据你的forward里面张量的计算过程来搭建动态的计算图，并且依据此计算图，在反向传播的时候使用自动微分计算梯度。</p>
+<h4 id="方向导数和梯度">4、方向导数和梯度</h4>
+<h5 id="方向导数">1）方向导数：</h5>
+<p>​
+方向导数的本质是一个数值，简单来说其定义为：<strong>一个函数沿指定方向的变化率。</strong>其最核心的两个要点是：</p>
+<ul>
+<li>函数</li>
+<li>指定方向</li>
+</ul>
+<p>​
+当我们拥有一个函数，并且确定好一个方向以后，就可以计算得到该方向的方向导数，是一个数值。从下图中一个最简单的一维函数来看：</p>
+<p><img src="C:\Users\14012\Desktop\屏幕捕获_2022_02_26_21_49_36_307.png" style="zoom:50%;" /></p>
+<p>​
+我们指定E点，现在指定EC、EB、EA、ED四个方向，<strong>我们来看一下各自方向的方向导数，ED方向的方向导数最小，因为它是切线方向，且是朝下的，也就是说函数在该点往ED方向的变化率负方向最大，也就是值最小。之后依次是EA、EB、EC。ED的反方向DE，就是该点各个方向导数中，最大的那一个。</strong></p>
+<h5 id="梯度">2) 梯度：</h5>
+<p>​
+梯度与方向导数是有本质区别的，梯度其实是一个向量，其定义为：一个函数对于其自变量分别求偏导数，这些偏导数所组成的向量就是函数的梯度。</p>
+<h5 id="梯度与方向导数的关系">3）梯度与方向导数的关系：</h5>
+<p>​
+<strong>函数在某点的梯度是这样一个向量，它的方向与取得最大方向导数的方向一致，而它的模为方向导数的最大值。</strong>
+这个其实是比较直观能够去理解的一个维度：具体证明此处不涉及。</p>
+<h4 id="梯度下降">5、梯度下降：</h4>
+<p>​ 对于一个具有参数 <strong>w </strong>=（w1,w2,w3）和 b
+的计算图，我们可以把所有参数看作一个大向量（<strong>w</strong>,b），然后以（<strong>w</strong>,b）为自变量，以损失值为函数值。求梯度就是求损失之对每个参数的偏导数，为了求这些偏导数，我们可以<strong>单独把每个参数节点视为自变量，求损失值对该节点的梯度</strong>（具体怎么求，见反向传播和自动微分方法）。</p>
+<h4 id="什么是反向传播和自动微分">6、什么是反向传播和自动微分？</h4>
+<h5 id="训练时自动微分在哪里应用">1）训练时自动微分在哪里应用？</h5>
+<p>​
+自动微分用于反向传播的过程中，依据计算图计算<strong>损失函数对参数的梯度</strong>。在Pytorch常见的训练步骤中，应当就是封装在
+.backward() 函数中的。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">batch_loss = criterion(outputs, labels) <span class="comment"># 通过损失函数，计算本次损失值</span></span><br><span class="line">batch_loss.backward()  <span class="comment"># 损失反向传播，计算梯度</span></span><br></pre></td></tr></table></figure>
+<p>​ 举一个更简单明了的例子：考虑最简单的一层神经网络，输入 x，参数 w 和
+b，以及一些损失函数。 它可以通过以下方式在 PyTorch 中定义：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> torch</span><br><span class="line"></span><br><span class="line">x = torch.ones(<span class="number">5</span>)  <span class="comment"># input tensor</span></span><br><span class="line">y = torch.zeros(<span class="number">3</span>)  <span class="comment"># expected output</span></span><br><span class="line">w = torch.randn(<span class="number">5</span>, <span class="number">3</span>, requires_grad=<span class="literal">True</span>)</span><br><span class="line">z = torch.matmul(x, w)+b</span><br><span class="line">loss = torch.nn.functional.binary_cross_entropy_with_logits(z, y)</span><br></pre></td></tr></table></figure>
+<p>pytorch在上述运算进行的过程中，就会搭建好如下的计算图。</p>
+<figure>
+<img src="https://pytorch.org/tutorials/_images/comp-graph.png"
+alt="avatar" />
+<figcaption aria-hidden="true">avatar</figcaption>
+</figure>
+<p>​ 然后，调用如下函数,即可计算梯度。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">loss.backward() // 计算梯度</span><br><span class="line"><span class="built_in">print</span>(w.grad)</span><br><span class="line"><span class="built_in">print</span>(b.grad)</span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">tensor([[0.2175, 0.0032, 0.1359],</span></span><br><span class="line"><span class="string">        [0.2175, 0.0032, 0.1359],</span></span><br><span class="line"><span class="string">        [0.2175, 0.0032, 0.1359],</span></span><br><span class="line"><span class="string">        [0.2175, 0.0032, 0.1359],</span></span><br><span class="line"><span class="string">        [0.2175, 0.0032, 0.1359]])</span></span><br><span class="line"><span class="string">tensor([0.2175, 0.0032, 0.1359])</span></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br></pre></td></tr></table></figure>
+<p>​ Pytorch
+这边其实实际上隐藏了非常多的内部细节，从外表函数调用来看，根本看不到计算图、自动微分的逻辑，这是因为Pytorch都已经将其封装在了底层中。实际上，Pytorch的计算图是什么时候搭建的呢？其就是在每一个Tensor张量参与计算的时候进行搭建的：</p>
+<p>例如，执行如下代码：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">z = torch.matmul(x, w)+b</span><br></pre></td></tr></table></figure>
+<p>计算图中，关于x、w、b、z节点之间的DAG就已经搭建好了</p>
+<p>再当执行如下代码的时候：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">loss = torch.nn.functional.binary_cross_entropy_with_logits(z, y)</span><br></pre></td></tr></table></figure>
+<p>​ Pytorch又将loss和z、y的节点关系加入计算图中了。</p>
+<p>​ 同时，截至此时，x,y,w,z,loss
+的值都已经计算出来了，也就是说已经完成了一遍前向传播，这时候这些值都被记录在这一个个Tensor中。（下图是torch.Tensor内部的成员变量，我们可以看到，其内部是记录了非常多东西的，前向传播的值就是记录在Tensor.data中，也就是其表现出来的值）</p>
+<p><img
+src="https://pic2.zhimg.com/80/v2-3bc1ff0ab920582a3491111b81a32fe5_1440w.jpg" /></p>
+<p>然后当我们在外层调用如下函数的时候:</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">loss.backward()</span><br></pre></td></tr></table></figure>
+<p>​ Pytorch
+内部实际上就是开始反向传播，利用自动微分引擎，链式法则计算loss对参数w的梯度值。对于我们人而言，是如下的一个过程：</p>
+<p><img src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/dsa98uyc89dsahkj.jpg" style="zoom:33%;" /></p>
+<p>​
+那么，这个时候我们就需要思考了，对于电脑来说我们根本没有告诉它，loss对参数w的导数怎么求啊？即使是按照上述靠链式法则去求，但是我们也没告诉它链式法则中的每一项的导数是什么（比如说loss对z的导数，z对w的导数），那怎么求呢？其实，这个时候Pytorch内部就是利用其带的自动微分引擎，去解析函数，然后进行计算的。从外层看来，我们只知道只要设定一些参数，调用backward()函数，就能够获得loss对某个参数w的梯度，外层完全不用关心内部的事情。我们再详细的先拓展一下反向传播的具体数学原理，随后会记录自动微分。</p>
+<h5 id="反向传播的数学原理扩展">2）反向传播的数学原理扩展：</h5>
+<p>​
+反向传播写成上面的链式传播导数的形式十分好理解，但是不仅仅是上述这样子。我们应该需要知道，上面我们都默认所有的字母都只是一个常量，而不是一个变量，就比如说
+w 是一个值， x
+也仅是一个值，这些节点，我们通常称之为变量节点，它们没有父节点，它们的值不是被计算出来的，而是被赋予的。但其实，节点的值可以是一个数，也可以是一个向量，我们可以用一个节点保存输入向量(x1,x2,x3)，再用一个节点保存权值向量(w1,w2,w3)。</p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/屏幕捕获_2022_02_10_15_03_30_21.png" /></p>
+<p>那么也就是说，其实<strong>计算图中每一个节点都是多个值到多个值的映射，也就是向量
+到向量的映射，自变量是父节点，因变量是子节点。</strong>虽然一个子节点可能拥有多个父节点，但是我们在计算子节点对某一个父节点的梯度的时候，可以把其他的父节点视为常量。</p>
+<p>​ 举例如下：比如我们从<strong>n维向量( w
+)，计算出m维向量的映射就可以视为m个标量函数</strong>：</p>
+<p><img src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/3FFA54BF58ADB73E2AB2959E12132F27.jpg" alt="img" style="zoom:33%;" /></p>
+<p>​ 我们可以知道，每一个<span class="math inline">\(f_i(w)\)</span>对
+<span class="math inline">\(w\)</span>来说，应该都有一个梯度 <span
+class="math inline">\(\nabla f_i(w)\)</span>
+,而每一个梯度都是一个n维向量（因为自变量是n维向量）。</p>
+<p>​ 以m个梯度作为行，每个梯度都是一个n维向量：</p>
+<p><img src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/C3DB7AD3158C70B1352C05AB2B03B655.jpg" style="zoom:33%;" /></p>
+<p>​ 这个<span class="math inline">\(J_f(w)\)</span> 叫做映射 <span
+class="math inline">\(f(w)\)</span>在 w 处的雅可比矩阵。因为<span
+class="math inline">\(f(w)\)</span>是从n维到m维的映射，所以<strong>雅可比矩阵是一个$
+m n<span
+class="math inline">\(的矩阵，它的每一行分别是\)</span>f(w)<span
+class="math inline">\(的每一个分量\)</span>f_{i}(w)<span
+class="math inline">\(在\)</span>w$处的梯度向量的转置。</strong></p>
+<p>​
+故而，我们知道，<strong>对于计算图中的每一对父子节点，都可以计算出子节点对父节点的映射的雅可比矩阵。
+雅克比矩阵其实也就是映射的每个分量对输入向量的每个分量的偏导数。</strong></p>
+<p>​ 在上述图2-1中的内积节点x = (x1,x2,x3) ， w =
+(w1,w2,w3)，它们的子节点 对 他们的映射，就是一个
+n维(n=3)到1维的映射，故而，子节点到父节点的雅可比矩阵应当是 $ 1
+n$矩阵。</p>
+<p>​
+<strong>至此为止，我们已经能够知晓计算图中每一对父子节点的雅可比矩阵怎么求解了，可是，我们最终要求的是损失函数对参数w的雅可比矩阵</strong>。仍然如2-1所示，w节点是h节点的祖先，它必须要经过
+内积节点、+节点、*节点后，才会最终到达h节点。
+这个时候，我们就可以利用链式法则：
+复合映射的雅可比矩阵式组成复合映射的多个映射的雅可比矩阵的乘积。</p>
+<p>​ 即复合映射<span class="math inline">\(f(g(h(w))\)</span>
+在w处的雅可比矩阵是 <span class="math inline">\(J_f\)</span> 、<span
+class="math inline">\(J_g\)</span> 、<span
+class="math inline">\(J_h\)</span>三个雅可比矩阵的乘积。</p>
+<p>​
+（我们先假设一个父节点只有一个子节点）<strong>那么所谓反向传播：就是从计算图中作为结果的节点开始，依次从后向前，每个节点都将
+“结果对自己的雅可比矩阵” 和 “自己对父节点的雅可比矩阵”
+传给自己的父节点，然后这个父节点再将 “结果节点对自己的雅可比矩阵” 和
+“自己对父节点的雅可比矩阵”
+传给父节点，再前面的父节点会将两矩阵相乘，得到 “结果对自己的雅可比矩阵”
+，一直这样子到我们的 变量节点</strong>。</p>
+<p>​
+所以“反向传播”传播的是结果节点对自己的雅可比矩阵，同时也将自己对父节点的雅可比矩阵传给父节点。父节点将这两个矩阵相乘，就得到最终结果对自己的雅可比矩阵。</p>
+<p>​
+接下来就剩最后一个问题了，<strong>如果一个父节点有多个子节点，它应该如何得到结果对自己的雅可比矩阵呢？</strong>在数学上能够证明，其实就是先按照上述方法，将<strong>结果节点
+对 各个子结点的雅可比矩阵 和
+各个子节点对父节点的雅可比矩阵分别相乘，然后再相加即可 得到
+结果节点对父节点的雅可比矩阵</strong>。如下所示：</p>
+<p><span class="math display">\[
+J_f = \Sigma_s J_{rs}J_{sf}
+\]</span> ​ <span
+class="math inline">\(J_f\)</span>是最终结果节点对父节点f
+的雅可比矩阵。</p>
+<p>​ <span
+class="math inline">\(J_{rs}\)</span>是最终结果节点对某个子节点s的雅可比矩阵。</p>
+<p>​ <span
+class="math inline">\(J_{sf}\)</span>是某个子节点对父节点f的雅可比矩阵。</p>
+<p>【附：<strong>最开始的时候，结果节点对自己的雅可比矩阵是啥？
+回答：是一个单位矩阵，即对角线元素为1，其余元素都为0</strong>】</p>
+<p>​ 具体的代码实现，见下一节中的Node类的backward方法的实现。</p>
+<h5 id="自动微分的工作原理解析">3）自动微分的工作原理解析：</h5>
+<p>​
+在上述描述的反向传播过程中，我们有一个核心的地方还没有细说，那就是如何让计算机计算
+一对子节点和父节点
+它们之间的雅可比矩阵，也就是它们之间的导数关系，如何计算？【此处留有陷阱，请继续往下看】</p>
+<p>​ 让计算机实现微分功能有以下几种微分方式，</p>
+<ul>
+<li>手工计算出微分，然后编码进代码中</li>
+<li>数值微分 (numerical differentiation)</li>
+<li>符号微分 (symbolic differentiation)</li>
+<li>自动微分</li>
+</ul>
+<figure>
+<img
+src="https://pic4.zhimg.com/80/v2-4c305dc170d7a165aec1b5d7017828c7_1440w.jpg"
+alt="四种微分方式的对比。 手工微分、符号微分、 自动微分得出的都是精确解， 而数值微分得出的只是近似解。" />
+<figcaption aria-hidden="true">四种微分方式的对比。 手工微分、符号微分、
+自动微分得出的都是精确解， 而数值微分得出的只是近似解。</figcaption>
+</figure>
+<p>我们简单的先介绍以下前三种方式，然后再着重介绍自动微分：</p>
+<ul>
+<li><p><strong>手工编码</strong>：故名思意，自己计算函数的导数然后编码入计算机代码中。</p></li>
+<li><p><strong>数值差分</strong>，其分为两种方式—前向差分、中心差分</p></li>
+</ul>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/屏幕捕获_2022_02_10_17_31_03_38.png" /></p>
+<p>​ 一般我们使用中心差分来对神经网络的反向传播进行
+<strong>梯度检验</strong>， 前向差分很少使用， 因为前向差分的误差是
+<span class="math inline">\(O(h)\)</span> , 而中心差分的误差是 <span
+class="math inline">\(O(h^2)\)</span> , 使用泰勒公式将上面的 <span
+class="math inline">\(f(x+h)\)</span> 和<span
+class="math inline">\(f(x-h)\)</span>展开，就能得出前向差分和中心差分的误差</p>
+<ul>
+<li><p><strong>符号微分：</strong></p>
+<p>​
+类似于我们人的手工计算，它是计算机根据规则进行微分的方式。符号微分的明显的缺陷是容易产生
+<strong>表达式膨胀</strong> (expression swell)。</p>
+<figure>
+<img
+src="https://pic3.zhimg.com/80/v2-fb2923b77c6a8cbed2716e58e44f191e_1440w.jpg"
+alt="符号微分的微分结果不一定是最简的形式" />
+<figcaption
+aria-hidden="true">符号微分的微分结果不一定是最简的形式</figcaption>
+</figure></li>
+<li><p><strong>自动微分：</strong></p>
+<p>​
+自动微分将符号微分法应用于最基本的算子，比如常数，幂函数，指数函数，对数函数，三角函数等，然后代入数值，保留中间结果，最后再应用于整个函数。因此它应用相当灵活，可以做到完全向用户隐藏微分求解过程，由于它只对基本函数或常数运用符号微分法则。</p>
+<p>​
+自动微分有前向模式和反向模式两种，<strong>当输出的维度大于输入的时候，适宜使用前向模式微分；当输出维度远远小于输入的时候，适宜使用反向模式微分。</strong>一般在神经网络中使用的都是反向模式。因为神经网路的输入通常
+&gt;&gt; 输出，</p>
+<p>​
+细节上来说，自动微分是将复合函数分解为输出量（根节点）和一系列的输入量（叶子节点）及基本函数（中间节点），构成一个计算图（Computational
+Graph），并以此计算任意两个节点间的梯度：</p>
+<ul>
+<li>加法法则：任意两个节点间的梯度为它们两节点之间所有路径的偏微分之和；</li>
+<li>链式法则：一条路径的偏微分为路径上各相邻节点间偏微分的连乘。</li>
+</ul></li>
+</ul>
+<p>​
+<strong>看到这里，会觉得很熟悉，诶等等！这不就是反向传播干的事情吗，一摸一样！</strong>然后我就发现自己一开始理解错概念了，我一开始以为反向传播过程中计算一对父节点和子节点的雅可比矩阵
+这边的过程用的是自动微分，其他都是反向传播的过程，其实从某种意义上来说，反向传播就是在计算自动微分的过程，而计算一对子节点和父节点它们之间的雅可比矩阵，其实就已经是分解到最基本的算子了。在后面的代码实现环节，会更清楚明了一些。</p>
+<p>​
+总结一下，计算图的变量节点被赋值或初始化后，在结果节点（比如损失值节点）上调用
+前向传播
+，递归计算路径上各个节点的值，信息沿着计算图向前传播，最终得到结果节点的值。之后，在需要更新的节点上调用
+反向传播
+方法，该方法会递归计算<strong>结果节点对路径上各个节点的雅可比矩阵，信息反向传播</strong>。如果有多个节点需要更新，比如权值向量节点和偏置节点，就在这些节点上分别调用
+反向传播
+方法。<strong>由于中间节点的雅可比矩阵（如果已经被计算）已经保存在了
+节点的 jacobi 属性中，所以在多个节点上多次调用其 反向传播
+方法时并不会增加额外的计算负担。</strong>这其实就是“反向传播”的精髓，它执行的无非就是复杂复合映射的求导链式法则，保存中间结果，从而以空间换时间。具体的内容会在下一节的实现中详解</p>
+<p><strong>参考资料：</strong></p>
+<p>代码实现参考：https://github.com/zc911/MatrixSlow</p>
+<p>1、《用python实现深度学习框架》张觉非、陈震</p>
+<p>2、https://zhuanlan.zhihu.com/p/191648279</p>
+<p>3、https://zhuanlan.zhihu.com/p/61103504</p>
+<p>4、https://blog.csdn.net/aws3217150/article/details/70214422</p>
+<p>5、https://zhuanlan.zhihu.com/p/53506221</p>
+
+    </div>
+
+    
+    
+    
+      
+  <div class="popular-posts-header">相关文章</div>
+  <ul class="popular-posts">
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2022\03\02\c830e3a9e023\" rel="bookmark">用Python搭建深度学习框架系列笔记5——逻辑回归中的损失函数节点</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2022\02\28\d9d77f183b68\" rel="bookmark">用Python搭建深度学习框架系列笔记4——优化器类的代码实现（下）</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2022\02\23\c051c3782dfb\" rel="bookmark">用Python搭建深度学习框架系列笔记3——优化器类的代码实现（上）</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2022\02\22\6bfa5496ebc4\" rel="bookmark">用Python搭建深度学习框架系列笔记2——计算图、前向传播、反向传播与自动微分的代码实现</a></div>
+    </li>
+  </ul>
+
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Framework/" rel="tag"># Framework</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2022/02/08/4ccc50ba5a4e/" rel="prev" title="奇妙应用——字符串比较中广义邻居的应用">
+                  <i class="fa fa-chevron-left"></i> 奇妙应用——字符串比较中广义邻居的应用
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2022/02/11/47deca447e0d/" rel="next" title="科研方法经验整理帖（待更新）">
+                  科研方法经验整理帖（待更新） <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments utterances-container"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Fantast</span>
+</div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+    <span title="站点总字数">725k</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">33:33</span>
+  </span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script><script src="/js/bookmark.js"></script>
+
+  
+<script src="https://cdn.jsdelivr.net/npm/hexo-generator-searchdb@1.4.0/dist/search.js" integrity="sha256-vXZMYLEqsROAXkEw93GGIvaB2ab+QW6w3+1ahD9nXXA=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdn.jsdelivr.net/npm/mathjax@3.2.0/es5/tex-mml-chtml.js","integrity":"sha256-r+3itOMtGGjap0x+10hu6jW/gZCzxHsoKrOd7gyRSGY="}}</script>
+<script src="/js/third-party/math/mathjax.js"></script>
+
+
+<script class="next-config" data-name="utterances" type="application/json">{"enable":true,"repo":"Fantast416/myblog-comment","issue_term":"pathname","theme":"github-light"}</script>
+<script src="/js/third-party/comments/utterances.js"></script>
+
+</body>
+</html>

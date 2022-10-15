@@ -1,0 +1,890 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.2.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css" integrity="sha256-mUZM63G8m73Mcidfrv5E+Y61y7a12O5mW4ezU3bxqW4=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"blog.fantast.top","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.9.0","exturl":false,"sidebar":{"position":"left","width":250,"display":"always","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":true,"color":"#222","save":"manual"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"utterances","storage":true,"lazyload":false,"nav":null,"activeClass":"utterances"},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+<meta name="description" content="本篇笔记为电子信息工程中数学模型与方法——单元2 系统辨识的相关知识整理，用于学在浙大考试。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="电子信息工程中数学模型与方法——单元2 系统辨识">
+<meta property="og:url" content="https://blog.fantast.top/2022/10/12/f71a1b069441/index.html">
+<meta property="og:site_name" content="Fantast&#39;s Blog">
+<meta property="og:description" content="本篇笔记为电子信息工程中数学模型与方法——单元2 系统辨识的相关知识整理，用于学在浙大考试。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220923163300371.png">
+<meta property="og:image" content="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220923164457568.png">
+<meta property="og:image" content="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220923164911006.png">
+<meta property="og:image" content="https://mypic416.oss-cn-hangzhou.aliyuncs.com/image-20220927221208577.png">
+<meta property="og:image" content="https://mypic416.oss-cn-hangzhou.aliyuncs.com/image-20220927221358771.png">
+<meta property="og:image" content="https://mypic416.oss-cn-hangzhou.aliyuncs.com/image-20220927221507779.png">
+<meta property="og:image" content="https://mypic416.oss-cn-hangzhou.aliyuncs.com/image-20220927221626122.png">
+<meta property="og:image" content="https://mypic416.oss-cn-hangzhou.aliyuncs.com/image-20220927222142483.png">
+<meta property="og:image" content="https://mypic416.oss-cn-hangzhou.aliyuncs.com/image-20220927222301599.png">
+<meta property="og:image" content="https://mypic416.oss-cn-hangzhou.aliyuncs.com/image-20220927223152305.png">
+<meta property="og:image" content="https://mypic416.oss-cn-hangzhou.aliyuncs.com/image-20220927223723009.png">
+<meta property="og:image" content="https://mypic416.oss-cn-hangzhou.aliyuncs.com/image-20220927225345044.png">
+<meta property="og:image" content="https://mypic416.oss-cn-hangzhou.aliyuncs.com/image-20220927225321648.png">
+<meta property="og:image" content="https://mypic416.oss-cn-hangzhou.aliyuncs.com/image-20220927225916291.png">
+<meta property="og:image" content="https://mypic416.oss-cn-hangzhou.aliyuncs.com/image-20220927230237868.png">
+<meta property="og:image" content="https://mypic416.oss-cn-hangzhou.aliyuncs.com/image-20220927231103308.png">
+<meta property="og:image" content="https://mypic416.oss-cn-hangzhou.aliyuncs.com/image-20220927231138550.png">
+<meta property="og:image" content="https://mypic416.oss-cn-hangzhou.aliyuncs.com/image-20220927231216488.png">
+<meta property="og:image" content="https://mypic416.oss-cn-hangzhou.aliyuncs.com/image-20220927231234423.png">
+<meta property="og:image" content="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220928090759861.png">
+<meta property="article:published_time" content="2022-10-12T00:14:20.782Z">
+<meta property="article:modified_time" content="2022-09-28T01:09:06.000Z">
+<meta property="article:author" content="Fantast">
+<meta property="article:tag" content="course">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220923163300371.png">
+
+
+<link rel="canonical" href="https://blog.fantast.top/2022/10/12/f71a1b069441/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://blog.fantast.top/2022/10/12/f71a1b069441/","path":"2022/10/12/f71a1b069441/","title":"电子信息工程中数学模型与方法——单元2 系统辨识"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>电子信息工程中数学模型与方法——单元2 系统辨识 | Fantast's Blog</title>
+  
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<link rel="alternate" href="/atom.xml" title="Fantast's Blog" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Fantast's Blog</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li>
+        <li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li>
+        <li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li>
+        <li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li>
+        <li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%80%E6%A8%A1%E5%9E%8B%E6%99%BA%E8%83%BD"><span class="nav-text">一、模型智能</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF%E6%99%BA%E8%83%BD"><span class="nav-text">1、什么是智能？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9F%BA%E4%BA%8E%E6%99%BA%E8%83%BD%E5%BB%BA%E6%A8%A1%E7%9A%84%E6%99%BA%E8%83%BD%E5%BB%BA%E9%80%A0%E6%8A%80%E6%9C%AF"><span class="nav-text">2、基于智能建模的智能建造技术：</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%B3%BB%E7%BB%9F%E8%BE%A8%E8%AF%86%E7%9A%84%E6%B8%90%E8%BF%9B%E6%B3%95"><span class="nav-text">1）系统辨识的渐进法：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#pid%E9%97%AD%E7%8E%AF%E5%8F%82%E6%95%B0%E6%95%B4%E5%AE%9A"><span class="nav-text">2）PID闭环参数整定</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%A8%A1%E5%9E%8B%E9%A2%84%E6%B5%8B%E6%8E%A7%E5%88%B6"><span class="nav-text">3）模型预测控制：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-text">3、总结：</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%8C%E7%B3%BB%E7%BB%9F%E8%BE%A8%E8%AF%86%E5%8A%A8%E6%80%81%E6%95%B0%E6%8D%AE%E5%BB%BA%E6%A8%A1%E7%9A%84%E7%90%86%E8%AE%BA%E5%92%8C%E6%96%B9%E6%B3%95"><span class="nav-text">二、系统辨识——动态数据建模的理论和方法：</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%B3%BB%E7%BB%9F%E8%BE%A8%E8%AF%86%E4%BB%8B%E7%BB%8D%E7%B3%BB%E7%BB%9F%E8%BE%A8%E8%AF%86%E7%9A%84%E5%85%B3%E9%94%AE%E6%AD%A5%E9%AA%A4"><span class="nav-text">1、系统辨识介绍（系统辨识的关键步骤）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8A%A8%E6%80%81%E7%B3%BB%E7%BB%9F%E5%92%8C%E4%BF%A1%E5%8F%B7%E7%9A%84%E6%A8%A1%E5%9E%8B"><span class="nav-text">2、动态系统和信号的模型：</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%8D%95%E8%BE%93%E5%85%A5%E5%8D%95%E8%BE%93%E5%87%BA%E8%BF%9E%E7%BB%AD%E6%97%B6%E9%97%B4%E6%A8%A1%E5%9E%8Bsiso-continuous-time-models"><span class="nav-text">1）单输入单输出连续时间模型：SISO
+Continuous-Time Models</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%8D%95%E8%BE%93%E5%85%A5%E5%8D%95%E8%BE%93%E5%87%BA%E7%A6%BB%E6%95%A3%E6%97%B6%E9%97%B4%E6%A8%A1%E5%9E%8B"><span class="nav-text">2）单输入单输出离散时间模型：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BF%A1%E5%8F%B7%E7%9A%84%E5%87%A0%E7%A7%8D%E6%A8%A1%E5%9E%8B%E6%8F%8F%E8%BF%B0%E6%96%B9%E5%BC%8F"><span class="nav-text">3）信号的几种模型描述方式</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E9%A2%91%E5%9F%9F%E6%A1%86%E6%9E%B6%E6%9C%89%E9%99%90%E5%BA%8F%E5%88%97%E7%9A%84%E4%BF%A1%E5%8F%B7%E7%9A%84%E5%91%A8%E6%9C%9F%E5%9B%BE"><span class="nav-text">-
+频域框架：有限序列的信号的周期图：</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%A6%82%E7%8E%87%E6%A1%86%E6%9E%B6%E4%BF%A1%E5%8F%B7%E5%8A%9F%E7%8E%87%E8%B0%B1-signal-spectra"><span class="nav-text">- 概率框架：信号功率谱 signal
+spectra</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E7%99%BD%E5%99%AA%E5%A3%B0%E4%BF%A1%E5%8F%B7white-noise-process"><span class="nav-text">- 白噪声信号White noise
+process:</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9C%89%E6%89%B0%E5%8A%A8%E6%83%85%E5%86%B5%E4%B8%8B%E7%9A%84%E7%BA%BF%E6%80%A7%E8%BF%87%E7%A8%8B%E6%8F%8F%E8%BF%B0"><span class="nav-text">3、有扰动情况下的线性过程描述：</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%89%E7%B3%BB%E7%BB%9F%E8%BE%A8%E8%AF%86%E8%BE%A8%E8%AF%86%E5%AE%9E%E9%AA%8C%E8%AE%BE%E8%AE%A1"><span class="nav-text">三、系统辨识——辨识实验设计</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BE%A8%E8%AF%86%E5%AE%9E%E9%AA%8Cidentification-test%E7%9A%84%E5%BF%85%E8%A6%81%E6%80%A7"><span class="nav-text">1、辨识实验Identification
+Test的必要性</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#preliminary-tests-%E9%A2%84%E6%B5%8B%E8%AF%95"><span class="nav-text">2、Preliminary Tests 预测试</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%94%B6%E9%9B%86%E5%8E%86%E5%8F%B2%E6%95%B0%E6%8D%AEcollect-historic-data-p3"><span class="nav-text">1）收集历史数据Collect
+historic data P3</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%98%B6%E8%B7%83%E5%AE%9E%E9%AA%8Cshort-step-test-p4"><span class="nav-text">2）阶跃实验Short step test P4</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%98%B6%E6%A2%AF%E5%AE%9E%E9%AA%8C%E4%BA%86%E8%A7%A3%E5%AF%B9%E8%B1%A1%E7%9A%84%E9%9D%9E%E7%BA%BF%E6%80%A7%E7%A8%8B%E5%BA%A6"><span class="nav-text">3）阶梯实验：了解对象的非线性程度</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%B3%BB%E7%BB%9F%E8%BE%A8%E8%AF%86%E4%B8%AD%E5%B8%B8%E8%A7%81%E7%9A%84%E5%AE%9E%E9%AA%8C%E4%BF%A1%E5%8F%B7"><span class="nav-text">3、系统辨识中常见的实验信号</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#prbs-%E4%BA%8C%E8%BF%9B%E5%88%B6%E4%BC%AA%E9%9A%8F%E6%9C%BA%E4%BF%A1%E5%8F%B7"><span class="nav-text">1）PRBS 二进制伪随机信号：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#gbngeneralized-binary-noise-%E5%B9%BF%E4%B9%89%E4%BA%8C%E5%80%BC%E5%8C%96%E4%BF%A1%E5%8F%B7"><span class="nav-text">2）GBN(generalized
+binary noise) 广义二值化信号</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#pbrs%E5%92%8Cgbn%E5%AF%B9%E6%AF%94"><span class="nav-text">3）PBRS和GBN对比：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%8C%81%E7%BB%AD%E6%BF%80%E5%8A%B1%E7%9A%84%E6%B5%8B%E8%AF%95%E4%BF%A1%E5%8F%B7persistent-excitation-of-a-test-signal"><span class="nav-text">4）持续激励的测试信号：Persistent
+excitation of a test signal</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A8%A1%E5%9E%8B%E8%BE%A8%E8%AF%86%E7%9A%84%E6%B5%8B%E8%AF%95%E6%9C%80%E7%BB%88%E6%B5%8B%E8%AF%95"><span class="nav-text">4、模型辨识的测试，最终测试</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#mpc%E6%8E%A7%E5%88%B6%E7%9A%84%E6%B5%8B%E8%AF%95%E8%AE%BE%E8%AE%A1"><span class="nav-text">1） MPC控制的测试设计</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%97%AD%E7%8E%AF%E5%AE%9E%E9%AA%8C%E6%B5%8B%E8%AF%95"><span class="nav-text">2）闭环实验测试：</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9B%9B%E7%B3%BB%E7%BB%9F%E8%BE%A8%E8%AF%86%E6%9C%80%E5%B0%8F%E4%BA%8C%E4%B9%98%E7%9A%84%E7%B3%BB%E7%BB%9F%E8%BE%A8%E8%AF%86%E6%96%B9%E6%B3%95"><span class="nav-text">四、系统辨识——最小二乘的系统辨识方法</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9C%80%E5%B0%8F%E4%BA%8C%E4%B9%98%E7%9A%84%E5%8E%9F%E5%88%99p20%E9%A1%B5-%E7%94%B1%E9%AB%98%E6%96%AF%E6%8F%90%E5%87%BA"><span class="nav-text">1、最小二乘的原则：P20页
+由高斯提出</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9F%BA%E4%BA%8E%E6%9C%80%E5%B0%8F%E4%BA%8C%E4%B9%98%E4%BC%B0%E8%AE%A1%E7%BA%BF%E6%80%A7%E8%BF%87%E7%A8%8B%E7%9A%84%E6%A8%A1%E5%9E%8Barx%E6%A8%A1%E5%9E%8B"><span class="nav-text">2、基于最小二乘，估计线性过程的模型——ARX模型</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B7%A5%E4%B8%9A%E5%AE%9E%E4%BE%8B"><span class="nav-text">3、工业实例：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9C%80%E5%B0%8F%E4%BA%8C%E4%B9%98%E4%BC%B0%E8%AE%A1%E7%9A%84%E5%B1%9E%E6%80%A7"><span class="nav-text">4、最小二乘估计的属性：</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%94%E6%9C%80%E5%B0%8F%E4%BA%8C%E4%B9%98%E6%A8%A1%E5%9E%8B%E7%9A%84%E6%89%A9%E5%B1%95"><span class="nav-text">五、最小二乘模型的扩展：</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BE%93%E5%87%BA%E8%AF%AF%E5%B7%AE%E6%96%B9%E6%B3%95-output-error-method"><span class="nav-text">1、输出误差方法 Output-error
+method</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%85%B3%E4%BA%8E%E4%B8%80%E8%87%B4%E6%80%A7%E7%9A%84%E8%AF%81%E6%98%8E"><span class="nav-text">1）关于一致性的证明：</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%A2%84%E6%B5%8B%E8%AF%AF%E5%B7%AE%E6%96%B9%E6%B3%95-prediction-error-methods"><span class="nav-text">2、预测误差方法
+Prediction error methods</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%A2%84%E6%B5%8B%E8%AF%AF%E5%B7%AE%E6%96%B9%E6%B3%95%E7%9A%84%E5%B1%9E%E6%80%A7"><span class="nav-text">预测误差方法的属性：</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%98%B6%E6%AC%A1%E9%80%89%E6%8B%A9-order-selection"><span class="nav-text">3、阶次选择 Order Selection</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A8%A1%E5%9E%8B%E9%AA%8C%E8%AF%81-model-validation"><span class="nav-text">4、模型验证 Model Validation</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%AE%8B%E5%B7%AE%E5%88%86%E6%9E%90"><span class="nav-text">1) 残差分析：</span></a></li></ol></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Fantast"
+      src="/images/avatar.webp">
+  <p class="site-author-name" itemprop="name">Fantast</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">161</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">40</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">97</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/fantast416" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;fantast416" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:fantast416@gmail.com" title="E-Mail → mailto:fantast416@gmail.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll site-overview-item animated">
+    <div class="links-of-blogroll-title"><i class="fa fa-globe fa-fw"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://www.zhihu.com/people/shuo-shuo-3-41" title="https:&#x2F;&#x2F;www.zhihu.com&#x2F;people&#x2F;shuo-shuo-3-41" rel="noopener" target="_blank">ZhiHu</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="http://www.next.zju.edu.cn/" title="http:&#x2F;&#x2F;www.next.zju.edu.cn&#x2F;" rel="noopener" target="_blank">NextLab</a>
+        </li>
+    </ul>
+  </div>
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://blog.fantast.top/2022/10/12/f71a1b069441/">
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.webp">
+      <meta itemprop="name" content="Fantast">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Fantast's Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          电子信息工程中数学模型与方法——单元2 系统辨识
+        </h1>
+
+        <div class="post-meta-container">
+          
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2022-10-12 08:14:20" itemprop="dateCreated datePublished" datetime="2022-10-12T08:14:20+08:00">2022-10-12</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2022-09-28 09:09:06" itemprop="dateModified" datetime="2022-09-28T09:09:06+08:00">2022-09-28</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E2%93%BE-%E8%AF%BE%E7%A8%8B%E7%AC%94%E8%AE%B0/" itemprop="url" rel="index"><span itemprop="name">⓾ 课程笔记</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E2%93%BE-%E8%AF%BE%E7%A8%8B%E7%AC%94%E8%AE%B0/%E7%94%B5%E5%AD%90%E4%BF%A1%E6%81%AF%E5%B7%A5%E7%A8%8B%E6%95%B0%E5%AD%A6%E6%A8%A1%E5%9E%8B%E4%B8%8E%E6%96%B9%E6%B3%95/" itemprop="url" rel="index"><span itemprop="name">电子信息工程数学模型与方法</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>5.3k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>15 分钟</span>
+    </span>
+</div>
+
+            <div class="post-description">本篇笔记为电子信息工程中数学模型与方法——单元2 系统辨识的相关知识整理，用于学在浙大考试。</div>
+            <div class="post-remind">Google Chrome is recommended, otherwise the image size may be wrong</div>
+            <div class="post-remind">FireFox is not recommended,Because it does not support the image zoom property</div>
+        </div>
+        
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h2 id="一模型智能">一、模型智能</h2>
+<h3 id="什么是智能">1、什么是智能？</h3>
+<p>​ 智能有三个层次（某IBM科学家）：感知智能，执行智能，认知智能</p>
+<ul>
+<li>感知智能：感知环境状态</li>
+<li>执行智能：采取行动</li>
+<li>认知智能：建模、分析与决策，认知智能是最高级智能</li>
+</ul>
+<p>认知智能是动物和人建立/改进环境模型（规律的表述），使用模型处理信息并做出预测和决策的能力</p>
+<ul>
+<li><p>理想人工智能:
+人工智能是研究模拟和扩展动物和人的智能的理论和方法，包含感知智能、执行智能和认知智能。</p></li>
+<li><p>当前人工智能：现在的所谓人工智能大都是开发基于图像和声音的感知技术。所以当前的人工智能还在感知智能的层次</p></li>
+</ul>
+<p>下图为自动控制流程：</p>
+<p><img src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220923163300371.png" style="zoom:67%;" /></p>
+<ul>
+<li><strong>一个系统的最优控制器一定是该系统的数学模型!</strong></li>
+</ul>
+<h3 id="基于智能建模的智能建造技术">2、基于智能建模的智能建造技术：</h3>
+<ul>
+<li><p>流程工业包括石化、化工、发电、钢铁、水泥、造纸、采矿等，是国民经济的基础</p></li>
+<li><p>催生一个巨大的流程工业智能制造市场，在流程工业实现全面自动化生产，即智能制造，可以节能1%
+-10%，提高收益0.1% - 2%，减少污染物生成5% - 50%</p></li>
+</ul>
+<p>计划调度、诊断监控、实时优化、模型预测控制、常规PID控制、设备仪表及DCS系统</p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220923163633152.png" /></p>
+<p><strong>过程模型的建立/维护，是实现每一层自动/闭环的关键</strong></p>
+<p><strong>模型智能：</strong>模型智能是一个计算机算法（软件），对于一类给定过程，可以对其自动建模、自动维护模型、并自动使用模型进行预测、控制、优化及诊断</p>
+<h4 id="系统辨识的渐进法">1）系统辨识的渐进法：</h4>
+<ul>
+<li>多变量、闭环、自动系统辨识（建模）技术
+<ul>
+<li>• 自动最优激励信号设计，多变量、闭环、自动测试</li>
+<li>• 自动确定模型阶次</li>
+<li>• 自动模型参数估计（计算）</li>
+<li>• 自动模型检验，给出每个模型A, B, C, D评级</li>
+</ul></li>
+</ul>
+<h4 id="pid闭环参数整定">2）PID闭环参数整定</h4>
+<p>​
+PID控制器以其结构简单、稳定性好、调整方便而成为应用最广泛的一类工业控制器。</p>
+<ul>
+<li>问题核心：PID控制器参数整定困难</li>
+<li>参数整定方法：</li>
+</ul>
+<p><img src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220923164457568.png" style="zoom:67%;" /></p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220923164619424.png" /></p>
+<h4 id="模型预测控制">3）模型预测控制：</h4>
+<p>​
+模型预测控制：是指利用对象的历史信息和模型信息，通过在未来时段上优化过程输出来计算最佳输入序列的一类算法。</p>
+<p>​ <strong>关键环节：</strong>预测模型、滚动优化、反馈校正</p>
+<p>​ 减少波动以后就可以卡边操作</p>
+<p><img src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220923164911006.png" style="zoom:67%;" /></p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220923165006259.png" /></p>
+<h4 id="总结">3、总结：</h4>
+<ul>
+<li>动态模型是智能制造的关键，模型才是智能</li>
+<li>团队经过多年研发，流程工业系统的智能建模、控制及优化技术已成熟，包括:
+(1) 基础控制层; (2) 先进控制层; (3) 实时优化层</li>
+<li>可在各流程工业普及应用，节能减排、提高收益</li>
+</ul>
+<h2
+id="二系统辨识动态数据建模的理论和方法">二、系统辨识——动态数据建模的理论和方法：</h2>
+<h3
+id="系统辨识介绍系统辨识的关键步骤">1、系统辨识介绍（系统辨识的关键步骤）</h3>
+<ul>
+<li><p>系统 System：
+系统是以有序形式排列的对象的集合，用于某种目的</p></li>
+<li><p>过程 Process:
+过程是用于在流程工业中制造均质材料或能源产品的加工厂。
+加工工业包括：石油、化工、电力、造纸、玻璃、采矿、金属、水泥、药品、食品</p></li>
+<li><p>模型 Model:
+模型是一个系统（过程）基本方面的表示，表示该系统的知识</p></li>
+<li><p>数学模型 Mathematical Models:
+用微分方程和代数方程描述系统变量之间的关系。工程领域的主要部分涉及使用数学模型进行设计、模拟、预测和控制/优化。</p></li>
+<li><p>系统辨识：系统或过程识别是使用测试数据对系统（过程）进行数学建模的领域。从技术上讲，Zadeh（1962）将系统识别定义为：在输入和输出的基础上，确定特定类别系统（模型）内的系统模型。</p></li>
+<li><p><strong>系统辨识的过程</strong></p></li>
+</ul>
+<figure>
+<img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220923173506705.png"
+alt="image-20220923173506705" />
+<figcaption aria-hidden="true">image-20220923173506705</figcaption>
+</figure>
+<p><strong>系统辨识的关键步骤</strong>：</p>
+<p>1）识别测试，辨识实验的设计 Identification tests/experiments
+：生成信息，输入输出数据</p>
+<p>2）模型结构选择 Model order/structure selection
+：线性或非线性，什么结构（MIMO），什么顺序？</p>
+<p>3）参数估计Parameter estimation ：使用一些优化技术确定模型参数。</p>
+<p>4） 模型验证Model validation:
+：检查获得的模型是否足够好，是否能够使用（目的），如果不够，给出补救方法。</p>
+<h3 id="动态系统和信号的模型">2、动态系统和信号的模型：</h3>
+<h4
+id="单输入单输出连续时间模型siso-continuous-time-models">1）单输入单输出连续时间模型：SISO
+Continuous-Time Models</h4>
+<p>​ 最常用的是<strong>微分方程</strong>和<strong>传递函数</strong>：</p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/image-20220927194052145.png" /></p>
+<p>​ <img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/image-20220927194102312.png" /></p>
+<p>还可以用<strong>脉冲响应模型</strong>进行描述：<strong>引入延迟算子</strong></p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/image-20220927194118895.png" /></p>
+<h4 id="单输入单输出离散时间模型">2）单输入单输出离散时间模型：</h4>
+<p>一个使用保持电路的计算机控制系统采样过程</p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/image-20220927194329943.png" /></p>
+<ul>
+<li><p>Zero-Order Hold 即零阶保持器，只有一个设置<a
+target="_blank" rel="noopener" href="https://so.csdn.net/so/search?q=采样&amp;spm=1001.2101.3001.7020">采样</a>时间的参数，表示的是以采样时间间隔进行数据的采集；</p></li>
+<li><p>Unit Delay即单位延迟模块，有两个输入参数，类似于<a
+target="_blank" rel="noopener" href="https://so.csdn.net/so/search?q=寄存器&amp;spm=1001.2101.3001.7020">寄存器</a>，第一个是设置初始值，第二个是采样时间。</p></li>
+<li><p>Zero-Order Hold模块是以当前时间点以后的值为准，而Unit
+Delay是以当前时间之前的值为准。</p></li>
+</ul>
+<p><img src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/image-20220927221208577.png" style="zoom:67%;" /></p>
+<ul>
+<li>在<strong>离散时间模型中</strong>引入延迟算子就能得到相应的离散传递函数：</li>
+</ul>
+<p><img src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/image-20220927221358771.png" style="zoom:50%;" /></p>
+<ul>
+<li><p>对一个n阶的差分方程使用0阶保持器：</p>
+<p><img src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/image-20220927221507779.png" style="zoom:67%;" /></p></li>
+</ul>
+<h4 id="信号的几种模型描述方式">3）信号的几种模型描述方式</h4>
+<h5 id="频域框架有限序列的信号的周期图">-
+频域框架：有限序列的信号的周期图：</h5>
+<ul>
+<li>通过傅里叶变化：可以得到信号的周期图</li>
+</ul>
+<p><img src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/image-20220927221626122.png" style="zoom:50%;" /></p>
+<ul>
+<li><p><strong>信号的周期图：periodogram</strong> ——
+反映了信号在各个频域点上能量贡献的大小</p></li>
+<li><p>Parsevals恒等式： 左侧是时间域，右侧是频域</p></li>
+</ul>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/image-20220927221815400.png" /></p>
+<p>​ 信号在时间域内拥有的总能量等于其在频域内各个频率的能量的总和</p>
+<h5 id="概率框架信号功率谱-signal-spectra">- 概率框架：信号功率谱 signal
+spectra</h5>
+<ul>
+<li><p>随机过程：一组信号，在每个时刻都是一个随机变量。</p></li>
+<li><p>平稳随机过程：这个随机过程，其均值属性不随时间变化</p></li>
+<li><p>自相关函数和功率谱</p></li>
+</ul>
+<p><img src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/image-20220927222142483.png" style="zoom:50%;" /></p>
+<ul>
+<li>给定两个平稳随机过程v(t)
+s(t)：互相关函数，和互功率谱（是互相关函数的傅里叶变换）：</li>
+</ul>
+<p><img src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/image-20220927222301599.png" style="zoom: 50%;" /></p>
+<ul>
+<li>如果给定一个随机过程的实现v(t),可以用时间算子代替数学期望可以估计自相关函数，从而估计功率谱</li>
+</ul>
+<p>但这样一个过程是有一个假设的，这个假设就是 Ergodic
+process（个态遍历）也就是：当N趋于正无穷，时间平均值趋于整体平均</p>
+<h5 id="白噪声信号white-noise-process">- 白噪声信号White noise
+process:</h5>
+<p>​ 零均值和方差 R 的独立同分布随机变量序列。</p>
+<p>​
+<strong>特点</strong>：白噪声没有记忆，t时间的信号值和t时间前的值完全无关，也就是可以导出下图中说的重要规则：</p>
+<p><strong>每个平稳随机过程 {v(t)}
+都可以通过稳定的最小相位滤波器对白噪声滤波来生成</strong></p>
+<p>​ <img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/image-20220927222909082.png" /></p>
+<h3 id="有扰动情况下的线性过程描述">3、有扰动情况下的线性过程描述：</h3>
+<p>​
+假设v(t)是稳定随即过程，利用上述的结论，我们可以使用下述这个形式来表示有扰动情况下的线性过程的描述。之后关键就是在这个模型下进行利用实验数据估计G(q)和H(q)</p>
+<p><img src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/image-20220927223152305.png" style="zoom:50%;" /></p>
+<h2 id="三系统辨识辨识实验设计">三、系统辨识——辨识实验设计</h2>
+<h3 id="辨识实验identification-test的必要性">1、辨识实验Identification
+Test的必要性</h3>
+<ul>
+<li>辨识实验（控制）的目的是激发和收集（控制）相关信息。</li>
+<li>测试期间使用测试信号/激励。</li>
+<li>辨识实验是一种成本，但不要干扰正常生产。</li>
+<li>良好的辨识实验是成功识别/控制的关键。</li>
+<li>没有良好的辨识实验就是数据输入垃圾输出。</li>
+</ul>
+<p><strong>辨识实验是有代价的</strong>：</p>
+<p><img src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/image-20220927223723009.png" style="zoom:50%;" /></p>
+<h3 id="preliminary-tests-预测试">2、Preliminary Tests 预测试</h3>
+<p>目的是为了获得先验知识</p>
+<h4 id="收集历史数据collect-historic-data-p3">1）收集历史数据Collect
+historic data P3</h4>
+<p><strong>一般来说，历史数据对于模型来说不够丰富，或者换句话说，信噪比太低（例如90％的噪声，10％的信号）</strong></p>
+<ul>
+<li>获得过程的第一印象。</li>
+<li>过程的输出 (CV) 代表未测量的干扰。</li>
+<li>MV 的动作代表操作员的控制。</li>
+<li>简单又便宜。 数据库可用于大多数流程。</li>
+<li>与操作者交谈并向他们学习。</li>
+</ul>
+<h4 id="阶跃实验short-step-test-p4">2）阶跃实验Short step test P4</h4>
+<ul>
+<li>将每个操作变量上下操作一些次数</li>
+<li>检查主要时间常数、增益和延迟</li>
+<li>检查并调整 MV PID 回路。</li>
+<li>控制工程师可以通过观察过程阶跃响应直观地了解过程动态。</li>
+<li>低成本测试。</li>
+</ul>
+<h4
+id="阶梯实验了解对象的非线性程度">3）阶梯实验：了解对象的非线性程度</h4>
+<ul>
+<li>将阶梯信号应用于某些 MV。</li>
+<li>目的是检查非线性。</li>
+<li>高成本测试，通常不允许</li>
+</ul>
+<h3 id="系统辨识中常见的实验信号">3、系统辨识中常见的实验信号</h3>
+<p>实验信号有两个方面的因素需要考虑：信号波形和频谱的要求 wave form and
+frequency content</p>
+<ul>
+<li>信号波形（时域）要求： -
+<ul>
+<li>在正常操作中不会引起干扰（比较脉冲和阶跃）。</li>
+<li>不激发过程非线性（比较脉冲和步骤）。</li>
+<li>操作员友好（比较脉冲和阶跃）。</li>
+</ul></li>
+<li>信号频率成分（功率谱）设计：
+<ul>
+<li>测试信号的功率谱会影响控制性能。</li>
+<li>用于控制目的的最佳频谱设计。</li>
+</ul></li>
+</ul>
+<h4 id="prbs-二进制伪随机信号">1）PRBS 二进制伪随机信号：</h4>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/image-20220927224849434.png" /></p>
+<ul>
+<li><p>Clock是时钟脉冲</p></li>
+<li><p>State是移位寄存器</p></li>
+<li><p>移位寄存器产生的序列，最大的周期为 M 即 2^n-1 称为M序列</p></li>
+<li><p>统计特性：（均值、自相关函数、频谱图）</p></li>
+</ul>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/image-20220927225042867.png" /></p>
+<p>​
+该实验信号模型可以很好的模拟一个白噪声信号，但是这种信号切换频率太快，对工业的装置影响太大。同时其对于中低频信号不友好，比较偏重于高频。而系统辨识需要中低频信号</p>
+<p><img src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/image-20220927225345044.png" style="zoom:67%;" /></p>
+<p>​ 所以需要调整我们的PRBS来产生低通特性的PRBS信号：</p>
+<p><img src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/image-20220927225321648.png" style="zoom:67%;" /></p>
+<h4 id="gbngeneralized-binary-noise-广义二值化信号">2）GBN(generalized
+binary noise) 广义二值化信号</h4>
+<p>​ 信号翻转的概率，按照如下图：Generation rule进行信号的生成：</p>
+<p>​ psw为切换概率</p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/image-20220927225457178.png" /></p>
+<p>​
+<strong>通过降低切换概率，增加切换时间来获得低通的信号，来进行辨识信号实验。</strong></p>
+<h4 id="pbrs和gbn对比">3）PBRS和GBN对比：</h4>
+<ul>
+<li>相比于PRBS来说，PRBS在一些特殊的2pi的点等于0，不接近实际，而GBN不会。同时，PRBS有最长周期，而GBN没有，可以随意选择</li>
+</ul>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/image-20220927225706274.png" /></p>
+<h4
+id="持续激励的测试信号persistent-excitation-of-a-test-signal">4）持续激励的测试信号：Persistent
+excitation of a test signal</h4>
+<ul>
+<li>N阶的持续激励信号：需要满足以下条件：</li>
+</ul>
+<p><img src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/image-20220927225916291.png" style="zoom:50%;" /></p>
+<ul>
+<li>N阶持续激励的频域解释：n阶持续激励的频域解释是信号的频谱在区间（-pi,pi）内至少n个频率中不为零</li>
+<li>PRBS和GBN信号的区别：</li>
+</ul>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/image-20220927230015132.png" /></p>
+<h3 id="模型辨识的测试最终测试">4、模型辨识的测试，最终测试</h3>
+<h4 id="mpc控制的测试设计">1） MPC控制的测试设计</h4>
+<ul>
+<li>测试时间：
+<ul>
+<li>小系统或低噪音：（6~10）*（稳定时间 settling time）</li>
+<li>大型系统或高噪音：(12 ~ 20) *(稳定时间 settling time)</li>
+</ul></li>
+<li>信号类型：GBN -</li>
+<li>信号步长：根据预先测试和与操作员的讨论确定。
+从小开始，可以在测试过程中进行调整-</li>
+<li>信号平均切换时间（功率谱）：</li>
+</ul>
+<p><img src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/image-20220927230237868.png" style="zoom:50%;" /></p>
+<ul>
+<li><p>GBN信号可以同时做若干个实验，不同实验互不相关。</p></li>
+<li><p>每个测试的MV个数，以及测试信号的相关性：</p>
+<ul>
+<li>每次测试的 MV 数量：开环测试最多 10 个 MV； 在闭环测试中所有
+MV。</li>
+<li>测试信号之间的相关性：通常独立；
+对于条件不佳的过程（例如高纯度蒸馏塔），某些 MV
+之间的强相关性可能会有所帮助。</li>
+</ul></li>
+</ul>
+<h4 id="闭环实验测试">2）闭环实验测试：</h4>
+<ul>
+<li>大多数工业应用使用开环测试。</li>
+<li>20年前，业界不相信的过程是 可使用闭环数据识别。</li>
+<li>可以在设定点或 MV 处应用测试信号</li>
+<li><strong>闭环测试对过程操作的干扰较小</strong></li>
+<li>闭环测试易于进行。</li>
+<li>来自闭环测试数据的模型更适合控制。</li>
+</ul>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/image-20220927230553891.png" /></p>
+<h2
+id="四系统辨识最小二乘的系统辨识方法">四、系统辨识——最小二乘的系统辨识方法</h2>
+<h3 id="最小二乘的原则p20页-由高斯提出">1、最小二乘的原则：P20页
+由高斯提出</h3>
+<h3
+id="基于最小二乘估计线性过程的模型arx模型">2、基于最小二乘，估计线性过程的模型——ARX模型</h3>
+<p>用n阶差分方程描述：</p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/image-20220927230958268.png" /></p>
+<p>引入误差项：</p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/image-20220927231012557.png" /></p>
+<p>首先进行等式重组：</p>
+<p><img src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/image-20220927231103308.png" style="zoom: 50%;" /></p>
+<p>在系统辨识实验测试后，我们可以得到数据集，并且使用数据来填充等式：</p>
+<p><img src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/image-20220927231138550.png" style="zoom:50%;" /></p>
+<p>最后，通过最小化如下的目标函数来估计模型参数：</p>
+<p><img src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/image-20220927231216488.png" style="zoom:50%;" /></p>
+<p>如下为解：</p>
+<p><img src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/image-20220927231234423.png" style="zoom:50%;" /></p>
+<h3 id="工业实例">3、工业实例：</h3>
+<figure>
+<img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/image-20220927231336491.png"
+alt="image-20220927231336491" />
+<figcaption aria-hidden="true">image-20220927231336491</figcaption>
+</figure>
+<h3 id="最小二乘估计的属性">4、最小二乘估计的属性：</h3>
+<p><strong>估计器的理想（良好）属性：</strong></p>
+<ul>
+<li>无偏估计 Unbiased estimator</li>
+<li>一致的估计器 Consistent estimator</li>
+<li>有效或最小方差估计器 Efficient or minimum variance estimator:</li>
+</ul>
+<p><strong>原始的最小二乘估计器是无偏的</strong></p>
+<p><strong>ARX模型是有偏的，因为A2不保持</strong></p>
+<h2 id="五最小二乘模型的扩展">五、最小二乘模型的扩展：</h2>
+<h3 id="输出误差方法-output-error-method">1、输出误差方法 Output-error
+method</h3>
+<p>​ 其存在一个大的数值问题：输出误差在 A(q) 参数中是非线性的。
+不存在解析（封闭形式）解决方案，也无法保证全局最小值。</p>
+<h4 id="关于一致性的证明">1）关于一致性的证明：</h4>
+<ul>
+<li>真实过程由 (5.1.4) 给出，其中 v(t) 是零均值的平稳随机过程。</li>
+<li>模型阶数 n 正确。</li>
+<li>输入持续兴奋，阶数高于 2n。</li>
+<li><strong>测试是开环的。</strong></li>
+<li>最小化收敛到所有 N 的全局最小值。</li>
+<li>A(q) 和 B(q) 没有公因数。</li>
+</ul>
+<h3 id="预测误差方法-prediction-error-methods">2、预测误差方法
+Prediction error methods</h3>
+<p>该方法实现：1）闭环测试的一致性（无偏性） 2)
+开环和闭环的效率（最小方差）。</p>
+<p>ARMAX 模型：</p>
+<ul>
+<li>一些控制设计方法的良好模型结构。、</li>
+<li>数值优化是必要的，不能保证全局最小值</li>
+</ul>
+<p>BOX-Jenkins模型：</p>
+<h4 id="预测误差方法的属性">预测误差方法的属性：</h4>
+<ul>
+<li>假设：（1）过程稳定； (2)模型结构正确； (3) 测试信号持续激励； (4)
+最小化收敛到其全局最小值</li>
+</ul>
+<h3 id="阶次选择-order-selection">3、阶次选择 Order Selection</h3>
+<ul>
+<li>目的：找到模型阶次，以便模型对其使用最准确（在控制中）。
+<ul>
+<li>粗阶选择方法：检查协方差矩阵的秩，绘制 Hankel 矩阵的奇异值。
+对于嘈杂的数据不准确。</li>
+<li>准确的方法：首先估计具有递增阶数的模型，然后使用错误准则选择最佳阶数。</li>
+</ul></li>
+<li>主要议题：什么策略？什么数据集？
+<ul>
+<li>在识别文献中，预测误差准则常用于模型阶数选择。 -</li>
+<li>交叉验证的缺点是成本高。 使用估计数据进行模型阶数选择更经济。</li>
+<li>使用估计数据的错误标准是使用验证数据的错误标准的有偏估计。</li>
+</ul></li>
+</ul>
+<p><strong>输出误差小并不能保证仿真误差小</strong></p>
+<ul>
+<li><p>仍然需要证明 FOE 是对验证数据的 OE 标准的无偏估计。</p></li>
+<li><p>我们可以将这种使用不同标准进行模型估计和订单选择的交叉标准方法称为方法。</p></li>
+</ul>
+<h3 id="模型验证-model-validation">4、模型验证 Model Validation</h3>
+<p>检查获得的模型是否足以使用（控制），如果没有，提供补救措施（做什么</p>
+<p>将模型属性与过程知识进行比较。 粗略估计过程增益，主要时间常数。</p>
+<p>使用模型阶跃响应图。 检查不同方法的一致性。 估计 FIR、ARX、ARMAX 和
+Box-Jenkins 模型并比较它们的阶跃响应和频率响应</p>
+<h4 id="残差分析">1) 残差分析：</h4>
+<p><img src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220928090759861.png" style="zoom:50%;" /></p>
+<ul>
+<li>一个批评意见：控制的识别没有解决。 （这类模型是否适用于控制）
+<ul>
+<li>前三种方法或多或少是定性测试。</li>
+<li>残差分析是检查模型是否与测试数据充分吻合。</li>
+<li>没有一种方法可以判断模型是否适合控制。</li>
+<li>如果一个模型通过了残差分析，它只告诉给定数据获得了好的模型。
+但是数据是否足够好（用于控制）？</li>
+</ul></li>
+</ul>
+
+    </div>
+
+    
+    
+    
+      
+  <div class="popular-posts-header">相关文章</div>
+  <ul class="popular-posts">
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2022\09\30\2742f0d23b8a\" rel="bookmark">电子信息工程中数学模型与方法——单元3 电磁系统</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2022\09\19\e947a7cc4335\" rel="bookmark">电子信息工程中数学模型与方法——单元1 工业智能</a></div>
+    </li>
+  </ul>
+
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/course/" rel="tag"># course</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2022/09/30/2742f0d23b8a/" rel="prev" title="电子信息工程中数学模型与方法——单元3 电磁系统">
+                  <i class="fa fa-chevron-left"></i> 电子信息工程中数学模型与方法——单元3 电磁系统
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2022/10/12/9203293a8fa9/" rel="next" title="">
+                   <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments utterances-container"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Fantast</span>
+</div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+    <span title="站点总字数">725k</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">33:33</span>
+  </span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script><script src="/js/bookmark.js"></script>
+
+  
+<script src="https://cdn.jsdelivr.net/npm/hexo-generator-searchdb@1.4.0/dist/search.js" integrity="sha256-vXZMYLEqsROAXkEw93GGIvaB2ab+QW6w3+1ahD9nXXA=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdn.jsdelivr.net/npm/mathjax@3.2.0/es5/tex-mml-chtml.js","integrity":"sha256-r+3itOMtGGjap0x+10hu6jW/gZCzxHsoKrOd7gyRSGY="}}</script>
+<script src="/js/third-party/math/mathjax.js"></script>
+
+
+<script class="next-config" data-name="utterances" type="application/json">{"enable":true,"repo":"Fantast416/myblog-comment","issue_term":"pathname","theme":"github-light"}</script>
+<script src="/js/third-party/comments/utterances.js"></script>
+
+</body>
+</html>

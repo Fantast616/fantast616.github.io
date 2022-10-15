@@ -1,0 +1,611 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.2.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css" integrity="sha256-mUZM63G8m73Mcidfrv5E+Y61y7a12O5mW4ezU3bxqW4=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"blog.fantast.top","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.9.0","exturl":false,"sidebar":{"position":"left","width":250,"display":"always","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":true,"color":"#222","save":"manual"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"utterances","storage":true,"lazyload":false,"nav":null,"activeClass":"utterances"},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+<meta name="description" content="该论文提出了一个简单高效的可变形自我注意模块，并通过该模块构造了一个强大的金字塔形式的骨干网络，名为Deformable Attention Transformer(DAT)，用于图像分类和各种密集预测任务。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="《Vision Transformer with Deformable Attention》">
+<meta property="og:url" content="https://blog.fantast.top/2022/04/24/503bff4618b7/index.html">
+<meta property="og:site_name" content="Fantast&#39;s Blog">
+<meta property="og:description" content="该论文提出了一个简单高效的可变形自我注意模块，并通过该模块构造了一个强大的金字塔形式的骨干网络，名为Deformable Attention Transformer(DAT)，用于图像分类和各种密集预测任务。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220425202601636.png">
+<meta property="og:image" content="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220425202654922.png">
+<meta property="og:image" content="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220426100345837.png">
+<meta property="og:image" content="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220426100823173.png">
+<meta property="article:published_time" content="2022-04-24T09:12:19.000Z">
+<meta property="article:modified_time" content="2022-08-07T14:48:40.000Z">
+<meta property="article:author" content="Fantast">
+<meta property="article:tag" content="Transformer">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220425202601636.png">
+
+
+<link rel="canonical" href="https://blog.fantast.top/2022/04/24/503bff4618b7/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://blog.fantast.top/2022/04/24/503bff4618b7/","path":"2022/04/24/503bff4618b7/","title":"《Vision Transformer with Deformable Attention》"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>《Vision Transformer with Deformable Attention》 | Fantast's Blog</title>
+  
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<link rel="alternate" href="/atom.xml" title="Fantast's Blog" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Fantast's Blog</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li>
+        <li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li>
+        <li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li>
+        <li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li>
+        <li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%AE%BA%E6%96%87%E5%90%8D%E7%A7%B0vision-transformer-with-deformable-attention"><span class="nav-text">论文名称：《Vision
+Transformer with Deformable Attention》</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%AE%BA%E6%96%87%E5%9C%B0%E5%9D%80-httparxiv.orgabs2201.00520"><span class="nav-text">论文地址：
+http:&#x2F;&#x2F;arxiv.org&#x2F;abs&#x2F;2201.00520</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%B3%E9%94%AE%E8%AF%8D"><span class="nav-text">1、关键词：</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%91%98%E8%A6%81"><span class="nav-text">2、摘要：</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%A0%94%E7%A9%B6%E8%83%8C%E6%99%AF"><span class="nav-text">3、研究背景：</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%88%E5%89%8D%E5%B7%A5%E4%BD%9C%E6%8F%8F%E8%BF%B0%E4%B8%8E%E6%AF%94%E8%BE%83"><span class="nav-text">4、先前工作描述与比较：</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%BB%E8%A6%81%E8%AE%BE%E8%AE%A1%E6%80%9D%E6%83%B3"><span class="nav-text">5、主要设计思想：</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%B7%E4%BD%93%E6%96%B9%E6%B3%95%E4%B8%8E%E7%BD%91%E7%BB%9C%E6%9E%B6%E6%9E%84"><span class="nav-text">6、具体方法与网络架构：</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%A0%B8%E5%BF%83%E6%9C%BA%E5%88%B61-deformable-attention"><span class="nav-text">1）核心机制1： Deformable
+Attention</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%A0%B8%E5%BF%83%E6%9C%BA%E5%88%B62offset-generation"><span class="nav-text">2）核心机制2：Offset Generation</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%A0%B8%E5%BF%83%E6%9C%BA%E5%88%B63-deformable-relative-position-bias"><span class="nav-text">3）核心机制3：
+Deformable Relative Position Bias</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Fantast"
+      src="/images/avatar.webp">
+  <p class="site-author-name" itemprop="name">Fantast</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">161</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">40</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">97</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/fantast416" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;fantast416" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:fantast416@gmail.com" title="E-Mail → mailto:fantast416@gmail.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll site-overview-item animated">
+    <div class="links-of-blogroll-title"><i class="fa fa-globe fa-fw"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://www.zhihu.com/people/shuo-shuo-3-41" title="https:&#x2F;&#x2F;www.zhihu.com&#x2F;people&#x2F;shuo-shuo-3-41" rel="noopener" target="_blank">ZhiHu</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="http://www.next.zju.edu.cn/" title="http:&#x2F;&#x2F;www.next.zju.edu.cn&#x2F;" rel="noopener" target="_blank">NextLab</a>
+        </li>
+    </ul>
+  </div>
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://blog.fantast.top/2022/04/24/503bff4618b7/">
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.webp">
+      <meta itemprop="name" content="Fantast">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Fantast's Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          《Vision Transformer with Deformable Attention》
+        </h1>
+
+        <div class="post-meta-container">
+          
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2022-04-24 17:12:19" itemprop="dateCreated datePublished" datetime="2022-04-24T17:12:19+08:00">2022-04-24</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2022-08-07 22:48:40" itemprop="dateModified" datetime="2022-08-07T22:48:40+08:00">2022-08-07</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E2%93%B6-%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB%E7%AC%94%E8%AE%B0/" itemprop="url" rel="index"><span itemprop="name">⓶ 论文阅读笔记</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E2%93%B6-%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB%E7%AC%94%E8%AE%B0/CV%E7%9B%B8%E5%85%B3%E8%AE%BA%E6%96%87/" itemprop="url" rel="index"><span itemprop="name">CV相关论文</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>3.9k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>11 分钟</span>
+    </span>
+</div>
+
+            <div class="post-description">该论文提出了一个简单高效的可变形自我注意模块，并通过该模块构造了一个强大的金字塔形式的骨干网络，名为Deformable Attention Transformer(DAT)，用于图像分类和各种密集预测任务。</div>
+            <div class="post-remind">Google Chrome is recommended, otherwise the image size may be wrong</div>
+            <div class="post-remind">FireFox is not recommended,Because it does not support the image zoom property</div>
+        </div>
+        
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h4
+id="论文名称vision-transformer-with-deformable-attention">论文名称：《Vision
+Transformer with Deformable Attention》</h4>
+<h4 id="论文地址-httparxiv.orgabs2201.00520">论文地址：
+http://arxiv.org/abs/2201.00520</h4>
+<h2 id="关键词">1、关键词：</h2>
+<p>​ Deformable Attention</p>
+<h2 id="摘要">2、摘要：</h2>
+<p>​
+Transformer最近在各种视觉任务中表现优异。全局的感知域使Transformer模型比CNN具有更强的表示能力。
+​
+然而，简单地扩大感受野也引起了一些问题。一方面，使用较为密集的注意力，例如在ViT中，会导致过多的内存和计算成本，并且功能可能会受到超出兴趣区域的无关部分的影响。另一方面，在PVT或Swin
+Transformer中采用的较为稀疏的注意机制是与数据无关的，这可能会限制对于长距离关系的建模能力。
+​为了缓解这些问题，论文提出了一种新的可变形的Self
+Attention模块，在自我注意模块中，KV键值对与数据相关。这种灵活的方案使Self
+Attention模块能够关注相关区域，并捕获更多的信息特性。 ​
+大量实验表明，我们的模型在综合基准上取得了持续改进的结果。</p>
+<p>【类似于DCN对于普通卷积的改进思想】</p>
+<h2 id="研究背景">3、研究背景：</h2>
+<p>​
+Transformer最初是为了解决自然语言处理任务而引入的。近年来，它在计算机视觉领域显示出巨大的潜力。Vision
+Transformer
+(ViT)这项开创性的工作，将多个Transformer块堆叠起来，以处理不重叠的图像patches序列，从而产生用于图像分类的无卷积模型。与CNN模型相比，基于transformer的模型具有更大的接受域，擅长建模远程依赖关系，在大量训练数据和模型参数的情况下具有更优越的性能。</p>
+<p>​ 然而，在视觉识别中过多的注意力是一把双刃剑，存在着多方面的弊端。</p>
+<p>​
+具体来说，如果每个查询patch要参与的Key数过多，会导致计算成本高、收敛速度慢，并增加过拟合的风险。为了避免过度的注意力计算，现有的研究都利用精心设计的高效注意力模式来降低计算复杂度。其中以Swin
+Transformer和金字塔视觉转换器(PVT)作为两个最经典的方式。</p>
+<p>​
+理想情况下，我们期望对于一个给定Query而言，Key和Value的选择应该是具有弹性的，这样才能避免因为人工指定的稀疏注意模式中存在的问题。</p>
+<p>​
+事实上，在cnn的文献中，学习卷积滤波器的可变形感受野已被证明可以有效地在数据依赖的基础上选择性地关注更有信息的区域，也就是DCN变形卷积。</p>
+<p>​
+CNN中DCN的思想如果直接应用在SelfAttention机制中，会导致不合理的高内存/计算复杂度。由可变形偏移引入的开销是Patches数量的二次方。
+​
+因此，尽管最近的一些工作研究了Transformer中的变形机制的思想，但由于计算成本高，它们都没有将其作为构建像DCN这样强大的骨干网络的基本构件。它们的变形机制要么被用于Head网络中，要么作为预处理层对后续骨干网络中的Patches进行采样。</p>
+<h2 id="先前工作描述与比较">4、先前工作描述与比较：</h2>
+<p>​ 暂略</p>
+<h2 id="主要设计思想">5、主要设计思想：</h2>
+<p>​
+基于上述研究背景，该论文提出了一个简单高效的可变形自我注意模块，并通过该模块构造了一个强大的金字塔形式的骨干网络，名为Deformable
+Attention Transformer(DAT)，用于图像分类和各种密集预测任务。 ​
+与DCN学习整个feature
+map中不同像素的不同偏移量不同，论文提出的方法基于这样一个思想：对于不同的查询，全局attention通常会导致对于不同的Query来说，都是近乎相同的attention模式。于是论文提出，网络通过学习几组与Query无关的偏移量，将键和值移到重要区域。</p>
+<p>​ 该设计既具有线性空间复杂性，又引入了变形的注意模式。</p>
+<p>​ 具体来说，对于每个注意力模块：</p>
+<ul>
+<li>参考点首先作为统一的网格生成，这些网格在输入数据中是相同的。</li>
+<li>然后，一个offset网络以query特征为输入，生成所有参考点对应的偏移量。</li>
+<li>通过这种方式，候选 键/值
+向重要区域转移，从而使原来的self-attention模块具有更高的灵活性和效率，从而捕捉到更多的信息特征。</li>
+</ul>
+<h2 id="具体方法与网络架构">6、具体方法与网络架构：</h2>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220425194741367.png" /></p>
+<p>​ 现有的ViT，特别是PVT和Swin
+Transformer试图解决过度关注的挑战。前者的下采样技术会导致严重的信息丢失，而后者的滑动窗口注意力会导致接收域的缓慢增长，这限制了对大对象建模的潜力。
+​
+因此，需要一种与数据相关的稀疏Attention机制来灵活地建模相关特征，这导致DCN中首次提出了可变形机制。</p>
+<p>​
+然而，在Transformer模型中简单地实现DCN并不是一个微不足道的问题。在DCN中，feature
+map上的每个元素单独学习其偏移量，其中在<span class="math inline">\(H
+\times W \times C\)</span> 的特征图上的<span class="math inline">\(3
+\times 3\)</span>可变形卷积的空间复杂度为<span class="math inline">\(9
+\times H \times W \times
+C\)</span>。如果我们直接在Attention模块中应用同样的机制，空间复杂度将急剧上升到<span
+class="math inline">\(N_qN_kC\)</span>，其中<span
+class="math inline">\(N_q,N_k\)</span>为Query和Key的数量，通常与特征图的size：<span
+class="math inline">\(HW\)</span>具有相同的比例，带来近似双二次复杂度。</p>
+<h4 id="核心机制1-deformable-attention">1）核心机制1： Deformable
+Attention</h4>
+<p>​ 具体来说，我们提出了
+在特征图中重要区域的指导下，使用可变形Attention来有效地建模tokens之间的关系。
+​
+这些被视为重要的区域是由偏移网络从查询中学习到的多组变形采样点来确定的。
+我们对特征图中的sample特征应用双线性差值，然后在将插值后的特征送入Key和Value的映射矩阵中，得到变形后的Key和Value。
+​
+最后，应用标准的多头注意力机制对采样点Key进行查询，并从变形的Value中聚合特征。
+​此外，变形点的位置提供了一个更强大的相对位置偏差，以促进Deformable
+Attention的学习。这个会在第二个核心机制中讨论。</p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220425201030829.png" /></p>
+<ul>
+<li><p><strong>Input:</strong> 特征图: <span class="math inline">\(x \in
+R^{H \times W \times C}\)</span></p></li>
+<li><p><strong>Step1:</strong>
+根据特征图建立全局的网格参考点，网格的尺寸是由输入特征图依据因子r下采样得到的。网格
+<span class="math inline">\(p \in R^{H_G \times W_G \times C}\)</span>,
+<span class="math inline">\(H_G = H /r , W_G = W /r\)</span></p></li>
+<li><p><strong>Step2:</strong> 参考点的值为网格的线性二维坐标：<span
+class="math inline">\(\{
+(0,0),……,(H_G-1,W_G-1)\}\)</span>，我们将这些值根据网格的大小Normalize归一化到[-1,+1]之间。(-1,-1)代表最左上角的网格点，(+1,+1)代表最右下角的网格点。</p></li>
+<li><p><strong>Step3:</strong>
+为了获得每个参考点的偏移量Offset，特征图通过映射矩阵<span
+class="math inline">\(W_q\)</span>得到<span
+class="math inline">\(q\)</span>，然后将<span
+class="math inline">\(q\)</span>喂入一个轻量级的子网络<span
+class="math inline">\(\theta_{offset}\)</span>中，得到每个Q的Offsets。</p>
+<p>（注：为了稳定训练过程，我们将网格点p的振幅用一些预定义的因素s来缩放以防止过大的偏移，具体公式如下：使用<span
+class="math inline">\(s\times tanh(offset_p)\)</span> 代替 <span
+class="math inline">\(offset_p\)</span></p></li>
+<li><p><strong>Step4:</strong>
+将Step2得到的参考点值和Step3得到的Offset相加，得到变形后的网格参考点Deformed
+Points。</p></li>
+<li><p><strong>Step5:
+</strong>在变形后的网格参考点的位置进行特征采样，使用Bilinear
+Interpolation作为采样函数<span
+class="math inline">\(\phi\)</span>，将采样后的变形特征作为Key和Value，然后经过投影矩阵<span
+class="math inline">\(W_v\)</span>和<span
+class="math inline">\(W_k\)</span>，得到<span class="math inline">\(\hat
+v\)</span>和<span class="math inline">\(\hat k\)</span>。</p>
+<p><img src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220425202601636.png" style="zoom:67%;" /></p>
+<p><img src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220425202654922.png" style="zoom: 67%;" /></p>
+<p><span class="math inline">\(g(a,b) = max(0,1-|a-b|)\)</span>，<span
+class="math inline">\((r_x,r_y)\)</span>代表z上所有的位置索引。</p>
+<p>​
+因为函数g使得只有在4个最接近(px,py)的点上才会是非零，所以可以将等式(8)简化为4个位置的加权平均值</p></li>
+<li><p><strong>Step6</strong>:</p>
+<p>​
+对q,k,v应用相对位置偏差编码R，然后再经过经典的多头注意力层。单层的输出如下：最后，每个head输出的特征拼接在一起，然后经过Wo进行投影，得到最终输出。<img src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220426100345837.png" style="zoom:67%;" /></p></li>
+</ul>
+<h4 id="核心机制2offset-generation">2）核心机制2：Offset Generation</h4>
+<p>​
+先前说道，Offset使用一个子网络进行生成，这个自网络接受Query特征，然后输出参考点的偏移值。考虑到每个参考点覆盖了一个局部的<span
+class="math inline">\(s \times
+s\)</span>的区域，为了学习到合理的偏移量，生成网络还需要对局部特征进行感知。因此，具体做法如下：</p>
+<p><img src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220426100823173.png" style="zoom: 67%;" /></p>
+<p>​ 输入特征先通过 一个 <span class="math inline">\(5\times
+5\)</span>的depthwise卷积层，来捕获局部特征。然后，应用GELU激活层，以及<span
+class="math inline">\(1\times1\)</span>的卷积层。注意：我们没有使用<span
+class="math inline">\(1\times1\)</span>的卷积层中的Bias，是为了避免所有位置的强制位移。</p>
+<p>其中：<strong>模仿MHSA设计了Offset Group的机制：</strong></p>
+<p>​ 为了提高变形参考点的多样性，我们遵循MHSA（MultiHead Self
+Attention）中类似的范式，将特征通道划分为G组。 ​
+每个组的特征使用共享的子网络参数分别产生相应的偏移量。
+在实际操作中，注意模块的Head数：M，将会是OffsetGroup中Group数：G的数倍，以确保多个注意头能被分配给一组变形Key和Value。</p>
+<h4 id="核心机制3-deformable-relative-position-bias">3）核心机制3：
+Deformable Relative Position Bias</h4>
+<p>​
+相对位置偏差对每对查询和键之间的相对位置进行编码，用空间信息来增加普遍的注意。考虑一个<span
+class="math inline">\(H \times
+W\)</span>的特征图，相对位置偏差应该在<span
+class="math inline">\([-H,H]和[-W,W]\)</span>间。</p>
+<p>​
+因为我们的可变形的注意力，有keys的连续位置，我们在正则化的范围内计算位置偏差，即在<span
+class="math inline">\([-1,+1]\)</span>之间。然后，我们对Swin
+Transformer中的 BiasTable 应用插值函数，来覆盖所有可能的offset值。</p>
+
+    </div>
+
+    
+    
+    
+      
+  <div class="popular-posts-header">相关文章</div>
+  <ul class="popular-posts">
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2022\04\24\22e32ee5ba59\" rel="bookmark">《Not All Tokens Are Equal Human-centric Visual Analysis via Token Clustering Transformer》</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2022\04\22\1076c1e77e53\" rel="bookmark">论文略读笔记——CVPR2022 Transformer相关（1）</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2022\03\21\58ee25c0143c\" rel="bookmark">《StyTr2 Unbiased Image Style Transfer with Transformers》</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2022\01\27\7d2ace115a28\" rel="bookmark">《UniFormer:Unifying Convolution and Self-attention for Visual Recognition》</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2022\01\26\8f68bd6cb4f4\" rel="bookmark">《HandWritting Transformers》(更新中)</a></div>
+    </li>
+  </ul>
+
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Transformer/" rel="tag"># Transformer</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2022/04/24/22e32ee5ba59/" rel="prev" title="《Not All Tokens Are Equal Human-centric Visual Analysis via Token Clustering Transformer》">
+                  <i class="fa fa-chevron-left"></i> 《Not All Tokens Are Equal Human-centric Visual Analysis via Token Clustering Transformer》
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2022/04/27/70c42ee7d534/" rel="next" title="计网微课堂Chap1——计网基础知识与概述">
+                  计网微课堂Chap1——计网基础知识与概述 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments utterances-container"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Fantast</span>
+</div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+    <span title="站点总字数">725k</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">33:33</span>
+  </span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script><script src="/js/bookmark.js"></script>
+
+  
+<script src="https://cdn.jsdelivr.net/npm/hexo-generator-searchdb@1.4.0/dist/search.js" integrity="sha256-vXZMYLEqsROAXkEw93GGIvaB2ab+QW6w3+1ahD9nXXA=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdn.jsdelivr.net/npm/mathjax@3.2.0/es5/tex-mml-chtml.js","integrity":"sha256-r+3itOMtGGjap0x+10hu6jW/gZCzxHsoKrOd7gyRSGY="}}</script>
+<script src="/js/third-party/math/mathjax.js"></script>
+
+
+<script class="next-config" data-name="utterances" type="application/json">{"enable":true,"repo":"Fantast416/myblog-comment","issue_term":"pathname","theme":"github-light"}</script>
+<script src="/js/third-party/comments/utterances.js"></script>
+
+</body>
+</html>

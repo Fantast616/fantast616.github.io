@@ -1,0 +1,711 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.2.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css" integrity="sha256-mUZM63G8m73Mcidfrv5E+Y61y7a12O5mW4ezU3bxqW4=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"blog.fantast.top","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.9.0","exturl":false,"sidebar":{"position":"left","width":250,"display":"always","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":true,"color":"#222","save":"manual"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"utterances","storage":true,"lazyload":false,"nav":null,"activeClass":"utterances"},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+<meta name="description" content="计网微课堂Chap5——运输层原理">
+<meta property="og:type" content="article">
+<meta property="og:title" content="计网微课堂Chap5——运输层原理">
+<meta property="og:url" content="https://blog.fantast.top/2022/07/15/b846bd0fbb3c/index.html">
+<meta property="og:site_name" content="Fantast&#39;s Blog">
+<meta property="og:description" content="计网微课堂Chap5——运输层原理">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220716123516884.png">
+<meta property="article:published_time" content="2022-07-15T14:00:19.000Z">
+<meta property="article:modified_time" content="2022-08-07T14:51:07.000Z">
+<meta property="article:author" content="Fantast">
+<meta property="article:tag" content="Computer Network">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220716123516884.png">
+
+
+<link rel="canonical" href="https://blog.fantast.top/2022/07/15/b846bd0fbb3c/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://blog.fantast.top/2022/07/15/b846bd0fbb3c/","path":"2022/07/15/b846bd0fbb3c/","title":"计网微课堂Chap5——运输层原理"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>计网微课堂Chap5——运输层原理 | Fantast's Blog</title>
+  
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<link rel="alternate" href="/atom.xml" title="Fantast's Blog" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Fantast's Blog</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li>
+        <li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li>
+        <li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li>
+        <li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li>
+        <li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%80%E8%BF%90%E8%BE%93%E5%B1%82%E7%9A%84%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5"><span class="nav-text">一、运输层的基本概念：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BA%8C%E8%BF%90%E8%BE%93%E5%B1%82%E7%AB%AF%E5%8F%A3%E5%8F%B7%E5%A4%8D%E7%94%A8%E4%B8%8E%E5%88%86%E7%94%A8%E7%9A%84%E6%A6%82%E5%BF%B5"><span class="nav-text">二、运输层端口号、复用与分用的概念</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%89udp%E5%92%8Ctcp%E7%9A%84%E5%8C%BA%E5%88%AB"><span class="nav-text">三、UDP和TCP的区别：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%9B%9Btcp%E7%9A%84%E6%B5%81%E9%87%8F%E6%8E%A7%E5%88%B6"><span class="nav-text">四、TCP的流量控制：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BA%94tcp%E7%9A%84%E6%8B%A5%E5%A1%9E%E6%8E%A7%E5%88%B6"><span class="nav-text">五、TCP的拥塞控制：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%85%ADtcp%E8%B6%85%E6%97%B6%E9%87%8D%E4%BC%A0%E6%97%B6%E9%97%B4%E7%9A%84%E9%80%89%E6%8B%A9"><span class="nav-text">六、TCP超时重传时间的选择：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%83%E5%8F%AF%E9%9D%A0%E4%BC%A0%E8%BE%93%E7%9A%84%E5%AE%9E%E7%8E%B0"><span class="nav-text">七、可靠传输的实现：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%85%ABtcp%E7%9A%84%E8%BF%9E%E6%8E%A5%E5%BB%BA%E7%AB%8B%E4%B8%89%E6%AC%A1%E6%8F%A1%E6%89%8B"><span class="nav-text">八、TCP的连接建立——三次握手</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B9%9Dtcp%E7%9A%84%E8%BF%9E%E6%8E%A5%E9%87%8A%E6%94%BE%E5%9B%9B%E6%AC%A1%E6%8C%A5%E6%89%8B"><span class="nav-text">九、TCP的连接释放——四次挥手</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%8D%81tcp%E6%8A%A5%E6%96%87%E6%AE%B5%E7%9A%84%E9%A6%96%E9%83%A8%E6%A0%BC%E5%BC%8F"><span class="nav-text">十、TCP报文段的首部格式</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Fantast"
+      src="/images/avatar.webp">
+  <p class="site-author-name" itemprop="name">Fantast</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">161</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">40</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">97</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/fantast416" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;fantast416" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:fantast416@gmail.com" title="E-Mail → mailto:fantast416@gmail.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll site-overview-item animated">
+    <div class="links-of-blogroll-title"><i class="fa fa-globe fa-fw"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://www.zhihu.com/people/shuo-shuo-3-41" title="https:&#x2F;&#x2F;www.zhihu.com&#x2F;people&#x2F;shuo-shuo-3-41" rel="noopener" target="_blank">ZhiHu</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="http://www.next.zju.edu.cn/" title="http:&#x2F;&#x2F;www.next.zju.edu.cn&#x2F;" rel="noopener" target="_blank">NextLab</a>
+        </li>
+    </ul>
+  </div>
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://blog.fantast.top/2022/07/15/b846bd0fbb3c/">
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.webp">
+      <meta itemprop="name" content="Fantast">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Fantast's Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          计网微课堂Chap5——运输层原理
+        </h1>
+
+        <div class="post-meta-container">
+          
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2022-07-15 22:00:19" itemprop="dateCreated datePublished" datetime="2022-07-15T22:00:19+08:00">2022-07-15</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2022-08-07 22:51:07" itemprop="dateModified" datetime="2022-08-07T22:51:07+08:00">2022-08-07</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E2%93%B9-%E5%9F%BA%E7%A1%80%E7%B1%BB%E7%AC%94%E8%AE%B0/" itemprop="url" rel="index"><span itemprop="name">⓹ 基础类笔记</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E2%93%B9-%E5%9F%BA%E7%A1%80%E7%B1%BB%E7%AC%94%E8%AE%B0/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/" itemprop="url" rel="index"><span itemprop="name">计算机网络</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>3.9k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>11 分钟</span>
+    </span>
+</div>
+
+            <div class="post-description">计网微课堂Chap5——运输层原理</div>
+            <div class="post-remind">Google Chrome is recommended, otherwise the image size may be wrong</div>
+            <div class="post-remind">FireFox is not recommended,Because it does not support the image zoom property</div>
+        </div>
+        
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p>视频地址：https://www.bilibili.com/video/BV1c4411d7jb?p=58</p>
+<h4 id="一运输层的基本概念">一、运输层的基本概念：</h4>
+<p>​ 先前的所有层共同解决了<strong>主机到主机的通信</strong></p>
+<p>​
+实际上计算机网络中进行<strong>通信的真正实体是位于通信两端主机中的进程</strong></p>
+<p>​
+<strong>如何为运行在不同主机上的应用进程提供直接的通信服务是运输层的任务，运输层协议又称为端到端协议。</strong></p>
+<p>​
+运输层向高层用户屏蔽了下面网络核心的细节（如网络拓扑、所采用的路由选择协议等），它使应用进程看见的就好像是在两个运输层实体之间有一条端到端的逻辑通信信道。</p>
+<p>​
+根据应用需求的不同，因特网的运输层为应用层提供了两种不同的运输协议，即面向连接的TCP和无连接的UDP，这两种协议就是本章要讨论的主要内容。</p>
+<h4
+id="二运输层端口号复用与分用的概念">二、运输层端口号、复用与分用的概念</h4>
+<ul>
+<li>​ 端口号：</li>
+</ul>
+<p>​ 运行在计算机上的进程使用进程标识符PID来标志。</p>
+<p>​
+因特网上的计算机<strong>并不是使用统一的操作系统</strong>，不同的操作系统（windows，Linux，Mac
+OS）又使用不同格式的进程标识符。</p>
+<p>​
+为了使运行不同操作系统的计算机的应用进程之间能够进行网络通信，就必须使用统一的方法对TCP/IP体系的应用进程进行标识。<strong>TCP/IP体系的运输层使用端口号来区分应用层的不同应用进程。</strong></p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220715215440625.png" /></p>
+<ul>
+<li>发送方的复用和接收方的分用</li>
+</ul>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220715215959063.png" /></p>
+<ul>
+<li>常用的应用层协议使用的运输层端口号</li>
+</ul>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220715220025060.png" /></p>
+<h4 id="三udp和tcp的区别">三、UDP和TCP的区别：</h4>
+<table>
+<colgroup>
+<col style="width: 50%" />
+<col style="width: 50%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>UDP</th>
+<th>TCP</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>无连接，随时传输数据</td>
+<td>面向连接，需要建立连接、释放连接</td>
+</tr>
+<tr class="even">
+<td>支持单播、多播、广播</td>
+<td>仅支持单播</td>
+</tr>
+<tr class="odd">
+<td>面向应用报文的</td>
+<td>面向字节流的</td>
+</tr>
+<tr class="even">
+<td>向上层提供无连接不可靠传输服务（适用于IP电话、视频会议等实时应用）。</td>
+<td>向上层提供面向连接的可靠传输服务（适用于要求可靠传输的应用，例如文件传输）</td>
+</tr>
+<tr class="odd">
+<td>首部仅8字节</td>
+<td>首部更为复杂，因为要实现可靠传输、流量控制、拥塞控制</td>
+</tr>
+</tbody>
+</table>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220715221236586.png" /></p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220715221534600.png" /></p>
+<h4 id="四tcp的流量控制">四、TCP的流量控制：</h4>
+<p>​ 所谓流量控制（flow
+control）就是让发送方的发送速率不要太快，要让接收方来得及接收。</p>
+<ul>
+<li><p>可以使用滑动窗口机制实现，示例如下：</p></li>
+<li><p><strong>主机A根据主机B的ACK帧中的接收窗口大小来调整自己的发送窗口大小。</strong></p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220716111424822.png" /></p></li>
+</ul>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220716111513511.png" /></p>
+<p>​
+为避免上述情况发生，每个主机当收到零窗口通知时，会启动一个持续计时器，当该计时器超时，则主机会发送一个<strong>零窗口探测报文</strong>，仅携带1字节数据，询问接收窗口大小。如下所示：</p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220716111638398.png" /></p>
+<h4 id="五tcp的拥塞控制">五、TCP的拥塞控制：</h4>
+<p>​
+在某段时间，若对网络中某一资源的需求超过了该资源所能提供的可用部分，网络性能就要变坏。这种情况就叫做拥塞（congestion）。</p>
+<ul>
+<li>在计算机网络中的链路容量（即带宽）、交换结点中的缓存和处理机等，都是网络的资源。若出现拥塞而不进行控制，整个网络的吞吐量将随输入负荷的增大而下降。</li>
+</ul>
+<p><strong>TCP共有以下四种拥塞控制算法</strong>：</p>
+<ul>
+<li><p>假设：</p>
+<ul>
+<li>数据是单方向传送，而另一个方向只传送确认。</li>
+<li>接收方总是有足够大的缓存空间，因而发送方发送窗口的大小由网络的拥塞程度来决定。</li>
+<li>以最大报文段MSS的个数为讨论问题的单位，而不是以字节为单位。</li>
+</ul></li>
+<li><p><strong>TCP使用拥塞避免算法的基本过程：</strong></p></li>
+<li><p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220716112248505.png" /></p></li>
+<li><p>慢开始算法：</p></li>
+</ul>
+<p>​ 每收到一个确认报文，拥塞窗口大小增加1.
+每个传输轮次结束后，按照<strong>指数速度</strong>增长拥塞窗口。</p>
+<ul>
+<li>拥塞避免算法：</li>
+</ul>
+<p>​
+每个传输轮次结束后，拥塞窗口大小增加1.每个传输轮次结束后，按照<strong>线性速度</strong>增长拥塞窗口。</p>
+<p>​
+当某一次，重传计时器超时，则<strong>网络很可能出现了拥塞，进行以下工作</strong>：</p>
+<p>​ 1、将ssthresh值更新为发生拥塞时cwnd值的一半；</p>
+<p>​ 2、将cwnd值减少为1，并重新开始执行慢开始算法。</p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220716112813706.png" /></p>
+<ul>
+<li><p>快重传和快恢复：</p>
+<ul>
+<li>有时，个别报文段会在网络中丢失，但实际上网络并未发生拥塞。这将导致发送方超时重传，并误认为网络发生了拥塞；这两个算法将会<strong>改进TCP的性能</strong></li>
+</ul></li>
+<li><p>快重传算法：</p>
+<p>​ 采用快重传算法可以让发送方尽早知道发生了个别报文段的丢失。</p>
+<p>​
+所谓快重传，就是使发送方尽快进行重传，而不是等超时重传计时器超时再重传。</p>
+<p>​
+口要求接收方不要等待自己发送数据时才进行捎带确认，而是要立即发送确认；</p>
+<p>​ 囗即使收到了失序的报文段也要立即发出对已收到的报文段的重复确认。</p>
+<p>​
+口发送方一旦收到3个连续的重复确认，就将相应的报文段立即重传，而不是等该报文段的超时重传计时器超时再重传。</p></li>
+</ul>
+<p>​
+口对于个别丢失的报文段，发送方不会出现超时重传，也就不会误认为出现了拥塞（进而降低拥塞窗口cwnd为1）。使用快重传可以使整个网络的吞叶量提高约20%。.</p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220716122753536.png" /></p>
+<ul>
+<li><p>快恢复算法：</p>
+<p>​
+发送方一旦收到3个重复确认，就知道现在只是丢失了个别的报文段。于是不启动慢开始算法，而执行快恢复算法；</p>
+<p>​
+<strong>发送方将慢开始门限ssthresh值和拥塞窗口cwnd值调整为当前窗口的一半；开始执行拥塞避免算法。</strong></p></li>
+<li><p>综合总结</p></li>
+</ul>
+<figure>
+<img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220716122929537.png"
+alt="image-20220716122929537" />
+<figcaption aria-hidden="true">image-20220716122929537</figcaption>
+</figure>
+<h4 id="六tcp超时重传时间的选择">六、TCP超时重传时间的选择：</h4>
+<p>​ 不能直接使用某次测量得到的RTT样本来计算超时重传时间RTO。</p>
+<p>​
+利用每次测量得到的RTT样本，计算加权平均往返时间RTTs利用每次测量得到的RTT样本，计算加权平均往返时间RTTs（又称为平滑的往返时间）。</p>
+<p><img src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220716123516884.png" style="zoom:67%;" /></p>
+<ul>
+<li>往返时间RTT的测量比较复杂：</li>
+</ul>
+<p>​
+针对出现超时重传时无法测准往返时间RTT的问题，Karn提出了一个算法：在计算加权平均往返时间RTTs时，只要报文段重传了，就不采用其往返时间RTT样本。也就是出现重传时，不重新计算RTTs，进而超时重传时间RTO也不会重新计算。</p>
+<p>​
+因此，Karn算法也需要修正。方法是：<strong>报文段每重传一次，就把超时重传时间RTO增大一些。</strong>典型的做法是将新RTO的值取为旧RTO值的2倍。</p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220716123844458.png" /></p>
+<h4 id="七可靠传输的实现">七、可靠传输的实现：</h4>
+<ul>
+<li><p>TCP基于<strong>以字节为单位的滑动窗口</strong>来实现可靠传输</p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220716132341532.png" /></p></li>
+<li><p>如何描述发送窗口的状态：</p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220716132527433.png" /></p></li>
+<li><p>接收窗口：</p>
+<ul>
+<li>接收方只能应答已收到报文的最高序号</li>
+<li>对于不按需到达的数据应如何处理，TCP无明确规定：
+<ul>
+<li>TCP通常对不按序到达的数据是先临时存放在接收窗口中，等到字节流中所缺少的字节收到后，再按序交付上层的应用进程。</li>
+</ul></li>
+<li>TCP要求接收方必须有累积确认和捎带确认机制，这样可以减小传输开销。接收方可以在合适的时候发送确认，也可以在自己有数据要发送时把确认信息顺便捎带上。</li>
+</ul></li>
+<li><p>TCP是全双工通信。每一方都有自己的接收窗口和发送窗口</p></li>
+</ul>
+<h4 id="八tcp的连接建立三次握手">八、TCP的连接建立——三次握手</h4>
+<p>TCP运输连接有以下三个阶段：</p>
+<ul>
+<li>建立TCP连接</li>
+<li>数据传送</li>
+<li>释放TCP连接</li>
+</ul>
+<p>TCP的连接建立要解决以下问题：</p>
+<ul>
+<li>使TCP双方能够确知对方的存在；</li>
+<li>使TCP双方能够协商一些参数（如最大窗口值、是否使用窗口扩大选项和时间戳选项以及服务质量等）；</li>
+<li>使TCP双方能够对运输实体资源（如缓存大小、连接表中的项目等）进行分配。</li>
+</ul>
+<p><strong>TCP连接建立的过程：</strong></p>
+<p>​ <img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220716133727985.png" /></p>
+<ul>
+<li><p>x是客户端选择的初始序号</p></li>
+<li><p>y是服务器选择的初始序号</p></li>
+<li><p>TCP连接请求帧和TCP连接请求确认帧不能携带其他数据</p></li>
+<li><p>为什么最后要发送确认报文？</p>
+<ul>
+<li>如果有TCP连接请求滞留在网络中，那么当该连接请求到达服务器后，服务器又会处于连接建立状态，而客户端已经处于关闭状态，故而会浪费服务器资源。</li>
+<li><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220716134101110.png" /></li>
+</ul></li>
+</ul>
+<h4 id="九tcp的连接释放四次挥手">九、TCP的连接释放——四次挥手</h4>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220716140346765.png" /></p>
+<ul>
+<li>客户端为什么要有TIME-WAIT阶段？
+<ul>
+<li>如果最后一个客户端的确认数据报文丢失，则：</li>
+<li><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220716140540038.png" /></li>
+</ul></li>
+<li>如果TCP客户端出现故障，TCP服务器进程如何发现呢？
+<ul>
+<li>TCP服务器进程每收到一次TCP客户进程的数据，就重新设置并启动保活计时器（2小时定时）。</li>
+<li>若保活计时器定时周期内未收到TCP客户进程发来的数据，则当保活计时器到时后，TCP服务器进程就向TCP客户进程发送一个探测报文段，以后则每隔75秒钟发送一次。</li>
+<li>若一连发送10个探测报文段后仍无TCP客户进程的响应，TCP服务器进程就认为TCP客户进程所在主机出了故障，接着就关闭这个连接。</li>
+</ul></li>
+</ul>
+<h4 id="十tcp报文段的首部格式">十、TCP报文段的首部格式</h4>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220716140957849.png" /></p>
+<ul>
+<li><p>源端口：占16比特，写入源端口号，用来标识发送该TCP报文段的应用进程。</p></li>
+<li><p>目的端口：占16比特，写入目的端口号，用来标识接收该TCP报文段的应用进程。</p></li>
+<li><p>序号：占32比特，取值范围[0，<span class="math inline">\(2^{32} -
+1\)</span>]，序号增加到最后一个后，下一个序号就又回到0。指出本TCP报文段数据载荷的第一个字节的序号。</p></li>
+<li><p>确认号：占32比特，取值范围[0，<span class="math inline">\(2^{32}
+-
+1\)</span>]，确认号增加到最后一个后，下一个确认号就又回到0。指出期望收到对方下一个TCP报文段的数据载荷的第一个字节的序号，同时也是对之前收到的所有数据的确认。</p></li>
+<li><p>确认标志位ACK：取值为1时确认号字段才有效；取值为0时确认号字段无效。TCP规定，在连接建立后所有传送的TCP报文段都必须把ACK置1。</p></li>
+<li><p>数据偏移：占4比特，并以4字节为单位。用来指出TCP报文段的数据载荷部分的起始处距离TCP报文段的起始处有多远。这个字段实际上是指出了TCP报文段的首部长度。</p></li>
+<li><p>窗口：占16比特，以字节为单位。指出发送本报文段的一方的接收窗口。窗口值作为接收方让发送方设置其发送窗口的依据。这是以接收方的接收能力来控制发送方的发送能力，称为流量控制。</p></li>
+<li><p>校验和：占16比特，检查范围包括TCP报文段的首部和数据载荷两部分。在计算校验和时，要在TCP报文段的前面加上12字节的伪首部。</p></li>
+<li><p>同步标志位SYN：在TCP连接建立时用来同步序号。</p></li>
+<li><p>终止标志位FIN：用来释放TCP连接。</p></li>
+<li><p>复位标志位RST：用来复位TCP连接。当RST=1时，表明TCP连接出现了异常，必须释放连接，然后再重新建立连接。RST置1还用来拒绝一个非法的报文段或拒绝打开一个TCP连接。</p></li>
+<li><p>推送标志位PSH：接收方的TCP收到该标志位为1的报文段会尽快上交应用进程，而不必等到接收缓存都填满后再向上交付。</p></li>
+<li><p>紧急标志位URG：取值为1时紧急指针字段有效；取值为0时紧急指针字段无效。</p></li>
+<li><p>紧急指针：占16比特，以字节为单位，用来指明紧急数据的长度。</p></li>
+<li><p>填充：由于选项的长度可变，因此使用填充来确保报文段首部能被4整除（因为数据偏移字段，也就是首部长度字段，是以4字节为单位的）。</p></li>
+</ul>
+
+    </div>
+
+    
+    
+    
+      
+  <div class="popular-posts-header">相关文章</div>
+  <ul class="popular-posts">
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2022\07\17\78c11b2eddea\" rel="bookmark">计网微课堂Chap6——应用层原理</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2022\07\12\a63746099b02\" rel="bookmark">计网微课堂Chap4——网络层原理</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2022\05\12\feb80abbdc95\" rel="bookmark">计网微课堂Chap3——数据链路层原理</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2022\05\01\81ac33552c19\" rel="bookmark">计网微课堂Chap2——物理层原理</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2022\04\27\dcdee696a9ce\" rel="bookmark">计网微课堂Chap1——计网基础知识与概述</a></div>
+    </li>
+  </ul>
+
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Computer-Network/" rel="tag"># Computer Network</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2022/07/12/a63746099b02/" rel="prev" title="计网微课堂Chap4——网络层原理">
+                  <i class="fa fa-chevron-left"></i> 计网微课堂Chap4——网络层原理
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2022/07/17/78c11b2eddea/" rel="next" title="计网微课堂Chap6——应用层原理">
+                  计网微课堂Chap6——应用层原理 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments utterances-container"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Fantast</span>
+</div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+    <span title="站点总字数">725k</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">33:33</span>
+  </span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script><script src="/js/bookmark.js"></script>
+
+  
+<script src="https://cdn.jsdelivr.net/npm/hexo-generator-searchdb@1.4.0/dist/search.js" integrity="sha256-vXZMYLEqsROAXkEw93GGIvaB2ab+QW6w3+1ahD9nXXA=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdn.jsdelivr.net/npm/mathjax@3.2.0/es5/tex-mml-chtml.js","integrity":"sha256-r+3itOMtGGjap0x+10hu6jW/gZCzxHsoKrOd7gyRSGY="}}</script>
+<script src="/js/third-party/math/mathjax.js"></script>
+
+
+<script class="next-config" data-name="utterances" type="application/json">{"enable":true,"repo":"Fantast416/myblog-comment","issue_term":"pathname","theme":"github-light"}</script>
+<script src="/js/third-party/comments/utterances.js"></script>
+
+</body>
+</html>

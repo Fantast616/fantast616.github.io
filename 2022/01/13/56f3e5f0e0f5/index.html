@@ -1,0 +1,683 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.2.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css" integrity="sha256-mUZM63G8m73Mcidfrv5E+Y61y7a12O5mW4ezU3bxqW4=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"blog.fantast.top","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.9.0","exturl":false,"sidebar":{"position":"left","width":250,"display":"always","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":true,"color":"#222","save":"manual"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"utterances","storage":true,"lazyload":false,"nav":null,"activeClass":"utterances"},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+<meta name="description" content="论文旨在在多尺度分辨率下，去恢复更多的图像细节。Uformer基于UNet，只不过将所有的卷积层替换为了Encoder-Decoder结构，同时保留了整体的Encoder-Decoder架构以及skip-connections。总体来说就是使用TransformerBlock 构建了一个层次化的Encoder-Decoder网络。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="《Uformer A General U-Shaped Transformer for Image Restoration》论文笔记">
+<meta property="og:url" content="https://blog.fantast.top/2022/01/13/56f3e5f0e0f5/index.html">
+<meta property="og:site_name" content="Fantast&#39;s Blog">
+<meta property="og:description" content="论文旨在在多尺度分辨率下，去恢复更多的图像细节。Uformer基于UNet，只不过将所有的卷积层替换为了Encoder-Decoder结构，同时保留了整体的Encoder-Decoder架构以及skip-connections。总体来说就是使用TransformerBlock 构建了一个层次化的Encoder-Decoder网络。">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2022-01-13T05:19:19.000Z">
+<meta property="article:modified_time" content="2022-08-07T14:48:40.000Z">
+<meta property="article:author" content="Fantast">
+<meta property="article:tag" content="UNet">
+<meta property="article:tag" content="Swin Transformer">
+<meta property="article:tag" content="Image Restoration">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://blog.fantast.top/2022/01/13/56f3e5f0e0f5/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://blog.fantast.top/2022/01/13/56f3e5f0e0f5/","path":"2022/01/13/56f3e5f0e0f5/","title":"《Uformer A General U-Shaped Transformer for Image Restoration》论文笔记"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>《Uformer A General U-Shaped Transformer for Image Restoration》论文笔记 | Fantast's Blog</title>
+  
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<link rel="alternate" href="/atom.xml" title="Fantast's Blog" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Fantast's Blog</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li>
+        <li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li>
+        <li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li>
+        <li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li>
+        <li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%AE%BA%E6%96%87%E5%90%8D%E7%A7%B0uformer-a-general-u-shaped-transformer-for-image-restoration"><span class="nav-text">论文名称：《Uformer:
+A General U-Shaped Transformer for Image Restoration》</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%AE%BA%E6%96%87%E5%9C%B0%E5%9D%80-httpsarxiv.orgabs2106.03106"><span class="nav-text">论文地址：
+https:&#x2F;&#x2F;arxiv.org&#x2F;abs&#x2F;2106.03106</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%B3%E9%94%AE%E8%AF%8D"><span class="nav-text">1、关键词：</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%A2%86%E5%9F%9F%E8%83%8C%E6%99%AF%E5%9B%BE%E5%83%8F%E4%BF%AE%E5%A4%8D"><span class="nav-text">2、领域背景—图像修复：</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%88%E5%89%8D%E5%B7%A5%E4%BD%9C%E6%8F%8F%E8%BF%B0%E4%B8%8E%E6%AF%94%E8%BE%83"><span class="nav-text">3、先前工作描述与比较：</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%BB%E8%A6%81%E8%AE%BE%E8%AE%A1%E6%80%9D%E6%83%B3"><span class="nav-text">4、主要设计思想：</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%B7%E4%BD%93%E6%96%B9%E6%B3%95%E4%B8%8E%E7%BD%91%E7%BB%9C%E6%9E%B6%E6%9E%84"><span class="nav-text">5、具体方法与网络架构：</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%95%B4%E4%BD%93%E6%9E%B6%E6%9E%84overall-pipeline"><span class="nav-text">1) 整体架构（Overall Pipeline）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#input-projection"><span class="nav-text">2) Input Projection</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#encoder---one-stage-encoder%E4%B8%AD%E6%80%BB%E5%85%B1k%E4%B8%AAstage"><span class="nav-text">3) Encoder - One
+Stage （ Encoder中总共K个Stage ）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#bottleneck-stage"><span class="nav-text">4) BottleNeck Stage</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#decoder---one-stage-decoder%E4%B8%AD%E6%80%BB%E5%85%B1k%E4%B8%AAstage%E4%B8%8Eencoder%E4%B8%80%E8%87%B4"><span class="nav-text">5）Decoder -
+One Stage （Decoder中总共K个Stage，与Encoder一致 ）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#output-projection"><span class="nav-text">6) Output Projection</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9C%80%E7%BB%88%E8%BE%93%E5%87%BA-loss%E5%87%BD%E6%95%B0"><span class="nav-text">7）最终输出 &amp; Loss函数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#lewin-transformer-block"><span class="nav-text">8）LeWin Transformer Block</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#multi-scale-restoration-modulator"><span class="nav-text">9）Multi-Scale Restoration
+Modulator</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Fantast"
+      src="/images/avatar.webp">
+  <p class="site-author-name" itemprop="name">Fantast</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">161</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">40</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">97</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/fantast416" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;fantast416" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:fantast416@gmail.com" title="E-Mail → mailto:fantast416@gmail.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll site-overview-item animated">
+    <div class="links-of-blogroll-title"><i class="fa fa-globe fa-fw"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://www.zhihu.com/people/shuo-shuo-3-41" title="https:&#x2F;&#x2F;www.zhihu.com&#x2F;people&#x2F;shuo-shuo-3-41" rel="noopener" target="_blank">ZhiHu</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="http://www.next.zju.edu.cn/" title="http:&#x2F;&#x2F;www.next.zju.edu.cn&#x2F;" rel="noopener" target="_blank">NextLab</a>
+        </li>
+    </ul>
+  </div>
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://blog.fantast.top/2022/01/13/56f3e5f0e0f5/">
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.webp">
+      <meta itemprop="name" content="Fantast">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Fantast's Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          《Uformer A General U-Shaped Transformer for Image Restoration》论文笔记
+        </h1>
+
+        <div class="post-meta-container">
+          
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2022-01-13 13:19:19" itemprop="dateCreated datePublished" datetime="2022-01-13T13:19:19+08:00">2022-01-13</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2022-08-07 22:48:40" itemprop="dateModified" datetime="2022-08-07T22:48:40+08:00">2022-08-07</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E2%93%B6-%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB%E7%AC%94%E8%AE%B0/" itemprop="url" rel="index"><span itemprop="name">⓶ 论文阅读笔记</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E2%93%B6-%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB%E7%AC%94%E8%AE%B0/CV%E7%9B%B8%E5%85%B3%E8%AE%BA%E6%96%87/" itemprop="url" rel="index"><span itemprop="name">CV相关论文</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>3.8k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>11 分钟</span>
+    </span>
+</div>
+
+            <div class="post-description">论文旨在在多尺度分辨率下，去恢复更多的图像细节。Uformer基于UNet，只不过将所有的卷积层替换为了Encoder-Decoder结构，同时保留了整体的Encoder-Decoder架构以及skip-connections。总体来说就是使用TransformerBlock 构建了一个层次化的Encoder-Decoder网络。</div>
+            <div class="post-remind">Google Chrome is recommended, otherwise the image size may be wrong</div>
+            <div class="post-remind">FireFox is not recommended,Because it does not support the image zoom property</div>
+        </div>
+        
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h3
+id="论文名称uformer-a-general-u-shaped-transformer-for-image-restoration">论文名称：《Uformer:
+A General U-Shaped Transformer for Image Restoration》</h3>
+<h3 id="论文地址-httpsarxiv.orgabs2106.03106">论文地址：
+https://arxiv.org/abs/2106.03106</h3>
+<h2 id="关键词">1、关键词：</h2>
+<p>​ 图像修复（Image Restoration）、类UNet结构、Transformer</p>
+<h2 id="领域背景图像修复">2、领域背景—图像修复：</h2>
+<p>​
+图像修复是一个经典问题，一般而言其目标为从低分辨率的图像中恢复出高分辨率的图像。通常可以用于超分辨率、图像去噪，以及JPEG压缩鬼影去除等应用。此篇文章将Swin
+Transformer应用于图像修复领域中。</p>
+<h2 id="先前工作描述与比较">3、先前工作描述与比较：</h2>
+<p>​ 近年来图像修复很好结果的都是基于卷积的网络，但是卷积网络在long-range
+dependencies上依旧存在局限性。同时，最近也有很多文章使用transofmer对低分辨率的特征图进行处理（限于self-attention的计算复杂度）。</p>
+<h2 id="主要设计思想">4、主要设计思想：</h2>
+<p>​ 论文旨在
+在多尺度分辨率下，去恢复更多的图像细节。Uformer基于UNet，只不过将所有的卷积层替换为了Encoder-Decoder结构，同时保留了整体的Encoder-Decoder架构以及skip-connections。总体来说就是使用TransformerBlock
+构建了一个层次化的encoder-decoder网络。</p>
+<p>​ <strong>2个核心设计</strong></p>
+<p>​ 1、<strong>LeWin Transformer Block</strong>( locally-enhanced window
+Transformer block
+),使用分块的self-attetiond代替全局的self-attention，在捕获高分辨率图像的局部特征时，减少了计算量。</p>
+<p>​ 2、提出了<strong>可学习的多尺度恢复调制器</strong>，以多尺度
+<strong>spatial bias</strong>
+的形式去在decoder的不同层上调节特征。来处理不同的图像退化问题（比如说虚焦、运动模糊等。这个模块本身由一个多尺度的spatial
+bias组成，用来在decoder的不同层级上调整特征。更具体一点的话，就是一个可学习的基于窗口的tensor张量，和特征直接相加，从而来调整特征能够恢复更多的细节。整体而言，这个调制器对于恢复图像细节而言有非常强的能力，同时只带来了一点点额外的参数和计算代价。</p>
+<h2 id="具体方法与网络架构">5、具体方法与网络架构：</h2>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/imac/image-20220112112308268.png" /></p>
+<h3 id="整体架构overall-pipeline">1) 整体架构（Overall Pipeline）</h3>
+<ul>
+<li><strong>概述</strong>：U型带Skip-Connection的Encoder-Decoder网络，基于UNet结构，但是将UNet中的所有卷积层都替换成了LeWinBlocks。</li>
+<li><strong>输入</strong>：退化图像 <span class="math inline">\(I \in
+R^{3\times H\times W}\)</span></li>
+<li><strong>输出</strong>：修复图像 <span
+class="math inline">\(I^{&#39;} \in R^{3\times H\times W}\)</span>
+<ul>
+<li><span class="math inline">\(Residual \in R^{3\times H\times W
+}\)</span></li>
+<li><span class="math inline">\(I^{&#39;} = I + R e sidual\)</span></li>
+</ul></li>
+</ul>
+<h3 id="input-projection">2) Input Projection</h3>
+<ul>
+<li><strong>概述</strong>：用于从退化图像中提取低层级信息</li>
+<li><strong>输入</strong>：退化图像 <span class="math inline">\(I \in
+R^{3\times H\times W}\)</span></li>
+<li><strong>输出</strong>：low-level 特征图 <span
+class="math inline">\(X_0\)</span></li>
+<li><strong>网络结构</strong>：
+<ul>
+<li><span class="math inline">\(3\times 3\)</span>卷积层 +
+LeakyReLU激活函数</li>
+</ul></li>
+</ul>
+<h3 id="encoder---one-stage-encoder中总共k个stage">3) Encoder - One
+Stage （ Encoder中总共K个Stage ）</h3>
+<ul>
+<li><strong>概述</strong>：用于从退化图像中提取低层级信息</li>
+<li><strong>输入</strong>：特征图 <span
+class="math inline">\(X_{l-1}\)</span></li>
+<li><strong>输出</strong>：第<span
+class="math inline">\(l\)</span>个阶段的输出特征图 <span
+class="math inline">\(X_l \in R^{2^lC \times \frac{H}{2^l} \times
+\frac{W}{2^l}}\)</span></li>
+<li><strong>网络结构</strong>：
+<ul>
+<li><span class="math inline">\({N_l}\)</span>个
+LeWinBlocks的叠加，以及一个下采样层（$4 $卷积 $stride$2）</li>
+</ul></li>
+<li><strong>实现细节（官方代码）</strong>
+<ul>
+<li>LeWinBlocks
+<ul>
+<li>将2D空间特征图先进行patch划分，然后展平，具体见后</li>
+</ul></li>
+<li>Down Sampling：（channel 翻倍，特征图宽高 减半）
+<ul>
+<li>Reshape 展平的特征 至 2D的空间特征图，然后使用 <span
+class="math inline">\(4 \times 4\)</span>卷积
+$stride$2，对其进行卷积</li>
+</ul></li>
+</ul></li>
+<li><strong>意义</strong>：在一遍遍的下采样与Lewin Transformer
+Blocks中提取特征信息，Lewin Transformer
+Block可以更好的提取远距离的相关性依赖信息，并且有效的降低计算复杂度</li>
+</ul>
+<h3 id="bottleneck-stage">4) BottleNeck Stage</h3>
+<ul>
+<li><strong>概述</strong>：用于提取更长距离的信息，甚至是全局的信息</li>
+<li><strong>输入</strong>：特征图 <span
+class="math inline">\(X_{K}\)</span></li>
+<li><strong>输出</strong>：序列向量 V</li>
+<li><strong>网络结构</strong>：
+<ul>
+<li><span class="math inline">\({N_?}\)</span>个 LeWinBlocks的叠加</li>
+</ul></li>
+<li><strong>实现细节（官方代码）</strong>
+<ul>
+<li>LeWinBlocks
+<ul>
+<li>将2D空间特征图先进行patch划分，然后展平，具体见后</li>
+</ul></li>
+</ul></li>
+<li><strong>意义</strong>：由于前面已经进行了许多次的特征提取以及下采样了，所以在此处再增加一个LeWinBlocks的模块，能够捕获到更长距离的信息，甚至是能够捕获全局的信息。</li>
+</ul>
+<p><!-- 但是这个模块难道不可以用Encoder阶段更大的K 来弥补吗？需要实验 --></p>
+<h3
+id="decoder---one-stage-decoder中总共k个stage与encoder一致">5）Decoder -
+One Stage （Decoder中总共K个Stage，与Encoder一致 ）</h3>
+<ul>
+<li><strong>概述</strong>：用于小尺寸的特征图中逐渐重建恢复特征信息</li>
+<li><strong>输入</strong>：1维特征序列 <span
+class="math inline">\(V_{in}\)</span></li>
+<li><strong>输出</strong>：1维特征输出序列 <span
+class="math inline">\(V_{out}\)</span></li>
+<li><strong>网络结构</strong>：
+<ul>
+<li>一个上采样层（$2 $反卷积 $stride$2）以及 <span
+class="math inline">\({N_l}\)</span>个 LeWinBlocks的叠加</li>
+</ul></li>
+<li><strong>实现细节（官方代码）</strong>
+<ul>
+<li>Up Sampling：（channel 减半，特征图宽高 翻倍）
+<ul>
+<li>先将输入的特征序列 Reshape 成
+2D特征图，然后进行上采样，得到新的2D特征图</li>
+</ul></li>
+<li>Residual Module：
+<ul>
+<li>Up Sampling 完以后得到的2D特征图需要和对应Encoder-Stage中
+输出的2D特征图进行Concat，然后得到一个新的2D特征图。</li>
+</ul></li>
+<li>LeWinBlocks
+<ul>
+<li>将残差Concat得到的2D空间特征图先进行patch划分，然后展平，具体见后</li>
+</ul></li>
+</ul></li>
+<li><strong>意义</strong>：在一遍遍的上采样与Lewin Transformer
+Blocks中重建特征信息。</li>
+</ul>
+<h3 id="output-projection">6) Output Projection</h3>
+<ul>
+<li><strong>概述</strong>：用于将输出的序列，变换成2D特征图后，再 映射至
+3通道的残差图像，准备和原图像叠加。</li>
+<li><strong>输入</strong>：1维特征输出序列 <span
+class="math inline">\(V_{out}\)</span></li>
+<li><strong>输出</strong>：残差图像 <span class="math inline">\(Residual
+\in R^{3\times H\times W }\)</span></li>
+<li><strong>网络结构</strong>：
+<ul>
+<li><span class="math inline">\(3\times 3\)</span>卷积层</li>
+</ul></li>
+<li><strong>实现细节（官方代码）</strong>：
+<ul>
+<li>先将 最后一个Decoder Stage输出的 序列 <span
+class="math inline">\(V_{out}\)</span>Reshape成2D的特征图，然后应用<span
+class="math inline">\(3 \times
+3\)</span>的卷积层，来获得一个残差图像</li>
+</ul></li>
+</ul>
+<h3 id="最终输出-loss函数">7）最终输出 &amp; Loss函数</h3>
+<ul>
+<li><strong>概述</strong>：将OutPut Projection 得到的Residual Image 和
+原来的输入图像相加，得到 最终的修复图像。</li>
+<li><strong>Loss</strong>：使用 <strong>Charbonnier Loss</strong>，<span
+class="math inline">\(I^{&#39;}\)</span>是 ground-truth 图像
+<ul>
+<li><span class="math display">\[l(I^{&#39;},\hat I) = \sqrt{||I^{&#39;}
+- \hat I||^2 + \varepsilon^2}\]</span></li>
+</ul></li>
+</ul>
+<h3 id="lewin-transformer-block">8）LeWin Transformer Block</h3>
+<ul>
+<li><p><strong>概述</strong>：由W-MSA 以及LeFF两个模块组成</p></li>
+<li><p><strong>输入</strong>：2D特征图</p></li>
+<li><p><strong>输出</strong>：2D特征图</p></li>
+<li><p><strong>网络结构</strong>：公式表达：</p>
+<ul>
+<li><span class="math inline">\(X_{l}^{&#39;} = W-MSA(LN(X_{l-1})) +
+X_{l-1}\)</span><strong>W-MSA 模块的输出</strong></li>
+<li><span class="math inline">\(X_l = LeFF(LN(X_l^{&#39;})) +
+X_l^{&#39;}\)</span>**LeFF模块的输出*</li>
+</ul></li>
+<li><p><strong>实现细节（官方代码）</strong>：</p>
+<ul>
+<li><p>W-MSA 与 Vision Transformer中一致</p></li>
+<li><p>作者论文中说尝试了移动窗口，但是带来的结果好坏增长微乎其微，说明：在图像修复领域，窗口与窗口之间的信息交互并不是很重要。图像修复领域比较注重局部的信息交互？</p></li>
+<li><p>LeFF模块结构：</p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/imac/截屏2022-01-12%20下午3.31.12.png" /></p>
+<ul>
+<li>1、对于每个Token，应用一个Linear Projection，增加特征channel</li>
+<li>2、将tokens Reshape 成 2D 特征图，用 <span class="math inline">\(3
+\times 3\)</span>depth-wise convolutional 捕获局部信息</li>
+<li>3、再将2D特征图展平回tokens，再应用一个Linear
+Projection，缩减特征channel</li>
+<li>在每一个Linear Projection / Convolution 后都会应用
+GELU激活函数。</li>
+</ul></li>
+</ul></li>
+<li><p><strong>意义</strong>：解决了如下两个问题
+1）全局计算self-attention复杂度太高
+2）在捕捉局部的依赖关系时有限制。</p></li>
+</ul>
+<h3 id="multi-scale-restoration-modulator">9）Multi-Scale Restoration
+Modulator</h3>
+<ul>
+<li><strong>概述</strong>：因为不同的图像有不同的混乱残差形式，比如模糊、噪音、下雨等等，为了更好的应对各种不同的修复任务，提出了这个light-weight
+multi-scale的恢复模块。来calibrate特征以及更好的修复细节。<br />
+</li>
+<li><strong>网络结构</strong>：
+<ul>
+<li>在每一个LeWin Transformer Block中，其为一个<span
+class="math inline">\(M \times M \times
+C\)</span>大小的张量，M为window_size，C为特征图通道数。</li>
+<li>在一个LeWin Transformer Block中，对于所有其分割出来的windows，这个
+调制器模块的参数都是共享的。</li>
+</ul></li>
+<li><strong>形式</strong>：在Self-Attention计算前，将其直接加到每一个窗口的像素值上。</li>
+<li><strong>意义</strong>：在Image Deblurring 和 Image
+Denoising里面，作者证实了该模块的重要性，能够更好的修复细节。一种可能的解释是添加
+在解码器的每个阶段的modulator可以对特征图进行更为灵活的调整，从而提高恢复的细节的性能表现。这个跟先前的StyleGAN的某个模块一致。</li>
+</ul>
+
+    </div>
+
+    
+    
+    
+      
+  <div class="popular-posts-header">相关文章</div>
+  <ul class="popular-posts">
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2022\01\13\45d8498aa8b8\" rel="bookmark">《SwinIR- Image Restoration Using Swin Transformer》论文笔记</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2022\01\12\8c9b3da724b3\" rel="bookmark">机器学习基础系列笔记6——全卷积网络FCN & U-Net结构</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2021\12\09\aba242d32ac9\" rel="bookmark">Transformer系列笔记4——Swin Transformer思想与架构</a></div>
+    </li>
+  </ul>
+
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/UNet/" rel="tag"># UNet</a>
+              <a href="/tags/Swin-Transformer/" rel="tag"># Swin Transformer</a>
+              <a href="/tags/Image-Restoration/" rel="tag"># Image Restoration</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2022/01/12/8c9b3da724b3/" rel="prev" title="机器学习基础系列笔记6——全卷积网络FCN & U-Net结构">
+                  <i class="fa fa-chevron-left"></i> 机器学习基础系列笔记6——全卷积网络FCN & U-Net结构
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2022/01/13/45d8498aa8b8/" rel="next" title="《SwinIR- Image Restoration Using Swin Transformer》论文笔记">
+                  《SwinIR- Image Restoration Using Swin Transformer》论文笔记 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments utterances-container"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Fantast</span>
+</div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+    <span title="站点总字数">725k</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">33:33</span>
+  </span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script><script src="/js/bookmark.js"></script>
+
+  
+<script src="https://cdn.jsdelivr.net/npm/hexo-generator-searchdb@1.4.0/dist/search.js" integrity="sha256-vXZMYLEqsROAXkEw93GGIvaB2ab+QW6w3+1ahD9nXXA=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdn.jsdelivr.net/npm/mathjax@3.2.0/es5/tex-mml-chtml.js","integrity":"sha256-r+3itOMtGGjap0x+10hu6jW/gZCzxHsoKrOd7gyRSGY="}}</script>
+<script src="/js/third-party/math/mathjax.js"></script>
+
+
+<script class="next-config" data-name="utterances" type="application/json">{"enable":true,"repo":"Fantast416/myblog-comment","issue_term":"pathname","theme":"github-light"}</script>
+<script src="/js/third-party/comments/utterances.js"></script>
+
+</body>
+</html>

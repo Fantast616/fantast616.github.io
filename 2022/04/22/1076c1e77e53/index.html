@@ -1,0 +1,661 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.2.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css" integrity="sha256-mUZM63G8m73Mcidfrv5E+Y61y7a12O5mW4ezU3bxqW4=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"blog.fantast.top","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.9.0","exturl":false,"sidebar":{"position":"left","width":250,"display":"always","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":true,"color":"#222","save":"manual"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"utterances","storage":true,"lazyload":false,"nav":null,"activeClass":"utterances"},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+<meta name="description" content="此篇略读笔记包含3篇CVPR中与Transformer相关的论文略读记录，可以用于提供改进Transformer的灵感。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="论文略读笔记——CVPR2022 Transformer相关（1）">
+<meta property="og:url" content="https://blog.fantast.top/2022/04/22/1076c1e77e53/index.html">
+<meta property="og:site_name" content="Fantast&#39;s Blog">
+<meta property="og:description" content="此篇略读笔记包含3篇CVPR中与Transformer相关的论文略读记录，可以用于提供改进Transformer的灵感。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220422100222424.png">
+<meta property="article:published_time" content="2022-04-22T00:51:19.000Z">
+<meta property="article:modified_time" content="2022-08-07T14:45:17.000Z">
+<meta property="article:author" content="Fantast">
+<meta property="article:tag" content="Transformer">
+<meta property="article:tag" content="CVPR2022">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220422100222424.png">
+
+
+<link rel="canonical" href="https://blog.fantast.top/2022/04/22/1076c1e77e53/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://blog.fantast.top/2022/04/22/1076c1e77e53/","path":"2022/04/22/1076c1e77e53/","title":"论文略读笔记——CVPR2022 Transformer相关（1）"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>论文略读笔记——CVPR2022 Transformer相关（1） | Fantast's Blog</title>
+  
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<link rel="alternate" href="/atom.xml" title="Fantast's Blog" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Fantast's Blog</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li>
+        <li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li>
+        <li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li>
+        <li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li>
+        <li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%80%E8%AE%BA%E6%96%87%E5%90%8D%E7%A7%B0batchformer-learning-to-explore-sample-relationships-for-robust-representation-learning"><span class="nav-text">一、论文名称：《BatchFormer:
+Learning to Explore Sample Relationships for Robust Representation
+Learning》</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%85%B3%E9%94%AE%E8%AF%8D"><span class="nav-text">1、关键词：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%91%98%E8%A6%81"><span class="nav-text">2、摘要：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%BB%E8%A6%81%E8%AE%BE%E8%AE%A1%E6%80%9D%E6%83%B3"><span class="nav-text">3、主要设计思想：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%85%B7%E4%BD%93%E6%96%B9%E6%B3%95%E4%B8%8E%E7%BD%91%E7%BB%9C%E6%9E%B6%E6%9E%84"><span class="nav-text">4、具体方法与网络架构：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%A2%AF%E5%BA%A6%E4%BC%A0%E6%92%AD%E8%BF%87%E7%A8%8B%E5%8F%8A%E8%A7%86%E8%A7%92"><span class="nav-text">5、梯度传播过程及视角：</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%8C%E8%AE%BA%E6%96%87%E5%90%8D%E7%A7%B0beyond-fixation-dynamic-window-visual-transformer"><span class="nav-text">二、论文名称：《Beyond
+Fixation: Dynamic Window Visual Transformer》</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%85%B3%E9%94%AE%E8%AF%8D-1"><span class="nav-text">1、关键词：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%91%98%E8%A6%81-1"><span class="nav-text">2、摘要：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%BB%E8%A6%81%E8%AE%BE%E8%AE%A1%E6%80%9D%E6%83%B3-1"><span class="nav-text">3、主要设计思想：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%85%B7%E4%BD%93%E6%96%B9%E6%B3%95%E4%B8%8E%E7%BD%91%E7%BB%9C%E6%9E%B6%E6%9E%84-1"><span class="nav-text">4、具体方法与网络架构：</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#msw-msa%E6%A8%A1%E5%9D%97"><span class="nav-text">1） MSW-MSA模块</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#dmsw%E6%A8%A1%E5%9D%97"><span class="nav-text">2） DMSW模块：</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%89%E8%AE%BA%E6%96%87%E5%90%8D%E7%A7%B0mixformer-mixing-features-across-windows-and-dimensions"><span class="nav-text">三、论文名称：《MixFormer:
+Mixing Features across Windows and Dimensions》</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%85%B3%E9%94%AE%E8%AF%8D-2"><span class="nav-text">1、关键词：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%91%98%E8%A6%81-2"><span class="nav-text">2、摘要：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%BB%E8%A6%81%E8%AE%BE%E8%AE%A1%E6%80%9D%E6%83%B3-2"><span class="nav-text">3、主要设计思想：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%85%B7%E4%BD%93%E6%96%B9%E6%B3%95%E4%B8%8E%E7%BD%91%E7%BB%9C%E6%9E%B6%E6%9E%84-2"><span class="nav-text">4、具体方法与网络架构：</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%B9%B6%E8%A1%8C%E8%AE%BE%E8%AE%A1"><span class="nav-text">1 并行设计</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%8F%8C%E5%90%91%E4%BA%A4%E4%BA%92"><span class="nav-text">2 双向交互</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#channel%E4%BA%A4%E4%BA%92%E8%AE%BE%E8%AE%A1"><span class="nav-text">Channel交互设计</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#spatial%E4%BA%A4%E4%BA%92%E8%AE%BE%E8%AE%A1"><span class="nav-text">Spatial交互设计</span></a></li></ol></li></ol></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Fantast"
+      src="/images/avatar.webp">
+  <p class="site-author-name" itemprop="name">Fantast</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">161</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">40</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">97</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/fantast416" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;fantast416" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:fantast416@gmail.com" title="E-Mail → mailto:fantast416@gmail.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll site-overview-item animated">
+    <div class="links-of-blogroll-title"><i class="fa fa-globe fa-fw"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://www.zhihu.com/people/shuo-shuo-3-41" title="https:&#x2F;&#x2F;www.zhihu.com&#x2F;people&#x2F;shuo-shuo-3-41" rel="noopener" target="_blank">ZhiHu</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="http://www.next.zju.edu.cn/" title="http:&#x2F;&#x2F;www.next.zju.edu.cn&#x2F;" rel="noopener" target="_blank">NextLab</a>
+        </li>
+    </ul>
+  </div>
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://blog.fantast.top/2022/04/22/1076c1e77e53/">
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.webp">
+      <meta itemprop="name" content="Fantast">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Fantast's Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          论文略读笔记——CVPR2022 Transformer相关（1）
+        </h1>
+
+        <div class="post-meta-container">
+          
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2022-04-22 08:51:19" itemprop="dateCreated datePublished" datetime="2022-04-22T08:51:19+08:00">2022-04-22</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2022-08-07 22:45:17" itemprop="dateModified" datetime="2022-08-07T22:45:17+08:00">2022-08-07</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E2%93%B6-%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB%E7%AC%94%E8%AE%B0/" itemprop="url" rel="index"><span itemprop="name">⓶ 论文阅读笔记</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E2%93%B6-%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB%E7%AC%94%E8%AE%B0/CV%E7%9B%B8%E5%85%B3%E8%AE%BA%E6%96%87/" itemprop="url" rel="index"><span itemprop="name">CV相关论文</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>5.2k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>14 分钟</span>
+    </span>
+</div>
+
+            <div class="post-description">此篇略读笔记包含3篇CVPR中与Transformer相关的论文略读记录，可以用于提供改进Transformer的灵感。</div>
+            <div class="post-remind">Google Chrome is recommended, otherwise the image size may be wrong</div>
+            <div class="post-remind">FireFox is not recommended,Because it does not support the image zoom property</div>
+        </div>
+        
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h2
+id="一论文名称batchformer-learning-to-explore-sample-relationships-for-robust-representation-learning">一、论文名称：《BatchFormer:
+Learning to Explore Sample Relationships for Robust Representation
+Learning》</h2>
+<p>论文地址： https://arxiv.org/abs/2203.01522</p>
+<h4 id="关键词">1、关键词：</h4>
+<p>​ deep representation learning 深度表征学习</p>
+<h4 id="摘要">2、摘要：</h4>
+<p>​
+尽管深度神经网络取得了成功，但由于数据不平衡、不可见分布、域漂移等数据稀缺问题，深度表征学习仍面临许多挑战。为了解决上述问题，已经设计了各种方法以一种普通的方式(即从输入函数或损失函数的角度)探索样本关系，但未能探索具有样本关系学习的深度神经网络的内部结构。受此启发，<strong>我们建议使深度神经网络本身具有从每个小批中学习样本间关系的能力。</strong></p>
+<p>​
+<strong>我们引入了一个模块BatchFormer，然后将其应用到每个mini-batch的batch维度上，以隐式地探索训练期间的样本间关系。通过这样做，所提出的方法可以实现不同样本之间的协作，例如，头类样本也可以有助于尾类的学习以进行长尾识别。</strong></p>
+<p>​
+<strong>此外，为了减少训练和测试之间的差距，我们在训练过程中使用或不使用BatchFormer共享分类器，从而可以在测试过程中删除。</strong></p>
+<h4 id="主要设计思想">3、主要设计思想：</h4>
+<p>​
+我们引入了一个模块BatchFormer，然后将其应用到每个mini-batch的batch维度上，以隐式地探索训练期间的样本间关系。</p>
+<p>​
+对于深度神经网络来说，由于训练和推理的差距，在批处理维度上进行学习并不容易。因此，为了探索用于鲁棒表示学习的样本关系，我们建议通过样本关系学习的结构改进来增强深度神经网络。</p>
+<p>​
+<strong>具体来说，我们试图通过在批维度中引入一个Transformer来捕获和建模每个小批训练数据样本中的样本关系，此外，为了减少训练和测试之间的差距，我们在BatchFormer模块之前和之后使用一个共享分类器来强制批不变学习。这样，BatchFormer模块只在训练过程中需要使用，即不需要改变深度神经网络的推理结构。</strong></p>
+<p>​
+从优化的角度来看，BatchFormer实现了小批量样本所有特征的信息传播。</p>
+<p>​
+因此，所有的样本都可以帮助学习任何类别的对象，而这可能会从整个小批量中含蓄地用幻觉特征丰富当前的训练样本</p>
+<h4 id="具体方法与网络架构">4、具体方法与网络架构：</h4>
+<p>​
+设计了一个简单而有效的模块，称为BatchFormer，这是一个即插即用模块，用于探索每个小批中的样本关系.</p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220422091934114.png" /></p>
+<p>​
+具体来说，骨干网首先用来学习单个数据样本的表示，即在每个小批量中，不同样本之间不存在交互。在此之后，我们引入了一个新的模块，利用Transformer中的交叉注意机制对不同样本之间的关系进行建模，我们将其称为Batch
+transformer或BatchFormer模块。然后，BatchFormer的输出被用作最终分类器的输入。</p>
+<p>​
+为了满足训练和测试之间的差距，我们还在BatchFormer模块之前使用了一个辅助分类器，<strong>即通过共享最终分类器和辅助分类器之间的权值，</strong>我们可以将从样本关系中学习到的知识转移到骨干和辅助分类器。
+因此，在测试时我们可以去掉BatchFormer，直接使用辅助分类器进行分类。</p>
+<p>​ 多头注意层已被广泛用于从Channel和Spatial维度建模关系</p>
+<p>​
+<strong>因此，我们认为它也可以被扩展以探索Batch维度中的关系。因此，与变压器层的典型使用不同，BatchFormer的输入将首先被重构，以使变压器层能够处理输入数据的批处理维度。</strong>
+​
+通过这样做，变压器层中的自我注意机制就变成了BatchFormer不同样本之间的交叉注意。</p>
+<ul>
+<li>测试时的差别：
+<ul>
+<li>由于我们不能为测试假定批处理统计信息，例如样本关系，因此在BatchFormer模块之前和之后的特性之间可能存在差距。</li>
+<li>因此，除了最终的分类器，我们还引入了一个新的辅助分类器，既可以学习最终的分类器，又可以保持BatchFormer之前的特征。</li>
+<li>为了实现这一点，我们只需在辅助分类器和最终分类器之间共享参数/权重。
+我们将这种简单而有效的策略称为“共享分类器”。
+有了提议的“共享分类器”，我们可以在测试期间删除BatchFormer模块，同时仍然受益于使用BatchFormer的示例关系学习。</li>
+</ul></li>
+<li><img
+src="C:\Users\14012\AppData\Roaming\Typora\typora-user-images\image-20220422093222300.png" /></li>
+</ul>
+<h4 id="梯度传播过程及视角">5、梯度传播过程及视角：</h4>
+<p>​ <img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220422093240599.png" /></p>
+<p>​
+直观上，没有BatchFormer，所有损失只传播梯度在相应的样本和类别。与其他示例相比，BatchFormer(虚线)具有梯度，如图所示。</p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220422093454357.png" /></p>
+<p>​ 从梯度优化的角度来看，Li还根据样本Xj(j !=
+i)对网络进行了优化，这与没有BatchFormer的模型有显著的差异。换句话说，Xj(j
+!= i)可以看作yi的一个虚拟样本，其中yi是Xi的标签。</p>
+<p>​ 我们认为BatchFormer和Mixup都可以看作是数据依赖的扩充。</p>
+<p>​
+BatchFormer隐式地通过交叉注意模块从样本的附近分布中提取虚拟示例。</p>
+<p>​
+从这个角度来看，BatchFormer通过小批量样品之间的关系建模，隐式增加了每个标签yi的N
+- 1虚拟样本。</p>
+<h2
+id="二论文名称beyond-fixation-dynamic-window-visual-transformer">二、论文名称：《Beyond
+Fixation: Dynamic Window Visual Transformer》</h2>
+<p>论文地址：https://arxiv.org/abs/2203.12856</p>
+<h4 id="关键词-1">1、关键词：</h4>
+<p>​ Dynamic Window</p>
+<h4 id="摘要-1">2、摘要：</h4>
+<p>​
+近年来，人们对视觉变压器的兴趣越来越大，主要是通过将自我注意的计算限制在局部窗口来降低计算成本。目前大多数工作默认使用固定的单尺度窗口进行建模，忽略了窗口大小对模型性能的影响。然而，这可能会限制这些基于窗口的模型对多尺度信息的建模潜力。</p>
+<p>​
+<strong>使用动态多尺度窗口来探索窗口设置对模型性能影响的上限。在DW-ViT中，通过将不同大小的窗口分配给不同的WMSA来获得多尺度信息。然后，通过对多尺度窗口分支分配不同的权重来动态融合信息。</strong></p>
+<h4 id="主要设计思想-1">3、主要设计思想：</h4>
+<p>​
+Swin提出将自我注意的计算限制在局部窗口，以降低计算复杂度，并取得了一定的效果。这种局部窗口自我注意很快吸引了大量的注意.然而，大多数这些方法默认使用固定的单尺度窗口(例如，win
+= 7)。 ​ 以下问题随之产生:</p>
+<ul>
+<li>这个窗口大小是最佳的吗?</li>
+<li>更大的窗口意味着更好的性能吗?</li>
+<li>多尺度窗口是否比单尺度窗口更有优势?</li>
+<li>此外，动态多尺度窗口会产生更好的结果吗?</li>
+</ul>
+<p>作者实验后得出：</p>
+<p>​
+<strong>随着窗口大小的增加，模型的性能得到了显著的提高，但这并不是绝对单调的。此外，很难从多个可选窗口大小中选择最佳窗口大小。而不同图层的最佳窗口设置也可能不同。一个自然的想法是将来自不同规模窗口的信息混合用于预测任务。</strong></p>
+<p>​
+基于这一思想，我们设计了一种基于窗口的ViT的多尺度窗口多头自关注(MSW-MSA)机制。</p>
+<p>​
+<strong>在DW-ViT中，我们首先通过给变压器中多头自注意的不同头组分配不同的尺度窗口来获得多尺度信息。然后，通过对多尺度窗口分支分配权重，实现信息的动态融合。具体来说，在DW-ViT中，MSW-MSA负责多尺度窗口信息的提取，而DMSW负责这些多尺度信息的动态增强。通过以上两部分，DW-ViT可以动态地提高模型的多尺度信息建模能力，同时保证相对较低的计算复杂度。</strong></p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220422095955551.png" /></p>
+<h4 id="具体方法与网络架构-1">4、具体方法与网络架构：</h4>
+<p>​ <img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220422100027793.png"
+alt="DW-ViT网络结构图" /></p>
+<p><img src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220422100222424.png" alt="DWM模块示意图" style="zoom:150%;" /></p>
+<p>​
+如图5所示，我们设计的多尺度窗口自关注模块主要由两部分组成:多尺度窗口多头自关注模块(MSW-MSA)和动态多尺度窗口模块(DMSW)。</p>
+<h5 id="msw-msa模块">1） MSW-MSA模块</h5>
+<p>​
+将MSA的多头h均匀分成nwin组，在不同尺度的窗口上进行多头自我注意，获取多尺度窗口信息。</p>
+<p>​ 将每个窗口展开为一个长度为wini ×
+wini的令牌序列，作为MSW-MSA的第i支W-MSA 的输入。</p>
+<p>​ 将W- msa的输出在空间维数上重构为H × W，最终输出维数为H × W ×
+Cnwin。</p>
+<p>​
+最后这些分支的输出在通道维度上被连接起来，并用作整个MSW-MSA模块的输出。</p>
+<h5 id="dmsw模块">2） DMSW模块：</h5>
+<p>​
+这个过程分为两个主要步骤:Fuse和Select。前者负责整合所有分支的信息，后者根据全局信息为每个分支生成相应的权值，完成分支信息的融合。</p>
+<ul>
+<li>Fuse主要由池化层<span class="math inline">\(F_{gp}\)</span> 和
+两对全连接层<span class="math inline">\(F_{fc}\)</span> 和 激活层<span
+class="math inline">\(F_a\)</span>组成。</li>
+<li>Select 主要由两部分组成：
+<ul>
+<li>第一部分由一组全连通层<span class="math inline">\(F_{\alpha} =
+\{F_{\alpha_i},i=1,2,……,n_{win}\}\)</span>
+和softmax层为每个分支生成相应的权值</li>
+<li>第二部分包含两个线性映射层<span
+class="math inline">\(F_{fc}\)</span>，用于恢复融合特征的通道维数。</li>
+</ul></li>
+<li>最终还有一个Res的过程</li>
+</ul>
+<h3
+id="三论文名称mixformer-mixing-features-across-windows-and-dimensions">三、论文名称：《MixFormer:
+Mixing Features across Windows and Dimensions》</h3>
+<p>论文地址：https://arxiv.org/abs/2204.02557</p>
+<h4 id="关键词-2">1、关键词：</h4>
+<p>​ Mix</p>
+<h4 id="摘要-2">2、摘要：</h4>
+<p>​
+局部窗口自我注意在视觉任务中表现突出，<strong>但存在接收野有限和建模能力弱的问题。</strong>这主要是因为它在非重叠窗口中执行自我注意，并在通道维度上共享权重。
+​
+我们提出的MixFormer找到一个解决方案。首先，我们将局部窗口自关注与深度卷积并行设计，建模跨窗口连接，以扩大接收域。其次，我们提出跨分支的双向交互，以在渠道和空间维度上提供互补的线索。
+​这两种设计集成在一起，以实现窗口和尺寸之间的高效特征混合。</p>
+<h4 id="主要设计思想-2">3、主要设计思想：</h4>
+<p>​
+我们提出了混合块。首先，我们将局部窗口自关注与深度卷积相结合，但以并行的方式。并行设计通过同时模拟窗口内和窗口间的关系来扩大接收域。其次，我们引入跨分支的双向交互(如图1中的蓝色箭头所示)。这些交互抵消了权重共享机制造成的限制，通过为局部窗口自关注和深度卷积提供互补线索，增强了通道维和空间维的建模能力。综合以上设计，实现窗口和尺寸之间的互补特征混合。</p>
+<p>​</p>
+<h4 id="具体方法与网络架构-2">4、具体方法与网络架构：</h4>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220422205646202.png" /></p>
+<p>​ 我们的混合块(图1)在标准的基于窗口的注意块上增加了两个关键设计:</p>
+<ul>
+<li><ol type="1">
+<li>采用并行设计，将局部窗口自我注意和深度卷积结合起来</li>
+</ol></li>
+<li>(2)引入跨分支的双向交互。用于解决 局部窗口自我注意中
+有限的接受域和薄弱的建模能力 的问题。</li>
+</ul>
+<h5 id="并行设计">1 并行设计</h5>
+<p>​
+虽然在非重叠窗口内执行自我注意可以提高计算效率，但由于没有提取跨窗口连接，它会导致有限的接收域。考虑到<strong>卷积层是用来模拟局部关系的，我们选择了一种有效的方法(深度卷积)来连接窗口。</strong></p>
+<p>​
+在本文中，我们提出了一种并行设计，通过同时建模窗口内和窗口间关系来扩大接收野</p>
+<p>​
+如图1所示，局部窗口自关注和深度卷积位于两条平行路径上。具体来说，它们使用不同的窗口大小。
+本地窗口自我注意采用7 ×
+7窗口，遵循前人的工作，而在深度卷积中，考虑到效率，采用了一个较小的核大小3
+x 3。</p>
+<p>​ 它们的输出被不同的归一化层[1,27]归一化，并通过拼接进行合并。 ​
+合并后的特征被发送到后续的前馈网络(FFN)，跨信道混合学习到的关系，生成最终的输出特征。</p>
+<p><strong>好处</strong>：
+首先，将局部窗口的自我关注与跨分支的深度卷积结合起来，建模跨窗口的连接，解决有限的接受域问题。其次，并行设计同时建模窗口内和窗口间的关系，为跨分支的特征交织提供机会，并实现更好的特征表示学习。</p>
+<h5 id="双向交互">2 双向交互</h5>
+<p>​
+通常，共享权值限制了共享维度上的建模能力。解决这一困境的常见方法是生成与数据相关的权重，就像在动态网络中所做的那样。局部窗口自关注在空间维度上动态计算权值，同时跨Channel
+共享权值，导致在Channel 维度上建模能力弱。</p>
+<p>​ 为了提高局部窗口自关注在 Channel
+维度上的建模能力，我们尝试生成基于Channel 的动态权值。
+考虑到深度卷积在关注Channel
+的同时，在Spatial维度上共享权重,它可以为局部窗口的自我注意提供补充线索，反之亦然。因此，我们提出了双向交互(如图1和图2所示)，以增强在Channel和Spatial维度上对局部窗口自我关注和的建模能力。</p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220422210802291.png" /></p>
+<h5 id="channel交互设计">Channel交互设计</h5>
+<p>​
+对于通道交互，我们遵循SE层[24]的设计，如图2所示。通道交互包括一个全局平均池化层，然后是两个连续的1X1卷积层，它们之间有归一化(BN[27])和激活(GELU[20])。
+​
+最后，我们在C维度上使用sigmoid来产生注意。虽然我们的通道交互与SE层[24]具有相同的设计，但它们在两个方面有所不同:</p>
+<p>（1）注意模块的输入不同。我们的通道交互的输入来自另一个并行分支，而SE层在同一个分支中执行。
+（2）我们只将通道交互应用于local window
+self-attention中的值，而不是像SE层那样将其应用于模块的输出。</p>
+<h5 id="spatial交互设计">Spatial交互设计</h5>
+<p>​ 我们还采用了一种简单的设计，它由两个1 X
+1卷积层组成，其次是BN[27]和GELU[20]。 ​
+这两层将通道的数量减少到一个。最后，采用sigmoid层生成空间注意图。与我们在通道交互中所做的一样，空间注意是由另一个分支产生的，其中应用了本地窗口自我注意模块。
+​它比深度3 X 3卷积具有更大的核大小(7 X
+7)，并且侧重于空间维度，为深度卷积分支提供了强有力的空间线索。</p>
+
+    </div>
+
+    
+    
+    
+      
+  <div class="popular-posts-header">相关文章</div>
+  <ul class="popular-posts">
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2022\04\24\503bff4618b7\" rel="bookmark">《Vision Transformer with Deformable Attention》</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2022\04\24\22e32ee5ba59\" rel="bookmark">《Not All Tokens Are Equal Human-centric Visual Analysis via Token Clustering Transformer》</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2022\03\21\58ee25c0143c\" rel="bookmark">《StyTr2 Unbiased Image Style Transfer with Transformers》</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2022\01\27\7d2ace115a28\" rel="bookmark">《UniFormer:Unifying Convolution and Self-attention for Visual Recognition》</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2022\01\26\8f68bd6cb4f4\" rel="bookmark">《HandWritting Transformers》(更新中)</a></div>
+    </li>
+  </ul>
+
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Transformer/" rel="tag"># Transformer</a>
+              <a href="/tags/CVPR2022/" rel="tag"># CVPR2022</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2022/04/15/ef402168a5bd/" rel="prev" title="2.3.2 经典问题（生产者-消费者等）">
+                  <i class="fa fa-chevron-left"></i> 2.3.2 经典问题（生产者-消费者等）
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2022/04/24/22e32ee5ba59/" rel="next" title="《Not All Tokens Are Equal Human-centric Visual Analysis via Token Clustering Transformer》">
+                  《Not All Tokens Are Equal Human-centric Visual Analysis via Token Clustering Transformer》 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments utterances-container"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Fantast</span>
+</div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+    <span title="站点总字数">725k</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">33:33</span>
+  </span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script><script src="/js/bookmark.js"></script>
+
+  
+<script src="https://cdn.jsdelivr.net/npm/hexo-generator-searchdb@1.4.0/dist/search.js" integrity="sha256-vXZMYLEqsROAXkEw93GGIvaB2ab+QW6w3+1ahD9nXXA=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdn.jsdelivr.net/npm/mathjax@3.2.0/es5/tex-mml-chtml.js","integrity":"sha256-r+3itOMtGGjap0x+10hu6jW/gZCzxHsoKrOd7gyRSGY="}}</script>
+<script src="/js/third-party/math/mathjax.js"></script>
+
+
+<script class="next-config" data-name="utterances" type="application/json">{"enable":true,"repo":"Fantast416/myblog-comment","issue_term":"pathname","theme":"github-light"}</script>
+<script src="/js/third-party/comments/utterances.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.2.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css" integrity="sha256-mUZM63G8m73Mcidfrv5E+Y61y7a12O5mW4ezU3bxqW4=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"blog.fantast.top","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.9.0","exturl":false,"sidebar":{"position":"left","width":250,"display":"always","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":true,"color":"#222","save":"manual"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"utterances","storage":true,"lazyload":false,"nav":null,"activeClass":"utterances"},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+<meta name="description" content="FCN相较于CNN来说，其将CNN最后几个用于输出概率的全连接层都改成了卷积层，从而使得模型网络中所有的层都是卷积层，最终输出一张已经label好的图像，故称为全卷积网络。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="机器学习基础系列笔记6——全卷积网络FCN &amp; U-Net结构">
+<meta property="og:url" content="https://blog.fantast.top/2022/01/12/8c9b3da724b3/index.html">
+<meta property="og:site_name" content="Fantast&#39;s Blog">
+<meta property="og:description" content="FCN相较于CNN来说，其将CNN最后几个用于输出概率的全连接层都改成了卷积层，从而使得模型网络中所有的层都是卷积层，最终输出一张已经label好的图像，故称为全卷积网络。">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2022-01-12T02:18:19.000Z">
+<meta property="article:modified_time" content="2022-08-07T14:46:29.000Z">
+<meta property="article:author" content="Fantast">
+<meta property="article:tag" content="Machine Learning">
+<meta property="article:tag" content="FCN">
+<meta property="article:tag" content="UNet">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://blog.fantast.top/2022/01/12/8c9b3da724b3/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://blog.fantast.top/2022/01/12/8c9b3da724b3/","path":"2022/01/12/8c9b3da724b3/","title":"机器学习基础系列笔记6——全卷积网络FCN & U-Net结构"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>机器学习基础系列笔记6——全卷积网络FCN & U-Net结构 | Fantast's Blog</title>
+  
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<link rel="alternate" href="/atom.xml" title="Fantast's Blog" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Fantast's Blog</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li>
+        <li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li>
+        <li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li>
+        <li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li>
+        <li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%80fcn%E5%85%A8%E5%8D%B7%E7%A7%AF%E7%BD%91%E7%BB%9C"><span class="nav-text">一、FCN全卷积网络</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#fcn%E4%BC%98%E7%82%B9"><span class="nav-text">FCN优点：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#fcn%E7%BC%BA%E7%82%B9"><span class="nav-text">FCN缺点：</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%8C%E5%85%B3%E4%BA%8E%E5%8D%B7%E7%A7%AF%E7%BD%91%E7%BB%9C%E4%B8%AD%E9%99%8D%E9%87%87%E6%A0%B7%E4%B8%8E%E4%B8%8A%E9%87%87%E6%A0%B7%E4%BB%A5%E5%8F%8A%E7%89%B9%E5%BE%81%E6%8F%90%E5%8F%96%E9%98%B6%E6%AE%B5%E7%9A%84%E7%90%86%E8%A7%A3"><span class="nav-text">二、关于卷积网络中降采样与上采样以及特征提取阶段的理解：</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%89unet%E7%BD%91%E7%BB%9C"><span class="nav-text">三、UNet网络</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Fantast"
+      src="/images/avatar.webp">
+  <p class="site-author-name" itemprop="name">Fantast</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">161</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">40</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">97</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/fantast416" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;fantast416" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:fantast416@gmail.com" title="E-Mail → mailto:fantast416@gmail.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll site-overview-item animated">
+    <div class="links-of-blogroll-title"><i class="fa fa-globe fa-fw"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://www.zhihu.com/people/shuo-shuo-3-41" title="https:&#x2F;&#x2F;www.zhihu.com&#x2F;people&#x2F;shuo-shuo-3-41" rel="noopener" target="_blank">ZhiHu</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="http://www.next.zju.edu.cn/" title="http:&#x2F;&#x2F;www.next.zju.edu.cn&#x2F;" rel="noopener" target="_blank">NextLab</a>
+        </li>
+    </ul>
+  </div>
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://blog.fantast.top/2022/01/12/8c9b3da724b3/">
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.webp">
+      <meta itemprop="name" content="Fantast">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Fantast's Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          机器学习基础系列笔记6——全卷积网络FCN & U-Net结构
+        </h1>
+
+        <div class="post-meta-container">
+          
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2022-01-12 10:18:19" itemprop="dateCreated datePublished" datetime="2022-01-12T10:18:19+08:00">2022-01-12</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2022-08-07 22:46:29" itemprop="dateModified" datetime="2022-08-07T22:46:29+08:00">2022-08-07</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E2%93%B5-%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" itemprop="url" rel="index"><span itemprop="name">⓵ 深度学习笔记</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E2%93%B5-%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/Basic%E7%B3%BB%E5%88%97%E7%AC%94%E8%AE%B0/" itemprop="url" rel="index"><span itemprop="name">Basic系列笔记</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>2.8k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>8 分钟</span>
+    </span>
+</div>
+
+            <div class="post-description">FCN相较于CNN来说，其将CNN最后几个用于输出概率的全连接层都改成了卷积层，从而使得模型网络中所有的层都是卷积层，最终输出一张已经label好的图像，故称为全卷积网络。</div>
+            <div class="post-remind">Google Chrome is recommended, otherwise the image size may be wrong</div>
+            <div class="post-remind">FireFox is not recommended,Because it does not support the image zoom property</div>
+        </div>
+        
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p>本文讲解FCN与U-Net相关的知识，在此之前你需要了解CNN是什么</p>
+<h3 id="一fcn全卷积网络">一、FCN全卷积网络</h3>
+<p>​
+首先，我们还是要回顾一下CNN的整体网络架构与优势：CNN网络最后输出的是类别的概率值。CNN
+的强大之处在于它的多层卷积结构能自动学习特征，并且可以学习到多个层次的特征：</p>
+<p>​ 较浅的卷积层感知域较小，学习到一些局部区域的特征。</p>
+<p>​
+而较深的卷积层具有较大的感知域，能够学习到更加抽象一些的特征。这些抽象特征对物体的大小、位置和方向等敏感性更低，从而有助于识别性能的提高。</p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220114212245766.png" /></p>
+<p>​
+而FCN相较于CNN来说，其将CNN最后几个用于输出概率的全连接层都改成了卷积层，从而使得模型网络中所有的层都是卷积层，最终输出一张已经label好的图像，故称为全卷积网络。全卷积神经网络主要使用了三种技术：</p>
+<p>​ 1、卷积化（Convolutional）</p>
+<p>​ 2、上采样（Upsample）</p>
+<p>​ 3、跳跃结构（Skip Layer）</p>
+<p>​ 整个FCN网络基本原理如图5（只是原理示意图）：</p>
+<p>​ 1、image经过多个卷积和+一个max pooling变为pool1
+feature，宽高变为1/2</p>
+<p>​ 2、pool1 feature再经过多个conv+一个max pooling变为pool2
+feature，宽高变为1/4</p>
+<p>​ 3、pool2 feature再经过多个conv+一个max pooling变为pool3
+feature，宽高变为1/8</p>
+<p>​ 4、......</p>
+<p>​ 5、直到pool5 feature，宽高变为1/32。</p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/dsawqeasd.png" /></p>
+<p>那么，对于三种不同规格参数的FCN，后续还原操作也不太一样，如下所示：</p>
+<p>​ 1、对于FCN-32s，直接对pool5 feature进行32倍上采样获得32x upsampled
+feature，再对32x upsampled feature每个点做softmax prediction获得32x
+upsampled feature prediction（即语义分割图）。</p>
+<p>​ 2、对于FCN-16s，首先对pool5 feature进行2倍上采样获得2x upsampled
+feature，再把pool4 feature和2x upsampled
+feature逐点相加，然后对相加的feature进行16倍上采样，并softmax
+prediction，获得16x upsampled feature prediction。</p>
+<p>​ 3、对于FCN-8s，首先进行pool4+2x upsampled
+feature逐点相加，然后又进行pool3+2x
+upsampled逐点相加，即进行更多次特征融合。具体过程与16s类似，不再赘述。</p>
+<p>​ 在上述处理过程中，我们发现FCN-16s和FCN-8s都引入了skip
+connection，将pool3或是pool4
+feature与pool5上采样后的feature逐像素相加，进行多次特征融合，这样处理的原因在于：</p>
+<p>​
+FCN模型虽然通过卷积和反卷积我们基本能定位到目标区域，但是，我们会发现模型前期是通过卷积、池化、非线性激活函数等作用输出了特征权重图像，我们经过反卷积等操作输出的<strong>图像实际是很粗糙的</strong>，毕竟丢了很多细节。因此我们需要找到一种方式填补丢失的细节数据，所以就有了跳跃结构。</p>
+<p>​ 作者在原文种给出3种网络结果对比，明显可以看出效果：FCN-32s &lt;
+FCN-16s &lt; FCN-8s，即使用多层feature融合有利于提高分割准确性。</p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220114212421618.png" /></p>
+<h4 id="fcn优点">FCN优点：</h4>
+<p>​
+与传统用CNN进行图像分割的方法相比，FCN有两大明显的优点：一是可以接受任意大小的输入图像，而不用要求所有的训练图像和测试图像具有同样的尺寸。二是更加高效，因为避免了由于使用像素块而带来的重复存储和计算卷积的问题。</p>
+<h4 id="fcn缺点">FCN缺点：</h4>
+<p>1、分割的结果不够精细。图像过于模糊或平滑，没有分割出目标图像的细节</p>
+<p>2、因为模型是基于CNN改进而来，即便是用卷积替换了全连接，但是依然是独立像素进行分类，没有充分考虑像素与像素之间的关系</p>
+<h2
+id="二关于卷积网络中降采样与上采样以及特征提取阶段的理解">二、关于卷积网络中降采样与上采样以及特征提取阶段的理解：</h2>
+<p>​
+1、降采样的理论意义是，它可以增加对输入图像的一些小扰动的鲁棒性，比如图像平移，旋转等，减少过拟合的风险，降低运算量，增加感受野的大小。</p>
+<p>​
+2、上采样的最大的作用其实就是把抽象的特征再还原到原图的尺寸，最终得到分割结果。但很容易得到模糊或过于平滑的结果，无法还原细节部分。</p>
+<p>​
+3、对于特征提取阶段，浅层结构可以抓取图像的一些简单的特征，比如边界，颜色，而深层结构因为感受野大了，而且经过的卷积操作多了，能抓取到图像的一些抽象特征。</p>
+<h3 id="三unet网络">三、UNet网络</h3>
+<p>​ UNet网络整体结构如下：</p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220114212533302.png" /></p>
+<p>​ 蓝色箭头代表3*3的卷积层+ReLU激活函数层</p>
+<p>​ 红色箭头代表2*2的最大池化层</p>
+<p>​ 绿色箭头代表2*2的上采样层（通常采用反卷积）</p>
+<p>​ 浅蓝色箭头代表1*1的卷积层，在最后用于调整输出通道数目</p>
+<p>​
+在整一个过程中，值得注意的是灰色箭头，我们会注意到灰色箭头代表的是“copy
+and crop”，即复制和剪切。我们以第一层的灰色箭头举例来看：其左侧大小为64
+* 568 * 568，右侧大小为128 * 392 *
+392。其中，右侧有64个通道的数据来源于左侧，64个通道的数据来源于上一层的上采样。那么灰色箭头应该就是把左侧的内容复制到了右侧，并且concat在了原先上采样后得到的64
+* 392 * 392的数据上，形成了128 * 392 * 392的数据。</p>
+<p>​ 但是问题在于，568 * 568和392 *
+392还有较大的尺寸差别，这就需要利用crop来完成，由于在每个卷积中都会丢失边界像素，因此裁剪crop是必要的</p>
+<p>​
+在上述网络形式中，最重要的结构就是其中的<strong>skip-connection</strong>。UNet中<strong>Concat</strong>形式的skip-connection的好处是，<strong>对于分割这个任务，空间域信息非常重要</strong>。而网络的encoder部分，通过各个pooling层已经把特征图分辨率降得非常小了，这一点不利于精确的分割mask生成，通过skip-connection可以把较浅的卷积层特征引过来，那些特征分辨率较高，且层数浅，会含有比较丰富的low-level信息，更利于生成分割mask。</p>
+<p>​
+总体来说，就是把对应尺度上的特征信息引入到上采样或反卷积过程，为后期图像分割提供多尺度多层次的信息，由此可以得到更精细的分割效果，如U-Net论文描述的分割结果一样。这比单纯用编解码器框架要好，纯粹的编解码器框架，在编码过程中压缩和丢失了大量细节信息，而这些信息很可能会有助于后期的图像分割。</p>
+<p>​
+同时，需要注意的一点是：此处的skip-connection与ResNet中直接相加形式的skip-connection不同，ResNet中的跳跃连接可以有效的减少梯度消失和网络退化问题，使训练更容易。直观上理解可以认为BP的时候，深层的梯度可以更容易的传回浅层，因为这种结构的存在，对神经网络层数的设定可以更随意一些。</p>
+
+    </div>
+
+    
+    
+    
+      
+  <div class="popular-posts-header">相关文章</div>
+  <ul class="popular-posts">
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2022\01\07\3664afb64da5\" rel="bookmark">机器学习基础系列笔记5——1x1卷积 & 部分卷积 & 空洞卷积 & 可变形卷积</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2022\01\05\d37a1913ba03\" rel="bookmark">机器学习基础系列笔记4——Depth-wise卷积 & Point-wise卷积</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2022\01\04\16c9f87609b5\" rel="bookmark">机器学习基础系列笔记3——反卷积Deconvolution</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2021\12\23\9bb28e693fc9\" rel="bookmark">ML2021课程系列笔记4——海森矩阵计算（课程作业）</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2021\12\20\cedd3c9597c5\" rel="bookmark">ML2021课程系列笔记3——卷积神经网络CNN</a></div>
+    </li>
+  </ul>
+
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Machine-Learning/" rel="tag"># Machine Learning</a>
+              <a href="/tags/FCN/" rel="tag"># FCN</a>
+              <a href="/tags/UNet/" rel="tag"># UNet</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2022/01/07/3664afb64da5/" rel="prev" title="机器学习基础系列笔记5——1x1卷积 & 部分卷积 & 空洞卷积 & 可变形卷积">
+                  <i class="fa fa-chevron-left"></i> 机器学习基础系列笔记5——1x1卷积 & 部分卷积 & 空洞卷积 & 可变形卷积
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2022/01/13/56f3e5f0e0f5/" rel="next" title="《Uformer A General U-Shaped Transformer for Image Restoration》论文笔记">
+                  《Uformer A General U-Shaped Transformer for Image Restoration》论文笔记 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments utterances-container"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Fantast</span>
+</div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+    <span title="站点总字数">725k</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">33:33</span>
+  </span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script><script src="/js/bookmark.js"></script>
+
+  
+<script src="https://cdn.jsdelivr.net/npm/hexo-generator-searchdb@1.4.0/dist/search.js" integrity="sha256-vXZMYLEqsROAXkEw93GGIvaB2ab+QW6w3+1ahD9nXXA=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdn.jsdelivr.net/npm/mathjax@3.2.0/es5/tex-mml-chtml.js","integrity":"sha256-r+3itOMtGGjap0x+10hu6jW/gZCzxHsoKrOd7gyRSGY="}}</script>
+<script src="/js/third-party/math/mathjax.js"></script>
+
+
+<script class="next-config" data-name="utterances" type="application/json">{"enable":true,"repo":"Fantast416/myblog-comment","issue_term":"pathname","theme":"github-light"}</script>
+<script src="/js/third-party/comments/utterances.js"></script>
+
+</body>
+</html>

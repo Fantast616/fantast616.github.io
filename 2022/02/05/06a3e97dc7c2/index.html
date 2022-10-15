@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.2.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css" integrity="sha256-mUZM63G8m73Mcidfrv5E+Y61y7a12O5mW4ezU3bxqW4=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"blog.fantast.top","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.9.0","exturl":false,"sidebar":{"position":"left","width":250,"display":"always","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":true,"color":"#222","save":"manual"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"utterances","storage":true,"lazyload":false,"nav":null,"activeClass":"utterances"},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+<meta name="description" content="前缀树 是一种树形数据结构，又称字典树，用于高效地存储和检索字符串数据集中的键。这一数据结构有相当多的应用情景，例如自动补完和拼写检查。本文用于实现该数据结构，以及一道应用题目。当题目涉及到字符串寻找前缀，或者是字符串是否含有某字符串的任务，可以采用该数据结构，能够大幅降低算法时间复杂度">
+<meta property="og:type" content="article">
+<meta property="og:title" content="容器设计——前缀树容器设计">
+<meta property="og:url" content="https://blog.fantast.top/2022/02/05/06a3e97dc7c2/index.html">
+<meta property="og:site_name" content="Fantast&#39;s Blog">
+<meta property="og:description" content="前缀树 是一种树形数据结构，又称字典树，用于高效地存储和检索字符串数据集中的键。这一数据结构有相当多的应用情景，例如自动补完和拼写检查。本文用于实现该数据结构，以及一道应用题目。当题目涉及到字符串寻找前缀，或者是字符串是否含有某字符串的任务，可以采用该数据结构，能够大幅降低算法时间复杂度">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://pic.leetcode-cn.com/1632672370-gVXuKM-image.png">
+<meta property="article:published_time" content="2022-02-05T11:02:19.000Z">
+<meta property="article:modified_time" content="2022-08-07T14:50:20.000Z">
+<meta property="article:author" content="Fantast">
+<meta property="article:tag" content="leetcode">
+<meta property="article:tag" content="container">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://pic.leetcode-cn.com/1632672370-gVXuKM-image.png">
+
+
+<link rel="canonical" href="https://blog.fantast.top/2022/02/05/06a3e97dc7c2/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://blog.fantast.top/2022/02/05/06a3e97dc7c2/","path":"2022/02/05/06a3e97dc7c2/","title":"容器设计——前缀树容器设计"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>容器设计——前缀树容器设计 | Fantast's Blog</title>
+  
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<link rel="alternate" href="/atom.xml" title="Fantast's Blog" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Fantast's Blog</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li>
+        <li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li>
+        <li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li>
+        <li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li>
+        <li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%89%91%E6%8C%87-offer-ii-062.-%E5%AE%9E%E7%8E%B0%E5%89%8D%E7%BC%80%E6%A0%91"><span class="nav-text">剑指 Offer II 062.
+实现前缀树</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E9%A2%98%E7%9B%AE%E6%8F%8F%E8%BF%B0"><span class="nav-text">题目描述：</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E8%A7%A3%E9%A2%98%E6%80%9D%E8%B7%AF"><span class="nav-text">解题思路：</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E4%BB%A3%E7%A0%81%E5%AE%9E%E7%8E%B0%E5%8A%A8%E6%80%81vector%E7%89%88%E6%9C%AC%E6%88%91%E5%86%99%E7%9A%84"><span class="nav-text">代码实现（动态vector版本，我写的）：</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E4%BB%A3%E7%A0%81%E5%AE%9E%E7%8E%B0%E9%9D%99%E6%80%81vector%E7%89%88%E6%9C%AC%E5%BC%95%E8%87%AAleetcode%E9%A2%98%E8%A7%A3"><span class="nav-text">代码实现（静态vector版本，引自LeetCode题解）：</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%89%91%E6%8C%87-offer-ii-063.-%E6%9B%BF%E6%8D%A2%E5%8D%95%E8%AF%8D"><span class="nav-text">剑指 Offer II 063.
+替换单词</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%89%91%E6%8C%87-offer-ii-067.-%E6%9C%80%E5%A4%A7%E7%9A%84%E5%BC%82%E6%88%96"><span class="nav-text">剑指 Offer II 067.
+最大的异或</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Fantast"
+      src="/images/avatar.webp">
+  <p class="site-author-name" itemprop="name">Fantast</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">161</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">40</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">97</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/fantast416" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;fantast416" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:fantast416@gmail.com" title="E-Mail → mailto:fantast416@gmail.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll site-overview-item animated">
+    <div class="links-of-blogroll-title"><i class="fa fa-globe fa-fw"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://www.zhihu.com/people/shuo-shuo-3-41" title="https:&#x2F;&#x2F;www.zhihu.com&#x2F;people&#x2F;shuo-shuo-3-41" rel="noopener" target="_blank">ZhiHu</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="http://www.next.zju.edu.cn/" title="http:&#x2F;&#x2F;www.next.zju.edu.cn&#x2F;" rel="noopener" target="_blank">NextLab</a>
+        </li>
+    </ul>
+  </div>
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://blog.fantast.top/2022/02/05/06a3e97dc7c2/">
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.webp">
+      <meta itemprop="name" content="Fantast">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Fantast's Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          容器设计——前缀树容器设计
+        </h1>
+
+        <div class="post-meta-container">
+          
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2022-02-05 19:02:19" itemprop="dateCreated datePublished" datetime="2022-02-05T19:02:19+08:00">2022-02-05</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2022-08-07 22:50:20" itemprop="dateModified" datetime="2022-08-07T22:50:20+08:00">2022-08-07</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E2%93%B7-%E7%AE%97%E6%B3%95%E7%B1%BB%E7%AC%94%E8%AE%B0/" itemprop="url" rel="index"><span itemprop="name">⓷ 算法类笔记</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E2%93%B7-%E7%AE%97%E6%B3%95%E7%B1%BB%E7%AC%94%E8%AE%B0/%E5%AD%97%E7%AC%A6%E4%B8%B2%E7%B3%BB%E5%88%97/" itemprop="url" rel="index"><span itemprop="name">字符串系列</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>8.1k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>23 分钟</span>
+    </span>
+</div>
+
+            <div class="post-description">前缀树 是一种树形数据结构，又称字典树，用于高效地存储和检索字符串数据集中的键。这一数据结构有相当多的应用情景，例如自动补完和拼写检查。本文用于实现该数据结构，以及一道应用题目。当题目涉及到字符串寻找前缀，或者是字符串是否含有某字符串的任务，可以采用该数据结构，能够大幅降低算法时间复杂度</div>
+            <div class="post-remind">Google Chrome is recommended, otherwise the image size may be wrong</div>
+            <div class="post-remind">FireFox is not recommended,Because it does not support the image zoom property</div>
+        </div>
+        
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h4 id="剑指-offer-ii-062.-实现前缀树"><a
+target="_blank" rel="noopener" href="https://leetcode-cn.com/problems/QC3q1f/">剑指 Offer II 062.
+实现前缀树</a></h4>
+<h5 id="题目描述"><strong>题目描述</strong>：</h5>
+<p>​ Trie（发音类似 "try"）或者说 前缀树
+是一种树形数据结构，用于高效地存储和检索字符串数据集中的键。这一数据结构有相当多的应用情景，例如<strong>自动补完和拼写检查</strong>。****</p>
+<p>请你实现 Trie 类：</p>
+<pre><code>Trie() 初始化前缀树对象。
+void insert(String word) 向前缀树中插入字符串 word 。
+boolean search(String word) 如果字符串 word 在前缀树中，返回 true（即，在检索之前已经插入）；否则，返回 false 。
+boolean startsWith(String prefix) 如果之前已经插入的字符串 word 的前缀之一为 prefix ，返回 true ；否则，返回 false 。</code></pre>
+<h5 id="解题思路"><strong>解题思路</strong>：</h5>
+<p>​ Trie，又称前缀树或字典树，是一棵有根树，其每个节点包含以下字段：</p>
+<ul>
+<li>指向子节点的指针数组
+childrens。在本题中，这可以是一个动态的vector，也可以是一个大小定为26的vector，因为本文中的字符限定为小写字母。两者各有好处，动态的vector节省一些空间，静态的vector在查找和插入时节省一些时间，实现起来也较为方便一些。</li>
+<li>布尔字段 isEnd，表示该节点是否为字符串的结尾。</li>
+</ul>
+<p>下面是一张比较清晰的图：非常明了</p>
+<figure>
+<img src="https://pic.leetcode-cn.com/1632672370-gVXuKM-image.png"
+alt="image.png" />
+<figcaption aria-hidden="true">image.png</figcaption>
+</figure>
+<h5
+id="代码实现动态vector版本我写的"><strong>代码实现（动态vector版本，我写的）</strong>：</h5>
+<p>​
+Search操作和startsWith其实就是差一个判定字符串结尾的操作，所以我将两个函数合并成了一个，用一个形参来控制，使得代码尽量简介。Insert操作其实和Search操作也有大量的重复代码，循环判定都是一致的，就是判定后操作逻辑不太一样，但为了不混在一起，我还是将其分开写了。</p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/屏幕捕获_2022_02_08_15_17_08_168.png" /></p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">MyTreeNode</span>&#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="type">bool</span> isEnd;</span><br><span class="line">    <span class="type">char</span> character;</span><br><span class="line">    vector&lt;MyTreeNode*&gt; childrens;</span><br><span class="line">    <span class="built_in">MyTreeNode</span>()&#123;</span><br><span class="line">        <span class="keyword">this</span>-&gt;isEnd = <span class="literal">false</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="built_in">MyTreeNode</span>(<span class="type">char</span> character,<span class="type">bool</span> isEnd)&#123;</span><br><span class="line">        <span class="keyword">this</span>-&gt;isEnd = isEnd;</span><br><span class="line">        <span class="keyword">this</span>-&gt;character = character;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Trie</span> &#123;</span><br><span class="line">    MyTreeNode* root;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="comment">/** Initialize your data structure here. */</span></span><br><span class="line">    <span class="built_in">Trie</span>() &#123;</span><br><span class="line">        <span class="keyword">this</span>-&gt;root = <span class="keyword">new</span> <span class="built_in">MyTreeNode</span>();</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">/** Inserts a word into the trie. */</span></span><br><span class="line">    <span class="function"><span class="type">void</span> <span class="title">insert</span><span class="params">(string word)</span> </span>&#123;</span><br><span class="line">        MyTreeNode* r = <span class="keyword">this</span>-&gt;root;</span><br><span class="line">        <span class="keyword">for</span>(<span class="type">int</span> i =<span class="number">0</span>;i&lt;word.<span class="built_in">length</span>();i++)&#123;</span><br><span class="line">            <span class="type">bool</span> flag = <span class="literal">false</span>;</span><br><span class="line">            <span class="type">int</span> j;</span><br><span class="line">            <span class="keyword">for</span>(j = <span class="number">0</span>;j&lt; r-&gt;childrens.<span class="built_in">size</span>();j++)&#123;</span><br><span class="line">                <span class="keyword">if</span>(r-&gt;childrens[j]-&gt;character == word[i])&#123;</span><br><span class="line">                    flag = <span class="literal">true</span>;</span><br><span class="line">                    <span class="keyword">break</span>;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="comment">// 如果没找到，插入一个新的节点</span></span><br><span class="line">            <span class="keyword">if</span>(!flag)&#123;</span><br><span class="line">                MyTreeNode* c = <span class="keyword">new</span> <span class="built_in">MyTreeNode</span>(word[i],i == word.<span class="built_in">length</span>()<span class="number">-1</span>);</span><br><span class="line">                r-&gt;childrens.<span class="built_in">push_back</span>(c);</span><br><span class="line">                r = c;</span><br><span class="line">            &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">                <span class="comment">//如果找到了，那么继续下一个字符，</span></span><br><span class="line">                r = r-&gt;childrens[j];</span><br><span class="line">                <span class="keyword">if</span>(i == word.<span class="built_in">length</span>()<span class="number">-1</span>)&#123;  <span class="comment">//如果是最后一个字符，那么</span></span><br><span class="line">                    r-&gt;isEnd = <span class="literal">true</span>;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">/** Returns if the word is in the trie. */</span></span><br><span class="line">    <span class="function"><span class="type">bool</span> <span class="title">search</span><span class="params">(string word)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="built_in">mySearch</span>(word,<span class="literal">false</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">/** Returns if there is any word in the trie that starts with the given prefix. */</span></span><br><span class="line">    <span class="function"><span class="type">bool</span> <span class="title">startsWith</span><span class="params">(string prefix)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="built_in">mySearch</span>(prefix,<span class="literal">true</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="type">bool</span> <span class="title">mySearch</span><span class="params">(string word,<span class="type">bool</span> includePrefix)</span></span>&#123;</span><br><span class="line">        <span class="type">bool</span> res = <span class="literal">true</span>;</span><br><span class="line">        MyTreeNode* r = <span class="keyword">this</span>-&gt;root;</span><br><span class="line">        <span class="keyword">for</span>(<span class="type">int</span> i =<span class="number">0</span>;i&lt;word.<span class="built_in">length</span>();i++)&#123;</span><br><span class="line">            <span class="type">bool</span> flag = <span class="literal">false</span>;</span><br><span class="line">            <span class="type">int</span> j;</span><br><span class="line">            <span class="keyword">for</span>(j = <span class="number">0</span>;j&lt; r-&gt;childrens.<span class="built_in">size</span>();j++)&#123;</span><br><span class="line">                <span class="keyword">if</span>(r-&gt;childrens[j]-&gt;character == word[i])&#123;</span><br><span class="line">                    flag = <span class="literal">true</span>;</span><br><span class="line">                    <span class="keyword">break</span>;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="comment">// 如果没找到，返回false</span></span><br><span class="line">            <span class="keyword">if</span>(!flag)&#123;</span><br><span class="line">                res = <span class="literal">false</span>;</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">                <span class="comment">//如果找到了，那么继续找下一个字符，</span></span><br><span class="line">                r = r-&gt;childrens[j];</span><br><span class="line">                <span class="keyword">if</span>(i == word.<span class="built_in">length</span>()<span class="number">-1</span> &amp;&amp; !includePrefix)&#123; <span class="comment">//如果是最后一个自符，还需要判定下一个r-&gt;isEnd</span></span><br><span class="line">                    <span class="keyword">if</span>(!r-&gt;isEnd) res = <span class="literal">false</span>;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> res;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<h5
+id="代码实现静态vector版本引自leetcode题解"><strong>代码实现（静态vector版本，引自LeetCode题解）</strong>：</h5>
+<p>​
+可以看到，其本身代码简洁程度较高，并且它将Trie直接视为一个节点了，没有建立额外的TreeNode类。运行时间上和我的算法类似，差别不是很大。但是其内存消耗是远大于我的算法的，</p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/屏幕捕获_2022_02_08_15_17_59_414.png" /></p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Trie</span> &#123;</span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">    vector&lt;Trie*&gt; children;</span><br><span class="line">    <span class="type">bool</span> isEnd;</span><br><span class="line"></span><br><span class="line">    <span class="function">Trie* <span class="title">searchPrefix</span><span class="params">(string prefix)</span> </span>&#123;</span><br><span class="line">        Trie* node = <span class="keyword">this</span>;</span><br><span class="line">        <span class="keyword">for</span> (<span class="type">char</span> ch : prefix) &#123;</span><br><span class="line">            ch -= <span class="string">&#x27;a&#x27;</span>;</span><br><span class="line">            <span class="keyword">if</span> (node-&gt;children[ch] == <span class="literal">nullptr</span>) &#123;</span><br><span class="line">                <span class="keyword">return</span> <span class="literal">nullptr</span>;</span><br><span class="line">            &#125;</span><br><span class="line">            node = node-&gt;children[ch];</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> node;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="built_in">Trie</span>() : <span class="built_in">children</span>(<span class="number">26</span>), <span class="built_in">isEnd</span>(<span class="literal">false</span>) &#123;&#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="type">void</span> <span class="title">insert</span><span class="params">(string word)</span> </span>&#123;</span><br><span class="line">        Trie* node = <span class="keyword">this</span>;</span><br><span class="line">        <span class="keyword">for</span> (<span class="type">char</span> ch : word) &#123;</span><br><span class="line">            ch -= <span class="string">&#x27;a&#x27;</span>;</span><br><span class="line">            <span class="keyword">if</span> (node-&gt;children[ch] == <span class="literal">nullptr</span>) &#123;</span><br><span class="line">                node-&gt;children[ch] = <span class="keyword">new</span> <span class="built_in">Trie</span>();</span><br><span class="line">            &#125;</span><br><span class="line">            node = node-&gt;children[ch];</span><br><span class="line">        &#125;</span><br><span class="line">        node-&gt;isEnd = <span class="literal">true</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="type">bool</span> <span class="title">search</span><span class="params">(string word)</span> </span>&#123;</span><br><span class="line">        Trie* node = <span class="keyword">this</span>-&gt;<span class="built_in">searchPrefix</span>(word);</span><br><span class="line">        <span class="keyword">return</span> node != <span class="literal">nullptr</span> &amp;&amp; node-&gt;isEnd;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="type">bool</span> <span class="title">startsWith</span><span class="params">(string prefix)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">this</span>-&gt;<span class="built_in">searchPrefix</span>(prefix) != <span class="literal">nullptr</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">作者：LeetCode-Solution</span><br><span class="line">链接：https:<span class="comment">//leetcode-cn.com/problems/QC3q1f/solution/shi-xian-qian-zhui-shu-by-leetcode-solut-un50/</span></span><br><span class="line">来源：力扣（LeetCode）</span><br><span class="line">著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。</span><br></pre></td></tr></table></figure>
+<p>再记录一道上述数据结构的应用题：</p>
+<h4 id="剑指-offer-ii-063.-替换单词"><a
+target="_blank" rel="noopener" href="https://leetcode-cn.com/problems/UhWRSj/">剑指 Offer II 063.
+替换单词</a></h4>
+<p>​ 在英语中，有一个叫做 词根(root)
+的概念，它可以跟着其他一些词组成另一个较长的单词——我们称这个词为
+继承词(successor)。例如，词根an，跟随着单词
+other(其他)，可以形成新的单词 another(另一个)。</p>
+<p>​
+现在，给定一个由许多词根组成的词典和一个句子，需要将句子中的所有继承词用词根替换掉。如果继承词有许多可以形成它的词根，则用最短的词根替换它。需要输出替换之后的句子。</p>
+<p>​ 示例 1：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">输入：dictionary = [&quot;cat&quot;,&quot;bat&quot;,&quot;rat&quot;], sentence = &quot;the cattle was rattled by the battery&quot;</span><br><span class="line">输出：&quot;the cat was rat by the bat&quot;</span><br></pre></td></tr></table></figure>
+<p><strong>代码（Author: Fantast）</strong>：</p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/屏幕捕获_2022_02_08_18_14_35_668.png" /></p>
+<p>​
+主要思路就是实现一个前缀树，其中和上题不一样的是，上题是前缀找单词，这题是单词找前缀，反了反，所以我将startsWith改成了searchRoot函数，大体搜寻逻辑一致。然后再应用该数据结构解题即可。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">MyTreeNode</span>&#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="type">bool</span> isEnd;</span><br><span class="line">    <span class="type">char</span> character;</span><br><span class="line">    vector&lt;MyTreeNode*&gt; childrens;</span><br><span class="line">    <span class="built_in">MyTreeNode</span>()&#123;</span><br><span class="line">        <span class="keyword">this</span>-&gt;isEnd = <span class="literal">false</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="built_in">MyTreeNode</span>(<span class="type">char</span> character,<span class="type">bool</span> isEnd)&#123;</span><br><span class="line">        <span class="keyword">this</span>-&gt;isEnd = isEnd;</span><br><span class="line">        <span class="keyword">this</span>-&gt;character = character;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Trie</span> &#123;</span><br><span class="line">    MyTreeNode* root;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="comment">/** Initialize your data structure here. */</span></span><br><span class="line">    <span class="built_in">Trie</span>() &#123;</span><br><span class="line">        <span class="keyword">this</span>-&gt;root = <span class="keyword">new</span> <span class="built_in">MyTreeNode</span>();</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">/** Inserts a word into the trie. */</span></span><br><span class="line">    <span class="function"><span class="type">void</span> <span class="title">insert</span><span class="params">(string word)</span> </span>&#123;</span><br><span class="line">        MyTreeNode* r = <span class="keyword">this</span>-&gt;root;</span><br><span class="line">        <span class="keyword">for</span>(<span class="type">int</span> i =<span class="number">0</span>;i&lt;word.<span class="built_in">length</span>();i++)&#123;</span><br><span class="line">            <span class="type">bool</span> flag = <span class="literal">false</span>;</span><br><span class="line">            <span class="type">int</span> j;</span><br><span class="line">            <span class="keyword">for</span>(j = <span class="number">0</span>;j&lt; r-&gt;childrens.<span class="built_in">size</span>();j++)&#123;</span><br><span class="line">                <span class="keyword">if</span>(r-&gt;childrens[j]-&gt;character == word[i])&#123;</span><br><span class="line">                    flag = <span class="literal">true</span>;</span><br><span class="line">                    <span class="keyword">break</span>;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="comment">// 如果没找到，插入一个新的节点</span></span><br><span class="line">            <span class="keyword">if</span>(!flag)&#123;</span><br><span class="line">                MyTreeNode* c = <span class="keyword">new</span> <span class="built_in">MyTreeNode</span>(word[i],i == word.<span class="built_in">length</span>()<span class="number">-1</span>);</span><br><span class="line">                r-&gt;childrens.<span class="built_in">push_back</span>(c);</span><br><span class="line">                r = c;</span><br><span class="line">            &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">                <span class="comment">//如果找到了，那么继续下一个字符，</span></span><br><span class="line">                r = r-&gt;childrens[j];</span><br><span class="line">                <span class="keyword">if</span>(i == word.<span class="built_in">length</span>()<span class="number">-1</span>)&#123;  <span class="comment">//如果是最后一个字符，那么</span></span><br><span class="line">                    r-&gt;isEnd = <span class="literal">true</span>;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">/** 查询字典中是否有该单词的词根，如果有返回词根，如果没有，返回原单词*/</span></span><br><span class="line">    <span class="function">string <span class="title">searchRoot</span><span class="params">(string word)</span> </span>&#123;</span><br><span class="line">        string res;</span><br><span class="line">        MyTreeNode* r = <span class="keyword">this</span>-&gt;root;</span><br><span class="line">        <span class="keyword">for</span>(<span class="type">int</span> i =<span class="number">0</span>;i&lt;word.<span class="built_in">length</span>();i++)&#123;</span><br><span class="line">            <span class="type">int</span> j;</span><br><span class="line">            <span class="type">bool</span> flag = <span class="literal">false</span>;</span><br><span class="line">            <span class="keyword">for</span>(j = <span class="number">0</span>;j&lt; r-&gt;childrens.<span class="built_in">size</span>();j++)&#123;</span><br><span class="line">                <span class="keyword">if</span>(r-&gt;childrens[j]-&gt;character == word[i])&#123;</span><br><span class="line">                    flag = <span class="literal">true</span>;</span><br><span class="line">                    <span class="keyword">break</span>;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="comment">// 如果没找到，返回false</span></span><br><span class="line">            <span class="keyword">if</span>(!flag)&#123;</span><br><span class="line">                res = word;</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">                <span class="comment">//如果找到了，观察其是否是一个词根</span></span><br><span class="line">                r = r-&gt;childrens[j];</span><br><span class="line">                res += r-&gt;character;</span><br><span class="line">                <span class="keyword">if</span>(r-&gt;isEnd)&#123; <span class="comment">//如果是一整个词根，直接返回</span></span><br><span class="line">                    <span class="keyword">break</span>;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> res;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function">string <span class="title">replaceWords</span><span class="params">(vector&lt;string&gt;&amp; dictionary, string sentence)</span> </span>&#123;</span><br><span class="line">        Trie* t = <span class="keyword">new</span> <span class="built_in">Trie</span>();</span><br><span class="line">        <span class="keyword">for</span>(<span class="type">int</span> i=<span class="number">0</span>;i&lt;dictionary.<span class="built_in">size</span>();i++)&#123;</span><br><span class="line">            t-&gt;<span class="built_in">insert</span>(dictionary[i]);</span><br><span class="line">        &#125;</span><br><span class="line">        string res;</span><br><span class="line">        string word;</span><br><span class="line">        <span class="keyword">for</span>(<span class="type">int</span> i=<span class="number">0</span>;i&lt;sentence.<span class="built_in">length</span>();i++)&#123;</span><br><span class="line">            <span class="keyword">if</span>(sentence[i] == <span class="string">&#x27; &#x27;</span>)&#123;</span><br><span class="line">                res += t-&gt;<span class="built_in">searchRoot</span>(word) + <span class="string">&quot; &quot;</span>;</span><br><span class="line">                word = <span class="string">&quot;&quot;</span>;</span><br><span class="line">            &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">                word += sentence[i];</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        res += t-&gt;<span class="built_in">searchRoot</span>(word);</span><br><span class="line">        <span class="keyword">return</span> res;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<p>再记录一道上述数据结构的拓展应用题：</p>
+<h4 id="剑指-offer-ii-067.-最大的异或"><a
+target="_blank" rel="noopener" href="https://leetcode-cn.com/problems/ms70jA/">剑指 Offer II 067.
+最大的异或</a></h4>
+<p>给定一个整数数组 <code>nums</code> ，返回
+<code>nums[i] XOR nums[j]</code> 的最大运算结果，其中
+<code>0 ≤ i ≤ j &lt; n</code> 。</p>
+<p><strong>提示：</strong></p>
+<ul>
+<li><code>1 &lt;= nums.length &lt;= 2 * 10^4</code></li>
+<li><code>0 &lt;= nums[i] &lt;= 2^31 - 1</code></li>
+</ul>
+<p><strong>解题思路</strong>：</p>
+<p>​ 将整数视为二进制字符串 0 /
+1，此题目的字典树孩子仅有0和1，然后遍历所有数组中的元素，对于任意一个元素ai来说，通过字典树找到和它异或最大的那个值。遍历元素O(n)复杂度，通过字典树找到每个元素的异或最大的值为log(C)，故而总的时间复杂度为O(nlog(C))</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">MyTreeNode</span>&#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    MyTreeNode* left;  <span class="comment">// 0 </span></span><br><span class="line">    MyTreeNode* right; <span class="comment">// 1</span></span><br><span class="line">    <span class="built_in">MyTreeNode</span>()&#123;</span><br><span class="line">        <span class="keyword">this</span>-&gt;left = <span class="keyword">this</span>-&gt;right = <span class="literal">NULL</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Trie</span>&#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    MyTreeNode* root;</span><br><span class="line">    <span class="built_in">Trie</span>()&#123;</span><br><span class="line">        root = <span class="keyword">new</span> <span class="built_in">MyTreeNode</span>();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="type">void</span> <span class="title">insert</span><span class="params">(<span class="type">int</span> val)</span></span>&#123;</span><br><span class="line">        MyTreeNode* r = <span class="keyword">this</span>-&gt;root;</span><br><span class="line">        <span class="keyword">for</span>(<span class="type">int</span> i=<span class="number">0</span>;i&lt;<span class="number">32</span>;i++)&#123;</span><br><span class="line">            <span class="type">int</span> bit = (val &gt;&gt; (<span class="number">31</span>-i)) &amp; <span class="number">1</span>;</span><br><span class="line">            <span class="keyword">if</span>(bit == <span class="number">0</span> &amp;&amp; r-&gt;left)&#123; <span class="comment">//找到这个节点了</span></span><br><span class="line">                r = r-&gt;left;</span><br><span class="line">            &#125;<span class="keyword">else</span> <span class="keyword">if</span>(bit == <span class="number">1</span> &amp;&amp; r-&gt;right)&#123; <span class="comment">//找到这个节点了</span></span><br><span class="line">                r = r-&gt;right;</span><br><span class="line">            &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">                <span class="comment">//没找到这个节点，进行插入</span></span><br><span class="line">                MyTreeNode* c = <span class="keyword">new</span> <span class="built_in">MyTreeNode</span>();</span><br><span class="line">                <span class="keyword">if</span>(bit == <span class="number">0</span>)&#123;</span><br><span class="line">                    <span class="comment">//插入左侧</span></span><br><span class="line">                    r-&gt;left = c;</span><br><span class="line">                    r = r-&gt;left;</span><br><span class="line">                &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">                    <span class="comment">//插入右侧</span></span><br><span class="line">                    r-&gt;right = c;</span><br><span class="line">                    r = r-&gt;right;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="type">int</span> <span class="title">calculateMax</span><span class="params">(<span class="type">int</span> val)</span></span>&#123;</span><br><span class="line">        MyTreeNode* r = <span class="keyword">this</span>-&gt;root;</span><br><span class="line">        <span class="type">int</span> multi_val = <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">for</span>(<span class="type">int</span> i=<span class="number">0</span>;i&lt;<span class="number">32</span>;i++)&#123;</span><br><span class="line">            <span class="type">int</span> bit = (val &gt;&gt; (<span class="number">31</span>-i)) &amp; <span class="number">1</span>;</span><br><span class="line">            <span class="keyword">if</span>(bit == <span class="number">0</span> &amp;&amp; r-&gt;right)&#123;</span><br><span class="line">                <span class="comment">//当前位为0，且有1，那么直接往1那边走</span></span><br><span class="line">                r = r-&gt;right;</span><br><span class="line">                multi_val = (multi_val &lt;&lt; <span class="number">1</span>) + <span class="number">1</span>;</span><br><span class="line">            &#125;<span class="keyword">else</span> <span class="keyword">if</span>(bit == <span class="number">1</span> &amp;&amp; r-&gt;left)&#123;</span><br><span class="line">                <span class="comment">//当前位为1，且有0，那么直接往0那边走</span></span><br><span class="line">                r = r-&gt;left;</span><br><span class="line">                multi_val = multi_val &lt;&lt; <span class="number">1</span>;</span><br><span class="line">            &#125;<span class="keyword">else</span> <span class="keyword">if</span>(bit == <span class="number">0</span> &amp;&amp; !r-&gt;right &amp;&amp; r-&gt;left)&#123;</span><br><span class="line">                <span class="comment">//当前位为0，且无1，则往0那边走</span></span><br><span class="line">                r = r-&gt;left;</span><br><span class="line">                multi_val = multi_val &lt;&lt; <span class="number">1</span>;</span><br><span class="line">            &#125;<span class="keyword">else</span> <span class="keyword">if</span>(bit == <span class="number">1</span> &amp;&amp; !r-&gt;left &amp;&amp; r-&gt;right)&#123;</span><br><span class="line">                <span class="comment">//当前位为1，且无0，那么直接往1那边走</span></span><br><span class="line">                r = r-&gt;right;</span><br><span class="line">                multi_val = (multi_val &lt;&lt; <span class="number">1</span>) + <span class="number">1</span>;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> multi_val ^ val;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="type">int</span> <span class="title">findMaximumXOR</span><span class="params">(vector&lt;<span class="type">int</span>&gt;&amp; nums)</span> </span>&#123;</span><br><span class="line">        Trie* t = <span class="keyword">new</span> <span class="built_in">Trie</span>();</span><br><span class="line">        <span class="type">int</span> maxVal = <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">for</span>(<span class="type">int</span> i=<span class="number">0</span>;i&lt;nums.<span class="built_in">size</span>();i++)&#123;</span><br><span class="line">            t-&gt;<span class="built_in">insert</span>(nums[i]);</span><br><span class="line">            maxVal = <span class="built_in">max</span>(maxVal,t-&gt;<span class="built_in">calculateMax</span>(nums[i]));</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> maxVal;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+    </div>
+
+    
+    
+    
+      
+  <div class="popular-posts-header">相关文章</div>
+  <ul class="popular-posts">
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2022\02\05\4cd58a8a96c9\" rel="bookmark">容器设计——LRU最近最少使用缓存的容器设计</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2022\02\05\233281550871\" rel="bookmark">容器设计——插入、删除和随机访问都是 O(1) 的容器设计</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2022\02\03\b62f2c89d90c\" rel="bookmark">LeetCode《剑指Offer》题目情况整理（持续更新）</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2022\02\02\e7e76d98fb52\" rel="bookmark">LeetCode 算法解题Tricks（持续更新）</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2022\02\26\3e00524469fb\" rel="bookmark">DFS系列——DFS多种形式变体整理</a></div>
+    </li>
+  </ul>
+
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/leetcode/" rel="tag"># leetcode</a>
+              <a href="/tags/container/" rel="tag"># container</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2022/02/05/4cd58a8a96c9/" rel="prev" title="容器设计——LRU最近最少使用缓存的容器设计">
+                  <i class="fa fa-chevron-left"></i> 容器设计——LRU最近最少使用缓存的容器设计
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2022/02/06/36f0ee63db4b/" rel="next" title="树系列——当二叉树需要以层为单位计算时层序遍历的优化版本">
+                  树系列——当二叉树需要以层为单位计算时层序遍历的优化版本 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments utterances-container"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Fantast</span>
+</div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+    <span title="站点总字数">725k</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">33:33</span>
+  </span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script><script src="/js/bookmark.js"></script>
+
+  
+<script src="https://cdn.jsdelivr.net/npm/hexo-generator-searchdb@1.4.0/dist/search.js" integrity="sha256-vXZMYLEqsROAXkEw93GGIvaB2ab+QW6w3+1ahD9nXXA=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdn.jsdelivr.net/npm/mathjax@3.2.0/es5/tex-mml-chtml.js","integrity":"sha256-r+3itOMtGGjap0x+10hu6jW/gZCzxHsoKrOd7gyRSGY="}}</script>
+<script src="/js/third-party/math/mathjax.js"></script>
+
+
+<script class="next-config" data-name="utterances" type="application/json">{"enable":true,"repo":"Fantast416/myblog-comment","issue_term":"pathname","theme":"github-light"}</script>
+<script src="/js/third-party/comments/utterances.js"></script>
+
+</body>
+</html>

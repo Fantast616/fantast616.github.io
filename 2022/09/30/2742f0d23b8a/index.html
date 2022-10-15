@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.2.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css" integrity="sha256-mUZM63G8m73Mcidfrv5E+Y61y7a12O5mW4ezU3bxqW4=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"blog.fantast.top","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.9.0","exturl":false,"sidebar":{"position":"left","width":250,"display":"always","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":true,"color":"#222","save":"manual"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"utterances","storage":true,"lazyload":false,"nav":null,"activeClass":"utterances"},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+<meta name="description" content="本篇笔记为电子信息工程中数学模型与方法——单元3 电磁散射、逆问题系统建模及可视化的相关知识整理，用于学在浙大考试。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="电子信息工程中数学模型与方法——单元3 电磁系统">
+<meta property="og:url" content="https://blog.fantast.top/2022/09/30/2742f0d23b8a/index.html">
+<meta property="og:site_name" content="Fantast&#39;s Blog">
+<meta property="og:description" content="本篇笔记为电子信息工程中数学模型与方法——单元3 电磁散射、逆问题系统建模及可视化的相关知识整理，用于学在浙大考试。">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2022-09-30T04:13:19.000Z">
+<meta property="article:modified_time" content="2022-10-02T07:29:34.000Z">
+<meta property="article:author" content="Fantast">
+<meta property="article:tag" content="course">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://blog.fantast.top/2022/09/30/2742f0d23b8a/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://blog.fantast.top/2022/09/30/2742f0d23b8a/","path":"2022/09/30/2742f0d23b8a/","title":"电子信息工程中数学模型与方法——单元3 电磁系统"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>电子信息工程中数学模型与方法——单元3 电磁系统 | Fantast's Blog</title>
+  
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<link rel="alternate" href="/atom.xml" title="Fantast's Blog" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Fantast's Blog</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li>
+        <li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li>
+        <li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li>
+        <li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li>
+        <li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%80%E6%A6%82%E8%BF%B0%E5%92%8C%E5%9F%BA%E6%9C%AC%E7%90%86%E8%AE%BA"><span class="nav-text">一、概述和基本理论</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%BA%A6%E5%85%8B%E6%96%AF%E9%9F%A6%E6%96%B9%E7%A8%8B%E7%BB%84"><span class="nav-text">1、麦克斯韦方程组：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B9%B3%E9%9D%A2%E7%94%B5%E7%A3%81%E6%B3%A2"><span class="nav-text">2、平面电磁波：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%89%B9%E5%BE%81%E9%98%BB%E6%8A%97"><span class="nav-text">3、特征阻抗：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%94%B5%E7%A3%81%E8%BE%90%E5%B0%84%E5%A4%A9%E7%BA%BF%E8%BE%90%E5%B0%84"><span class="nav-text">4、电磁辐射—天线辐射</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%94%B5%E7%A3%81%E8%BE%90%E5%B0%84%E8%B5%AB%E5%85%B9%E5%81%B6%E6%9E%81%E5%AD%90"><span class="nav-text">5、电磁辐射—赫兹偶极子：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%94%B5%E7%A3%81%E8%BE%90%E5%B0%84%E5%8D%8A%E6%B3%A2%E9%95%BF%E5%81%B6%E6%9E%81%E5%AD%90"><span class="nav-text">6、电磁辐射—半波长偶极子</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%94%B5%E7%A3%81%E8%BE%90%E5%B0%84%E5%A4%A9%E7%BA%BF%E5%BA%94%E7%94%A8-p24-26"><span class="nav-text">7、电磁辐射—天线应用 P24-26</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%94%B5%E7%A3%81%E6%84%9F%E5%BA%94%E6%97%A0%E7%BA%BF%E4%BC%A0%E8%83%BD"><span class="nav-text">8、电磁感应—无线传能</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%94%B5%E7%A3%81%E6%84%9F%E5%BA%94%E5%85%A8%E6%81%AF%E6%88%90%E5%83%8F"><span class="nav-text">9、电磁感应—全息成像</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%94%B5%E7%A3%81%E8%BE%90%E5%B0%84%E7%A9%BF%E9%80%8F%E6%80%A7-p39"><span class="nav-text">10、电磁辐射—穿透性 P39</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%8C%E7%94%B5%E7%A3%81%E6%95%A3%E5%B0%84%E7%B3%BB%E7%BB%9F%E5%BB%BA%E6%A8%A1%E5%92%8C%E5%8F%AF%E8%A7%86%E5%8C%96"><span class="nav-text">二、电磁散射系统建模和可视化</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%94%B5%E7%A3%81%E6%95%A3%E5%B0%84%E5%9F%BA%E6%9C%AC%E7%90%86%E8%AE%BA-%E7%8B%84%E6%8B%89%E5%85%8B%E6%A0%BC%E6%9E%97%E5%87%BD%E6%95%B0"><span class="nav-text">1、电磁散射基本理论
+狄拉克格林函数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%91%9E%E5%88%A9%E6%95%A3%E5%B0%84"><span class="nav-text">2、瑞利散射</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%B1%B3%E6%B0%8F%E6%95%A3%E5%B0%84"><span class="nav-text">3、米氏散射：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%BA%94%E7%94%A8%E5%BE%AE%E6%B3%A2%E8%BF%91%E5%9C%BA%E6%89%AB%E6%8F%8F%E6%98%BE%E5%BE%AE%E6%88%90%E5%83%8F"><span class="nav-text">4、应用：微波近场扫描显微成像：</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Fantast"
+      src="/images/avatar.webp">
+  <p class="site-author-name" itemprop="name">Fantast</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">161</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">40</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">97</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/fantast416" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;fantast416" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:fantast416@gmail.com" title="E-Mail → mailto:fantast416@gmail.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll site-overview-item animated">
+    <div class="links-of-blogroll-title"><i class="fa fa-globe fa-fw"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://www.zhihu.com/people/shuo-shuo-3-41" title="https:&#x2F;&#x2F;www.zhihu.com&#x2F;people&#x2F;shuo-shuo-3-41" rel="noopener" target="_blank">ZhiHu</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="http://www.next.zju.edu.cn/" title="http:&#x2F;&#x2F;www.next.zju.edu.cn&#x2F;" rel="noopener" target="_blank">NextLab</a>
+        </li>
+    </ul>
+  </div>
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://blog.fantast.top/2022/09/30/2742f0d23b8a/">
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.webp">
+      <meta itemprop="name" content="Fantast">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Fantast's Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          电子信息工程中数学模型与方法——单元3 电磁系统
+        </h1>
+
+        <div class="post-meta-container">
+          
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2022-09-30 12:13:19" itemprop="dateCreated datePublished" datetime="2022-09-30T12:13:19+08:00">2022-09-30</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2022-10-02 15:29:34" itemprop="dateModified" datetime="2022-10-02T15:29:34+08:00">2022-10-02</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E2%93%BE-%E8%AF%BE%E7%A8%8B%E7%AC%94%E8%AE%B0/" itemprop="url" rel="index"><span itemprop="name">⓾ 课程笔记</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E2%93%BE-%E8%AF%BE%E7%A8%8B%E7%AC%94%E8%AE%B0/%E7%94%B5%E5%AD%90%E4%BF%A1%E6%81%AF%E5%B7%A5%E7%A8%8B%E6%95%B0%E5%AD%A6%E6%A8%A1%E5%9E%8B%E4%B8%8E%E6%96%B9%E6%B3%95/" itemprop="url" rel="index"><span itemprop="name">电子信息工程数学模型与方法</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>984</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>3 分钟</span>
+    </span>
+</div>
+
+            <div class="post-description">本篇笔记为电子信息工程中数学模型与方法——单元3 电磁散射、逆问题系统建模及可视化的相关知识整理，用于学在浙大考试。</div>
+            <div class="post-remind">Google Chrome is recommended, otherwise the image size may be wrong</div>
+            <div class="post-remind">FireFox is not recommended,Because it does not support the image zoom property</div>
+        </div>
+        
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h2 id="一概述和基本理论">一、概述和基本理论</h2>
+<h3 id="麦克斯韦方程组">1、麦克斯韦方程组：</h3>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/image-20221002113642895.png" /></p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/image-20221002113659170.png" /></p>
+<h3 id="平面电磁波">2、平面电磁波：</h3>
+<ul>
+<li><p>波 : 扰动、能量、或物理信息在空间上传播的一种物理现象；</p></li>
+<li><p>电磁波 : 传播电磁能量的波；</p></li>
+<li><p>平面电磁波 :
+波前（等相位面）是平行面且与传播方向垂直的固定频率电磁波；</p></li>
+<li><p>亥姆亥兹方程（Helmholtz’s equation）</p></li>
+</ul>
+<p><img
+src="C:\Users\Fantast\AppData\Roaming\Typora\typora-user-images\image-20221002150037334.png" /></p>
+<ul>
+<li>电场强度表达式：</li>
+</ul>
+<p><img
+src="C:\Users\Fantast\AppData\Roaming\Typora\typora-user-images\image-20221002150210202.png" /></p>
+<p><img
+src="C:\Users\Fantast\AppData\Roaming\Typora\typora-user-images\image-20221002150222274.png" /></p>
+<ul>
+<li><p>磁场强度表达式：</p>
+<figure>
+<img
+src="C:\Users\Fantast\AppData\Roaming\Typora\typora-user-images\image-20221002150256704.png"
+alt="image-20221002150256704" />
+<figcaption aria-hidden="true">image-20221002150256704</figcaption>
+</figure></li>
+</ul>
+<h3 id="特征阻抗">3、特征阻抗：</h3>
+<p>电场强度和磁场强度的幅值比值定义为某种材料的特征阻抗</p>
+<p><img
+src="C:\Users\Fantast\AppData\Roaming\Typora\typora-user-images\image-20221002150355839.png" /></p>
+<h3 id="电磁辐射天线辐射">4、电磁辐射—天线辐射</h3>
+<p>​ 分为近场和远场，近场又分为两个</p>
+<p><img
+src="C:\Users\Fantast\AppData\Roaming\Typora\typora-user-images\image-20221002150510352.png" /></p>
+<p>​ 在比较远的地方可以等价于一个平面波的形式</p>
+<p><img
+src="C:\Users\Fantast\AppData\Roaming\Typora\typora-user-images\image-20221002150516797.png" /></p>
+<h3 id="电磁辐射赫兹偶极子">5、电磁辐射—赫兹偶极子：</h3>
+<h3 id="电磁辐射半波长偶极子">6、电磁辐射—半波长偶极子</h3>
+<h3 id="电磁辐射天线应用-p24-26">7、电磁辐射—天线应用 P24-26</h3>
+<figure>
+<img
+src="C:\Users\Fantast\AppData\Roaming\Typora\typora-user-images\image-20221002150915273.png"
+alt="image-20221002150915273" />
+<figcaption aria-hidden="true">image-20221002150915273</figcaption>
+</figure>
+<ul>
+<li>移动手机 P26-27</li>
+<li>笔记本电脑 P28-29</li>
+<li>无线可穿戴设备 P30-31</li>
+<li>无线电识别天线 P32-33
+<ul>
+<li>无线电识别：一种用来在一定距离无线识别的电子贴片技术。</li>
+</ul></li>
+<li>工作范围：P３４　　近场和远场</li>
+<li>工作模式：被动（Passive Tag 主动（ Active Tag 半被动（ Semi passive
+Tag)
+<ul>
+<li>被动：
+<ul>
+<li>没有电源，使用从读卡器上的能量来充能并且传输数据到读卡器</li>
+<li>更小，更廉价</li>
+<li>往往只有很短的读取距离</li>
+</ul></li>
+<li>主动：
+<ul>
+<li>有电源，tag先传输，然后是reader</li>
+<li>更长的读取距离，100m或以上</li>
+<li>昂贵，使用时间较有限</li>
+</ul></li>
+</ul></li>
+</ul>
+<h3 id="电磁感应无线传能">8、电磁感应—无线传能</h3>
+<h3 id="电磁感应全息成像">9、电磁感应—全息成像</h3>
+<h3 id="电磁辐射穿透性-p39">10、电磁辐射—穿透性 P39</h3>
+<h2 id="二电磁散射系统建模和可视化">二、电磁散射系统建模和可视化</h2>
+<h3 id="电磁散射基本理论-狄拉克格林函数">1、电磁散射基本理论
+狄拉克格林函数</h3>
+<h3 id="瑞利散射">2、瑞利散射</h3>
+<p>​ 半径比光或其他电磁辐射的波长小很多（ （&lt;0.1 𝜆）的 微小颗粒
+（例如单个原子或分子）对入射光束的散射。</p>
+<p>​
+瑞利散射在光通过<strong>透明的固体和液体时都会发生，但以气体最为显著。</strong></p>
+<figure>
+<img
+src="C:\Users\Fantast\AppData\Roaming\Typora\typora-user-images\image-20221002152515412.png"
+alt="image-20221002152515412" />
+<figcaption aria-hidden="true">image-20221002152515412</figcaption>
+</figure>
+<ul>
+<li>总的辐射能量与波数的四次方成正相关，与波长的四次方成反相关。频率越高，瑞利散射越强</li>
+<li>公式见P7</li>
+</ul>
+<h3 id="米氏散射">3、米氏散射：</h3>
+<p>​ <strong>当 微粒半径的大小接近于或大于入射光线的波长 λ
+的时候</strong>，大部分的入射光线会沿着前进的方向进行散射，这种现象被称为米氏散射。
+​<strong>散射场几乎与波长无关；前向波比较大 ;
+物体大小越大，前向波越大</strong></p>
+<p>​
+这种大微粒包括灰尘，水滴，来自污染物的颗粒物质，如烟雾等。即s是形成所谓的丁达尔效应</p>
+<p><img
+src="C:\Users\Fantast\AppData\Roaming\Typora\typora-user-images\image-20221002152726428.png" /></p>
+<ul>
+<li>为什么天空是蓝色、红色（傍晚）、白色（云）？</li>
+</ul>
+<p>​ 瑞利散射：波长的四次方成反相关，即频率越高，瑞利散射越强</p>
+<p><img
+src="C:\Users\Fantast\AppData\Roaming\Typora\typora-user-images\image-20221002152752906.png" /></p>
+<h3 id="应用微波近场扫描显微成像">4、应用：微波近场扫描显微成像：</h3>
+<p><img
+src="C:\Users\Fantast\AppData\Roaming\Typora\typora-user-images\image-20221002152904823.png" /></p>
+
+    </div>
+
+    
+    
+    
+      
+  <div class="popular-posts-header">相关文章</div>
+  <ul class="popular-posts">
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2022\10\12\f71a1b069441\" rel="bookmark">电子信息工程中数学模型与方法——单元2 系统辨识</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2022\09\19\e947a7cc4335\" rel="bookmark">电子信息工程中数学模型与方法——单元1 工业智能</a></div>
+    </li>
+  </ul>
+
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/course/" rel="tag"># course</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2022/09/19/e947a7cc4335/" rel="prev" title="电子信息工程中数学模型与方法——单元1 工业智能">
+                  <i class="fa fa-chevron-left"></i> 电子信息工程中数学模型与方法——单元1 工业智能
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2022/10/12/f71a1b069441/" rel="next" title="电子信息工程中数学模型与方法——单元2 系统辨识">
+                  电子信息工程中数学模型与方法——单元2 系统辨识 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments utterances-container"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Fantast</span>
+</div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+    <span title="站点总字数">725k</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">33:33</span>
+  </span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script><script src="/js/bookmark.js"></script>
+
+  
+<script src="https://cdn.jsdelivr.net/npm/hexo-generator-searchdb@1.4.0/dist/search.js" integrity="sha256-vXZMYLEqsROAXkEw93GGIvaB2ab+QW6w3+1ahD9nXXA=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdn.jsdelivr.net/npm/mathjax@3.2.0/es5/tex-mml-chtml.js","integrity":"sha256-r+3itOMtGGjap0x+10hu6jW/gZCzxHsoKrOd7gyRSGY="}}</script>
+<script src="/js/third-party/math/mathjax.js"></script>
+
+
+<script class="next-config" data-name="utterances" type="application/json">{"enable":true,"repo":"Fantast416/myblog-comment","issue_term":"pathname","theme":"github-light"}</script>
+<script src="/js/third-party/comments/utterances.js"></script>
+
+</body>
+</html>

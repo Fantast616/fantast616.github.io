@@ -1,0 +1,619 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.2.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css" integrity="sha256-mUZM63G8m73Mcidfrv5E+Y61y7a12O5mW4ezU3bxqW4=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"blog.fantast.top","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.9.0","exturl":false,"sidebar":{"position":"left","width":250,"display":"always","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":true,"color":"#222","save":"manual"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"utterances","storage":true,"lazyload":false,"nav":null,"activeClass":"utterances"},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+<meta name="description" content="本篇笔记为观看李宏毅老师的GAN相关课程后所记录，文中所有图片及内容均来源于李宏毅老师的课程，此处只是搬运+以自己的理解进行记录。全文讲述了一些关于GAN训练过程中的Tips，同时深入讲解了解决方案WGAN以及EBGAN。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="GAN系列笔记4——GAN训练过程中的一些Tips与改进的GAN网络（含LSGAN、WGAN、EBGAN）">
+<meta property="og:url" content="https://blog.fantast.top/2021/12/03/ce02100bd0a0/index.html">
+<meta property="og:site_name" content="Fantast&#39;s Blog">
+<meta property="og:description" content="本篇笔记为观看李宏毅老师的GAN相关课程后所记录，文中所有图片及内容均来源于李宏毅老师的课程，此处只是搬运+以自己的理解进行记录。全文讲述了一些关于GAN训练过程中的Tips，同时深入讲解了解决方案WGAN以及EBGAN。">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2021-12-03T13:31:19.000Z">
+<meta property="article:modified_time" content="2022-08-07T14:47:04.000Z">
+<meta property="article:author" content="Fantast">
+<meta property="article:tag" content="GAN">
+<meta property="article:tag" content="LSGAN">
+<meta property="article:tag" content="WGAN">
+<meta property="article:tag" content="EBGAN">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://blog.fantast.top/2021/12/03/ce02100bd0a0/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://blog.fantast.top/2021/12/03/ce02100bd0a0/","path":"2021/12/03/ce02100bd0a0/","title":"GAN系列笔记4——GAN训练过程中的一些Tips与改进的GAN网络（含LSGAN、WGAN、EBGAN）"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>GAN系列笔记4——GAN训练过程中的一些Tips与改进的GAN网络（含LSGAN、WGAN、EBGAN） | Fantast's Blog</title>
+  
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<link rel="alternate" href="/atom.xml" title="Fantast's Blog" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Fantast's Blog</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li>
+        <li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li>
+        <li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li>
+        <li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li>
+        <li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%80tips1-%E6%9C%89%E5%85%B3%E5%A6%82%E4%BD%95%E6%9B%B4%E6%9C%89%E6%95%88%E7%9A%84%E8%AE%AD%E7%BB%83%E5%88%A4%E5%88%AB%E5%99%A8"><span class="nav-text">一、Tips1
+有关如何更有效的训练判别器</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BA%8Cleast-square-gan-lsgan"><span class="nav-text">二、Least Square GAN ( LSGAN )</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%89wasserstein-gan-wgan"><span class="nav-text">三、Wasserstein GAN ( WGAN )</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9B%9Benergy-based-gan-ebgan"><span class="nav-text">四、Energy-Based GAN ( EBGAN )</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Fantast"
+      src="/images/avatar.webp">
+  <p class="site-author-name" itemprop="name">Fantast</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">161</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">40</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">97</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/fantast416" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;fantast416" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:fantast416@gmail.com" title="E-Mail → mailto:fantast416@gmail.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll site-overview-item animated">
+    <div class="links-of-blogroll-title"><i class="fa fa-globe fa-fw"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://www.zhihu.com/people/shuo-shuo-3-41" title="https:&#x2F;&#x2F;www.zhihu.com&#x2F;people&#x2F;shuo-shuo-3-41" rel="noopener" target="_blank">ZhiHu</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="http://www.next.zju.edu.cn/" title="http:&#x2F;&#x2F;www.next.zju.edu.cn&#x2F;" rel="noopener" target="_blank">NextLab</a>
+        </li>
+    </ul>
+  </div>
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://blog.fantast.top/2021/12/03/ce02100bd0a0/">
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.webp">
+      <meta itemprop="name" content="Fantast">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Fantast's Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          GAN系列笔记4——GAN训练过程中的一些Tips与改进的GAN网络（含LSGAN、WGAN、EBGAN）
+        </h1>
+
+        <div class="post-meta-container">
+          
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2021-12-03 21:31:19" itemprop="dateCreated datePublished" datetime="2021-12-03T21:31:19+08:00">2021-12-03</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2022-08-07 22:47:04" itemprop="dateModified" datetime="2022-08-07T22:47:04+08:00">2022-08-07</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E2%93%B5-%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" itemprop="url" rel="index"><span itemprop="name">⓵ 深度学习笔记</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E2%93%B5-%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/GAN%E7%B3%BB%E5%88%97%E7%AC%94%E8%AE%B0/" itemprop="url" rel="index"><span itemprop="name">GAN系列笔记</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>4.5k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>13 分钟</span>
+    </span>
+</div>
+
+            <div class="post-description">本篇笔记为观看李宏毅老师的GAN相关课程后所记录，文中所有图片及内容均来源于李宏毅老师的课程，此处只是搬运+以自己的理解进行记录。全文讲述了一些关于GAN训练过程中的Tips，同时深入讲解了解决方案WGAN以及EBGAN。</div>
+            <div class="post-remind">Google Chrome is recommended, otherwise the image size may be wrong</div>
+            <div class="post-remind">FireFox is not recommended,Because it does not support the image zoom property</div>
+        </div>
+        
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h3 id="一tips1-有关如何更有效的训练判别器">一、Tips1
+有关如何更有效的训练判别器</h3>
+<p>​
+在第三份笔记中，我们讲到其实在训练GAN的过程中，我们就是在计算最小化JS
+divergence的这样一个过程。但是其实JS
+divergence其实存在一个非常严重的问题，根源在于generation
+data的分布和real
+data的分布往往是没有任何重叠的，这个没有任何重叠的问题是由以下两个因素导致的：</p>
+<p>1、data本质导致。Data本身，我们认为是一个图像是一个高维空间中的一个点，<span
+class="math inline">\(P_G\)</span>和<span
+class="math inline">\(P_{data}\)</span>在这个高维空间中都是属于low-dim
+manifold。所以基本是不存在重叠的部分的。</p>
+<p>2、实际操作的时候，我们是先进行的采样，然后再用discriminator去量他们之间的divergence，而且采样的样例也不会太多。所以离散的采样也会导致，两堆采样的点基本上是不可能重叠的，应该是没有交集的。</p>
+<p>​ 那么，为什么当<span class="math inline">\(P_G\)</span>和<span
+class="math inline">\(P_{data}\)</span>没有重合部分的时候，用JS
+divergence衡量会出问题呢？精确一点来说，应该是会对你训练时候，造成比较大的障碍。首先我们你需要知道一个事实，有关JS
+divergence，就是如果两个分布没有任何重合，那么计算出来的JS
+divergence值就是log2，无论其相距多远。如下图所示，更直观一些：</p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220115104959639.png" /></p>
+<p>​
+对于这三组数据而言，因为算出来的目标函数都是一样的，所以判别器会认为G0跟G1是一样差的，也就没法把G0更新到G1.这样子的话就会给判别器的训练带来一定的困难</p>
+<p>​ 这个问题，其实以一个直观的方法来讲就如下图所示：假设蓝点是generated
+data，绿色是real
+data，两组点没有交集，我们现在训练一个判别器（其实就是一个binary
+classifier）,如果这个判别器训练的太好的话呢，就会导致如下图所示的红色实线的情况，蓝色点上方的区域导数都是零，这就会使的Generator在梯度下降的时候，没法继续下去，generated
+data也就没法像real
+data靠近。如果这个判别器训练的不行的话，又很容易导致分辨不出两组data。所以，在原始GAN早期，训练是比较不容易的一件事情。因为你没有办法去分辨，到底什么是训练的太好，什么是训练的不行。</p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220115105009691.png" /></p>
+<h3 id="二least-square-gan-lsgan">二、Least Square GAN ( LSGAN )</h3>
+<p>​
+承接上一段落的内容，为了使得上述描述的梯度为0，最后导致蓝色点不会像绿色点靠近情况出现，所以就出现了LSGAN。它就是将之前Discriminator所作的classifier分类问题，改变成了regression回归问题。从操作上来讲，就是将输出的sigmoid激活函数，变成了linear函数。这样的话，就会使得我们的判别器的得分曲线如下图所示：</p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220115105022595.png" /></p>
+<h3 id="三wasserstein-gan-wgan">三、Wasserstein GAN ( WGAN )</h3>
+<p>​ 相比于原始的GAN，就是把原来用来衡量的JS divergence换成了Earth
+Mover’s Distance.</p>
+<p>​ 首先我们来介绍一下Earth Mover’s
+Distance是什么东西，如下所示：下图是一个最简单的示例，我们有两个概率分布P和Q，然后你要想办法把概率分布P移到Q的地方去。如果P和Q如下图所示，都是一个一维空间上的分布，那非常简单，Earth
+Mover’s Distance就是它们之间的距离d。</p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220115105043352.png" /></p>
+<p>​
+然后让我们再来考虑一个更为复杂的情形：现在P和Q的概率分布如图所示，那么你会发现我要想把P变成Q，我会有许多种挪动的方式。左边是一种挪动方式，右边是一种挪动方式，每一种挪动方式都会算出一个不同的距离，每一种挪动方式，我们就称之为一种“moving
+plan”。那么，我们会使用所有的moving
+plan中计算出最小的那个距离，来将其定义为Earth Mover’s
+Distance。（通俗一点就是，所有方案算一遍，要最小的那个方案）</p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220115105052710.png" /></p>
+<p>​
+比如说，同一堆东西我们用同样的颜色来表示，下图所示的P到Q的挪动方式，就是该示例最佳的一个moving
+plan。</p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220115105101411.png" /></p>
+<p>​ 下面这张图是一个更为官方与公式化的定义，我们可以把一个moving
+plan表示成像左图一样的一个矩阵，对应的交叉的区域就表示该块挪动的量。那么你会发现，左边矩阵中每一行值相加应该都会等于其对应的P的那一条区域的值，每一列值相加起来都会等于其对应的Q的那一条区域的值。所以，给定这样一个moving
+plan，应该怎么去计算这个方案对应的移动距离呢？就用到下图中B(γ)的公式，遍历所有的xp和xq，其实就是遍历矩阵的每一个值，然后做乘积、求和。</p>
+<p>​ 最终，如果我们想要求解P和Q的Earth Mover’s
+Distance，那么就需要穷举所有的moving
+plan，然后找到所有B(γ)最小的那一个值,就是P和Q的Earth Mover’s
+Distance.所以你会发现求解这样一个距离还需要解一个最优化问题.</p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220115105115495.png" /></p>
+<p>​ OK,到此为止,我们已经知道了Earth Mover’s
+Distance是怎么样一个东西,那么就先来讨论一下,为什么我们用这个距离来进行衡量?有什么样的好处?
+如下图所示,原来的JS Divergence计算出来的,对于G0,
+G50来说,两个差距一致,生成器就没法从G0 Update到G50,但是如果我们使用W
+Distance,d50是会比d0好的,那也就是说对于Generator来说,会慢慢的从G0 Update
+到G50,也就是之前导致训练不起来的因素会被规避掉.</p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220115105125389.png" /></p>
+<p>​ 那么在训练过程中,WGAN到底应该如何使用Earth Mover’s Distance呢?
+我们将原来的V(G,D)函数替换成如下公式即可:</p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220115105135075.png" /></p>
+<p>​
+这个公式其实比较好理解,推导过程非常复杂我们再次略过.就是我们需要让从real
+data中产生出来的值越大越好,generate
+中产生的值越小越好.同时,会有一个额外的constrain,就是D这个函数必须是一个
+1-Lipschitz函数,我们暂时先不管这个
+名词是什么,只需要先知道,这个代表的就是说D需要是一个非常平滑的函数.从直观的角度,为什么需要增加这个限制呢?如下图所示,如果不增加这个限制,就会像下图所示的红色曲线一样,Discriminator永远都不会收敛,两边分化会越来越大.generated
+data部分会变成无穷小,real data 就会变得无穷大.</p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220115105142990.png" /></p>
+<p>​ 那么实际上1-Lipschitz函数是什么呢?定义如下:
+右边蓝色函数就不是,而绿色函数就是.</p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220115105150180.png" /></p>
+<p>​ 那我们应该怎么去进行训练呢? 原始的方法就是使用Weight Clipping
+方法,但是其实这个方法并没有完全能够限制住D是一个1-Lipschitz函数,但可以相对来说让你的D变得平滑一些.</p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220115105158514.png" /></p>
+<p>​ 所以后面就出现了 Improved WGAN ( WGAN-GP )来解决这个问题:
+它的作者提出了这样一个观察:
+就是说D是一个1-Lipschitz函数是和右侧的不等式等价的，也就是说要对于所有网络可能的输入x来说，如果将它给判别起求它的梯度的Norm范式是小于等于1的话，就可以。</p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220115105204998.png" /></p>
+<p>​ 那么我们现在的方法，就是在整个的式子后面近似补上一项，</p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220115105211649.png" /></p>
+<p>​
+在我们的目标函数中加上这样一项以后，在网络训练的过程中，网络就会希望尽可能的满足下面这个式子，但是问题又来了，我们没办法对所有的x做积分，但是如果想要D是一个1-Lipschitz函数，是需要对所有的x来说的。所以我们又进行了部分的近似：</p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220115105219880.png" /></p>
+<p>​
+如下所示，将最后补充的那一项变更成如下的一项，意思是我们只从一个叫做<span
+class="math inline">\(P_{penalty}\)</span>的分布中进行取样，我们只保证从这个分布中取出来的x能够满足，其他的就先不保证了。</p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220115105229709.png" /></p>
+<p>​ 那么<span
+class="math inline">\(P_{penalty}\)</span>长什么样子呢？如下图所示，我们从<span
+class="math inline">\(P_{data}\)</span>中取一个点，从<span
+class="math inline">\(P_{G}\)</span>中随机取一个点，然后在两点的直线上随机采样一个点。这样子采出得到的点所形成的一个分布我们就认为是<span
+class="math inline">\(P_{penalty}\)</span>。如图所示，其实就是大概是图中蓝色部分区域。</p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220115105307969.png" /></p>
+<p>​ 那为什么我们不用考虑整个Image Space空间中的x，只需要考虑<span
+class="math inline">\(P_{penalty}\)</span>分布上的x了呢？原因其实只是通过实验做出来，这样子效果是好的。其实从直观的角度上也可以有理解，因为我们之前说过其实训练过程就是<span
+class="math inline">\(P_{G}\)</span>向<span
+class="math inline">\(P_{data}\)</span>慢慢靠近的这么一个过程，那么也就是说其实只有<span
+class="math inline">\(P_{penalty}\)</span>这块部分区域的点的梯度才会影响。</p>
+<p>​
+同时，我们还要再做一个改进。我们刚才目标函数补充的那一项，将其进一步修改。我们希望训练过程中，梯度越接近1越好。</p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220115105332353.png" /></p>
+<p>​
+其实在刚才的WGAN-GP的过程中，做了很多的近似，很多结果也是由实验得出的，那么Spectrum
+Norm提出了一种方法，真的可以限制判别器学习完以后，在每一个位置的Gradient
+Norm都是可以小于1的。</p>
+<p>​
+在最后，我们回到WGAN的算法，看看在实际的过程中，怎么从GAN变成WGAN：整体而言就是修改下图中黑框框的四个部分，1个是在LearningD的过程中，将目标函数部分的sigmoid输出移除掉，同时要记得使用weight
+cliipping 获得gradient penalty来进行限制。再就是在Learning
+G的过程中，将目标函数进行部分的修改，就可以了。</p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220115105348387.png" /></p>
+<h3 id="四energy-based-gan-ebgan">四、Energy-Based GAN ( EBGAN )</h3>
+<p>​
+其与原始GAN唯一的不同在于其修改了DIscriminator的架构，Discriminator原本来说是一个Binary
+Classifier，但是在EBGAN中，将其变成了一个Auto
+Encoder自动编码器，Generator是跟原来一样的。架构如下图所示：</p>
+<p>​
+整一个Discriminator仍旧会输出一个Scalar分数，但现在这个分数是从何而来的呢？他是基于Auto
+Encoder的重建误差得到的。之所以这样做，EBGAN是基于以下一个假设的：越真实的Image它经过AutoEncoder以后，重建误差越小，越虚假的Image重建误差越大。那么EBGAN的好处在于这个Discriminator是可以预训练的，因为AutoEncoder的训练并不需要用到negative的样例。只需要给positive的样例，然后最小化重建误差就可以了。</p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220115105401559.png" /></p>
+<p>​ 相比于原来的GAN来说，因为Origin
+GAN它不能预训练Discriminator，所以一开始DIscriminator就会很弱，训练起来就会很慢。而EBGAN的Discriminator一开始就相对比较强。</p>
+<p>​ 在训练EBGAN的时候，需要注意以下一点：以下图为示例，我们会想要让real
+data最后得到的值比较大，generate
+data得到的值比较小，但是我们不能让generate
+data得到的值无限小，不加限制。因为这样的话就会让Discriminator对于generate
+data的输入而言，其全部输出noise，这样的话既可以把输出分数压的很低。所以我们需要一个margin，让genrate
+data对应的分数，只要小于margin以下的值就可以，不需要再变得更小。而至于margin的值就是一个我们需要调整的超参数。</p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220115105412942.png" /></p>
+
+    </div>
+
+    
+    
+    
+      
+  <div class="popular-posts-header">相关文章</div>
+  <ul class="popular-posts">
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2022\01\26\8f68bd6cb4f4\" rel="bookmark">《HandWritting Transformers》(更新中)</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2021\12\05\59cf77767a4c\" rel="bookmark">GAN系列笔记6——评估GAN的相关方法指标</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2021\12\04\554e29d255b4\" rel="bookmark">GAN系列笔记5——GAN应用于特征提取（InfoGAN，VAEGAN，BiGAN）</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2021\12\02\147dd3a9b3ed\" rel="bookmark">GAN系列笔记3——GAN的数学理论支撑</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2021\12\01\85bccde5409d\" rel="bookmark">GAN系列笔记2——常见GAN变种（ConditionalGAN，PatchGAN，CycleGAN等）</a></div>
+    </li>
+  </ul>
+
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/GAN/" rel="tag"># GAN</a>
+              <a href="/tags/LSGAN/" rel="tag"># LSGAN</a>
+              <a href="/tags/WGAN/" rel="tag"># WGAN</a>
+              <a href="/tags/EBGAN/" rel="tag"># EBGAN</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2021/12/02/147dd3a9b3ed/" rel="prev" title="GAN系列笔记3——GAN的数学理论支撑">
+                  <i class="fa fa-chevron-left"></i> GAN系列笔记3——GAN的数学理论支撑
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2021/12/04/554e29d255b4/" rel="next" title="GAN系列笔记5——GAN应用于特征提取（InfoGAN，VAEGAN，BiGAN）">
+                  GAN系列笔记5——GAN应用于特征提取（InfoGAN，VAEGAN，BiGAN） <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments utterances-container"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Fantast</span>
+</div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+    <span title="站点总字数">725k</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">33:33</span>
+  </span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script><script src="/js/bookmark.js"></script>
+
+  
+<script src="https://cdn.jsdelivr.net/npm/hexo-generator-searchdb@1.4.0/dist/search.js" integrity="sha256-vXZMYLEqsROAXkEw93GGIvaB2ab+QW6w3+1ahD9nXXA=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdn.jsdelivr.net/npm/mathjax@3.2.0/es5/tex-mml-chtml.js","integrity":"sha256-r+3itOMtGGjap0x+10hu6jW/gZCzxHsoKrOd7gyRSGY="}}</script>
+<script src="/js/third-party/math/mathjax.js"></script>
+
+
+<script class="next-config" data-name="utterances" type="application/json">{"enable":true,"repo":"Fantast416/myblog-comment","issue_term":"pathname","theme":"github-light"}</script>
+<script src="/js/third-party/comments/utterances.js"></script>
+
+</body>
+</html>

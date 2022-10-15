@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.2.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css" integrity="sha256-mUZM63G8m73Mcidfrv5E+Y61y7a12O5mW4ezU3bxqW4=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"blog.fantast.top","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.9.0","exturl":false,"sidebar":{"position":"left","width":250,"display":"always","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":true,"color":"#222","save":"manual"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"utterances","storage":true,"lazyload":false,"nav":null,"activeClass":"utterances"},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+<meta name="description" content="链表问题的解题技巧与常见优化思路，比如快慢指针法以达到O(1)空间复杂度、双指针以缩减空间复杂度等。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="链表系列——链表问题的常见技巧">
+<meta property="og:url" content="https://blog.fantast.top/2022/02/04/bb6e8e482b2b/index.html">
+<meta property="og:site_name" content="Fantast&#39;s Blog">
+<meta property="og:description" content="链表问题的解题技巧与常见优化思路，比如快慢指针法以达到O(1)空间复杂度、双指针以缩减空间复杂度等。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://mypic416.oss-cn-hangzhou.aliyuncs.com/mac/截屏2022-02-04 下午2.06.49.png">
+<meta property="article:published_time" content="2022-02-04T05:52:19.000Z">
+<meta property="article:modified_time" content="2022-08-07T14:48:53.000Z">
+<meta property="article:author" content="Fantast">
+<meta property="article:tag" content="leetcode">
+<meta property="article:tag" content="linked list">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://mypic416.oss-cn-hangzhou.aliyuncs.com/mac/截屏2022-02-04 下午2.06.49.png">
+
+
+<link rel="canonical" href="https://blog.fantast.top/2022/02/04/bb6e8e482b2b/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://blog.fantast.top/2022/02/04/bb6e8e482b2b/","path":"2022/02/04/bb6e8e482b2b/","title":"链表系列——链表问题的常见技巧"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>链表系列——链表问题的常见技巧 | Fantast's Blog</title>
+  
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<link rel="alternate" href="/atom.xml" title="Fantast's Blog" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Fantast's Blog</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li>
+        <li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li>
+        <li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li>
+        <li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li>
+        <li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%80%E5%89%91%E6%8C%87-offer-ii-022.-%E9%93%BE%E8%A1%A8%E4%B8%AD%E7%8E%AF%E7%9A%84%E5%85%A5%E5%8F%A3%E8%8A%82%E7%82%B9"><span class="nav-text">一、剑指 Offer II 022.
+链表中环的入口节点</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E8%A7%A3%E9%A2%98%E6%80%9D%E8%B7%AF"><span class="nav-text">解题思路：</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BA%8C%E5%89%91%E6%8C%87-offer-ii-023.-%E4%B8%A4%E4%B8%AA%E9%93%BE%E8%A1%A8%E7%9A%84%E7%AC%AC%E4%B8%80%E4%B8%AA%E9%87%8D%E5%90%88%E8%8A%82%E7%82%B9"><span class="nav-text">二、剑指 Offer II 023.
+两个链表的第一个重合节点</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Fantast"
+      src="/images/avatar.webp">
+  <p class="site-author-name" itemprop="name">Fantast</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">161</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">40</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">97</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/fantast416" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;fantast416" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:fantast416@gmail.com" title="E-Mail → mailto:fantast416@gmail.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll site-overview-item animated">
+    <div class="links-of-blogroll-title"><i class="fa fa-globe fa-fw"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://www.zhihu.com/people/shuo-shuo-3-41" title="https:&#x2F;&#x2F;www.zhihu.com&#x2F;people&#x2F;shuo-shuo-3-41" rel="noopener" target="_blank">ZhiHu</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="http://www.next.zju.edu.cn/" title="http:&#x2F;&#x2F;www.next.zju.edu.cn&#x2F;" rel="noopener" target="_blank">NextLab</a>
+        </li>
+    </ul>
+  </div>
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://blog.fantast.top/2022/02/04/bb6e8e482b2b/">
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.webp">
+      <meta itemprop="name" content="Fantast">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Fantast's Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          链表系列——链表问题的常见技巧
+        </h1>
+
+        <div class="post-meta-container">
+          
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2022-02-04 13:52:19" itemprop="dateCreated datePublished" datetime="2022-02-04T13:52:19+08:00">2022-02-04</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2022-08-07 22:48:53" itemprop="dateModified" datetime="2022-08-07T22:48:53+08:00">2022-08-07</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E2%93%B7-%E7%AE%97%E6%B3%95%E7%B1%BB%E7%AC%94%E8%AE%B0/" itemprop="url" rel="index"><span itemprop="name">⓷ 算法类笔记</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E2%93%B7-%E7%AE%97%E6%B3%95%E7%B1%BB%E7%AC%94%E8%AE%B0/%E9%93%BE%E8%A1%A8%E7%B3%BB%E5%88%97/" itemprop="url" rel="index"><span itemprop="name">链表系列</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>2k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>6 分钟</span>
+    </span>
+</div>
+
+            <div class="post-description">链表问题的解题技巧与常见优化思路，比如快慢指针法以达到O(1)空间复杂度、双指针以缩减空间复杂度等。</div>
+            <div class="post-remind">Google Chrome is recommended, otherwise the image size may be wrong</div>
+            <div class="post-remind">FireFox is not recommended,Because it does not support the image zoom property</div>
+        </div>
+        
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h3 id="一剑指-offer-ii-022.-链表中环的入口节点">一、<a
+target="_blank" rel="noopener" href="https://leetcode-cn.com/problems/c32eOV/">剑指 Offer II 022.
+链表中环的入口节点</a></h3>
+<p><strong>题目简单描述</strong>：</p>
+<p>​ 给定一个链表，需要返回链表开始入环的第一个节点。
+从链表的头节点开始沿着 next
+指针进入环的第一个节点为环的入口节点。如果链表无环，则返回 null。</p>
+<p>​ 进阶：是否可以使用 O(1) 空间解决此题？</p>
+<h5 id="解题思路"><strong>解题思路</strong>：</h5>
+<p>​
+本题本身想要解答十分简单，将其放入博客中整理是想记录我们应该如何利用O(1)空间去解决这个题目呢？</p>
+<p>​ <strong>快慢指针法</strong>，我们使用两个指针，fast 与
+slow。它们起始都位于链表的头部。随后，slow 指针每次向后移动一个位置，而
+fast 指针向后移动两个位置。如果链表中存在环，则 fast 指针最终将再次与
+slow 指针在环中相遇。</p>
+<p>​
+如下图所示，即可非常好的理解如下：那么，又该如何判断入环点的位置呢？我们先上结论：经过数学推断可以得知：</p>
+<p>​
+<strong>假设快慢指针相遇时，fast指针已经走完了环的n圈，那么</strong></p>
+<p>​ <strong>从相遇点到入环点的距离加上 n−1
+圈的环长，恰好等于从链表头部到入环点的距离。</strong></p>
+<p>​
+<strong>根据此结论，我们只需要在快慢指针相遇时，再加一个ptr指针，让其指向链表头部；随后，它和
+slow 指针每次向后移动一个位置。最终，它们会在入环点相遇。</strong></p>
+<p><img src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/mac/截屏2022-02-04 下午2.06.49.png" alt="截屏2022-02-04 下午2.06.49" style="zoom:33%;" /></p>
+<p>​ <strong>结论证明</strong>：设链表中环外部分的长度为 a。slow
+指针进入环后，又走了 b 的距离与 fast 相遇。此时，fast 指针已经走完了环的
+n 圈，因此它走过的总距离为 <span class="math inline">\(a + n \times
+(b+c) + b\)</span> ,而此时，slow指针走过的总距离为 <span
+class="math inline">\(a + b\)</span>。</p>
+<p>​
+<strong>【此处需要解释一下：为何fast与slow相遇时，slow必定还在走第一圈？】</strong>（我们假设fast和slow如果同时从入环点出发，由于速度是2倍的关系，slow走完1圈的时候，fast刚好走完2圈，他们会在起点相遇。但是现在，fast比slow先入环，也就是说slow入环的时候，fast不管在环的哪里，肯定能在slow走完一圈前，将其追上。）</p>
+<p>​ 由于fast指针走的速度是slow指针的2倍，那么可以得到以下等式：$ a + n
+(b+c) = 2 (a + b)$ 所以可以得到如下结论： $ a = c + (n-1) (b+c)$
+,这也就意味着，最开始说的， 从相遇点到入环点的距离 + (n-1)
+圈环的距离，等于链表头到入环点的距离。</p>
+<p>​
+那么为什么说，如果相遇的时候，ptr从链表头出发，ptr和slow必定在入环口相遇呢？因为a的距离是c加上许多圈环的距离，所以当ptr到达链表入环口的时候，时间经过了a，此时slow必定出现在入环口处。所以我们可以根据此来判断，入环口的位置是哪一个节点。</p>
+<h3 id="二剑指-offer-ii-023.-两个链表的第一个重合节点">二、<a
+target="_blank" rel="noopener" href="https://leetcode-cn.com/problems/3u1WK4/">剑指 Offer II 023.
+两个链表的第一个重合节点</a></h3>
+<p><strong>简单题目描述</strong>：</p>
+<p>​ 给定两个单链表的头节点 headA 和 headB
+，请找出并返回两个单链表相交的起始节点。如果两个链表没有交点，返回 null
+。详细见原网址</p>
+<p><strong>解题思路</strong>：</p>
+<p>参考：https://leetcode-cn.com/problems/3u1WK4/solution/liang-ge-lian-biao-de-di-yi-ge-zhong-he-0msfg/</p>
+<p>此题难点在于设计一个时间复杂度 O(n) 、仅用 O(1) 内存的解决方案？</p>
+<p>​
+我们可以考虑双指针的方法对两个链表进行求解，但是双指针的难点在于，两条链表的长度不同，无法做到一一对应。我们先给出<strong>解决方案</strong>：</p>
+<p>​ 当链表 headA 和 headB 都不为空时，创建两个指针 pA 和 pB
+，初始时分别指向两个链表的头节点 headA和 headB
+，然后将两个指针依次遍历两个链表的每个节点。具体做法如下：</p>
+<ul>
+<li>每步操作需要同时更新指针 pA 和 pB。</li>
+<li>如果指针 pA 不为空，则将指针 pA 移到下一个节点；如果指针 pB
+不为空，则将指针 pB 移到下一个节点。</li>
+<li>如果指针 pA 为空，则将指针 pA 移到链表 headB 的头节点；如果指针 pB
+为空，则将指针 pB 移到链表 headA 的头节点。</li>
+<li>当指针 pA 和 pB 指向同一个节点或者都为空时，返回它们指向的节点或者
+null。</li>
+</ul>
+<p>​
+<strong>乍一看，其中有一个非常奇怪的点</strong>，就是如果指针pA为空，那么将指针pA移动到链表headB的头节点。但其实仔细一想，这样子是没问题的。也正是因为这个操作，我们才能够得以解决两个链表长度不一致导致的不对应问题。较为详细的证明如下：</p>
+<p>​
+我们先考虑<strong>两链表相交的情况</strong>，如果两链表长度一致，那不需要想，pA和pB必定同时到达某一个节点。</p>
+<p>​
+如果两链表长度不一致，这样子的话，我们假设链表A、B长度为m和n，A、B的不相交部分节点数为a，b，相交部分节点数为c，那么m
+= a + c , n = b + c.
+pA和pB第一遍遍历完各自的链表后，他们不是同时到达尾部节点的，但是当pA遍历完
+a + c + b个节点，当pB遍历完b + c +
+a个节点的时候，两者就会同时到达相交的节点。</p>
+<p>​
+再证明<strong>两链表不相交的情况</strong>，如果两链表长度一致，那不需要想，pA和pB必定同时到达最终的NULL节点。</p>
+<p>​
+如果两链表长度不一致，这样子的话，我们假设链表A、B的长度各位m和n，当pA
+遍历完 m + n个节点，pB遍历完 n +
+m个节点的时候，必定同时到达尾部的NULL节点。</p>
+
+    </div>
+
+    
+    
+    
+      
+  <div class="popular-posts-header">相关文章</div>
+  <ul class="popular-posts">
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2022\02\03\b62f2c89d90c\" rel="bookmark">LeetCode《剑指Offer》题目情况整理（持续更新）</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2022\02\02\e7e76d98fb52\" rel="bookmark">LeetCode 算法解题Tricks（持续更新）</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2022\02\26\3e00524469fb\" rel="bookmark">DFS系列——DFS多种形式变体整理</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2022\02\26\16bfad4011e0\" rel="bookmark">图系列——重建序列</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2022\02\26\994b03ade281\" rel="bookmark">数组系列——值和下标之差都在给定范围内</a></div>
+    </li>
+  </ul>
+
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/leetcode/" rel="tag"># leetcode</a>
+              <a href="/tags/linked-list/" rel="tag"># linked list</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2022/02/04/5959f8901103/" rel="prev" title="数组系列——回文字符串相关处理技巧">
+                  <i class="fa fa-chevron-left"></i> 数组系列——回文字符串相关处理技巧
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2022/02/05/233281550871/" rel="next" title="容器设计——插入、删除和随机访问都是 O(1) 的容器设计">
+                  容器设计——插入、删除和随机访问都是 O(1) 的容器设计 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments utterances-container"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Fantast</span>
+</div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+    <span title="站点总字数">725k</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">33:33</span>
+  </span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script><script src="/js/bookmark.js"></script>
+
+  
+<script src="https://cdn.jsdelivr.net/npm/hexo-generator-searchdb@1.4.0/dist/search.js" integrity="sha256-vXZMYLEqsROAXkEw93GGIvaB2ab+QW6w3+1ahD9nXXA=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdn.jsdelivr.net/npm/mathjax@3.2.0/es5/tex-mml-chtml.js","integrity":"sha256-r+3itOMtGGjap0x+10hu6jW/gZCzxHsoKrOd7gyRSGY="}}</script>
+<script src="/js/third-party/math/mathjax.js"></script>
+
+
+<script class="next-config" data-name="utterances" type="application/json">{"enable":true,"repo":"Fantast416/myblog-comment","issue_term":"pathname","theme":"github-light"}</script>
+<script src="/js/third-party/comments/utterances.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,603 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.2.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css" integrity="sha256-mUZM63G8m73Mcidfrv5E+Y61y7a12O5mW4ezU3bxqW4=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"blog.fantast.top","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.9.0","exturl":false,"sidebar":{"position":"left","width":250,"display":"always","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":true,"color":"#222","save":"manual"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"utterances","storage":true,"lazyload":false,"nav":null,"activeClass":"utterances"},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+<meta name="description" content="本篇笔记为java系列笔记关于java单元测试的相关内容，JUnit是常见的单元测试模块，单元测试就是针对最小的功能单元编写测试代码。Java程序最小的功能单元是方法，因此，对Java程序进行单元测试就是针对单个Java方法的测试。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="java系列笔记10——java单元测试JUnit">
+<meta property="og:url" content="https://blog.fantast.top/2022/02/02/e8aa8ccaa4fe/index.html">
+<meta property="og:site_name" content="Fantast&#39;s Blog">
+<meta property="og:description" content="本篇笔记为java系列笔记关于java单元测试的相关内容，JUnit是常见的单元测试模块，单元测试就是针对最小的功能单元编写测试代码。Java程序最小的功能单元是方法，因此，对Java程序进行单元测试就是针对单个Java方法的测试。">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2022-02-02T00:54:19.000Z">
+<meta property="article:modified_time" content="2022-08-07T14:50:50.000Z">
+<meta property="article:author" content="Fantast">
+<meta property="article:tag" content="java">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://blog.fantast.top/2022/02/02/e8aa8ccaa4fe/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://blog.fantast.top/2022/02/02/e8aa8ccaa4fe/","path":"2022/02/02/e8aa8ccaa4fe/","title":"java系列笔记10——java单元测试JUnit"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>java系列笔记10——java单元测试JUnit | Fantast's Blog</title>
+  
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<link rel="alternate" href="/atom.xml" title="Fantast's Blog" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Fantast's Blog</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li>
+        <li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li>
+        <li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li>
+        <li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li>
+        <li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%80%E7%BC%96%E5%86%99junit%E6%B5%8B%E8%AF%95"><span class="nav-text">一、编写JUnit测试：</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF%E6%B5%8B%E8%AF%95%E9%A9%B1%E5%8A%A8%E5%BC%80%E5%8F%91"><span class="nav-text">1、什么是测试驱动开发？</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#junit%E6%B5%8B%E8%AF%95%E6%A1%86%E6%9E%B6"><span class="nav-text">2、JUnit测试框架：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#intellij%E4%B8%AD%E5%A6%82%E4%BD%95%E5%BC%80%E5%90%AF%E5%8D%95%E5%85%83%E6%B5%8B%E8%AF%95"><span class="nav-text">3、IntelliJ中如何开启单元测试？</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%8D%95%E5%85%83%E6%B5%8B%E8%AF%95%E6%96%87%E4%BB%B6%E6%80%8E%E4%B9%88%E7%BC%96%E5%86%99"><span class="nav-text">4、单元测试文件怎么编写？</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%8D%95%E5%85%83%E6%B5%8B%E8%AF%95%E7%9A%84%E7%BB%93%E6%9E%9C"><span class="nav-text">5、单元测试的结果：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%8D%95%E5%85%83%E6%B5%8B%E8%AF%95%E7%9A%84%E5%A5%BD%E5%A4%84"><span class="nav-text">6、单元测试的好处：</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BA%8C%E4%BD%BF%E7%94%A8fixture"><span class="nav-text">二、使用Fixture</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%89%E5%BC%82%E5%B8%B8%E6%B5%8B%E8%AF%95"><span class="nav-text">三、异常测试：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9B%9B%E6%9D%A1%E4%BB%B6%E6%B5%8B%E8%AF%95"><span class="nav-text">四、条件测试：</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#disabled"><span class="nav-text">1、@Disabled</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#enabledonos"><span class="nav-text">2、@EnabledOnOs</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%85%B6%E4%BB%96%E6%9D%A1%E4%BB%B6%E6%B5%8B%E8%AF%95"><span class="nav-text">3、其他条件测试：</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BA%94%E5%8F%82%E6%95%B0%E5%8C%96%E6%B5%8B%E8%AF%95"><span class="nav-text">五、参数化测试：</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Fantast"
+      src="/images/avatar.webp">
+  <p class="site-author-name" itemprop="name">Fantast</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">161</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">40</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">97</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/fantast416" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;fantast416" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:fantast416@gmail.com" title="E-Mail → mailto:fantast416@gmail.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll site-overview-item animated">
+    <div class="links-of-blogroll-title"><i class="fa fa-globe fa-fw"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://www.zhihu.com/people/shuo-shuo-3-41" title="https:&#x2F;&#x2F;www.zhihu.com&#x2F;people&#x2F;shuo-shuo-3-41" rel="noopener" target="_blank">ZhiHu</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="http://www.next.zju.edu.cn/" title="http:&#x2F;&#x2F;www.next.zju.edu.cn&#x2F;" rel="noopener" target="_blank">NextLab</a>
+        </li>
+    </ul>
+  </div>
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://blog.fantast.top/2022/02/02/e8aa8ccaa4fe/">
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.webp">
+      <meta itemprop="name" content="Fantast">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Fantast's Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          java系列笔记10——java单元测试JUnit
+        </h1>
+
+        <div class="post-meta-container">
+          
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2022-02-02 08:54:19" itemprop="dateCreated datePublished" datetime="2022-02-02T08:54:19+08:00">2022-02-02</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2022-08-07 22:50:50" itemprop="dateModified" datetime="2022-08-07T22:50:50+08:00">2022-08-07</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E2%93%B8-%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80%E7%B1%BB%E7%AC%94%E8%AE%B0/" itemprop="url" rel="index"><span itemprop="name">⓸ 编程语言类笔记</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E2%93%B8-%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80%E7%B1%BB%E7%AC%94%E8%AE%B0/java%E5%85%A5%E9%97%A8%E7%B3%BB%E5%88%97%E7%AC%94%E8%AE%B0/" itemprop="url" rel="index"><span itemprop="name">java入门系列笔记</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>7.4k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>20 分钟</span>
+    </span>
+</div>
+
+            <div class="post-description">本篇笔记为java系列笔记关于java单元测试的相关内容，JUnit是常见的单元测试模块，单元测试就是针对最小的功能单元编写测试代码。Java程序最小的功能单元是方法，因此，对Java程序进行单元测试就是针对单个Java方法的测试。</div>
+            <div class="post-remind">Google Chrome is recommended, otherwise the image size may be wrong</div>
+            <div class="post-remind">FireFox is not recommended,Because it does not support the image zoom property</div>
+        </div>
+        
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p>参考教程网址：https://www.liaoxuefeng.com/wiki/1252599548343744/1304048154181666</p>
+<h3 id="一编写junit测试">一、编写JUnit测试：</h3>
+<h4 id="什么是测试驱动开发">1、什么是测试驱动开发？</h4>
+<p>​
+所谓测试驱动开发，是指先编写接口，紧接着编写测试。编写完测试后，我们才开始真正编写实现代码。在编写实现代码的过程中，一边写，一边测，什么时候测试全部通过了，那就表示编写的实现完成了：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">    编写接口</span><br><span class="line">     │</span><br><span class="line">     ▼</span><br><span class="line">    编写测试</span><br><span class="line">     │</span><br><span class="line">     ▼</span><br><span class="line">┌─&gt; 编写实现</span><br><span class="line">│    │</span><br><span class="line">│ N  ▼</span><br><span class="line">└── 运行测试</span><br><span class="line">     │ Y</span><br><span class="line">     ▼</span><br><span class="line">    任务完成</span><br></pre></td></tr></table></figure>
+<h4 id="junit测试框架">2、JUnit测试框架：</h4>
+<p>​
+JUnit是一个开源的Java语言的单元测试框架，专门针对Java设计，使用最广泛。JUnit是事实上的单元测试的标准框架，任何Java开发者都应当学习并使用JUnit编写单元测试</p>
+<p>​
+使用JUnit编写单元测试的好处在于，我们可以非常简单地组织测试代码，并随时运行它们，JUnit就会给出成功的测试和失败的测试，还可以生成测试报告，不仅包含测试的成功率，还可以统计测试的代码覆盖率，即被测试的代码本身有多少经过了测试。对于高质量的代码来说，测试覆盖率应该在80%以上。</p>
+<h4 id="intellij中如何开启单元测试">3、IntelliJ中如何开启单元测试？</h4>
+<p>​
+教程：https://blog.csdn.net/qq754772661/article/details/107790362</p>
+<h4 id="单元测试文件怎么编写">4、单元测试文件怎么编写？</h4>
+<p>​
+核心测试方法<code>testFact()</code>加上了<code>@Test</code>注解，这是JUnit要求的，它会把带有<code>@Test</code>的方法识别为测试方法。在测试方法内部，我们用<code>assertEquals(1, Factorial.fact(1))</code>表示，期望<code>Factorial.fact(1)</code>返回<code>1</code>。<code>assertEquals(expected, actual)</code>是最常用的测试方法，它在<code>Assertion</code>类中定义。<code>Assertion</code>还定义了其他断言方法，例如：</p>
+<ul>
+<li><code>assertTrue()</code>: 期待结果为<code>true</code></li>
+<li><code>assertFalse()</code>: 期待结果为<code>false</code></li>
+<li><code>assertNotNull()</code>: 期待结果为非<code>null</code></li>
+<li><code>assertArrayEquals()</code>:
+期待结果为数组并与期望数组每个元素的值均相等</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.itranswarp.learnjava;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> <span class="keyword">static</span> org.junit.jupiter.api.Assertions.*;</span><br><span class="line"><span class="keyword">import</span> org.junit.jupiter.api.Test;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">FactorialTest</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Test</span></span><br><span class="line">    <span class="keyword">void</span> <span class="title function_">testFact</span><span class="params">()</span> &#123;</span><br><span class="line">        assertEquals(<span class="number">1</span>, Factorial.fact(<span class="number">1</span>));</span><br><span class="line">        assertEquals(<span class="number">2</span>, Factorial.fact(<span class="number">2</span>));</span><br><span class="line">        assertEquals(<span class="number">6</span>, Factorial.fact(<span class="number">3</span>));</span><br><span class="line">        assertEquals(<span class="number">3628800</span>, Factorial.fact(<span class="number">10</span>));</span><br><span class="line">        assertEquals(<span class="number">2432902008176640000L</span>, Factorial.fact(<span class="number">20</span>));</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>编写完成后，在编译器内直接选择运行该文件即可。</p>
+<h4 id="单元测试的结果">5、单元测试的结果：</h4>
+<ul>
+<li>如果全部通过测试：</li>
+</ul>
+<figure>
+<img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/屏幕捕获_2022_02_02_10_13_50_410.png"
+alt="屏幕捕获_2022_02_02_10_13_50_410" />
+<figcaption
+aria-hidden="true">屏幕捕获_2022_02_02_10_13_50_410</figcaption>
+</figure>
+<ul>
+<li>如果有案例通不过测试：</li>
+</ul>
+<figure>
+<img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/屏幕捕获_2022_02_02_10_14_11_224.png"
+alt="屏幕捕获_2022_02_02_10_14_11_224" />
+<figcaption
+aria-hidden="true">屏幕捕获_2022_02_02_10_14_11_224</figcaption>
+</figure>
+<h4 id="单元测试的好处">6、单元测试的好处：</h4>
+<p>​
+单元测试可以确保单个方法按照正确预期运行，如果修改了某个方法的代码，只需确保其对应的单元测试通过，即可认为改动正确。此外，测试代码本身就可以作为示例代码，用来演示如何调用该方法。</p>
+<p>​
+使用JUnit进行单元测试，我们可以使用断言（<code>Assertion</code>）来测试期望结果，可以方便地组织和运行测试，并方便地查看测试结果。此外，<strong>JUnit既可以直接在IDE中运行，也可以方便地集成到Maven这些自动化工具中运行。</strong></p>
+<p>在编写单元测试的时候，我们要遵循一定的规范：</p>
+<p>​
+一是单元测试代码本身必须非常简单，能一下看明白，决不能再为测试代码编写测试；</p>
+<p>​ 二是每个单元测试应当互相独立，不依赖运行的顺序；</p>
+<p>​
+<strong>三是测试时不但要覆盖常用测试用例，还要特别注意测试边界条件，例如输入为<code>0</code>，<code>null</code>，空字符串<code>""</code>等情况。</strong></p>
+<h3 id="二使用fixture">二、使用Fixture</h3>
+<p>​
+在一个单元测试中，我们经常编写多个<code>@Test</code>方法，来分组、分类对目标代码进行测试。在测试的时候，我们经常遇到一个对象需要初始化，测试完可能还需要清理的情况。如果每个<code>@Test</code>方法都写一遍这样的重复代码，显然比较麻烦。</p>
+<p>​
+<strong>JUnit提供了编写测试前准备、测试后清理的固定代码，我们称之为Fixture。</strong></p>
+<ul>
+<li>以下为要测试的代码：</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Calculator</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="type">long</span> <span class="variable">n</span> <span class="operator">=</span> <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="type">long</span> <span class="title function_">add</span><span class="params">(<span class="type">long</span> x)</span> &#123;</span><br><span class="line">        n = n + x;</span><br><span class="line">        <span class="keyword">return</span> n;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="type">long</span> <span class="title function_">sub</span><span class="params">(<span class="type">long</span> x)</span> &#123;</span><br><span class="line">        n = n - x;</span><br><span class="line">        <span class="keyword">return</span> n;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>​
+这个类的功能很简单，但是测试的时候，我们要先初始化对象，我们不必在每个测试方法中都写上初始化代码，而是<strong>通过<code>@BeforeEach</code>来初始化，通过<code>@AfterEach</code>来清理资源：</strong>如下所示</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">CalculatorTest</span> &#123;</span><br><span class="line"></span><br><span class="line">    Calculator calculator;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@BeforeEach</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">setUp</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="built_in">this</span>.calculator = <span class="keyword">new</span> <span class="title class_">Calculator</span>();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@AfterEach</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">tearDown</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="built_in">this</span>.calculator = <span class="literal">null</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Test</span></span><br><span class="line">    <span class="keyword">void</span> <span class="title function_">testAdd</span><span class="params">()</span> &#123;</span><br><span class="line">        assertEquals(<span class="number">100</span>, <span class="built_in">this</span>.calculator.add(<span class="number">100</span>));</span><br><span class="line">        assertEquals(<span class="number">150</span>, <span class="built_in">this</span>.calculator.add(<span class="number">50</span>));</span><br><span class="line">        assertEquals(<span class="number">130</span>, <span class="built_in">this</span>.calculator.add(-<span class="number">20</span>));</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Test</span></span><br><span class="line">    <span class="keyword">void</span> <span class="title function_">testSub</span><span class="params">()</span> &#123;</span><br><span class="line">        assertEquals(-<span class="number">100</span>, <span class="built_in">this</span>.calculator.sub(<span class="number">100</span>));</span><br><span class="line">        assertEquals(-<span class="number">150</span>, <span class="built_in">this</span>.calculator.sub(<span class="number">50</span>));</span><br><span class="line">        assertEquals(-<span class="number">130</span>, <span class="built_in">this</span>.calculator.sub(-<span class="number">20</span>));</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>​
+还有一些资源初始化和清理可能更加繁琐，而且会耗费较长的时间，例如初始化数据库。**JUnit还提供了<code>@BeforeAll</code>和<code>@AfterAll</code>，它们在运行所有@Test前后运行。</p>
+<p>​
+因为<code>@BeforeAll</code>和<code>@AfterAll</code>在所有<code>@Test</code>方法运行前后仅运行一次，因此，它们只能初始化静态变量。</p>
+<p><strong>事实上，<code>@BeforeAll</code>和<code>@AfterAll</code>也只能标注在静态方法上。</strong></p>
+<p><strong>因此，我们总结出编写Fixture的套路如下：</strong></p>
+<ol type="1">
+<li>对于实例变量，在<code>@BeforeEach</code>中初始化，在<code>@AfterEach</code>中清理，它们在各个<code>@Test</code>方法中互不影响，因为是不同的实例；</li>
+<li>对于静态变量，在<code>@BeforeAll</code>中初始化，在<code>@AfterAll</code>中清理，它们在各个<code>@Test</code>方法中均是唯一实例，会影响各个<code>@Test</code>方法。</li>
+</ol>
+<p>​
+大多数情况下，使用<code>@BeforeEach</code>和<code>@AfterEach</code>就足够了。只有某些测试资源初始化耗费时间太长，以至于我们不得不尽量“复用”时才会用到<code>@BeforeAll</code>和<code>@AfterAll</code>。</p>
+<p>​
+<strong>最后，注意到每次运行一个<code>@Test</code>方法前，JUnit首先创建一个<code>XxxTest</code>实例，因此，每个<code>@Test</code>方法内部的成员变量都是独立的，不能也无法把成员变量的状态从一个<code>@Test</code>方法带到另一个<code>@Test</code>方法。</strong></p>
+<h3 id="三异常测试">三、异常测试：</h3>
+<p>​
+对于可能抛出的异常进行测试，本身就是测试的重要环节。在编写JUnit测试的时候，除了正常的输入输出，我们还要特别针对可能导致异常的情况进行测试。示例如下：</p>
+<ul>
+<li>被测试代码如下：在方法入口，我们增加了对参数<code>n</code>的检查，如果为负数，则直接抛出<code>IllegalArgumentException</code>。</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Factorial</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="type">long</span> <span class="title function_">fact</span><span class="params">(<span class="type">long</span> n)</span> &#123;</span><br><span class="line">        <span class="keyword">if</span> (n &lt; <span class="number">0</span>) &#123;</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">IllegalArgumentException</span>();</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="type">long</span> <span class="variable">r</span> <span class="operator">=</span> <span class="number">1</span>;</span><br><span class="line">        <span class="keyword">for</span> (<span class="type">long</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">1</span>; i &lt;= n; i++) &#123;</span><br><span class="line">            r = r * i;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> r;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>测试代码：</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Test</span></span><br><span class="line"><span class="keyword">void</span> <span class="title function_">testNegative</span><span class="params">()</span> &#123;</span><br><span class="line">    assertThrows(IllegalArgumentException.class, () -&gt; &#123;</span><br><span class="line">        Factorial.fact(-<span class="number">1</span>);</span><br><span class="line">    &#125;);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="四条件测试">四、条件测试：</h3>
+<h4 id="disabled">1、<span class="citation"
+data-cites="Disabled">@Disabled</span></h4>
+<p>​
+在运行测试的时候，有些时候，我们需要排出某些<code>@Test</code>方法，不要让它运行，这时，我们就可以给它标记一个<code>@Disabled</code>：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Disabled</span></span><br><span class="line"><span class="meta">@Test</span></span><br><span class="line"><span class="keyword">void</span> <span class="title function_">testBug101</span><span class="params">()</span> &#123;</span><br><span class="line">    <span class="comment">// 这个测试不会运行</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>​
+为什么我们不直接注释掉<code>@Test</code>，而是要加一个<code>@Disabled</code>？这是因为注释掉<code>@Test</code>，JUnit就不知道这是个测试方法，而加上<code>@Disabled</code>，JUnit仍然识别出这是个测试方法，只是暂时不运行。它会在测试结果中显示：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Tests run: 68, Failures: 2, Errors: 0, Skipped: 5</span><br></pre></td></tr></table></figure>
+<p>​
+类似<code>@Disabled</code>这种注解就称为条件测试，JUnit根据不同的条件注解，决定是否运行当前的<code>@Test</code>方法。</p>
+<h4 id="enabledonos">2、<span class="citation"
+data-cites="EnabledOnOs">@EnabledOnOs</span></h4>
+<p>给两个测试方法分别加上条件如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Test</span></span><br><span class="line"><span class="meta">@EnabledOnOs(OS.WINDOWS)</span></span><br><span class="line"><span class="keyword">void</span> <span class="title function_">testWindows</span><span class="params">()</span> &#123;</span><br><span class="line">    assertEquals(<span class="string">&quot;C:\\test.ini&quot;</span>, config.getConfigFile(<span class="string">&quot;test.ini&quot;</span>));</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Test</span></span><br><span class="line"><span class="meta">@EnabledOnOs(&#123; OS.LINUX, OS.MAC &#125;)</span></span><br><span class="line"><span class="keyword">void</span> <span class="title function_">testLinuxAndMac</span><span class="params">()</span> &#123;</span><br><span class="line">    assertEquals(<span class="string">&quot;/usr/local/test.cfg&quot;</span>, config.getConfigFile(<span class="string">&quot;test.cfg&quot;</span>));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><code>@EnableOnOs</code>就是一个条件测试判断。</p>
+<p>在Windows平台执行的测试: <span class="citation"
+data-cites="EnabledOnOs">@EnabledOnOs</span>(OS.WINDOWS)</p>
+<h4 id="其他条件测试">3、其他条件测试：</h4>
+<p>只能在Java
+9或更高版本执行的测试，可以加上<code>@DisabledOnJre(JRE.JAVA_8)</code>：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Test</span></span><br><span class="line"><span class="meta">@DisabledOnJre(JRE.JAVA_8)</span></span><br><span class="line"><span class="keyword">void</span> <span class="title function_">testOnJava9OrAbove</span><span class="params">()</span> &#123;</span><br><span class="line">    <span class="comment">// <span class="doctag">TODO:</span> this test is disabled on java 8</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>只能在64位操作系统上执行的测试，可以用<code>@EnabledIfSystemProperty</code>判断：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Test</span></span><br><span class="line"><span class="meta">@EnabledIfSystemProperty(named = &quot;os.arch&quot;, matches = &quot;.*64.*&quot;)</span></span><br><span class="line"><span class="keyword">void</span> <span class="title function_">testOnlyOn64bitSystem</span><span class="params">()</span> &#123;</span><br><span class="line">    <span class="comment">// <span class="doctag">TODO:</span> this test is only run on 64 bit system</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>需要传入环境变量<code>DEBUG=true</code>才能执行的测试，可以用<code>@EnabledIfEnvironmentVariable</code>：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Test</span></span><br><span class="line"><span class="meta">@EnabledIfEnvironmentVariable(named = &quot;DEBUG&quot;, matches = &quot;true&quot;)</span></span><br><span class="line"><span class="keyword">void</span> <span class="title function_">testOnlyOnDebugMode</span><span class="params">()</span> &#123;</span><br><span class="line">    <span class="comment">// <span class="doctag">TODO:</span> this test is only run on DEBUG=true</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="五参数化测试">五、参数化测试：</h3>
+<p>如果待测试的输入和输出是一组数据： 可以把测试数据组织起来
+用不同的测试数据调用相同的测试方法</p>
+<p>参数化测试和普通测试稍微不同的地方在于，一个测试方法需要接收至少一个参数，然后，传入一组参数反复运行。</p>
+<p>JUnit提供了一个<code>@ParameterizedTest</code>注解，用来进行参数化测试。</p>
+<p>假设我们想对<code>Math.abs()</code>进行测试，先用一组正数进行测试：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@ParameterizedTest</span></span><br><span class="line"><span class="meta">@ValueSource(ints = &#123; 0, 1, 5, 100 &#125;)</span></span><br><span class="line"><span class="keyword">void</span> <span class="title function_">testAbs</span><span class="params">(<span class="type">int</span> x)</span> &#123;</span><br><span class="line">    assertEquals(x, Math.abs(x));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>再用一组负数进行测试：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@ParameterizedTest</span></span><br><span class="line"><span class="meta">@ValueSource(ints = &#123; -1, -5, -100 &#125;)</span></span><br><span class="line"><span class="keyword">void</span> <span class="title function_">testAbsNegative</span><span class="params">(<span class="type">int</span> x)</span> &#123;</span><br><span class="line">    assertEquals(-x, Math.abs(x));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>注意到参数化测试的注解是<code>@ParameterizedTest</code>，而不是普通的<code>@Test</code>。</p>
+<p>实际的测试场景往往没有这么简单。假设我们自己编写了一个<code>StringUtils.capitalize()</code>方法，它会把字符串的第一个字母变为大写，后续字母变为小写：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">StringUtils</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> String <span class="title function_">capitalize</span><span class="params">(String s)</span> &#123;</span><br><span class="line">        <span class="keyword">if</span> (s.length() == <span class="number">0</span>) &#123;</span><br><span class="line">            <span class="keyword">return</span> s;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> Character.toUpperCase(s.charAt(<span class="number">0</span>)) + s.substring(<span class="number">1</span>).toLowerCase();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>要用参数化测试的方法来测试，我们不但要给出输入，还要给出预期输出。因此，测试方法至少需要接收两个参数：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@ParameterizedTest</span></span><br><span class="line"><span class="keyword">void</span> <span class="title function_">testCapitalize</span><span class="params">(String input, String result)</span> &#123;</span><br><span class="line">    assertEquals(result, StringUtils.capitalize(input));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>现在问题来了：参数如何传入？</p>
+<p>最简单的方法是通过<code>@MethodSource</code>注解，它允许我们编写一个同名的静态方法来提供测试参数：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@ParameterizedTest</span></span><br><span class="line"><span class="meta">@MethodSource</span></span><br><span class="line"><span class="keyword">void</span> <span class="title function_">testCapitalize</span><span class="params">(String input, String result)</span> &#123;</span><br><span class="line">    assertEquals(result, StringUtils.capitalize(input));</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">static</span> List&lt;Arguments&gt; <span class="title function_">testCapitalize</span><span class="params">()</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> List.of( <span class="comment">// arguments:</span></span><br><span class="line">            Arguments.arguments(<span class="string">&quot;abc&quot;</span>, <span class="string">&quot;Abc&quot;</span>), <span class="comment">//</span></span><br><span class="line">            Arguments.arguments(<span class="string">&quot;APPLE&quot;</span>, <span class="string">&quot;Apple&quot;</span>), <span class="comment">//</span></span><br><span class="line">            Arguments.arguments(<span class="string">&quot;gooD&quot;</span>, <span class="string">&quot;Good&quot;</span>));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>上面的代码很容易理解：静态方法<code>testCapitalize()</code>返回了一组测试参数，每个参数都包含两个<code>String</code>，正好作为测试方法的两个参数传入。</p>
+<p>如果静态方法和测试方法的名称不同，<span class="citation"
+data-cites="MethodSource也允许指定方法名">@MethodSource也允许指定方法名</span>。但使用默认同名方法最方便。</p>
+<p>另一种传入测试参数的方法是使用<code>@CsvSource</code>，它的每一个字符串表示一行，一行包含的若干参数用<code>,</code>分隔，因此，上述测试又可以改写如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@ParameterizedTest</span></span><br><span class="line"><span class="meta">@CsvSource(&#123; &quot;abc, Abc&quot;, &quot;APPLE, Apple&quot;, &quot;gooD, Good&quot; &#125;)</span></span><br><span class="line"><span class="keyword">void</span> <span class="title function_">testCapitalize</span><span class="params">(String input, String result)</span> &#123;</span><br><span class="line">    assertEquals(result, StringUtils.capitalize(input));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>如果有成百上千的测试输入，那么，直接写<code>@CsvSource</code>就很不方便。这个时候，我们可以把测试数据提到一个独立的CSV文件中，然后标注上<code>@CsvFileSource</code>：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@ParameterizedTest</span></span><br><span class="line"><span class="meta">@CsvFileSource(resources = &#123; &quot;/test-capitalize.csv&quot; &#125;)</span></span><br><span class="line"><span class="keyword">void</span> <span class="title function_">testCapitalizeUsingCsvFile</span><span class="params">(String input, String result)</span> &#123;</span><br><span class="line">    assertEquals(result, StringUtils.capitalize(input));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>JUnit只在classpath中查找指定的CSV文件，因此，<code>test-capitalize.csv</code>这个文件要放到<code>test</code>目录下，内容如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">apple, Apple</span><br><span class="line">HELLO, Hello</span><br><span class="line">JUnit, Junit</span><br><span class="line">reSource, Resource</span><br></pre></td></tr></table></figure>
+
+    </div>
+
+    
+    
+    
+      
+  <div class="popular-posts-header">相关文章</div>
+  <ul class="popular-posts">
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2022\08\13\d7802ff9ffde\" rel="bookmark">java精简系列笔记8——网络编程</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2022\08\05\baf467f2b931\" rel="bookmark">java精简系列笔记7——并发</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2022\08\02\ef5062ee24ca\" rel="bookmark">java精简系列笔记6——集合</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2022\08\02\86bf4f2de889\" rel="bookmark">java精简系列笔记5——异常、断言和日志</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2022\07\21\4c15134889df\" rel="bookmark">java精简系列笔记4——java接口、lambda表达式、内部类</a></div>
+    </li>
+  </ul>
+
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/java/" rel="tag"># java</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2022/02/01/671534cf591b/" rel="prev" title="java系列笔记9——java 日期与时间（更新中）">
+                  <i class="fa fa-chevron-left"></i> java系列笔记9——java 日期与时间（更新中）
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2022/02/02/dc49710223cc/" rel="next" title="java系列笔记11——java正则表达式">
+                  java系列笔记11——java正则表达式 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments utterances-container"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Fantast</span>
+</div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+    <span title="站点总字数">725k</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">33:33</span>
+  </span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script><script src="/js/bookmark.js"></script>
+
+  
+<script src="https://cdn.jsdelivr.net/npm/hexo-generator-searchdb@1.4.0/dist/search.js" integrity="sha256-vXZMYLEqsROAXkEw93GGIvaB2ab+QW6w3+1ahD9nXXA=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdn.jsdelivr.net/npm/mathjax@3.2.0/es5/tex-mml-chtml.js","integrity":"sha256-r+3itOMtGGjap0x+10hu6jW/gZCzxHsoKrOd7gyRSGY="}}</script>
+<script src="/js/third-party/math/mathjax.js"></script>
+
+
+<script class="next-config" data-name="utterances" type="application/json">{"enable":true,"repo":"Fantast416/myblog-comment","issue_term":"pathname","theme":"github-light"}</script>
+<script src="/js/third-party/comments/utterances.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.2.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css" integrity="sha256-mUZM63G8m73Mcidfrv5E+Y61y7a12O5mW4ezU3bxqW4=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"blog.fantast.top","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.9.0","exturl":false,"sidebar":{"position":"left","width":250,"display":"always","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":true,"color":"#222","save":"manual"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"utterances","storage":true,"lazyload":false,"nav":null,"activeClass":"utterances"},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+<meta name="description" content="本篇笔记为电子信息工程中数学模型与方法——单元1 工业智能的相关知识整理，用于学在浙大考试。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="电子信息工程中数学模型与方法——单元1 工业智能">
+<meta property="og:url" content="https://blog.fantast.top/2022/09/19/e947a7cc4335/index.html">
+<meta property="og:site_name" content="Fantast&#39;s Blog">
+<meta property="og:description" content="本篇笔记为电子信息工程中数学模型与方法——单元1 工业智能的相关知识整理，用于学在浙大考试。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220919140907698.png">
+<meta property="og:image" content="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220919155604175.png">
+<meta property="og:image" content="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220919160136072.png">
+<meta property="og:image" content="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220919160736180.png">
+<meta property="article:published_time" content="2022-09-19T02:40:19.000Z">
+<meta property="article:modified_time" content="2022-09-19T08:09:01.000Z">
+<meta property="article:author" content="Fantast">
+<meta property="article:tag" content="course">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220919140907698.png">
+
+
+<link rel="canonical" href="https://blog.fantast.top/2022/09/19/e947a7cc4335/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://blog.fantast.top/2022/09/19/e947a7cc4335/","path":"2022/09/19/e947a7cc4335/","title":"电子信息工程中数学模型与方法——单元1 工业智能"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>电子信息工程中数学模型与方法——单元1 工业智能 | Fantast's Blog</title>
+  
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<link rel="alternate" href="/atom.xml" title="Fantast's Blog" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Fantast's Blog</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li>
+        <li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li>
+        <li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li>
+        <li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li>
+        <li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%80%E4%BB%A5%E6%A8%A1%E5%9E%8B%E4%B8%BA%E6%A0%B8%E5%BF%83%E7%9A%84%E5%B7%A5%E4%B8%9A%E6%99%BA%E8%83%BD%E5%B7%A5%E4%BF%A1%E8%9E%8D%E5%90%88%E4%B8%8E%E5%B7%A5%E4%B8%9A%E6%99%BA%E8%83%BD"><span class="nav-text">一、以模型为核心的工业智能——工信融合与工业智能</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B7%A5%E4%B8%9A%E6%96%87%E6%98%8E%E5%8F%91%E5%B1%95%E5%92%8C%E5%B7%A5%E4%BF%A1%E8%9E%8D%E5%90%88-p9"><span class="nav-text">1、工业文明发展和工信融合 P9</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%99%BA%E8%83%BD%E4%BA%BA%E7%B1%BB%E6%99%BA%E8%83%BD%E5%92%8C%E5%B7%A5%E4%B8%9A%E6%99%BA%E8%83%BD"><span class="nav-text">2、智能：人类智能和工业智能</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8E%A7%E5%88%B6%E8%A7%86%E8%A7%92%E5%92%8C%E6%8E%A7%E5%88%B6%E5%89%8D%E6%B2%BF"><span class="nav-text">3、控制视角和控制前沿</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%B5%81%E7%A8%8B%E5%B7%A5%E4%B8%9A%E7%9A%84%E6%99%BA%E8%83%BD%E5%8C%96%E4%B9%8B%E8%B7%AF"><span class="nav-text">4、流程工业的智能化之路</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%8C%E4%BB%A5%E6%A8%A1%E5%9E%8B%E4%B8%BA%E6%A0%B8%E5%BF%83%E7%9A%84%E5%B7%A5%E4%B8%9A%E6%99%BA%E8%83%BD%E8%BF%87%E7%A8%8B%E7%B3%BB%E7%BB%9F%E5%BB%BA%E6%A8%A1%E4%B8%8E%E5%88%86%E6%9E%90%E8%BF%90%E8%A1%8C"><span class="nav-text">二、以模型为核心的工业智能——过程系统建模与分析运行：</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%BC%95%E8%A8%80"><span class="nav-text">1、引言</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BF%87%E7%A8%8B%E7%B3%BB%E7%BB%9F%E7%AE%80%E4%BB%8B"><span class="nav-text">2、过程系统简介</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A8%A1%E5%9E%8B%E6%8F%8F%E8%BF%B0%E5%92%8C%E6%B1%82%E8%A7%A3"><span class="nav-text">3、模型描述和求解</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%8D%E5%90%8C%E7%B1%BB%E5%9E%8B%E7%9A%84%E5%91%BD%E9%A2%98"><span class="nav-text">4、不同类型的命题</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%95%B0%E5%AD%A6%E5%BB%BA%E6%A8%A1%E7%9A%84%E6%AD%A5%E9%AA%A4"><span class="nav-text">5、数学建模的步骤</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A8%A1%E5%9E%8B%E9%99%8D%E9%98%B6%E5%92%8C%E8%9E%8D%E5%90%88"><span class="nav-text">6、模型降阶和融合：</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Fantast"
+      src="/images/avatar.webp">
+  <p class="site-author-name" itemprop="name">Fantast</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">161</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">40</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">97</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/fantast416" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;fantast416" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:fantast416@gmail.com" title="E-Mail → mailto:fantast416@gmail.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll site-overview-item animated">
+    <div class="links-of-blogroll-title"><i class="fa fa-globe fa-fw"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://www.zhihu.com/people/shuo-shuo-3-41" title="https:&#x2F;&#x2F;www.zhihu.com&#x2F;people&#x2F;shuo-shuo-3-41" rel="noopener" target="_blank">ZhiHu</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="http://www.next.zju.edu.cn/" title="http:&#x2F;&#x2F;www.next.zju.edu.cn&#x2F;" rel="noopener" target="_blank">NextLab</a>
+        </li>
+    </ul>
+  </div>
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://blog.fantast.top/2022/09/19/e947a7cc4335/">
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.webp">
+      <meta itemprop="name" content="Fantast">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Fantast's Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          电子信息工程中数学模型与方法——单元1 工业智能
+        </h1>
+
+        <div class="post-meta-container">
+          
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2022-09-19 10:40:19 / 修改时间：16:09:01" itemprop="dateCreated datePublished" datetime="2022-09-19T10:40:19+08:00">2022-09-19</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E2%93%BE-%E8%AF%BE%E7%A8%8B%E7%AC%94%E8%AE%B0/" itemprop="url" rel="index"><span itemprop="name">⓾ 课程笔记</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E2%93%BE-%E8%AF%BE%E7%A8%8B%E7%AC%94%E8%AE%B0/%E7%94%B5%E5%AD%90%E4%BF%A1%E6%81%AF%E5%B7%A5%E7%A8%8B%E6%95%B0%E5%AD%A6%E6%A8%A1%E5%9E%8B%E4%B8%8E%E6%96%B9%E6%B3%95/" itemprop="url" rel="index"><span itemprop="name">电子信息工程数学模型与方法</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>2.3k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>6 分钟</span>
+    </span>
+</div>
+
+            <div class="post-description">本篇笔记为电子信息工程中数学模型与方法——单元1 工业智能的相关知识整理，用于学在浙大考试。</div>
+            <div class="post-remind">Google Chrome is recommended, otherwise the image size may be wrong</div>
+            <div class="post-remind">FireFox is not recommended,Because it does not support the image zoom property</div>
+        </div>
+        
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h2
+id="一以模型为核心的工业智能工信融合与工业智能">一、以模型为核心的工业智能——工信融合与工业智能</h2>
+<h3 id="工业文明发展和工信融合-p9">1、工业文明发展和工信融合 P9</h3>
+<p><img src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220919140907698.png" alt="image-20220919140907698" style="zoom:33%;" /></p>
+<ul>
+<li>我国工业面临的形式和发展目标 P13</li>
+<li>什么是两者领域的深度融合？ P14</li>
+</ul>
+<h3 id="智能人类智能和工业智能">2、智能：人类智能和工业智能</h3>
+<ul>
+<li>人类心智的八个范畴 P19</li>
+<li>什么是智能？什么是智慧？智能的进化属性？理解工程科学的智能 P20</li>
+<li>工业智能的八个范畴 P24</li>
+<li>人擅长做的：感知、决策和执行</li>
+</ul>
+<h3 id="控制视角和控制前沿">3、控制视角和控制前沿</h3>
+<ul>
+<li>工业系统信息物理深度融合面临的主要挑战 P28
+<ul>
+<li>综合认知难、融合表达难、协同调控难、安全防护难</li>
+</ul></li>
+<li>实时、精准的综合信息感知 P29</li>
+<li>工业大数据的综合表达与认知 P30</li>
+<li>人-机-物协同的智能控制与优化 P31</li>
+<li>三元空间的一体化安全防护 P32</li>
+<li>智能工厂的内涵 P41</li>
+<li>无人驾驶和无人工厂 共性和区别 P42</li>
+<li>工厂智能化的技术分级：范围、能力、效益 L0-L5 P43</li>
+</ul>
+<h3 id="流程工业的智能化之路">4、流程工业的智能化之路</h3>
+<ul>
+<li>工业运行方式的变迁 P46 47
+<ul>
+<li>流程工业是形成人类物质文明的基础工业</li>
+<li>流程工业的行业特点、新需求等</li>
+<li>人工控制——少量仪表——中控系统——现代化大型控制室</li>
+</ul></li>
+<li>设计型技术和运行型技术：P48
+<ul>
+<li>设计型技术：产品和工艺设计-&gt;高附加值产品、新工艺</li>
+<li>运行型技术：生产和制造
+-&gt;高效、高适应性生产。不增加太多投资的情况下取得显著的经济效益，投资小见效快是最集中体现流程企业操作运行“智能”的技术关键</li>
+<li>流程工业生产运行的新需求：高效、柔性。</li>
+</ul></li>
+<li>什么是智能？工厂的指挥、智慧工厂的工作流 P52</li>
+<li>无人化工厂的技术核心：P53
+<ul>
+<li>人工智能：算力、数据、算法</li>
+<li>工业智能：建模、控制、优化</li>
+<li>大工业：工艺、流程、设备</li>
+</ul></li>
+<li>无人化工厂的新目标：P54</li>
+</ul>
+<h2
+id="二以模型为核心的工业智能过程系统建模与分析运行">二、以模型为核心的工业智能——过程系统建模与分析运行：</h2>
+<h3 id="引言">1、引言</h3>
+<ul>
+<li>机理模型（白箱）：P59</li>
+<li>数据模型（黑箱）：P59</li>
+</ul>
+<h3 id="过程系统简介">2、过程系统简介</h3>
+<ul>
+<li>过程系统的结构</li>
+<li>流程工业的典型生产过程：（反应 + 分离 很重要）
+<ul>
+<li>化工过程是由一个个加工过程组成的，可以分为两类：化学反应过程，物理加
+工过程。</li>
+<li>化学反应过程对应的设备为反应器，物理加工过程对应的设备为单元操作。</li>
+<li>所有单元操作都属于动量、热量、质量的传递速率控制过程</li>
+<li>单元操作的种类：P68</li>
+<li>过程系统工程：以数学模型、计算机辅助为基础的效能分析、设计放大、操作调整</li>
+</ul></li>
+<li>田纳西过程：P69
+<ul>
+<li>操作变量：用于调节生产运行状态的手段。通常是阀门开度或者电机转速。</li>
+<li>测量变量（生产装置的眼睛）：现场仪表或实验室分析手段所能测量的流量、
+温度、压力、液位、组分等变量。通过测量变量可以了解生产过程的工作状</li>
+<li>运行约束：运行约束一般包括设备操作范围的约束，产品约束，安全约束等。</li>
+<li>优化目标：常见的优化目标包括提高产品收率、降低生产能耗等。</li>
+</ul></li>
+</ul>
+<h3 id="模型描述和求解">3、模型描述和求解</h3>
+<ul>
+<li><p>装置与流股： P77</p>
+<ul>
+<li>全流程的机理模型是由单个装置的机理模型+连接关系组合而成的</li>
+<li>装置与装置之间的连接称为流股Stream（包括物质流股和能量流股）</li>
+<li>物质流股S由流量、组分、温度、压力来描述。能量流股H由热量和温度来描述。</li>
+</ul></li>
+<li><p>连接关系与全流程模型 P78</p></li>
+<li><p>仿真问题与反问题：</p>
+<ul>
+<li><p>仿真问题：可用于回溯分析，what-if分析（就是如果输入调整，输出会如何改变）</p></li>
+<li><p>仿真问题反问题：</p>
+<ul>
+<li><p>要求输出流股(产品)的状态为Y，相应的输入流股(进料)条件是怎样的？(操作问题)</p></li>
+<li><p>设备参数应该如何选择？(设计问题)</p></li>
+<li><p>获得了输入流股、输出流股等数据，如何反推设备参数？(参数估计问题)</p></li>
+</ul></li>
+</ul></li>
+<li><p>序贯求解</p>
+<ul>
+<li>当进料条件为X时，产品的状态是怎样的？</li>
+<li>当流程中存在回路Recycle时，需要先断开某个流股（割裂流股），才能够序贯求解。
+回路的存在使得求解过程更加复杂</li>
+<li><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220919154605965.png" /></li>
+<li>优化问题：怎样的进料条件，使得A产品产量最高/生产能耗最低/有害物质产出最少？</li>
+</ul></li>
+<li><p>物质流 &amp; 能量流 &amp; 信息流：P83</p></li>
+<li><p>单个装置的建模：装置的方程 P84</p></li>
+<li><p>全流程机理模型的层次化特征：</p>
+<ul>
+<li>上述两类方程及流程单元的连接构成层次化特征，多层次的模型造成了机理模型的复杂性。</li>
+<li><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220919155241488.png" /></li>
+</ul></li>
+<li><p>完整模型的序贯求解：P91</p>
+<ul>
+<li>上述多层次结构中的每个层次的模型通常都没有closed
+form的解。也就是说序贯求解的思路需要在每个层次上，需要迭代求解那个层次的方程组。因此，完整模型序贯求解的工作流呈现出一种“洋葱结构”。</li>
+</ul></li>
+<li><p>机理模型联立求解：</p>
+<ul>
+<li>对于复杂耦合流程的优化问题，采用序贯法求解时迭代过程嵌套层数多，内外
+层信息传递复杂、收敛难度大。采用联立方程法求解可以避免这一问题</li>
+<li><img src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220919155604175.png" style="zoom:50%;" /></li>
+</ul></li>
+</ul>
+<h3 id="不同类型的命题">4、不同类型的命题</h3>
+<ul>
+<li>仿真或WHAT-IF分析 P95</li>
+<li>灵敏度分析：灵敏度分析一般是各种优化问题求解的前置步骤</li>
+<li>设计优化、操作优化：包括设备操作范围的约束、产品约束、安全约束</li>
+<li>参数估计：参数估计需要使用实际装置的测量数据𝑦0
+。实际的测量数据存在噪声、静差等，
+需要先进行校正和滤波，然后再用于参数估计</li>
+<li>稳态与动态：稳态是指各生产变量基本保持不变的平稳的运行状态动态是指两个稳态之间的过渡过程</li>
+<li>动态优化问题：动态优化的结果不再是一个数值，而是一个时间序列𝑢(𝑡)</li>
+</ul>
+<h3 id="数学建模的步骤">5、数学建模的步骤</h3>
+<ul>
+<li>模型建立：工艺分析和简化装置数学模型的建立 P103
+<ul>
+<li>（建模假设、模型变量建立、机理方程的建立）</li>
+</ul></li>
+<li>命题求解：数学模型的变换和化简，模型的编程实现，数学规划命题的求解
+P103</li>
+<li>结果分析：求解结果是否正确，是否符合预期目标 P103</li>
+</ul>
+<p>​ 代数建模语言(Algebraic modeling language,
+AML)：用于大规模数学计算(一般是数
+学规划)中的数学元素进行描述，并提供求解器接口的一类高级脚本语言。</p>
+<p>​ 非线性方程组求解和优化：迭代法数值计算</p>
+<p><img src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220919160136072.png" style="zoom:50%;" /></p>
+<p>​
+初值（初始迭代点）对非线性规划问题的求解影响很大，考虑以下的优化命题：</p>
+<h3 id="模型降阶和融合">6、模型降阶和融合：</h3>
+<p>​ 高保真度模型，低保真度模型</p>
+<ul>
+<li><p>模型复杂度和性能的关系：</p>
+<p><img src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220919160736180.png" style="zoom:67%;" /></p></li>
+<li><p>模型简化思路 P119</p></li>
+<li><p>代理模型的建立 P121</p></li>
+<li><p>机理数据融合模型 —— 灰箱模型 P122</p>
+<ul>
+<li>不同的融合思路 —— P123</li>
+</ul></li>
+</ul>
+
+    </div>
+
+    
+    
+    
+      
+  <div class="popular-posts-header">相关文章</div>
+  <ul class="popular-posts">
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2022\10\12\f71a1b069441\" rel="bookmark">电子信息工程中数学模型与方法——单元2 系统辨识</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2022\09\30\2742f0d23b8a\" rel="bookmark">电子信息工程中数学模型与方法——单元3 电磁系统</a></div>
+    </li>
+  </ul>
+
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/course/" rel="tag"># course</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2022/09/13/26db2c268982/" rel="prev" title="Mysql 架构相关">
+                  <i class="fa fa-chevron-left"></i> Mysql 架构相关
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2022/09/30/2742f0d23b8a/" rel="next" title="电子信息工程中数学模型与方法——单元3 电磁系统">
+                  电子信息工程中数学模型与方法——单元3 电磁系统 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments utterances-container"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Fantast</span>
+</div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+    <span title="站点总字数">725k</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">33:33</span>
+  </span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script><script src="/js/bookmark.js"></script>
+
+  
+<script src="https://cdn.jsdelivr.net/npm/hexo-generator-searchdb@1.4.0/dist/search.js" integrity="sha256-vXZMYLEqsROAXkEw93GGIvaB2ab+QW6w3+1ahD9nXXA=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdn.jsdelivr.net/npm/mathjax@3.2.0/es5/tex-mml-chtml.js","integrity":"sha256-r+3itOMtGGjap0x+10hu6jW/gZCzxHsoKrOd7gyRSGY="}}</script>
+<script src="/js/third-party/math/mathjax.js"></script>
+
+
+<script class="next-config" data-name="utterances" type="application/json">{"enable":true,"repo":"Fantast416/myblog-comment","issue_term":"pathname","theme":"github-light"}</script>
+<script src="/js/third-party/comments/utterances.js"></script>
+
+</body>
+</html>

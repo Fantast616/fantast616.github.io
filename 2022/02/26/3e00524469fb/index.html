@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.2.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css" integrity="sha256-mUZM63G8m73Mcidfrv5E+Y61y7a12O5mW4ezU3bxqW4=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"blog.fantast.top","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.9.0","exturl":false,"sidebar":{"position":"left","width":250,"display":"always","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":true,"color":"#222","save":"manual"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"utterances","storage":true,"lazyload":false,"nav":null,"activeClass":"utterances"},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+<meta name="description" content="包含几道经典DFS类型的题目，难度都不是很高，可以用于练手">
+<meta property="og:type" content="article">
+<meta property="og:title" content="DFS系列——DFS多种形式变体整理">
+<meta property="og:url" content="https://blog.fantast.top/2022/02/26/3e00524469fb/index.html">
+<meta property="og:site_name" content="Fantast&#39;s Blog">
+<meta property="og:description" content="包含几道经典DFS类型的题目，难度都不是很高，可以用于练手">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2022-02-26T03:06:19.000Z">
+<meta property="article:modified_time" content="2022-08-07T14:50:14.000Z">
+<meta property="article:author" content="Fantast">
+<meta property="article:tag" content="leetcode">
+<meta property="article:tag" content="DFS">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://blog.fantast.top/2022/02/26/3e00524469fb/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://blog.fantast.top/2022/02/26/3e00524469fb/","path":"2022/02/26/3e00524469fb/","title":"DFS系列——DFS多种形式变体整理"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>DFS系列——DFS多种形式变体整理 | Fantast's Blog</title>
+  
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<link rel="alternate" href="/atom.xml" title="Fantast's Blog" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Fantast's Blog</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li>
+        <li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li>
+        <li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li>
+        <li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li>
+        <li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%89%91%E6%8C%87-offer-ii-080.-%E5%90%AB%E6%9C%89-k-%E4%B8%AA%E5%85%83%E7%B4%A0%E7%9A%84%E7%BB%84%E5%90%88"><span class="nav-text">剑指 Offer II 080. 含有
+k 个元素的组合</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E8%A7%A3%E9%A2%98%E6%80%9D%E8%B7%AF"><span class="nav-text">解题思路：</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E8%A7%A3%E9%A2%98%E4%BB%A3%E7%A0%81"><span class="nav-text">解题代码：</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%89%91%E6%8C%87-offer-ii-081.-%E5%85%81%E8%AE%B8%E9%87%8D%E5%A4%8D%E9%80%89%E6%8B%A9%E5%85%83%E7%B4%A0%E7%9A%84%E7%BB%84%E5%90%88"><span class="nav-text">剑指 Offer II 081.
+允许重复选择元素的组合</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E8%A7%A3%E9%A2%98%E6%80%9D%E8%B7%AF-1"><span class="nav-text">解题思路：</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E8%A7%A3%E9%A2%98%E4%BB%A3%E7%A0%81-1"><span class="nav-text">解题代码：</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%89%91%E6%8C%87-offer-ii-082.-%E5%90%AB%E6%9C%89%E9%87%8D%E5%A4%8D%E5%85%83%E7%B4%A0%E9%9B%86%E5%90%88%E7%9A%84%E7%BB%84%E5%90%88"><span class="nav-text">剑指 Offer II 082.
+含有重复元素集合的组合</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E8%A7%A3%E9%A2%98%E6%80%9D%E8%B7%AF-2"><span class="nav-text">解题思路：</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E8%A7%A3%E9%A2%98%E4%BB%A3%E7%A0%81-2"><span class="nav-text">解题代码：</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%89%91%E6%8C%87-offer-ii-083.-%E6%B2%A1%E6%9C%89%E9%87%8D%E5%A4%8D%E5%85%83%E7%B4%A0%E9%9B%86%E5%90%88%E7%9A%84%E5%85%A8%E6%8E%92%E5%88%97"><span class="nav-text">剑指 Offer II 083.
+没有重复元素集合的全排列</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E8%A7%A3%E9%A2%98%E6%80%9D%E8%B7%AF-3"><span class="nav-text">解题思路：</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E8%A7%A3%E9%A2%98%E4%BB%A3%E7%A0%81-3"><span class="nav-text">解题代码：</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%89%91%E6%8C%87-offer-ii-084.-%E5%90%AB%E6%9C%89%E9%87%8D%E5%A4%8D%E5%85%83%E7%B4%A0%E9%9B%86%E5%90%88%E7%9A%84%E5%85%A8%E6%8E%92%E5%88%97"><span class="nav-text">剑指 Offer II 084.
+含有重复元素集合的全排列</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E8%A7%A3%E9%A2%98%E6%80%9D%E8%B7%AF-4"><span class="nav-text">解题思路：</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%89%91%E6%8C%87-offer-ii-085.-%E7%94%9F%E6%88%90%E5%8C%B9%E9%85%8D%E7%9A%84%E6%8B%AC%E5%8F%B7"><span class="nav-text">剑指 Offer II 085.
+生成匹配的括号</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E8%A7%A3%E9%A2%98%E6%80%9D%E8%B7%AF-5"><span class="nav-text">解题思路：</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E8%A7%A3%E9%A2%98%E4%BB%A3%E7%A0%81-4"><span class="nav-text">解题代码：</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Fantast"
+      src="/images/avatar.webp">
+  <p class="site-author-name" itemprop="name">Fantast</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">161</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">40</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">97</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/fantast416" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;fantast416" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:fantast416@gmail.com" title="E-Mail → mailto:fantast416@gmail.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll site-overview-item animated">
+    <div class="links-of-blogroll-title"><i class="fa fa-globe fa-fw"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://www.zhihu.com/people/shuo-shuo-3-41" title="https:&#x2F;&#x2F;www.zhihu.com&#x2F;people&#x2F;shuo-shuo-3-41" rel="noopener" target="_blank">ZhiHu</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="http://www.next.zju.edu.cn/" title="http:&#x2F;&#x2F;www.next.zju.edu.cn&#x2F;" rel="noopener" target="_blank">NextLab</a>
+        </li>
+    </ul>
+  </div>
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://blog.fantast.top/2022/02/26/3e00524469fb/">
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.webp">
+      <meta itemprop="name" content="Fantast">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Fantast's Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          DFS系列——DFS多种形式变体整理
+        </h1>
+
+        <div class="post-meta-container">
+          
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2022-02-26 11:06:19" itemprop="dateCreated datePublished" datetime="2022-02-26T11:06:19+08:00">2022-02-26</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2022-08-07 22:50:14" itemprop="dateModified" datetime="2022-08-07T22:50:14+08:00">2022-08-07</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E2%93%B7-%E7%AE%97%E6%B3%95%E7%B1%BB%E7%AC%94%E8%AE%B0/" itemprop="url" rel="index"><span itemprop="name">⓷ 算法类笔记</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E2%93%B7-%E7%AE%97%E6%B3%95%E7%B1%BB%E7%AC%94%E8%AE%B0/DFS%E4%B8%8EBFS%E7%B3%BB%E5%88%97/" itemprop="url" rel="index"><span itemprop="name">DFS与BFS系列</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>6.8k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>19 分钟</span>
+    </span>
+</div>
+
+            <div class="post-description">包含几道经典DFS类型的题目，难度都不是很高，可以用于练手</div>
+            <div class="post-remind">Google Chrome is recommended, otherwise the image size may be wrong</div>
+            <div class="post-remind">FireFox is not recommended,Because it does not support the image zoom property</div>
+        </div>
+        
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h4 id="剑指-offer-ii-080.-含有-k-个元素的组合"><a
+target="_blank" rel="noopener" href="https://leetcode-cn.com/problems/uUsW3B/">剑指 Offer II 080. 含有
+k 个元素的组合</a></h4>
+<p>​ 给定两个整数 <code>n</code> 和 <code>k</code>，返回
+<code>1 ... n</code> 中所有可能的 <code>k</code> 个数的组合。</p>
+<p>示例 1:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">输入: n = 4, k = 2</span><br><span class="line">输出:</span><br><span class="line">[</span><br><span class="line">  [2,4],</span><br><span class="line">  [3,4],</span><br><span class="line">  [2,3],</span><br><span class="line">  [1,2],</span><br><span class="line">  [1,3],</span><br><span class="line">  [1,4],</span><br><span class="line">]</span><br></pre></td></tr></table></figure>
+<h5 id="解题思路">解题思路：</h5>
+<p>​ 该题是最经典的无限制的DFS，注意剪枝来降低整体的时间复杂度。</p>
+<h5 id="解题代码">解题代码：</h5>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    vector&lt;vector&lt;<span class="type">int</span>&gt;&gt; res;</span><br><span class="line">    <span class="type">int</span> k;</span><br><span class="line">    <span class="type">int</span> n;</span><br><span class="line">    vector&lt;vector&lt;<span class="type">int</span>&gt;&gt; <span class="built_in">combine</span>(<span class="type">int</span> n, <span class="type">int</span> k) &#123;</span><br><span class="line">        vector&lt;<span class="type">int</span>&gt; tmp;</span><br><span class="line">        <span class="keyword">this</span>-&gt;k = k;</span><br><span class="line">        <span class="keyword">this</span>-&gt;n = n;</span><br><span class="line">        <span class="built_in">permute</span>(tmp,<span class="number">1</span>,<span class="number">0</span>);</span><br><span class="line">        <span class="keyword">return</span> res;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="type">void</span> <span class="title">permute</span><span class="params">(vector&lt;<span class="type">int</span>&gt; &amp;tmp,<span class="type">int</span> curr,<span class="type">int</span> count)</span></span>&#123;</span><br><span class="line">        <span class="comment">//curr代表当前 轮到的数字</span></span><br><span class="line">        <span class="comment">//count代表当前已经 放入集合中的数字个数</span></span><br><span class="line">        <span class="keyword">if</span>(count &gt; k) <span class="keyword">return</span>; <span class="comment">//剪枝</span></span><br><span class="line">        <span class="keyword">if</span>(curr == n+<span class="number">1</span>)&#123;</span><br><span class="line">            <span class="keyword">if</span>(count == k)&#123;</span><br><span class="line">                <span class="comment">//这轮完结了，将tmp添加进入curr中</span></span><br><span class="line">                res.<span class="built_in">push_back</span>(tmp);</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">return</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">//遍历两种情况 ： 要不要这个数字</span></span><br><span class="line">        <span class="comment">//Case1: 要这个数字</span></span><br><span class="line">        tmp.<span class="built_in">push_back</span>(curr);</span><br><span class="line">        <span class="built_in">permute</span>(tmp,curr+<span class="number">1</span>,count+<span class="number">1</span>);</span><br><span class="line">        tmp.<span class="built_in">pop_back</span>();</span><br><span class="line"></span><br><span class="line">        <span class="comment">//Case2: 不要这个数字</span></span><br><span class="line">        <span class="built_in">permute</span>(tmp,curr+<span class="number">1</span>,count);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<h4 id="剑指-offer-ii-081.-允许重复选择元素的组合"><a
+target="_blank" rel="noopener" href="https://leetcode-cn.com/problems/Ygoe9J/">剑指 Offer II 081.
+允许重复选择元素的组合</a></h4>
+<p>​ 给定一个无重复元素的正整数数组 candidates 和一个正整数 target ，找出
+candidates 中所有可以使数字和为目标数 target 的唯一组合。</p>
+<p>​ candidates
+中的数字可以无限制重复被选取。如果至少一个所选数字数量不同，则两种组合是不同的。</p>
+<p>​ 对于给定的输入，保证和为 target 的唯一组合数少于 150 个。</p>
+<p><strong>示例 1：</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">输入: candidates = [2,3,6,7], target = 7</span><br><span class="line">输出: [[7],[2,2,3]]</span><br></pre></td></tr></table></figure>
+<h5 id="解题思路-1">解题思路：</h5>
+<p>​
+相比于上一题而言，该题允许重复选择元素，大致框架类似，但是在DFS的过程中，分支的选项需要改变，同样也是选择当前元素和不选择当前元素两条分支，之前无论选不选当前元素，下一轮递归的时候都会去判断下一个元素，而在本题中，如果选择当前元素，那么下一轮递归还应该是本元素。</p>
+<h5 id="解题代码-1">解题代码：</h5>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    vector&lt;vector&lt;<span class="type">int</span>&gt;&gt; res;</span><br><span class="line">    vector&lt;vector&lt;<span class="type">int</span>&gt;&gt; <span class="built_in">combinationSum</span>(vector&lt;<span class="type">int</span>&gt;&amp; candidates, <span class="type">int</span> target) &#123;</span><br><span class="line">        vector&lt;<span class="type">int</span>&gt; tmp;</span><br><span class="line">        <span class="built_in">permute</span>(candidates,target,tmp,<span class="number">0</span>,<span class="number">0</span>);</span><br><span class="line">        <span class="keyword">return</span> res;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="type">void</span> <span class="title">permute</span><span class="params">(vector&lt;<span class="type">int</span>&gt;&amp; candidates,<span class="type">int</span> target,vector&lt;<span class="type">int</span>&gt; &amp;tmp,<span class="type">int</span> sum,<span class="type">int</span> curr)</span></span>&#123;</span><br><span class="line">        <span class="comment">//当前vector，当前sum</span></span><br><span class="line">        <span class="keyword">if</span>(curr &gt;= candidates.<span class="built_in">size</span>()) <span class="keyword">return</span>;</span><br><span class="line">        <span class="keyword">if</span>(sum == target)&#123;</span><br><span class="line">            res.<span class="built_in">push_back</span>(tmp);</span><br><span class="line">            <span class="keyword">return</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">//Case1: 不选择当前元素：</span></span><br><span class="line">        <span class="built_in">permute</span>(candidates,target,tmp,sum,curr+<span class="number">1</span>);</span><br><span class="line"></span><br><span class="line">        <span class="comment">// Case2: 选择当前元素：</span></span><br><span class="line">        <span class="keyword">if</span>(sum + candidates[curr] &gt; target) <span class="keyword">return</span>;</span><br><span class="line">        tmp.<span class="built_in">push_back</span>(candidates[curr]);</span><br><span class="line">        <span class="built_in">permute</span>(candidates,target,tmp,sum + candidates[curr],curr);</span><br><span class="line">        tmp.<span class="built_in">pop_back</span>();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<h4 id="剑指-offer-ii-082.-含有重复元素集合的组合"><a
+target="_blank" rel="noopener" href="https://leetcode-cn.com/problems/4sjJUc/">剑指 Offer II 082.
+含有重复元素集合的组合</a></h4>
+<p>​ 给定一个可能有重复数字的整数数组 candidates 和一个目标数 target
+，找出 candidates 中所有可以使数字和为 target 的组合。</p>
+<p>​ candidates
+中的每个数字在每个组合中只能使用一次，解集不能包含重复的组合。</p>
+<p>示例 1:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">输入: candidates = [10,1,2,7,6,1,5], target = 8,</span><br><span class="line">输出:</span><br><span class="line">[</span><br><span class="line">    [1,1,6],</span><br><span class="line">    [1,2,5],</span><br><span class="line">    [1,7],</span><br><span class="line">    [2,6]</span><br><span class="line">]</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<h5 id="解题思路-2">解题思路：</h5>
+<p>​
+本题跟上题不一样的点在于：本题每个元素都只能使用一次，但是可选的元素数组中会出现重复的元素，这也就意味着如果按照正常的DFS下来，是会出现重复的组合的。此处，我们按照如下思想来处理：</p>
+<p>​ 我们先将它提供的整数数组进行排序，使其成为有序的数组。</p>
+<p>​ 每一轮DFS的时候，记录上一轮有没有选择元素</p>
+<ul>
+<li><p>如果上一轮没有选择元素，并且当前元素和上一轮元素一样：那么该轮也只能选择
+“不选择当前元素”，原因是如果两轮元素一致，"上一轮没选这一轮选了"，那么势必会和
+"上一轮选了，这一轮不选"，这种情况产生重复。</p></li>
+<li><p>如果上一轮选择了元素，那么该轮就可以正常操作：可以选择当前元素，也可以不选择当前元素。</p></li>
+</ul>
+<h5 id="解题代码-2">解题代码：</h5>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    vector&lt;vector&lt;<span class="type">int</span>&gt;&gt; res;</span><br><span class="line">    vector&lt;vector&lt;<span class="type">int</span>&gt;&gt; <span class="built_in">combinationSum2</span>(vector&lt;<span class="type">int</span>&gt;&amp; candidates, <span class="type">int</span> target) &#123;</span><br><span class="line">        vector&lt;<span class="type">int</span>&gt; tmp;</span><br><span class="line">        <span class="built_in">sort</span>(candidates.<span class="built_in">begin</span>(),candidates.<span class="built_in">end</span>());</span><br><span class="line">        <span class="built_in">permute</span>(candidates,target,tmp,<span class="number">0</span>,<span class="number">0</span>,<span class="literal">true</span>);</span><br><span class="line">        <span class="keyword">return</span> res;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="type">void</span> <span class="title">permute</span><span class="params">(vector&lt;<span class="type">int</span>&gt;&amp; candidates,<span class="type">int</span> target,vector&lt;<span class="type">int</span>&gt; &amp;tmp,<span class="type">int</span> sum,<span class="type">int</span> curr,<span class="type">bool</span> choose)</span></span>&#123;</span><br><span class="line">        <span class="comment">//当前vector，当前sum</span></span><br><span class="line">        <span class="keyword">if</span>(sum == target)&#123;</span><br><span class="line">            res.<span class="built_in">push_back</span>(tmp);</span><br><span class="line">            <span class="keyword">return</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span>(curr &gt;= candidates.<span class="built_in">size</span>()) <span class="keyword">return</span>;</span><br><span class="line">        <span class="keyword">if</span>(curr &gt;= <span class="number">1</span> &amp;&amp; candidates[curr] == candidates[curr<span class="number">-1</span>] &amp;&amp; !choose)&#123;</span><br><span class="line">            <span class="comment">//Case1: 不选择当前元素：</span></span><br><span class="line">            <span class="built_in">permute</span>(candidates,target,tmp,sum,curr+<span class="number">1</span>,<span class="literal">false</span>);  </span><br><span class="line">        &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">            <span class="comment">//Case1: 不选择当前元素：</span></span><br><span class="line">            <span class="built_in">permute</span>(candidates,target,tmp,sum,curr+<span class="number">1</span>,<span class="literal">false</span>);  </span><br><span class="line"></span><br><span class="line">            <span class="comment">// Case2: 选择当前元素：</span></span><br><span class="line">            <span class="keyword">if</span>(sum + candidates[curr] &gt; target) <span class="keyword">return</span>;</span><br><span class="line">            tmp.<span class="built_in">push_back</span>(candidates[curr]);</span><br><span class="line">            <span class="built_in">permute</span>(candidates,target,tmp,sum + candidates[curr],curr+<span class="number">1</span>,<span class="literal">true</span>);</span><br><span class="line">            tmp.<span class="built_in">pop_back</span>();</span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<h4 id="剑指-offer-ii-083.-没有重复元素集合的全排列"><a
+target="_blank" rel="noopener" href="https://leetcode-cn.com/problems/VvJkup/">剑指 Offer II 083.
+没有重复元素集合的全排列</a></h4>
+<p>给定一个不含重复数字的整数数组 nums ，返回其 所有可能的全排列 。可以
+按任意顺序 返回答案。</p>
+<p>示例 1：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">输入：nums = [1,2,3]</span><br><span class="line">输出：[[1,2,3],[1,3,2],[2,1,3],[2,3,1],[3,1,2],[3,2,1]]</span><br></pre></td></tr></table></figure>
+<p>提示：</p>
+<pre><code>1 &lt;= nums.length &lt;= 6
+-10 &lt;= nums[i] &lt;= 10
+nums 中的所有整数 互不相同</code></pre>
+<h5 id="解题思路-3">解题思路：</h5>
+<p>​
+本题跟直接求1-n这n个数的全排列是一样的思想，基本就是每一轮确定第curr个数是什么，如果<code>curr==nums.size()</code>就输出该种可能。并且我们需要一个<code>hasInclude[]</code>数组记录，某个数有没有被访问过。</p>
+<h5 id="解题代码-3">解题代码：</h5>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    vector&lt;vector&lt;<span class="type">int</span>&gt;&gt; <span class="built_in">permute</span>(vector&lt;<span class="type">int</span>&gt;&amp; nums) &#123;</span><br><span class="line">        vector&lt;vector&lt;<span class="type">int</span>&gt;&gt; res;</span><br><span class="line">        vector&lt;<span class="type">bool</span>&gt; hasInclude;</span><br><span class="line">        <span class="keyword">for</span>(<span class="type">int</span> i=<span class="number">0</span>;i&lt;nums.<span class="built_in">size</span>();i++)&#123;</span><br><span class="line">            hasInclude.<span class="built_in">push_back</span>(<span class="literal">false</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        vector&lt;<span class="type">int</span>&gt; tmp;</span><br><span class="line">        <span class="built_in">dfs</span>(<span class="number">0</span>,tmp,nums,hasInclude,res);</span><br><span class="line">        <span class="keyword">return</span> res;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="type">void</span> <span class="title">dfs</span><span class="params">(<span class="type">int</span> curr,vector&lt;<span class="type">int</span>&gt;&amp; tmp,vector&lt;<span class="type">int</span>&gt;&amp; nums,vector&lt;<span class="type">bool</span>&gt; &amp;hasInclude,vector&lt;vector&lt;<span class="type">int</span>&gt;&gt; &amp;res)</span></span>&#123;</span><br><span class="line">        <span class="comment">//确定第curr个数是什么</span></span><br><span class="line">        <span class="keyword">if</span>(curr == nums.<span class="built_in">size</span>())&#123;</span><br><span class="line">            <span class="comment">//代表到底了</span></span><br><span class="line">            res.<span class="built_in">push_back</span>(tmp);</span><br><span class="line">            <span class="keyword">return</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">for</span>(<span class="type">int</span> i=<span class="number">0</span>;i&lt;nums.<span class="built_in">size</span>();i++)&#123;</span><br><span class="line">            <span class="keyword">if</span>(!hasInclude[i])&#123;</span><br><span class="line">                hasInclude[i] = <span class="literal">true</span>;</span><br><span class="line">                tmp.<span class="built_in">push_back</span>(nums[i]);</span><br><span class="line">                <span class="built_in">dfs</span>(curr+<span class="number">1</span>,tmp,nums,hasInclude,res);</span><br><span class="line">                tmp.<span class="built_in">pop_back</span>();</span><br><span class="line">                hasInclude[i] = <span class="literal">false</span>;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<h4 id="剑指-offer-ii-084.-含有重复元素集合的全排列"><a
+target="_blank" rel="noopener" href="https://leetcode-cn.com/problems/7p8L0Z/">剑指 Offer II 084.
+含有重复元素集合的全排列</a></h4>
+<p>给定一个可包含重复数字的整数集合 nums ，按任意顺序
+返回它所有不重复的全排列。</p>
+<p>示例 1：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">输入：nums = [1,1,2]</span><br><span class="line">输出：</span><br><span class="line">[[1,1,2],</span><br><span class="line"> [1,2,1],</span><br><span class="line"> [2,1,1]]</span><br></pre></td></tr></table></figure>
+<h5 id="解题思路-4">解题思路：</h5>
+<p>​
+084这题相对于083而言，就像是082相对于081而言，多了一个重复元素。我们就需要排除重复的信息。一种朴素的想法是，用hash表记录每一个全排列的情况，然后每产生一个全排列就去Hash表里找有没有一样的，这是一种方法，但时间复杂度肯定较高。</p>
+<p>​
+比较优化的方法思想其实和082相似，也是需要先对数组进行排序，得到有序的nums.</p>
+<p>​
+我们在DFS的时候，如果当前元素和前面元素一样，并且前面的元素还没有被选择，那么该元素也不在本轮被选择。原因也和082一致，如果前面的元素没被选，而当前元素被选了，势必会和正常流程中，"前面元素选了，当前元素未选"的排列造成重复。所以只有当前面的元素已经被使用了，确定好位置了，后面的相同的元素才有机会被使用。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span><span class="string">&lt;cstdlib&gt;</span></span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    vector&lt;vector&lt;<span class="type">int</span>&gt;&gt; <span class="built_in">permuteUnique</span>(vector&lt;<span class="type">int</span>&gt;&amp; nums) &#123;</span><br><span class="line">        vector&lt;vector&lt;<span class="type">int</span>&gt;&gt; res;</span><br><span class="line">        vector&lt;<span class="type">bool</span>&gt; hasInclude;</span><br><span class="line">        <span class="keyword">for</span>(<span class="type">int</span> i=<span class="number">0</span>;i&lt;nums.<span class="built_in">size</span>();i++)&#123;</span><br><span class="line">            hasInclude.<span class="built_in">push_back</span>(<span class="literal">false</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        vector&lt;<span class="type">int</span>&gt; tmp;</span><br><span class="line">        <span class="built_in">sort</span>(nums.<span class="built_in">begin</span>(),nums.<span class="built_in">end</span>());</span><br><span class="line">        <span class="built_in">dfs</span>(<span class="number">0</span>,tmp,nums,hasInclude,res);</span><br><span class="line">        <span class="keyword">return</span> res;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="type">void</span> <span class="title">dfs</span><span class="params">(<span class="type">int</span> curr,vector&lt;<span class="type">int</span>&gt;&amp; tmp,vector&lt;<span class="type">int</span>&gt;&amp; nums,vector&lt;<span class="type">bool</span>&gt; &amp;hasInclude,vector&lt;vector&lt;<span class="type">int</span>&gt;&gt; &amp;res)</span></span>&#123;</span><br><span class="line">        <span class="comment">//确定第curr个数是什么</span></span><br><span class="line">        <span class="keyword">if</span>(curr == nums.<span class="built_in">size</span>())&#123;</span><br><span class="line">            <span class="comment">//代表到底了</span></span><br><span class="line">            res.<span class="built_in">push_back</span>(tmp);</span><br><span class="line">            <span class="keyword">return</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">for</span>(<span class="type">int</span> i=<span class="number">0</span>;i&lt;nums.<span class="built_in">size</span>();i++)&#123;</span><br><span class="line">            <span class="keyword">if</span>(i &gt;= <span class="number">1</span> &amp;&amp; nums[i] == nums[i<span class="number">-1</span>] &amp;&amp; !hasInclude[i<span class="number">-1</span>])&#123;</span><br><span class="line">                <span class="comment">//前面元素和当前一样，并且前面的元素还没用掉，直接不选跳过</span></span><br><span class="line">                <span class="keyword">continue</span>;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">if</span>(!hasInclude[i])&#123;</span><br><span class="line">                hasInclude[i] = <span class="literal">true</span>;</span><br><span class="line">                tmp.<span class="built_in">push_back</span>(nums[i]);</span><br><span class="line">                <span class="built_in">dfs</span>(curr+<span class="number">1</span>,tmp,nums,hasInclude,res);</span><br><span class="line">                tmp.<span class="built_in">pop_back</span>();</span><br><span class="line">                hasInclude[i] = <span class="literal">false</span>;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<h4 id="剑指-offer-ii-085.-生成匹配的括号"><a
+target="_blank" rel="noopener" href="https://leetcode-cn.com/problems/IDBivT/">剑指 Offer II 085.
+生成匹配的括号</a></h4>
+<p>正整数 <code>n</code>
+代表生成括号的对数，请设计一个函数，用于能够生成所有可能的并且
+<strong>有效的</strong> 括号组合。</p>
+<p><strong>示例 1：</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">输入：n = 3</span><br><span class="line">输出：[&quot;((()))&quot;,&quot;(()())&quot;,&quot;(())()&quot;,&quot;()(())&quot;,&quot;()()()&quot;]</span><br></pre></td></tr></table></figure>
+<h5 id="解题思路-5">解题思路：</h5>
+<p>​
+这是一道比较有趣的DFS的题目，DFS分支的条件比较难想，整体代码较为简单。</p>
+<p>​
+要想清楚，为什么此处我仅用两个Case就可以完成DFS分支的遍历，在最终输出的时候又做了哪些操作。</p>
+<h5 id="解题代码-4">解题代码：</h5>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function">vector&lt;string&gt; <span class="title">generateParenthesis</span><span class="params">(<span class="type">int</span> n)</span> </span>&#123;</span><br><span class="line">        vector&lt;string&gt; res;</span><br><span class="line">        string tmp;</span><br><span class="line">        <span class="built_in">dfs</span>(<span class="number">0</span>,<span class="number">0</span>,n,tmp,res);</span><br><span class="line">        <span class="keyword">return</span> res;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="type">void</span> <span class="title">dfs</span><span class="params">(<span class="type">int</span> left_curr,<span class="type">int</span> right_curr,<span class="type">int</span> n,string tmp,vector&lt;string&gt; &amp;res)</span></span>&#123;</span><br><span class="line">        <span class="comment">//left_curr当前加到第几个（了，right_curr 代表已经加了几个 ）</span></span><br><span class="line">        <span class="keyword">if</span>(left_curr == n)&#123;</span><br><span class="line">            <span class="keyword">for</span>(<span class="type">int</span> i=right_curr;i&lt;n;i++)&#123;</span><br><span class="line">                tmp += <span class="string">&quot;)&quot;</span>;</span><br><span class="line">            &#125;</span><br><span class="line">            res.<span class="built_in">push_back</span>(tmp);</span><br><span class="line">            <span class="keyword">return</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">//Case1: 仅加左括号</span></span><br><span class="line">        <span class="keyword">if</span>(left_curr &lt; n) <span class="built_in">dfs</span>(left_curr+<span class="number">1</span>,right_curr,n,tmp+<span class="string">&quot;(&quot;</span>,res);</span><br><span class="line">        <span class="comment">//Case2: 加一对右括号</span></span><br><span class="line">        <span class="keyword">if</span>(right_curr &lt; left_curr &amp;&amp; right_curr &lt; n) <span class="built_in">dfs</span>(left_curr,right_curr+<span class="number">1</span>,n,tmp+<span class="string">&quot;)&quot;</span>,res);</span><br><span class="line">        </span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+    </div>
+
+    
+    
+    
+      
+  <div class="popular-posts-header">相关文章</div>
+  <ul class="popular-posts">
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2022\02\22\cd538be761a4\" rel="bookmark">DFS系列——最长递增路径</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2022\02\03\b62f2c89d90c\" rel="bookmark">LeetCode《剑指Offer》题目情况整理（持续更新）</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2022\02\02\e7e76d98fb52\" rel="bookmark">LeetCode 算法解题Tricks（持续更新）</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2022\02\26\16bfad4011e0\" rel="bookmark">图系列——重建序列</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2022\02\26\994b03ade281\" rel="bookmark">数组系列——值和下标之差都在给定范围内</a></div>
+    </li>
+  </ul>
+
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/leetcode/" rel="tag"># leetcode</a>
+              <a href="/tags/DFS/" rel="tag"># DFS</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2022/02/26/16bfad4011e0/" rel="prev" title="图系列——重建序列">
+                  <i class="fa fa-chevron-left"></i> 图系列——重建序列
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2022/02/26/84b3fb3c559e/" rel="next" title="毕业相关事项">
+                  毕业相关事项 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments utterances-container"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Fantast</span>
+</div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+    <span title="站点总字数">725k</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">33:33</span>
+  </span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script><script src="/js/bookmark.js"></script>
+
+  
+<script src="https://cdn.jsdelivr.net/npm/hexo-generator-searchdb@1.4.0/dist/search.js" integrity="sha256-vXZMYLEqsROAXkEw93GGIvaB2ab+QW6w3+1ahD9nXXA=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdn.jsdelivr.net/npm/mathjax@3.2.0/es5/tex-mml-chtml.js","integrity":"sha256-r+3itOMtGGjap0x+10hu6jW/gZCzxHsoKrOd7gyRSGY="}}</script>
+<script src="/js/third-party/math/mathjax.js"></script>
+
+
+<script class="next-config" data-name="utterances" type="application/json">{"enable":true,"repo":"Fantast416/myblog-comment","issue_term":"pathname","theme":"github-light"}</script>
+<script src="/js/third-party/comments/utterances.js"></script>
+
+</body>
+</html>

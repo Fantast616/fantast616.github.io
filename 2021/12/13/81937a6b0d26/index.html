@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.2.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css" integrity="sha256-mUZM63G8m73Mcidfrv5E+Y61y7a12O5mW4ezU3bxqW4=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"blog.fantast.top","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.9.0","exturl":false,"sidebar":{"position":"left","width":250,"display":"always","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":true,"color":"#222","save":"manual"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"utterances","storage":true,"lazyload":false,"nav":null,"activeClass":"utterances"},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+<meta name="description" content="Pytorch中基本概念，Tensor张量的介绍">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Pytorch学习笔记1——Tensor介绍">
+<meta property="og:url" content="https://blog.fantast.top/2021/12/13/81937a6b0d26/index.html">
+<meta property="og:site_name" content="Fantast&#39;s Blog">
+<meta property="og:description" content="Pytorch中基本概念，Tensor张量的介绍">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2021-12-13T07:47:19.000Z">
+<meta property="article:modified_time" content="2022-08-07T14:46:03.000Z">
+<meta property="article:author" content="Fantast">
+<meta property="article:tag" content="Pytorch">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://blog.fantast.top/2021/12/13/81937a6b0d26/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://blog.fantast.top/2021/12/13/81937a6b0d26/","path":"2021/12/13/81937a6b0d26/","title":"Pytorch学习笔记1——Tensor介绍"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Pytorch学习笔记1——Tensor介绍 | Fantast's Blog</title>
+  
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<link rel="alternate" href="/atom.xml" title="Fantast's Blog" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Fantast's Blog</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li>
+        <li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li>
+        <li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li>
+        <li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li>
+        <li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%80tensor-%E7%9A%84%E5%88%9D%E5%A7%8B%E5%8C%96"><span class="nav-text">一、Tensor 的初始化</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BB%8E%E6%95%B0%E6%8D%AE%E5%88%9D%E5%A7%8B%E5%8C%96"><span class="nav-text">1、从数据初始化</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BB%8Enparray%E5%88%9D%E5%A7%8B%E5%8C%96"><span class="nav-text">2、从nparray初始化</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BB%8E%E5%8F%A6%E4%B8%80%E4%B8%AAtensor%E5%88%9D%E5%A7%8B%E5%8C%96%E6%96%B0%E7%9A%84tensor%E4%BC%9A%E7%BB%A7%E6%89%BF%E4%BD%9C%E4%B8%BA%E5%8F%82%E6%95%B0%E7%9A%84tensor%E7%9A%84-%E5%BD%A2%E7%8A%B6%E5%92%8C%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B%E9%99%A4%E9%9D%9E%E6%98%BE%E5%BC%8F%E5%A3%B0%E6%98%8E"><span class="nav-text">3、从另一个Tensor初始化，新的Tensor会继承作为参数的Tensor的
+形状和数据类型，除非显式声明</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8%E9%9A%8F%E6%9C%BA%E5%80%BC%E8%BF%9B%E8%A1%8C%E5%88%9D%E5%A7%8B%E5%8C%96-rand-ones-zeros%E5%87%BD%E6%95%B0"><span class="nav-text">4、使用随机值进行初始化
+rand() ones() zeros()函数</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%8Ctensor%E7%9A%84%E4%B8%89%E4%B8%AA%E9%87%8D%E8%A6%81%E5%B1%9E%E6%80%A7shapedtypedevice"><span class="nav-text">二、Tensor的三个重要属性:shape,dtype,device</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%89tensor%E7%9A%84%E7%9B%B8%E5%85%B3%E6%93%8D%E4%BD%9C"><span class="nav-text">三、Tensor的相关操作</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%80%E4%BA%9B%E5%B8%B8%E8%A7%84%E6%93%8D%E4%BD%9C"><span class="nav-text">1、一些常规操作：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#torch.cat-%E5%92%8C-torch.stack"><span class="nav-text">2、Torch.cat() 和 Torch.stack()</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#torch.cat-%E6%B2%BF%E7%9D%80%E4%B8%80%E4%B8%AA%E7%BB%B4%E5%BA%A6%E8%BF%9B%E8%A1%8C%E5%A0%86%E5%8F%A0%E4%B8%8D%E4%BC%9A%E6%94%B9%E5%8F%98%E5%8E%9Ftensor%E7%9A%84%E7%BB%B4%E5%BA%A6%E5%8D%B3%E5%8E%9F%E6%9D%A5%E6%98%AF2%E7%BB%B4%E7%9F%A9%E9%98%B5%E5%A0%86%E5%8F%A0%E5%AE%8C%E8%BF%98%E6%98%AF%E4%BA%8C%E7%BB%B4%E7%9F%A9%E9%98%B5"><span class="nav-text">torch.cat()
+沿着一个维度进行堆叠,不会改变原Tensor的维度，即原来是2维矩阵，堆叠完还是二维矩阵</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#torch.stack-%E6%B2%BF%E7%9D%80%E4%B8%80%E4%B8%AA%E7%BB%B4%E5%BA%A6%E8%BF%9B%E8%A1%8C%E5%A0%86%E5%8F%A0%E4%BD%86%E6%98%AF%E4%BC%9A%E5%9C%A8%E5%8E%9Ftensor%E7%9A%84%E7%BB%B4%E5%BA%A6%E4%B8%8A%E5%A2%9E%E5%8A%A0%E4%B8%80%E4%B8%AA%E7%BB%B4%E5%BA%A6%E5%8D%B3%E5%8E%9F%E6%9D%A5%E6%98%AF2%E7%BB%B4%E7%9F%A9%E9%98%B5%E5%A0%86%E5%8F%A0%E5%AE%8C%E4%BC%9A%E5%8F%98%E6%88%903%E7%BB%B4%E7%9F%A9%E9%98%B5"><span class="nav-text">torch.stack()
+沿着一个维度进行堆叠,但是会在原Tensor的维度上增加一个维度，即原来是2维矩阵，堆叠完会变成3维矩阵</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%AE%97%E6%9C%AF%E8%BF%90%E7%AE%97"><span class="nav-text">3、算术运算</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%AE%A1%E7%AE%97%E7%9F%A9%E9%98%B5%E4%B9%98%E6%B3%95%E7%9A%84%E5%87%A0%E7%A7%8D%E6%96%B9%E5%BC%8F"><span class="nav-text">计算矩阵乘法的几种方式</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#element-wise-product-%E7%82%B9%E5%AF%B9%E7%82%B9%E4%B9%98%E7%A7%AF%E7%9F%A9%E9%98%B5%E5%AF%B9%E5%BA%94%E5%85%83%E7%B4%A0%E7%9B%B8%E4%B9%98%E5%BE%97%E5%88%B0%E7%BB%93%E6%9E%9C"><span class="nav-text">element-wise
+product 点对点乘积（矩阵对应元素相乘得到结果）</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#in-place-%E6%93%8D%E4%BD%9C"><span class="nav-text">4、In-Place 操作</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#bridge-with-numpy%E6%9C%BA%E5%88%B6"><span class="nav-text">5、Bridge with NumPy机制</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Fantast"
+      src="/images/avatar.webp">
+  <p class="site-author-name" itemprop="name">Fantast</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">161</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">40</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">97</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/fantast416" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;fantast416" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:fantast416@gmail.com" title="E-Mail → mailto:fantast416@gmail.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll site-overview-item animated">
+    <div class="links-of-blogroll-title"><i class="fa fa-globe fa-fw"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://www.zhihu.com/people/shuo-shuo-3-41" title="https:&#x2F;&#x2F;www.zhihu.com&#x2F;people&#x2F;shuo-shuo-3-41" rel="noopener" target="_blank">ZhiHu</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="http://www.next.zju.edu.cn/" title="http:&#x2F;&#x2F;www.next.zju.edu.cn&#x2F;" rel="noopener" target="_blank">NextLab</a>
+        </li>
+    </ul>
+  </div>
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://blog.fantast.top/2021/12/13/81937a6b0d26/">
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.webp">
+      <meta itemprop="name" content="Fantast">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Fantast's Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Pytorch学习笔记1——Tensor介绍
+        </h1>
+
+        <div class="post-meta-container">
+          
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2021-12-13 15:47:19" itemprop="dateCreated datePublished" datetime="2021-12-13T15:47:19+08:00">2021-12-13</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2022-08-07 22:46:03" itemprop="dateModified" datetime="2022-08-07T22:46:03+08:00">2022-08-07</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E2%93%B5-%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" itemprop="url" rel="index"><span itemprop="name">⓵ 深度学习笔记</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E2%93%B5-%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/Pytorch%E7%B3%BB%E5%88%97%E7%AC%94%E8%AE%B0/" itemprop="url" rel="index"><span itemprop="name">Pytorch系列笔记</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>4.6k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>13 分钟</span>
+    </span>
+</div>
+
+            <div class="post-description">Pytorch中基本概念，Tensor张量的介绍</div>
+            <div class="post-remind">Google Chrome is recommended, otherwise the image size may be wrong</div>
+            <div class="post-remind">FireFox is not recommended,Because it does not support the image zoom property</div>
+        </div>
+        
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> torch</span><br><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br></pre></td></tr></table></figure>
+<h2 id="一tensor-的初始化">一、Tensor 的初始化</h2>
+<h3 id="从数据初始化">1、从数据初始化</h3>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">data = [[<span class="number">1</span>, <span class="number">2</span>],[<span class="number">3</span>, <span class="number">4</span>]]</span><br><span class="line">x_data = torch.tensor(data)</span><br><span class="line">x_data</span><br></pre></td></tr></table></figure>
+<pre><code>tensor([[1, 2],
+        [3, 4]])</code></pre>
+<h3 id="从nparray初始化">2、从nparray初始化</h3>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">np_array = np.array(data)</span><br><span class="line">x_np = torch.from_numpy(np_array)</span><br><span class="line">x_np</span><br></pre></td></tr></table></figure>
+<pre><code>tensor([[1, 2],
+        [3, 4]], dtype=torch.int32)</code></pre>
+<h3
+id="从另一个tensor初始化新的tensor会继承作为参数的tensor的-形状和数据类型除非显式声明">3、从另一个Tensor初始化，新的Tensor会继承作为参数的Tensor的
+形状和数据类型，除非显式声明</h3>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">x_ones = torch.ones_like(x_data) <span class="comment"># retains the properties of x_data</span></span><br><span class="line"><span class="built_in">print</span>(<span class="string">f&quot;Ones Tensor: \n <span class="subst">&#123;x_ones&#125;</span> \n&quot;</span>)</span><br><span class="line"></span><br><span class="line">x_rand = torch.rand_like(x_data, dtype=torch.<span class="built_in">float</span>) <span class="comment"># overrides the datatype of x_data</span></span><br><span class="line"><span class="built_in">print</span>(<span class="string">f&quot;Random Tensor: \n <span class="subst">&#123;x_rand&#125;</span> \n&quot;</span>)</span><br></pre></td></tr></table></figure>
+<pre><code>Ones Tensor: 
+ tensor([[1, 1],
+        [1, 1]]) 
+
+Random Tensor: 
+ tensor([[0.8288, 0.8223],
+        [0.4349, 0.4734]]) </code></pre>
+<h3
+id="使用随机值进行初始化-rand-ones-zeros函数">4、使用随机值进行初始化
+rand() ones() zeros()函数</h3>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">shape = (<span class="number">2</span>,<span class="number">4</span>)</span><br><span class="line">rand_tensor = torch.rand(shape)</span><br><span class="line">ones_tensor = torch.ones(shape)</span><br><span class="line">zeros_tensor = torch.zeros(shape)</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(<span class="string">f&quot;Random Tensor: \n <span class="subst">&#123;rand_tensor&#125;</span> \n&quot;</span>)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">f&quot;Ones Tensor: \n <span class="subst">&#123;ones_tensor&#125;</span> \n&quot;</span>)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">f&quot;Zeros Tensor: \n <span class="subst">&#123;zeros_tensor&#125;</span>&quot;</span>)</span><br></pre></td></tr></table></figure>
+<pre><code>Random Tensor: 
+ tensor([[0.5132, 0.3130, 0.5135, 0.7438],
+        [0.9011, 0.3348, 0.6246, 0.7321]]) 
+
+Ones Tensor: 
+ tensor([[1., 1., 1., 1.],
+        [1., 1., 1., 1.]]) 
+
+Zeros Tensor: 
+ tensor([[0., 0., 0., 0.],
+        [0., 0., 0., 0.]])</code></pre>
+<h2
+id="二tensor的三个重要属性shapedtypedevice">二、Tensor的三个重要属性:shape,dtype,device</h2>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">tensor = torch.rand(<span class="number">3</span>,<span class="number">4</span>)</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(<span class="string">f&quot;Shape of tensor: <span class="subst">&#123;tensor.shape&#125;</span>&quot;</span>)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">f&quot;Datatype of tensor: <span class="subst">&#123;tensor.dtype&#125;</span>&quot;</span>)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">f&quot;Device tensor is stored on: <span class="subst">&#123;tensor.device&#125;</span>&quot;</span>)</span><br></pre></td></tr></table></figure>
+<pre><code>Shape of tensor: torch.Size([3, 4])
+Datatype of tensor: torch.float32
+Device tensor is stored on: cpu</code></pre>
+<h2 id="三tensor的相关操作">三、Tensor的相关操作</h2>
+<p>在默认情况下，Tensor将会被创建于CPU上，我们可以使用以下方法将其复制至GPU中，但是大型的Tensor在拷贝的过程中所耗费的代价是比较昂贵的</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> torch.cuda.is_available():</span><br><span class="line">    tensor = tensor.to(<span class="string">&#x27;cuda&#x27;</span>)</span><br><span class="line"></span><br><span class="line">tensor.device</span><br></pre></td></tr></table></figure>
+<pre><code>device(type=&#39;cuda&#39;, index=0)</code></pre>
+<h3 id="一些常规操作">1、一些常规操作：</h3>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">tensor = torch.ones(<span class="number">4</span>, <span class="number">4</span>)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;First row: &#x27;</span>, tensor[<span class="number">0</span>])</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;First column: &#x27;</span>, tensor[:, <span class="number">0</span>])</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;Last column:&#x27;</span>, tensor[..., -<span class="number">1</span>])  <span class="comment"># 等价于 tensor[:,-1]</span></span><br><span class="line">tensor[:,-<span class="number">1</span>] = <span class="number">0</span></span><br><span class="line"><span class="built_in">print</span>(tensor)</span><br></pre></td></tr></table></figure>
+<pre><code>First row:  tensor([1., 1., 1., 1.])
+First column:  tensor([1., 1., 1., 1.])
+Last column: tensor([1., 1., 1., 1.])
+tensor([[1., 1., 1., 0.],
+        [1., 1., 1., 0.],
+        [1., 1., 1., 0.],
+        [1., 1., 1., 0.]])</code></pre>
+<h3 id="torch.cat-和-torch.stack">2、Torch.cat() 和 Torch.stack()</h3>
+<h4
+id="torch.cat-沿着一个维度进行堆叠不会改变原tensor的维度即原来是2维矩阵堆叠完还是二维矩阵">torch.cat()
+沿着一个维度进行堆叠,不会改变原Tensor的维度，即原来是2维矩阵，堆叠完还是二维矩阵</h4>
+<p>示例：dim=0的时候，原来的4x4的矩阵 A 会变成
+[[A],[A],[A]]纵向叠加，即12x4的矩阵，示例：dim=1的时候，原来的4x4的矩阵
+A 会变成 [A,A,A]横向叠加，即4*12的矩阵</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">t1 = torch.cat([tensor, tensor, tensor], dim=<span class="number">0</span>)</span><br><span class="line">t1</span><br></pre></td></tr></table></figure>
+<pre><code>tensor([[1., 1., 1., 0.],
+        [1., 1., 1., 0.],
+        [1., 1., 1., 0.],
+        [1., 1., 1., 0.],
+        [1., 1., 1., 0.],
+        [1., 1., 1., 0.],
+        [1., 1., 1., 0.],
+        [1., 1., 1., 0.],
+        [1., 1., 1., 0.],
+        [1., 1., 1., 0.],
+        [1., 1., 1., 0.],
+        [1., 1., 1., 0.]])</code></pre>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">t1 = torch.cat([tensor, tensor, tensor], dim=<span class="number">1</span>)</span><br><span class="line">t1</span><br></pre></td></tr></table></figure>
+<pre><code>tensor([[1., 1., 1., 0., 1., 1., 1., 0., 1., 1., 1., 0.],
+        [1., 1., 1., 0., 1., 1., 1., 0., 1., 1., 1., 0.],
+        [1., 1., 1., 0., 1., 1., 1., 0., 1., 1., 1., 0.],
+        [1., 1., 1., 0., 1., 1., 1., 0., 1., 1., 1., 0.]])</code></pre>
+<h4
+id="torch.stack-沿着一个维度进行堆叠但是会在原tensor的维度上增加一个维度即原来是2维矩阵堆叠完会变成3维矩阵">torch.stack()
+沿着一个维度进行堆叠,但是会在原Tensor的维度上增加一个维度，即原来是2维矩阵，堆叠完会变成3维矩阵</h4>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">t1 = torch.stack([tensor, tensor, tensor], dim=<span class="number">0</span>)</span><br><span class="line"><span class="built_in">print</span>(t1.shape)</span><br><span class="line"><span class="built_in">print</span>(t1)</span><br><span class="line">t1 = torch.stack([tensor, tensor, tensor], dim=<span class="number">1</span>)</span><br><span class="line"><span class="built_in">print</span>(t1.shape)</span><br><span class="line"><span class="built_in">print</span>(t1)</span><br><span class="line">t1 = torch.stack([tensor, tensor, tensor], dim=<span class="number">2</span>)</span><br><span class="line"><span class="built_in">print</span>(t1.shape)</span><br><span class="line"><span class="built_in">print</span>(t1)</span><br></pre></td></tr></table></figure>
+<pre><code>torch.Size([3, 4, 4])
+tensor([[[1., 1., 1., 0.],
+         [1., 1., 1., 0.],
+         [1., 1., 1., 0.],
+         [1., 1., 1., 0.]],
+
+        [[1., 1., 1., 0.],
+         [1., 1., 1., 0.],
+         [1., 1., 1., 0.],
+         [1., 1., 1., 0.]],
+
+        [[1., 1., 1., 0.],
+         [1., 1., 1., 0.],
+         [1., 1., 1., 0.],
+         [1., 1., 1., 0.]]])
+torch.Size([4, 3, 4])
+tensor([[[1., 1., 1., 0.],
+         [1., 1., 1., 0.],
+         [1., 1., 1., 0.]],
+
+        [[1., 1., 1., 0.],
+         [1., 1., 1., 0.],
+         [1., 1., 1., 0.]],
+
+        [[1., 1., 1., 0.],
+         [1., 1., 1., 0.],
+         [1., 1., 1., 0.]],
+
+        [[1., 1., 1., 0.],
+         [1., 1., 1., 0.],
+         [1., 1., 1., 0.]]])
+torch.Size([4, 4, 3])
+tensor([[[1., 1., 1.],
+         [1., 1., 1.],
+         [1., 1., 1.],
+         [0., 0., 0.]],
+
+        [[1., 1., 1.],
+         [1., 1., 1.],
+         [1., 1., 1.],
+         [0., 0., 0.]],
+
+        [[1., 1., 1.],
+         [1., 1., 1.],
+         [1., 1., 1.],
+         [0., 0., 0.]],
+
+        [[1., 1., 1.],
+         [1., 1., 1.],
+         [1., 1., 1.],
+         [0., 0., 0.]]])</code></pre>
+<h3 id="算术运算">3、算术运算</h3>
+<h4 id="计算矩阵乘法的几种方式">计算矩阵乘法的几种方式</h4>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">print</span>(tensor)</span><br><span class="line">y1 = tensor @ tensor.T</span><br><span class="line">y2 = tensor.matmul(tensor.T)</span><br><span class="line">y3 = torch.rand_like(tensor)</span><br><span class="line">torch.matmul(tensor, tensor.T, out=y3)</span><br></pre></td></tr></table></figure>
+<pre><code>tensor([[1., 1., 1., 0.],
+        [1., 1., 1., 0.],
+        [1., 1., 1., 0.],
+        [1., 1., 1., 0.]])
+
+
+
+
+
+tensor([[3., 3., 3., 3.],
+        [3., 3., 3., 3.],
+        [3., 3., 3., 3.],
+        [3., 3., 3., 3.]])</code></pre>
+<h4
+id="element-wise-product-点对点乘积矩阵对应元素相乘得到结果">element-wise
+product 点对点乘积（矩阵对应元素相乘得到结果）</h4>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">z1 = tensor * tensor</span><br><span class="line">z2 = tensor.mul(tensor)</span><br><span class="line"></span><br><span class="line">z3 = torch.rand_like(tensor)</span><br><span class="line">torch.mul(tensor, tensor, out=z3)</span><br></pre></td></tr></table></figure>
+<pre><code>tensor([[1., 1., 1., 0.],
+        [1., 1., 1., 0.],
+        [1., 1., 1., 0.],
+        [1., 1., 1., 0.]])</code></pre>
+<h3 id="in-place-操作">4、In-Place 操作</h3>
+<p>像一些会将结果存储到操作数里的计算，我们将之称为In-Place操作，它们会在操作符后面加上后缀
+"_"</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">print</span>(tensor, <span class="string">&quot;\n&quot;</span>)</span><br><span class="line">tensor.add_(<span class="number">5</span>)</span><br><span class="line"><span class="built_in">print</span>(tensor)</span><br></pre></td></tr></table></figure>
+<pre><code>tensor([[1., 1., 1., 0.],
+        [1., 1., 1., 0.],
+        [1., 1., 1., 0.],
+        [1., 1., 1., 0.]]) 
+
+tensor([[6., 6., 6., 5.],
+        [6., 6., 6., 5.],
+        [6., 6., 6., 5.],
+        [6., 6., 6., 5.]])</code></pre>
+<h3 id="bridge-with-numpy机制">5、Bridge with NumPy机制</h3>
+<p>Tensors和Numpy在计算机底层可能共享同一块内存，改变其中一个变量就会影响另外一个，需要注意</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">t = torch.ones(<span class="number">5</span>)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">f&quot;t: <span class="subst">&#123;t&#125;</span>&quot;</span>)</span><br><span class="line">n = t.numpy()</span><br><span class="line"><span class="built_in">print</span>(<span class="string">f&quot;n: <span class="subst">&#123;n&#125;</span>&quot;</span>)</span><br></pre></td></tr></table></figure>
+<pre><code>t: tensor([1., 1., 1., 1., 1.])
+n: [1. 1. 1. 1. 1.]</code></pre>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">t.add_(<span class="number">1</span>)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">f&quot;t: <span class="subst">&#123;t&#125;</span>&quot;</span>)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">f&quot;n: <span class="subst">&#123;n&#125;</span>&quot;</span>)</span><br></pre></td></tr></table></figure>
+<pre><code>t: tensor([2., 2., 2., 2., 2.])
+n: [2. 2. 2. 2. 2.]</code></pre>
+
+    </div>
+
+    
+    
+    
+      
+  <div class="popular-posts-header">相关文章</div>
+  <ul class="popular-posts">
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2022\03\29\5a94914aa20a\" rel="bookmark">Pytorch学习笔记12——分布式DDP基本概念</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2022\03\12\6c6b30d1f672\" rel="bookmark">__call__方法</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2022\03\12\796f9da33963\" rel="bookmark">Pytorch学习笔记11——torchvision图像数据预处理</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2022\01\18\acaa679c551a\" rel="bookmark">Pytorch学习笔记10——PyTorch 中，nn与nn.functional有什么区别？（搬运）</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2022\01\18\52f2902757db\" rel="bookmark">Torch/Numpy的广播机制介绍</a></div>
+    </li>
+  </ul>
+
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Pytorch/" rel="tag"># Pytorch</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2021/12/09/aba242d32ac9/" rel="prev" title="Transformer系列笔记4——Swin Transformer思想与架构">
+                  <i class="fa fa-chevron-left"></i> Transformer系列笔记4——Swin Transformer思想与架构
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2021/12/13/9d4aeea992ce/" rel="next" title="Pytorch学习笔记2——Dataset介绍">
+                  Pytorch学习笔记2——Dataset介绍 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments utterances-container"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Fantast</span>
+</div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+    <span title="站点总字数">725k</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">33:33</span>
+  </span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script><script src="/js/bookmark.js"></script>
+
+  
+<script src="https://cdn.jsdelivr.net/npm/hexo-generator-searchdb@1.4.0/dist/search.js" integrity="sha256-vXZMYLEqsROAXkEw93GGIvaB2ab+QW6w3+1ahD9nXXA=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdn.jsdelivr.net/npm/mathjax@3.2.0/es5/tex-mml-chtml.js","integrity":"sha256-r+3itOMtGGjap0x+10hu6jW/gZCzxHsoKrOd7gyRSGY="}}</script>
+<script src="/js/third-party/math/mathjax.js"></script>
+
+
+<script class="next-config" data-name="utterances" type="application/json">{"enable":true,"repo":"Fantast416/myblog-comment","issue_term":"pathname","theme":"github-light"}</script>
+<script src="/js/third-party/comments/utterances.js"></script>
+
+</body>
+</html>

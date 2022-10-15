@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.2.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css" integrity="sha256-mUZM63G8m73Mcidfrv5E+Y61y7a12O5mW4ezU3bxqW4=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"blog.fantast.top","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.9.0","exturl":false,"sidebar":{"position":"left","width":250,"display":"always","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":true,"color":"#222","save":"manual"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"utterances","storage":true,"lazyload":false,"nav":null,"activeClass":"utterances"},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+<meta name="description" content="本文记录使用Python搭建深度学习框架，实现其中优化器类的代码，包含优化器基类的抽象和需要执行的任务，以及最基本的MBGD优化器的实现，还跟Pytorch的实现方式进行了比对。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="用Python搭建深度学习框架系列笔记3——优化器类的代码实现（上）">
+<meta property="og:url" content="https://blog.fantast.top/2022/02/23/c051c3782dfb/index.html">
+<meta property="og:site_name" content="Fantast&#39;s Blog">
+<meta property="og:description" content="本文记录使用Python搭建深度学习框架，实现其中优化器类的代码，包含优化器基类的抽象和需要执行的任务，以及最基本的MBGD优化器的实现，还跟Pytorch的实现方式进行了比对。">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2022-02-23T04:17:19.000Z">
+<meta property="article:modified_time" content="2022-08-07T14:47:46.000Z">
+<meta property="article:author" content="Fantast">
+<meta property="article:tag" content="Framework">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://blog.fantast.top/2022/02/23/c051c3782dfb/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://blog.fantast.top/2022/02/23/c051c3782dfb/","path":"2022/02/23/c051c3782dfb/","title":"用Python搭建深度学习框架系列笔记3——优化器类的代码实现（上）"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>用Python搭建深度学习框架系列笔记3——优化器类的代码实现（上） | Fantast's Blog</title>
+  
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<link rel="alternate" href="/atom.xml" title="Fantast's Blog" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Fantast's Blog</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li>
+        <li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li>
+        <li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li>
+        <li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li>
+        <li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%80%E5%9C%A8%E4%B8%8D%E5%B0%81%E8%A3%85%E4%BC%98%E5%8C%96%E5%99%A8%E7%9A%84%E6%97%B6%E5%80%99%E5%A6%82%E4%BD%95%E5%9C%A8%E8%AE%A1%E7%AE%97%E5%9B%BE%E4%B8%8A%E6%89%A7%E8%A1%8C%E6%A2%AF%E5%BA%A6%E4%B8%8B%E9%99%8D%E6%B3%95"><span class="nav-text">一、在不封装优化器的时候，如何在计算图上执行梯度下降法？</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BA%8C%E4%BC%98%E5%8C%96%E5%99%A8%E7%9A%84%E5%B0%81%E8%A3%85"><span class="nav-text">二、优化器的封装</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%89%E4%BC%98%E5%8C%96%E5%99%A8%E5%9F%BA%E7%B1%BBoptimizer%E7%B1%BB"><span class="nav-text">三、优化器基类（Optimizer类）：</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#part1%E6%9E%84%E9%80%A0%E5%87%BD%E6%95%B0"><span class="nav-text">Part1：构造函数</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#part2%E6%A0%B8%E5%BF%83%E5%87%BD%E6%95%B0"><span class="nav-text">Part2：核心函数</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#%E6%A0%B8%E5%BF%83%E5%87%BD%E6%95%B01forward_backward"><span class="nav-text">核心函数1：forward_backward()</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#%E6%A0%B8%E5%BF%83%E5%87%BD%E6%95%B02update"><span class="nav-text">核心函数2：update()：</span></a></li></ol></li><li class="nav-item nav-level-5"><a class="nav-link" href="#part3%E5%85%A5%E5%8F%A3%E5%87%BD%E6%95%B0"><span class="nav-text">Part3：入口函数：</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#part4-%E5%85%B6%E4%BB%96%E8%BE%85%E5%8A%A9%E5%87%BD%E6%95%B0"><span class="nav-text">Part4: 其他辅助函数：</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%9B%9Bbgd%E5%92%8Csgd%E5%92%8Cmbgd%E7%9A%84%E6%95%B0%E5%AD%A6%E8%A1%A8%E8%BE%BE"><span class="nav-text">四、BGD和SGD和MBGD的数学表达：</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#bgd"><span class="nav-text">1、BGD</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#sgd"><span class="nav-text">2、 SGD</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#mbgd"><span class="nav-text">3、MBGD</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-text">总结：</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BA%94matrixslow%E4%BC%98%E5%8C%96%E5%99%A8mbgd%E5%AE%9E%E7%8E%B0-%E5%85%B6%E4%BB%96%E6%A1%86%E6%9E%B6%E5%AE%9E%E7%8E%B0%E6%96%B9%E5%BC%8F"><span class="nav-text">五、MatrixSlow优化器MBGD实现
+&amp; 其他框架实现方式：</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E4%BC%98%E5%8C%96%E5%99%A8mbgd%E5%AE%9E%E7%8E%B0"><span class="nav-text">1、 优化器MBGD实现</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%85%B6%E4%BB%96%E6%A1%86%E6%9E%B6%E5%AF%B9%E4%BA%8Eminibatch%E7%9A%84%E5%AE%9E%E7%8E%B0%E6%96%B9%E5%BC%8F"><span class="nav-text">2、
+其他框架对于MiniBatch的实现方式：</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Fantast"
+      src="/images/avatar.webp">
+  <p class="site-author-name" itemprop="name">Fantast</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">161</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">40</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">97</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/fantast416" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;fantast416" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:fantast416@gmail.com" title="E-Mail → mailto:fantast416@gmail.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll site-overview-item animated">
+    <div class="links-of-blogroll-title"><i class="fa fa-globe fa-fw"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://www.zhihu.com/people/shuo-shuo-3-41" title="https:&#x2F;&#x2F;www.zhihu.com&#x2F;people&#x2F;shuo-shuo-3-41" rel="noopener" target="_blank">ZhiHu</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="http://www.next.zju.edu.cn/" title="http:&#x2F;&#x2F;www.next.zju.edu.cn&#x2F;" rel="noopener" target="_blank">NextLab</a>
+        </li>
+    </ul>
+  </div>
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://blog.fantast.top/2022/02/23/c051c3782dfb/">
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.webp">
+      <meta itemprop="name" content="Fantast">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Fantast's Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          用Python搭建深度学习框架系列笔记3——优化器类的代码实现（上）
+        </h1>
+
+        <div class="post-meta-container">
+          
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2022-02-23 12:17:19" itemprop="dateCreated datePublished" datetime="2022-02-23T12:17:19+08:00">2022-02-23</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2022-08-07 22:47:46" itemprop="dateModified" datetime="2022-08-07T22:47:46+08:00">2022-08-07</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E2%93%B5-%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" itemprop="url" rel="index"><span itemprop="name">⓵ 深度学习笔记</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E2%93%B5-%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/Basic%E7%B3%BB%E5%88%97%E7%AC%94%E8%AE%B0/" itemprop="url" rel="index"><span itemprop="name">Basic系列笔记</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E2%93%B5-%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/Python%E6%90%AD%E5%BB%BA%E7%AE%80%E6%98%93%E6%A1%86%E6%9E%B6%E7%AC%94%E8%AE%B0/" itemprop="url" rel="index"><span itemprop="name">Python搭建简易框架笔记</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>8.5k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>24 分钟</span>
+    </span>
+</div>
+
+            <div class="post-description">本文记录使用Python搭建深度学习框架，实现其中优化器类的代码，包含优化器基类的抽象和需要执行的任务，以及最基本的MBGD优化器的实现，还跟Pytorch的实现方式进行了比对。</div>
+            <div class="post-remind">Google Chrome is recommended, otherwise the image size may be wrong</div>
+            <div class="post-remind">FireFox is not recommended,Because it does not support the image zoom property</div>
+        </div>
+        
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p><strong>前言</strong>：
+优化器的理论部分以及各种常见的优化器可以参见如下博客：<a
+href="https://blog.fantast.top/2022/02/11/ced858ce48dc/">机器学习基础系列笔记16——常见的梯度下降优化器整理</a></p>
+<p>本文所讲的是如何使用Python搭建优化器类，从而帮助实现整个机器学习的训练过程。</p>
+<h4
+id="一在不封装优化器的时候如何在计算图上执行梯度下降法">一、在不封装优化器的时候，如何在计算图上执行梯度下降法？</h4>
+<p>当我们还没有明确提出优化器这个概念的时候，我们遵循如下过程去在计算图上执行梯度下降来优化损失函数：</p>
+<ul>
+<li>1）对结果节点的上游变量节点(Variable)赋值或初始化【包括输入向量节点和训练参数节点】</li>
+<li>2）在结果节点上调用forward，计算出它的值，数据前向传播</li>
+<li>3）在所有需要训练的变量节点( Variable, trainable = True
+)上调用backward方法，梯度反向传播，计算出结果节点对该节点的雅可比矩阵。【仅包括训练参数节点】</li>
+<li>4）根据变量节点的jacobi属性中的值，从变量节点的当前值中减去 用学习率
+* 梯度的值即为更新后的值。</li>
+<li>5）清除所有节点的value和jacobi属性，回到第2步</li>
+</ul>
+<h4 id="二优化器的封装">二、优化器的封装</h4>
+<p>​
+其实，优化器所实现的功能就是上述训练过程中对可训练的变量节点的值进行优化的过程。但是由于，可能存在各种多种多样的优化器，为了便于外层用户使用，代码的整洁，我们需要将优化器的功能封装起来，然后进行使用。</p>
+<p>​ 抽象而言，整个更新计算图中变量的普适流程可以抽象为3步：</p>
+<ul>
+<li>调用Loss节点的Forward方法，这会递归调用所有上游节点的forward方法进行前向传播</li>
+<li>对于计算图中需要更新的变量节点，利用Backward方法，计算出Loss节点对他们的雅可比矩阵</li>
+<li>使用雅可比矩阵，根据梯度下降法更新参数节点。</li>
+</ul>
+<p>​
+当然，在理论部分已经知道了，会有不同形式的梯度下降方法，那么在实现中，自然而然的解决方案就是：**将上述流程封装进入一个抽象类：Optimizer中，然后将不同的算法封装进不同的子类里面，实现各自个性化的部分。</p>
+<h4 id="三优化器基类optimizer类">三、优化器基类（Optimizer类）：</h4>
+<h5 id="part1构造函数">Part1：构造函数</h5>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Optimizer</span>(<span class="title class_ inherited__">object</span>):</span><br><span class="line">    <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">    优化器基类</span></span><br><span class="line"><span class="string">    &quot;&quot;&quot;</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, graph, target, learning_rate=<span class="number">0.01</span></span>):</span><br><span class="line">        <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">        优化器的构造函数接受计算图对象，目标节点对象(往往就是Loss函数损失值节点，为了方便期间，该框架只支持优化一个目标节点，且我们暂时假设该目标节点最终结果为标量)以及学习率</span></span><br><span class="line"><span class="string">        &quot;&quot;&quot;</span></span><br><span class="line">        <span class="keyword">assert</span> <span class="built_in">isinstance</span>(target, Node) <span class="keyword">and</span> <span class="built_in">isinstance</span>(graph, Graph)</span><br><span class="line">        self.graph = graph</span><br><span class="line">        self.target = target</span><br><span class="line">        self.learning_rate = learning_rate</span><br><span class="line"></span><br><span class="line">        <span class="comment"># 为每个参与训练的节点累加一个Mini Batch的全部样本的梯度（具体作用见后）</span></span><br><span class="line">        self.acc_gradient = <span class="built_in">dict</span>()</span><br><span class="line">        self.acc_no = <span class="number">0</span></span><br></pre></td></tr></table></figure>
+<h5 id="part2核心函数">Part2：核心函数</h5>
+<h6 id="核心函数1forward_backward">核心函数1：forward_backward()</h6>
+<p>​
+该函数抽象了先前我们所说的优化器普适流程中的前两步，完成前向传播计算结果节点target的值，然后遍历所有的计算图中的节点，找到那些<strong>需要训练的变量节点</strong>，然后对它们执行backward，求出结果节点对这些变量节点的雅可比矩阵。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">forward_backward</span>(<span class="params">self</span>):</span><br><span class="line">       <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">       前向传播计算结果节点的值并反向传播计算结果节点对各个节点的雅可比矩阵</span></span><br><span class="line"><span class="string">       &quot;&quot;&quot;</span></span><br><span class="line"></span><br><span class="line">       <span class="comment"># 清除计算图中所有节点的雅可比矩阵</span></span><br><span class="line">       self.graph.clear_jacobi()</span><br><span class="line"></span><br><span class="line">       <span class="comment"># 前向传播计算结果节点</span></span><br><span class="line">       self.target.forward()</span><br><span class="line"></span><br><span class="line">       <span class="comment"># 反向传播计算雅可比矩阵</span></span><br><span class="line">       <span class="keyword">for</span> node <span class="keyword">in</span> self.graph.nodes:</span><br><span class="line">           <span class="keyword">if</span> <span class="built_in">isinstance</span>(node, Variable) <span class="keyword">and</span> node.trainable:</span><br><span class="line">               node.backward(self.target)</span><br><span class="line"></span><br><span class="line">               <span class="comment"># 我们会得到 目标节点对参数节点的雅可比矩阵，将其转置以后即为目标节点对某变量节点的梯度</span></span><br><span class="line">               <span class="comment"># 目标节点（如果是标量的话）对节点值的雅可比是一个行向量，其转置是梯度（列向量）</span></span><br><span class="line">               <span class="comment"># 这里将梯度reshape成与节点值相同的形状，好对节点值进行更新。</span></span><br><span class="line">               <span class="comment"># node 节点的 shape 应当是一个矩阵，矩阵中元素为 N 个。</span></span><br><span class="line">               <span class="comment"># 从 目标节点 对 node 节点的雅可比矩阵相当于是 N维 -》 1维的变换</span></span><br><span class="line">               <span class="comment"># 故而 jacobi 的 shape 应该是 1 * N 维，所以要将其Reshape成Node节点形状，才方便对Node节点中的各个值进行梯度的累加。</span></span><br><span class="line">               gradient = node.jacobi.T.reshape(node.shape())</span><br><span class="line">               <span class="comment"># 如果该节点不在acc_gradient里面，就新建一个key-value</span></span><br><span class="line">               <span class="keyword">if</span> node <span class="keyword">not</span> <span class="keyword">in</span> self.acc_gradient:</span><br><span class="line">                   self.acc_gradient[node] = gradient</span><br><span class="line">               <span class="keyword">else</span>: <span class="comment"># 如果该节点已经在acc_gradient里面，就将梯度进行一个累加</span></span><br><span class="line">                   self.acc_gradient[node] += gradient</span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<h6 id="核心函数2update">核心函数2：update()：</h6>
+<p>​
+该函数封装了优化过程的第三步，参数更新。在Optimizer类中，update方法调用_update这个抽象方法，其具体的方法由具体的子类覆写。执行完参数的更新以后，我们需要将先前累积的梯度给清零。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">  <span class="keyword">def</span> <span class="title function_">update</span>(<span class="params">self, var_gradients=<span class="literal">None</span></span>):</span><br><span class="line"><span class="comment"># 该部分作用暂时还未解释，用于分布式训练，该处暂时无用，可以忽略</span></span><br><span class="line">      <span class="keyword">if</span> var_gradients <span class="keyword">is</span> <span class="keyword">not</span> <span class="literal">None</span>:</span><br><span class="line">          self.apply_gradients(var_gradients)</span><br><span class="line"></span><br><span class="line">      <span class="comment"># 执行更新</span></span><br><span class="line">      self._update()</span><br><span class="line"></span><br><span class="line">      <span class="comment"># 清除累加梯度</span></span><br><span class="line">      self.acc_gradient.clear()</span><br><span class="line">      self.acc_no = <span class="number">0</span></span><br><span class="line">  </span><br><span class="line"><span class="meta">  @abc.abstractmethod</span></span><br><span class="line">  <span class="keyword">def</span> <span class="title function_">_update</span>(<span class="params">self</span>):</span><br><span class="line">      <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">      抽象方法，执行具体的梯度更新算法，由子类实现</span></span><br><span class="line"><span class="string">      &quot;&quot;&quot;</span></span><br></pre></td></tr></table></figure>
+<h5 id="part3入口函数">Part3：入口函数：</h5>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">one_step</span>(<span class="params">self</span>):</span><br><span class="line">    <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">    计算并累加样本的梯度</span></span><br><span class="line"><span class="string">    &quot;&quot;&quot;</span></span><br><span class="line">    self.forward_backward()</span><br><span class="line">    self.acc_no += <span class="number">1</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<h5 id="part4-其他辅助函数">Part4: 其他辅助函数：</h5>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">apply_gradients</span>(<span class="params">self, node_gradients_dict, summarize=<span class="literal">False</span>, acc_no=<span class="literal">None</span></span>):</span><br><span class="line">	<span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">	此处暂时先不提这个函数，用于分布式训练</span></span><br><span class="line"><span class="string">	&quot;&quot;&quot;</span></span><br><span class="line">   <span class="keyword">def</span> <span class="title function_">get_gradient</span>(<span class="params">self, node</span>):</span><br><span class="line">       <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">       返回样本的平均梯度</span></span><br><span class="line"><span class="string">       &quot;&quot;&quot;</span></span><br><span class="line">       <span class="keyword">assert</span> node <span class="keyword">in</span> self.acc_gradient</span><br><span class="line">       <span class="keyword">return</span> self.acc_gradient[node] / self.acc_no</span><br></pre></td></tr></table></figure>
+<h4 id="四bgd和sgd和mbgd的数学表达">四、BGD和SGD和MBGD的数学表达：</h4>
+<h5 id="bgd">1、BGD</h5>
+<p>​
+计算所有样本的平均损失值对参数的梯度，由于求梯度的过程是线性运算，所以<strong>所有样本的平均损失值对参数的梯度就等于每个样本的损失值对参数的梯度的平均：如下公式所示</strong>
+<span class="math display">\[
+\grad(\frac{1}{N}\sum_{i=1}^Nloss{(w|x_i)} ) = \frac{1}{N}\sum_{i=1}^N
+\grad(loss{(w|x_i)} )
+\]</span> ​
+所以，在实现中，我们可以以此计算出训练集中每个样本的损失值对参数的梯度，然后再求这些梯度的平均值。这也是为什么在Optimizer的基类中，我们需要设置<code>self.acc_gradient</code>用于累加每个样本的梯度，然后设置<code>self.acc_no</code>记录累加的样本的数量。</p>
+<h5 id="sgd">2、 SGD</h5>
+<p>​ 每计算一个样本的损失值，然后就进行参数的更新。</p>
+<h5 id="mbgd">3、MBGD</h5>
+<p>​ 以一部分样本的损失之进行计算。</p>
+<h5 id="总结">总结：</h5>
+<p>​
+所以，其实针对于以上三种，在代码实现泛化的时候，我们可以用批大小来进行泛化。batch
+size = 1即为SGD，反之极端为BDG。在代码中，其实就是 调用
+<code>batch_size</code> 次
+<code>one_step()</code>函数，然后等到一个Batch的样本梯度累加结束后，再调用<code>update</code>函数即可，<code>update</code>函数会调用子类的<code>_update</code>函数，子类的<code>_update</code>函数中，会调用<code>get_gradient</code>函数，来得到样本的平均梯度然后进行处理。</p>
+<h4
+id="五matrixslow优化器mbgd实现-其他框架实现方式">五、MatrixSlow优化器MBGD实现
+&amp; 其他框架实现方式：</h4>
+<h5 id="优化器mbgd实现">1、 优化器MBGD实现</h5>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">GradientDescent</span>(<span class="title class_ inherited__">Optimizer</span>):</span><br><span class="line">    <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">    梯度下降优化器</span></span><br><span class="line"><span class="string">    &quot;&quot;&quot;</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, graph, target, learning_rate=<span class="number">0.01</span></span>):</span><br><span class="line"></span><br><span class="line">        Optimizer.__init__(self, graph, target)</span><br><span class="line">        self.learning_rate = learning_rate</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">_update</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">        朴素梯度下降法</span></span><br><span class="line"><span class="string">        &quot;&quot;&quot;</span></span><br><span class="line">        <span class="keyword">for</span> node <span class="keyword">in</span> self.graph.nodes:</span><br><span class="line">            <span class="keyword">if</span> <span class="built_in">isinstance</span>(node, Variable) <span class="keyword">and</span> node.trainable:</span><br><span class="line">                <span class="comment"># 取得该节点在当前批的平均梯度</span></span><br><span class="line">                gradient = self.get_gradient(node)</span><br><span class="line">                <span class="comment"># 用朴素梯度下降法更新变量节点的值</span></span><br><span class="line">                node.set_value(node.value - self.learning_rate * gradient)</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>​
+按照上述非常简单好理解的代码实现，我们可以将整一个优化训练代码的过程简化如下：就是像上一段中描述的那样，调用
+<code>batch_size</code> 次
+<code>one_step()</code>函数，然后等到一个Batch的样本梯度累加结束后，再调用<code>update</code>函数即可，<code>update</code>函数会调用子类的<code>_update</code>函数，子类的<code>_update</code>函数中，会调用<code>get_gradient</code>函数，来得到样本的平均梯度然后进行处理。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br></pre></td><td class="code"><pre><span class="line">optimizer = ms.optimizer.Adam(ms.default_graph, loss, learning_rate)</span><br><span class="line"></span><br><span class="line">mini_batch_size = <span class="number">8</span></span><br><span class="line">cur_batch_size = <span class="number">0</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 训练执行50个epoch</span></span><br><span class="line"><span class="keyword">for</span> epoch <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">50</span>):</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 遍历训练集中的样本</span></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="built_in">len</span>(train_set)):</span><br><span class="line"></span><br><span class="line">        <span class="comment"># 取第i个样本的前4列（除最后一列的所有列），构造3x1矩阵对象</span></span><br><span class="line">        features = np.mat(train_set[i, :-<span class="number">1</span>]).T</span><br><span class="line"></span><br><span class="line">        <span class="comment"># 取第i个样本的最后一列，是该样本的性别标签（1男，-1女），构造1x1矩阵对象</span></span><br><span class="line">        l = np.mat(train_set[i, -<span class="number">1</span>])</span><br><span class="line"></span><br><span class="line">        <span class="comment"># 将特征赋给x节点，将标签赋给label节点</span></span><br><span class="line">        x.set_value(features)</span><br><span class="line">        label.set_value(l)</span><br><span class="line"></span><br><span class="line">        <span class="comment"># 优化器执行一次前向传播和一次后向传播</span></span><br><span class="line">        optimizer.one_step()</span><br><span class="line">        cur_batch_size += <span class="number">1</span></span><br><span class="line">        <span class="comment"># 当积累到一个mini batch的时候，完成一次参数更新</span></span><br><span class="line">        <span class="keyword">if</span> (cur_batch_size == mini_batch_size):</span><br><span class="line">            optimizer.update()</span><br><span class="line">            cur_batch_size = <span class="number">0</span></span><br><span class="line"></span><br><span class="line">    <span class="comment"># 每个epoch结束后评价模型的正确率</span></span><br><span class="line">    pred = []</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 遍历训练集，计算当前模型对每个样本的预测值</span></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="built_in">len</span>(train_set)):</span><br><span class="line"></span><br><span class="line">        features = np.mat(train_set[i, :-<span class="number">1</span>]).T</span><br><span class="line">        x.set_value(features)</span><br><span class="line"></span><br><span class="line">        <span class="comment"># 在模型的predict节点上执行前向传播</span></span><br><span class="line">        predict.forward()</span><br><span class="line">        pred.append(predict.value[<span class="number">0</span>, <span class="number">0</span>])  <span class="comment"># 模型的预测结果：1男，0女</span></span><br><span class="line"></span><br><span class="line">    pred = np.array(pred) * <span class="number">2</span> - <span class="number">1</span>  <span class="comment"># 将1/0结果转化成1/-1结果，好与训练标签的约定一致</span></span><br><span class="line"></span><br><span class="line">    <span class="comment"># 判断预测结果与样本标签相同的数量与训练集总数量之比，即模型预测的正确率</span></span><br><span class="line">    accuracy = (train_set[:, -<span class="number">1</span>] == pred).astype(np.<span class="built_in">int</span>).<span class="built_in">sum</span>() / <span class="built_in">len</span>(train_set)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 打印当前epoch数和模型在训练集上的正确率</span></span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;epoch: &#123;:d&#125;, accuracy: &#123;:.3f&#125;&quot;</span>.<span class="built_in">format</span>(epoch + <span class="number">1</span>, accuracy))</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<h5 id="其他框架对于minibatch的实现方式">2、
+其他框架对于MiniBatch的实现方式：</h5>
+<p>​
+其实，上述MatrixSlow实现MiniBatch梯度计算的方式，并不是工业上最佳的。但是我认为是在学习的过程中比较好的方式。其把
+MiniBatch样本和计算图完全分隔开，概念很清晰。<strong>那么在一些工业级的框架中，一般是怎么做的呢？</strong></p>
+<p>​
+在其他一些框架中（比如<strong>Pytorch</strong>），可能会用一个变量节点来存储整批样本，<strong>比如样本为n维向量，批大小维m，那么就用一个<span
+class="math inline">\(m \times
+n\)</span>的矩阵来存储。</strong>后续计算节点的计算都是对存储数据矩阵的每一行进行的，<strong>然后这一整批的数据都会在计算图里像前面流动，直到损失值节点</strong></p>
+<p>​ 总结来说，就是以下几步：</p>
+<ul>
+<li>添加一个维度，用一个变量节点存储整个minibatch的样本</li>
+<li>前向传播对整个batch的样本计算</li>
+<li>以平均损失值节点为目标节点</li>
+<li>以平均损失之节点对参数的梯度更新参数。</li>
+</ul>
+<p>​
+这样子的好处在于什么呢？<strong>这种方法所进行计算的性能更好，可以在高效率的利用GPU的并行计算能力，并且能够支持高阶的张量。</strong></p>
+<p>​
+以下代码是书中，对于先前的AdaLine的寻阿联例子，如果使用工业框架的方法，应当是如何训练的，给出了一个示例（没有进行封装）：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> sys</span><br><span class="line">sys.path.append(<span class="string">&#x27;../..&#x27;</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">import</span> matrixslow <span class="keyword">as</span> ms</span><br><span class="line"></span><br><span class="line"><span class="comment"># 构造训练集</span></span><br><span class="line">male_heights = np.random.normal(<span class="number">171</span>, <span class="number">6</span>, <span class="number">500</span>)</span><br><span class="line">female_heights = np.random.normal(<span class="number">158</span>, <span class="number">5</span>, <span class="number">500</span>)</span><br><span class="line"></span><br><span class="line">male_weights = np.random.normal(<span class="number">70</span>, <span class="number">10</span>, <span class="number">500</span>)</span><br><span class="line">female_weights = np.random.normal(<span class="number">57</span>, <span class="number">8</span>, <span class="number">500</span>)</span><br><span class="line"></span><br><span class="line">male_bfrs = np.random.normal(<span class="number">16</span>, <span class="number">2</span>, <span class="number">500</span>)</span><br><span class="line">female_bfrs = np.random.normal(<span class="number">22</span>, <span class="number">2</span>, <span class="number">500</span>)</span><br><span class="line"></span><br><span class="line">male_labels = [<span class="number">1</span>] * <span class="number">500</span></span><br><span class="line">female_labels = [-<span class="number">1</span>] * <span class="number">500</span></span><br><span class="line"></span><br><span class="line">train_set = np.array([np.concatenate((male_heights, female_heights)),</span><br><span class="line">                      np.concatenate((male_weights, female_weights)),</span><br><span class="line">                      np.concatenate((male_bfrs, female_bfrs)),</span><br><span class="line">                      np.concatenate((male_labels, female_labels))]).T</span><br><span class="line"></span><br><span class="line"><span class="comment"># 随机打乱样本顺序</span></span><br><span class="line">np.random.shuffle(train_set)</span><br><span class="line"><span class="comment"># 批大小</span></span><br><span class="line">batch_size = <span class="number">10</span></span><br><span class="line"><span class="comment"># batch_size x 3矩阵，每行保存一个样本，整个节点保存一个mini batch的样本</span></span><br><span class="line">X = ms.core.Variable(dim=(batch_size, <span class="number">3</span>), init=<span class="literal">False</span>, trainable=<span class="literal">False</span>)</span><br><span class="line"><span class="comment"># 保存一个mini batch的样本的类别标签</span></span><br><span class="line">label = ms.core.Variable(dim=(batch_size, <span class="number">1</span>), init=<span class="literal">False</span>, trainable=<span class="literal">False</span>)</span><br><span class="line"><span class="comment"># 权值向量，3x1矩阵</span></span><br><span class="line">w = ms.core.Variable(dim=(<span class="number">3</span>, <span class="number">1</span>), init=<span class="literal">True</span>, trainable=<span class="literal">True</span>)</span><br><span class="line"><span class="comment"># 阈值</span></span><br><span class="line">b = ms.core.Variable(dim=(<span class="number">1</span>, <span class="number">1</span>), init=<span class="literal">True</span>, trainable=<span class="literal">True</span>)</span><br><span class="line"><span class="comment"># 全1向量，维数是batch_size，不可训练</span></span><br><span class="line">ones = ms.core.Variable(dim=(batch_size, <span class="number">1</span>), init=<span class="literal">False</span>, trainable=<span class="literal">False</span>)</span><br><span class="line">ones.set_value(np.mat(np.ones(batch_size)).T)</span><br><span class="line"><span class="comment"># 用阈值（标量）乘以全1向量</span></span><br><span class="line">bias = ms.ops.ScalarMultiply(b, ones)</span><br><span class="line"><span class="comment"># 对一个mini batch的样本计算输出</span></span><br><span class="line">output = ms.ops.Add(ms.ops.MatMul(X, w), bias)</span><br><span class="line">predict = ms.ops.Step(output)</span><br><span class="line"><span class="comment"># 一个mini batch的样本的损失函数</span></span><br><span class="line">loss = ms.ops.loss.PerceptionLoss(ms.ops.Multiply(label, output))</span><br><span class="line"><span class="comment"># 一个mini batch的平均损失</span></span><br><span class="line">B =  ms.core.Variable(dim=(<span class="number">1</span>, batch_size), init=<span class="literal">False</span>, trainable=<span class="literal">False</span>)</span><br><span class="line">B.set_value(<span class="number">1</span> / batch_size * np.mat(np.ones(batch_size)))</span><br><span class="line">mean_loss = ms.ops.MatMul(B, loss)</span><br><span class="line"><span class="comment"># 学习率</span></span><br><span class="line">learning_rate = <span class="number">0.0001</span></span><br><span class="line"><span class="comment"># 训练，这个步骤之后没啥区别</span></span><br><span class="line"><span class="keyword">for</span> epoch <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">50</span>):</span><br><span class="line">    <span class="comment"># 遍历训练集中的样本</span></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> np.arange(<span class="number">0</span>, <span class="built_in">len</span>(train_set), batch_size):</span><br><span class="line">        <span class="comment"># 取一个mini batch的样本的特征</span></span><br><span class="line">        features = np.mat(train_set[i:i + batch_size, :-<span class="number">1</span>])</span><br><span class="line">        <span class="comment"># 取一个mini batch的样本的标签</span></span><br><span class="line">        l = np.mat(train_set[i:i + batch_size, -<span class="number">1</span>]).T</span><br><span class="line">        <span class="comment"># 将特征赋给X节点，将标签赋给label节点</span></span><br><span class="line">        X.set_value(features)</span><br><span class="line">        label.set_value(l)</span><br><span class="line">        <span class="comment"># 在平均损失节点上执行前向传播</span></span><br><span class="line">        mean_loss.forward()</span><br><span class="line">        <span class="comment"># 在参数节点上执行反向传播</span></span><br><span class="line">        w.backward(mean_loss)</span><br><span class="line">        b.backward(mean_loss)</span><br><span class="line">        <span class="comment"># 更新参数</span></span><br><span class="line">        w.set_value(w.value - learning_rate * w.jacobi.T.reshape(w.shape()))</span><br><span class="line">        b.set_value(b.value - learning_rate * b.jacobi.T.reshape(b.shape()))</span><br><span class="line">        ms.default_graph.clear_jacobi()</span><br><span class="line">    <span class="comment"># 每个epoch结束后评价模型的正确率</span></span><br><span class="line">    pred = []</span><br><span class="line">    <span class="comment"># 遍历训练集，计算当前模型对每个样本的预测值</span></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> np.arange(<span class="number">0</span>, <span class="built_in">len</span>(train_set), batch_size):</span><br><span class="line">        features = np.mat(train_set[i:i + batch_size, :-<span class="number">1</span>])</span><br><span class="line">        X.set_value(features)</span><br><span class="line">        <span class="comment"># 在模型的predict节点上执行前向传播</span></span><br><span class="line">        predict.forward()</span><br><span class="line">        <span class="comment"># 当前模型对一个mini batch的样本的预测结果</span></span><br><span class="line">        pred.extend(predict.value.A.ravel())</span><br><span class="line">    pred = np.array(pred) * <span class="number">2</span> - <span class="number">1</span></span><br><span class="line">    accuracy = (train_set[:, -<span class="number">1</span>] == pred).astype(np.<span class="built_in">int</span>).<span class="built_in">sum</span>() / <span class="built_in">len</span>(train_set)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;epoch: &#123;:d&#125;, accuracy: &#123;:.3f&#125;&quot;</span>.<span class="built_in">format</span>(epoch + <span class="number">1</span>, accuracy))</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+    </div>
+
+    
+    
+    
+      
+  <div class="popular-posts-header">相关文章</div>
+  <ul class="popular-posts">
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2022\03\02\c830e3a9e023\" rel="bookmark">用Python搭建深度学习框架系列笔记5——逻辑回归中的损失函数节点</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2022\02\28\d9d77f183b68\" rel="bookmark">用Python搭建深度学习框架系列笔记4——优化器类的代码实现（下）</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2022\02\22\6bfa5496ebc4\" rel="bookmark">用Python搭建深度学习框架系列笔记2——计算图、前向传播、反向传播与自动微分的代码实现</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2022\02\10\f5cccb7aefe2\" rel="bookmark">Python搭建深度学习框架系列笔记1——计算图、梯度下降、反向传播、自动微分的理论部分</a></div>
+    </li>
+  </ul>
+
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Framework/" rel="tag"># Framework</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2022/02/22/6bfa5496ebc4/" rel="prev" title="用Python搭建深度学习框架系列笔记2——计算图、前向传播、反向传播与自动微分的代码实现">
+                  <i class="fa fa-chevron-left"></i> 用Python搭建深度学习框架系列笔记2——计算图、前向传播、反向传播与自动微分的代码实现
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2022/02/24/46f0b3257e29/" rel="next" title="动态规划——背包问题应用">
+                  动态规划——背包问题应用 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments utterances-container"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Fantast</span>
+</div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+    <span title="站点总字数">725k</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">33:33</span>
+  </span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script><script src="/js/bookmark.js"></script>
+
+  
+<script src="https://cdn.jsdelivr.net/npm/hexo-generator-searchdb@1.4.0/dist/search.js" integrity="sha256-vXZMYLEqsROAXkEw93GGIvaB2ab+QW6w3+1ahD9nXXA=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdn.jsdelivr.net/npm/mathjax@3.2.0/es5/tex-mml-chtml.js","integrity":"sha256-r+3itOMtGGjap0x+10hu6jW/gZCzxHsoKrOd7gyRSGY="}}</script>
+<script src="/js/third-party/math/mathjax.js"></script>
+
+
+<script class="next-config" data-name="utterances" type="application/json">{"enable":true,"repo":"Fantast416/myblog-comment","issue_term":"pathname","theme":"github-light"}</script>
+<script src="/js/third-party/comments/utterances.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,621 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.2.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css" integrity="sha256-mUZM63G8m73Mcidfrv5E+Y61y7a12O5mW4ezU3bxqW4=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"blog.fantast.top","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.9.0","exturl":false,"sidebar":{"position":"left","width":250,"display":"always","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":true,"color":"#222","save":"manual"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"utterances","storage":true,"lazyload":false,"nav":null,"activeClass":"utterances"},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+<meta name="description" content="Transformer在视觉领域应用与NLP领域有一些较大的差别，首先就是在视觉领域，视觉实体的规模尺度会存在较大的变化，举例而言，想要识别同一张图像中的同一距离的果实和汽车，两者的规模尺度大小可能会存在较大的不同。第二点就是相比于文字而言，图像像素的分辨率更高，信息量更多，计算更为复杂，需要消耗更多的计算资源与训练时间。相比于先前的Vision Transformer的架构，Swin Trans">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Transformer系列笔记4——Swin Transformer思想与架构">
+<meta property="og:url" content="https://blog.fantast.top/2021/12/09/aba242d32ac9/index.html">
+<meta property="og:site_name" content="Fantast&#39;s Blog">
+<meta property="og:description" content="Transformer在视觉领域应用与NLP领域有一些较大的差别，首先就是在视觉领域，视觉实体的规模尺度会存在较大的变化，举例而言，想要识别同一张图像中的同一距离的果实和汽车，两者的规模尺度大小可能会存在较大的不同。第二点就是相比于文字而言，图像像素的分辨率更高，信息量更多，计算更为复杂，需要消耗更多的计算资源与训练时间。相比于先前的Vision Transformer的架构，Swin Trans">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2021-12-09T12:31:19.000Z">
+<meta property="article:modified_time" content="2022-08-07T14:52:51.000Z">
+<meta property="article:author" content="Fantast">
+<meta property="article:tag" content="Transformer">
+<meta property="article:tag" content="Computer Vision">
+<meta property="article:tag" content="Swin Transformer">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://blog.fantast.top/2021/12/09/aba242d32ac9/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://blog.fantast.top/2021/12/09/aba242d32ac9/","path":"2021/12/09/aba242d32ac9/","title":"Transformer系列笔记4——Swin Transformer思想与架构"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Transformer系列笔记4——Swin Transformer思想与架构 | Fantast's Blog</title>
+  
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<link rel="alternate" href="/atom.xml" title="Fantast's Blog" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Fantast's Blog</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li>
+        <li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li>
+        <li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li>
+        <li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li>
+        <li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%AE%BA%E6%96%87%E5%90%8D%E7%A7%B0swin-transformer-hierarchical-vision-transformer-using-shifted-windows"><span class="nav-text">论文名称：《Swin
+Transformer: Hierarchical Vision Transformer using Shifted
+Windows》</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%AE%BA%E6%96%87%E5%9C%B0%E5%9D%80httpsarxiv.orgabs2103.14030"><span class="nav-text">论文地址：https:&#x2F;&#x2F;arxiv.org&#x2F;abs&#x2F;2103.14030</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%A8%A1%E5%9E%8Bswin-transformer"><span class="nav-text">模型：Swin Transformer</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%80%E8%AE%BA%E6%96%87%E6%91%98%E8%A6%81%E4%B8%8Eswin-transformer%E8%83%8C%E6%99%AF%E4%BB%8B%E7%BB%8D"><span class="nav-text">一、论文摘要与Swin
+Transformer背景介绍</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BA%8Cswin-transformer%E6%95%B4%E4%BD%93%E6%9E%B6%E6%9E%84%E4%BB%8B%E7%BB%8D"><span class="nav-text">二、Swin
+Transformer整体架构介绍</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%89swin-transformer%E7%BB%86%E8%8A%82%E4%BB%8B%E7%BB%8D"><span class="nav-text">三、Swin Transformer细节介绍</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#patch-partition-linear-embedding%E4%BB%8B%E7%BB%8D"><span class="nav-text">1、Patch Partition &amp;
+Linear Embedding介绍</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#patch-merging"><span class="nav-text">2、Patch Merging</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#w-msa%E6%A8%A1%E5%9D%97"><span class="nav-text">3、W-MSA模块</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#sw-msa%E6%A8%A1%E5%9D%97"><span class="nav-text">4、SW-MSA模块</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#relative-position-bias%E4%BB%8B%E7%BB%8D"><span class="nav-text">5、Relative Position Bias介绍：</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9B%9Bswin-transformer-%E6%A8%A1%E5%9E%8B%E6%89%A9%E5%B1%95%E5%8F%82%E6%95%B0"><span class="nav-text">四、Swin Transformer
+模型扩展参数</span></a></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Fantast"
+      src="/images/avatar.webp">
+  <p class="site-author-name" itemprop="name">Fantast</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">161</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">40</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">97</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/fantast416" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;fantast416" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:fantast416@gmail.com" title="E-Mail → mailto:fantast416@gmail.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll site-overview-item animated">
+    <div class="links-of-blogroll-title"><i class="fa fa-globe fa-fw"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://www.zhihu.com/people/shuo-shuo-3-41" title="https:&#x2F;&#x2F;www.zhihu.com&#x2F;people&#x2F;shuo-shuo-3-41" rel="noopener" target="_blank">ZhiHu</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="http://www.next.zju.edu.cn/" title="http:&#x2F;&#x2F;www.next.zju.edu.cn&#x2F;" rel="noopener" target="_blank">NextLab</a>
+        </li>
+    </ul>
+  </div>
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://blog.fantast.top/2021/12/09/aba242d32ac9/">
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.webp">
+      <meta itemprop="name" content="Fantast">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Fantast's Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Transformer系列笔记4——Swin Transformer思想与架构
+        </h1>
+
+        <div class="post-meta-container">
+          
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2021-12-09 20:31:19" itemprop="dateCreated datePublished" datetime="2021-12-09T20:31:19+08:00">2021-12-09</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2022-08-07 22:52:51" itemprop="dateModified" datetime="2022-08-07T22:52:51+08:00">2022-08-07</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E2%93%B5-%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" itemprop="url" rel="index"><span itemprop="name">⓵ 深度学习笔记</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E2%93%B5-%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/Transformer%E7%B3%BB%E5%88%97%E7%AC%94%E8%AE%B0/" itemprop="url" rel="index"><span itemprop="name">Transformer系列笔记</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>5.2k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>14 分钟</span>
+    </span>
+</div>
+
+            <div class="post-description">Transformer在视觉领域应用与NLP领域有一些较大的差别，首先就是在视觉领域，视觉实体的规模尺度会存在较大的变化，举例而言，想要识别同一张图像中的同一距离的果实和汽车，两者的规模尺度大小可能会存在较大的不同。第二点就是相比于文字而言，图像像素的分辨率更高，信息量更多，计算更为复杂，需要消耗更多的计算资源与训练时间。相比于先前的Vision Transformer的架构，Swin Transformer使用Shifted Windows这样一个技巧，不仅大大加速了计算速度，和图像的尺度呈线性计算复杂度，并且其也仍然能够考虑到不同窗口之间的信息交互，在识别质量上也提高了2-3个百分点。故而成为了应用性非常广泛的一个架构。那么具体而言，如何加速计算，并且仍然能够考虑不同窗口的信息交互，后面会详细讲解。</div>
+            <div class="post-remind">Google Chrome is recommended, otherwise the image size may be wrong</div>
+            <div class="post-remind">FireFox is not recommended,Because it does not support the image zoom property</div>
+        </div>
+        
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h4
+id="论文名称swin-transformer-hierarchical-vision-transformer-using-shifted-windows">论文名称：《Swin
+Transformer: Hierarchical Vision Transformer using Shifted
+Windows》</h4>
+<h4
+id="论文地址httpsarxiv.orgabs2103.14030">论文地址：https://arxiv.org/abs/2103.14030</h4>
+<h4 id="模型swin-transformer">模型：Swin Transformer</h4>
+<h3 id="一论文摘要与swin-transformer背景介绍">一、论文摘要与Swin
+Transformer背景介绍</h3>
+<p>​
+论文摘要部分即指出了Transformer在视觉领域应用与NLP领域的一些较大的差别，首先就是在视觉领域，视觉实体的规模尺度会存在较大的变化，举例而言，想要识别同一张图像中的同一距离的果实和汽车，两者的规模尺度大小可能会存在较大的不同。第二点就是相比于文字而言，图像像素的分辨率更高，信息量更多，计算更为复杂，需要消耗更多的计算资源与训练时间。相比于先前的Vision
+Transformer的架构，Swin Transformer使用Shifted
+Windows这样一个技巧，不仅大大加速了计算速度，和图像的尺度呈线性计算复杂度，并且其也仍然能够考虑到不同窗口之间的信息交互，在识别质量上也提高了2-3个百分点。故而成为了应用性非常广泛的一个架构。那么具体而言，如何加速计算，并且仍然能够考虑不同窗口的信息交互，后面会详细讲解。</p>
+<h3 id="二swin-transformer整体架构介绍">二、Swin
+Transformer整体架构介绍</h3>
+<p>​ 在上一篇笔记中，讲过了ViT网络架构，相比于ViT网络架构，Swin
+Transformer考虑了<strong>多尺度下的图像</strong>，可以看到如下图所示：其通过不断的下采样，在多个图像的尺度维度进行检测，这样的话直观上可以很好的解决我们先前说的视觉实体的规模尺度的大小不同的问题。</p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220115120312596.png" /></p>
+<p>​ 同样，我们先来看一下Swin
+Transformer整体的一个架构流程，如下所示：可以看到，我们假设输入的图像是高为H，宽为W，RGB三通道24位真彩图，首先其会有一个Patch
+Partition层，图像宽高减少为原来的1/4，维度由3变至48.
+然后后面跟着四个阶段的运算，除了第一个阶段中经过的是Linear
+Embedding层，后续每个阶段开始都会经过Patch
+Merging也就是对图像进行下采样，然后经过堆叠的Swin Transformer
+Block。此处值得注意的是：我们观察到，Swin Transformer
+Block的堆叠次数都是偶数，原因在于在该架构中，Block是成对出现的，看到下图的右侧部分，有两个不同的Block，我们暂且将之称为Block1和Block2，如果Swin
+Transformer Block堆叠2次那么就是Block1+Block2,如果Swin Transformer
+Block堆叠6次那么就是Block1+Block2+Block1+Block2+Block1+Block2。</p>
+<p>​ 在每一个Block中，LN就是Layer
+Norm层，这个层在先前的Transformer架构中已经出现过多次了，然后MLP是多层感知级，通常由全连接层构成，在Swin
+Transformer的Block中，比较新的就是W-MSA模块和SW-MSA模块，也就是论文标题中所提到的Shift-Window-Multihead-Self-Attention机制。此机制我们在后续一个个模块时会进行详细讲解。</p>
+<p>​
+在整体的流程中，还有一个内容值得我们注意，也就是上面显示的每经过一个阶段，矩阵的维度变化。我们发现，每过一个阶段特征图的宽和高都会减半，而随之特征图数量就会翻倍。其实每一个不同的阶段就是在不同的图像尺度下去进行内容模式的识别观察。</p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/cvbvbng.png" /></p>
+<h3 id="三swin-transformer细节介绍">三、Swin Transformer细节介绍</h3>
+<h4 id="patch-partition-linear-embedding介绍">1、Patch Partition &amp;
+Linear Embedding介绍</h4>
+<p>​
+如下图所示，对于输入的Images来说，我们假设输入的图像为H*W*3，那么在Patch
+Partition的过程中会将其分割成4*4大小的块，然后将每一个块在维度方向进行展平，也就是说先前的H*W*3的矩阵经过此步骤后，长宽会变成H/4
+* W/4，至于最后一个维度，将会变为3*16 =
+48维，因为我们将其分割成4*4大小的块后，是在维度方向对其进行展平的。展平后，再通过Stage1的一个Linear
+Embedding层，该层就是对原来的第三维度为48维的三维矩阵进行一个编码（其实就是再进行一个映射），然后三维矩阵的最后一个维度的大小就会变为C。具体C为多少，是不同类型的Swin
+Transformer的一个参数，后文中会详细提及。在这两层的实际实现中，其实都是通过卷积来实现维度的变化以及编码的，比如在Patch
+Partition中就可以使用大小为4*4,步长为4的16个卷积核来对原图进行卷积得到结果。</p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220115120418491.png" /></p>
+<h4 id="patch-merging">2、Patch Merging</h4>
+<p>​ Patch
+Merging层所起到的作用就是将图片下采样，然后在深度方向进行拼接。主要由如下图所示的几步组成：</p>
+<p>首先是以2 *
+2的格子为一组，将每组中相同位置的像素抽出，形成一个新的矩阵。以下图为例，原特征矩阵为4
+* 4，那么以2 * 2格子为1组，会形成4组新的矩阵，每组的矩阵大小为2 *
+2，也就是原来的一半。然后将这4组新形成的矩阵，在深度方向做连接，然后完成LayerNorm，最后再在深度维度进行一个线性映射，将深度维度减半。此时就完成了最终的Patch
+Merging层的输出。</p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220115120447510.png" /></p>
+<p>​
+对比该模块的输入与输出，可以发现，输出的H和W是输入的一半，深度维度是输入的2倍。符合先前全流程示意图中的H/4
+* W/4 * C 变成了H/8 * W/8 *
+2C，成功的将图像空间上的尺寸缩小，由较好的保留了信息。</p>
+<h4 id="w-msa模块">3、W-MSA模块</h4>
+<p>​ W-MSA 全称为Windows Multi-head
+Self-Attention也就是窗口化的Self-Attention机制，此处以在一个4*4的特征图上做为例子，在上一篇Vision
+Transformer中的MSA模块，4*4中的每个像素都要去和其他像素进行关联度的计算，那么在W-MSA中，其将原4*4的特征图首先分割成了4个2*2的Window窗口，然后再在每个窗口内部进行单独的Self-Attention的计算。也就是说，每个像素只需要和自己所属Window内部的像素进行关联度的计算即可。这样一来，确实大大减少了计算量，但是你会发现窗口之间的像素也无法进行通信了，导致我们的感受野变小，对于最终的结果产生影响。优劣势还是非常的明确的。</p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220115120506850.png" /></p>
+<p>​
+在原论文中，给出了MSA和W-MSA的计算复杂度的推导结果公式，我们假设每个窗口含有M
+*
+M个像素，计算图像的宽高为h和w，C即为矩阵的第三维度的大小（也就是深度）。详细的推导此处省略。我们从公式中应该可以看出，相比于MSA平方的复杂度（对于hw），W-MSA相对于hw的复杂度是线性的。能够大大的提高计算效率。</p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220115120516476.png" /></p>
+<h4 id="sw-msa模块">4、SW-MSA模块</h4>
+<p>​
+相比于W-MSA而言，SW-MSA才是本篇论文中的重点模块，该模块弥补了W-MSA窗口与窗口间无法进行信息交互的缺陷，同时也保证了和W-MSA一样的计算复杂度。</p>
+<p>​
+如下图所示，我们先前说过，在Swin-Transformer中，堆叠的Block都是偶数次，是两个不同的Block的组合。我们可以看到，下图的Layerl所示是第一次的Block堆叠，使用的是W-MSA，然后在Layerl+1中，我们将window进行了重新的分割，然后在每个window中完成计算，新的window中有些仍然是老的window的一部分，但有些新的window已经含有老的多个window的信息了，也就是完成了window间的信息的交互。</p>
+<p>那么现在就让我们来一一解决以下两个问题：</p>
+<p>​ 1、这个是如何进行重新的分割的呢？</p>
+<p>​
+2、这样子重新分割以后，由于要计算的Window数目变成了9个，如果需要并行计算的话，需要将每个window都填充至4*4，这样子就会加大我们的计算量。</p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220115120536278.png" /></p>
+<p>​ 首先是如何分割的问题：Shifted
+Window顾名思义，我们将原来的分割线向右和向下偏移一定的像素，然后对原图形成的分割线，就是新的window的划分线。以上面的示意图为例，就是将原来的分割线向右以及向下移动了2个像素点，就得到了新的划分。这个移动的距离，一般来说是窗口的一半，也就是<span
+class="math inline">\(Math.floor(M/2)\)</span>。</p>
+<p>​ 接下来是第二个问题，原论文中给出了如下的示意图：</p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220115120606229.png" /></p>
+<p>​
+我们将所有window中的一些window进行一个划分，0所在的部分标志为A，1，2所在的标志为C，3，6所在的标志为B，如图1所示，然后进行一个平移，也就是变成图2的形式，这样子的话我们发现又可以将其组成4个新的4
+*
+4的window进行self-Attention的计算，计算量和以前一致。到此为止，你可能会问，我们不是要按照原来划分的9个window进行计算吗？如果按照现在这个平移过的4
+*
+4的window进行计算，原先window和window之间的边缘都是跳跃的，而且我们本来就是要原来每个window内部单独计算的，只是为了减轻计算量才进行的平移，所以计算某一个新的4
+*
+4的混合window的时候，自然不希望内部的两个原来的window之间信息有交互和混合。（就比如说，我们平移后，变成了4号块自己算自己的，5、3号块合起来算，1、7号块合起来算，2、0、6、8号块合起来算，4号块是没有问题的，内部像素本身就是连续的，但是5、3号块一起算就会出现问题，5号块和3号块边缘处的像素是不连续的，而且理论上而言，我们是要单独计算3、5号块各自的Self-Attention的内部像素关联度的，所以我们在计算区域5的时候不要引入区域3的信息）</p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220115120637174.png" /></p>
+<p>​
+所以，平移以后对4个新的4*4的window进行的Self-Attention是我们先前提到过的Masked
+MSA,也就是让每一个新形成的window中，根据原来的分割规则给它套上一个mask。这样子的话，虽然它们在一起训练，但是通过这个mask，仍然使得原来的9个window划分规则中，不同的window之间的像素是不会计算关联度的，或者说关联度为0.</p>
+<p>​
+举例来说，如下图所示：我们计算区域5和区域3的这块的Self-Attention的时候，原先是计算了16个α值，那么我们等它计算完以后，将图中蓝色框圈出来的系数全都减去100，这个减100的含义是什么呢？原先计算出的α系数，一般都是比较小量级的，减去100以后，必定是一个比较大的负数，那么经过SoftMax的计算以后，系数就会变成0，也就实现了区域5和区域3之间的像素如果计算关联度，那么就是0。</p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220115120650353.png" /></p>
+<p>​ 最后的话，我们要注意，计算完以后将对应的小块移回原位置。</p>
+<h4 id="relative-position-bias介绍">5、Relative Position Bias介绍：</h4>
+<p>​
+在论文中还简单介绍了这样一种相对位置偏移的计算机制。这种机制应用于计算Self-Attention的时候。如下公式所示：</p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220115120718204.png" /></p>
+<p>​
+其给出了一组数据，在不同的学习网络中，是否使用偏移、或者是使用相对/绝对位置偏移来计算Attention会导致的结果误差。我们可以发现相对位置偏差能够将结果提升1个百分点左右。</p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220115120725660.png" /></p>
+<p>​
+那么相对位置偏差是怎么确定的呢？如下所示，假设我们的特征图是左侧的2*2的格子，下方是我们熟知的绝对位置索引，相对位置索引如右侧上面一排所示，其实就是当前计算格子的绝对位置索引减去其他格子的绝对位置索引。然后将四个像素的相对位置索引展开后拼接在一起形成一个新的矩阵。这个矩阵就是二维的相对位置索引矩阵。</p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/iiioio.png" /></p>
+<p>​
+在作者的源码中，其使用的是1维的的相对位置索引矩阵，我们不能简单的将x,y相加，不然可能导致不同位置的相对位置索引一致，导致出现问题。所以作者在源码中经过了一个简单处理。我们先把所有的行列标加上M-1，然后再将行标乘2M-1，然后再将行列标相加，得到的矩阵。</p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220115120758495.png" /></p>
+<figure>
+<img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220115120804811.png"
+alt="image-20220115120804811" />
+<figcaption aria-hidden="true">image-20220115120804811</figcaption>
+</figure>
+<figure>
+<img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220115120807646.png"
+alt="image-20220115120807646" />
+<figcaption aria-hidden="true">image-20220115120807646</figcaption>
+</figure>
+<p>​ 然后我们需要把Relative Position Index通过一张Bias
+Table映射成relative position
+bias才是用于计算Self-Attention最终用于计算的Bias值，也就是公式里的矩阵B。</p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220115120814669.png" /></p>
+<h3 id="四swin-transformer-模型扩展参数">四、Swin Transformer
+模型扩展参数</h3>
+<p>​
+论文中给出了以下一张表格，里面是四种不同的Swin模型的各个阶段的参数。其中有Swin-T,Swin-S,Swin-B,Swin-L四种不同的Swin
+Transformer模型，分别代表Tiny。</p>
+<p>​ 我们解析某一列的参数，concat 4 * 4
+就代表要将高和宽下采样4倍，96-d就代表经过Linear
+Embedding层以后的C大小。接下来的括号内的东西就代表堆叠的block内的参数，window
+size = 7*7,通过该Block之后输出维度为96，Multi_Head的Head = 3。</p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/bvbcf123.png" /></p>
+
+    </div>
+
+    
+    
+    
+      
+  <div class="popular-posts-header">相关文章</div>
+  <ul class="popular-posts">
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2021\12\08\5899e5598f03\" rel="bookmark">Transformer系列笔记3——Vision Transformer思想与架构</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2022\04\24\503bff4618b7\" rel="bookmark">《Vision Transformer with Deformable Attention》</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2022\04\24\22e32ee5ba59\" rel="bookmark">《Not All Tokens Are Equal Human-centric Visual Analysis via Token Clustering Transformer》</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2022\04\22\1076c1e77e53\" rel="bookmark">论文略读笔记——CVPR2022 Transformer相关（1）</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2022\03\21\58ee25c0143c\" rel="bookmark">《StyTr2 Unbiased Image Style Transfer with Transformers》</a></div>
+    </li>
+  </ul>
+
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Transformer/" rel="tag"># Transformer</a>
+              <a href="/tags/Computer-Vision/" rel="tag"># Computer Vision</a>
+              <a href="/tags/Swin-Transformer/" rel="tag"># Swin Transformer</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2021/12/08/5899e5598f03/" rel="prev" title="Transformer系列笔记3——Vision Transformer思想与架构">
+                  <i class="fa fa-chevron-left"></i> Transformer系列笔记3——Vision Transformer思想与架构
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2021/12/13/81937a6b0d26/" rel="next" title="Pytorch学习笔记1——Tensor介绍">
+                  Pytorch学习笔记1——Tensor介绍 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments utterances-container"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Fantast</span>
+</div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+    <span title="站点总字数">725k</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">33:33</span>
+  </span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script><script src="/js/bookmark.js"></script>
+
+  
+<script src="https://cdn.jsdelivr.net/npm/hexo-generator-searchdb@1.4.0/dist/search.js" integrity="sha256-vXZMYLEqsROAXkEw93GGIvaB2ab+QW6w3+1ahD9nXXA=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdn.jsdelivr.net/npm/mathjax@3.2.0/es5/tex-mml-chtml.js","integrity":"sha256-r+3itOMtGGjap0x+10hu6jW/gZCzxHsoKrOd7gyRSGY="}}</script>
+<script src="/js/third-party/math/mathjax.js"></script>
+
+
+<script class="next-config" data-name="utterances" type="application/json">{"enable":true,"repo":"Fantast416/myblog-comment","issue_term":"pathname","theme":"github-light"}</script>
+<script src="/js/third-party/comments/utterances.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,707 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.2.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css" integrity="sha256-mUZM63G8m73Mcidfrv5E+Y61y7a12O5mW4ezU3bxqW4=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"blog.fantast.top","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.9.0","exturl":false,"sidebar":{"position":"left","width":250,"display":"always","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":true,"color":"#222","save":"manual"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"utterances","storage":true,"lazyload":false,"nav":null,"activeClass":"utterances"},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+<meta name="description" content="Transformer架构最广泛用在Seq2Seq问题上，也就是Sequence-to-Sequence。区别于GAN所对应的Pix2Pix的问题，Seq2Seq的问题也会有非常多的应用和变式，其应用场景也是非常的广。Seq2Seq问题是指输入一个序列，输出一个序列，同时输出序列的长度由训练好的模型进行决定。比较经典的问题就是语音识别、机器翻译、语音翻译等领域。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Transformer系列笔记2——原始Transformer架构与Seq2Seq问题">
+<meta property="og:url" content="https://blog.fantast.top/2021/12/07/84769e08d06a/index.html">
+<meta property="og:site_name" content="Fantast&#39;s Blog">
+<meta property="og:description" content="Transformer架构最广泛用在Seq2Seq问题上，也就是Sequence-to-Sequence。区别于GAN所对应的Pix2Pix的问题，Seq2Seq的问题也会有非常多的应用和变式，其应用场景也是非常的广。Seq2Seq问题是指输入一个序列，输出一个序列，同时输出序列的长度由训练好的模型进行决定。比较经典的问题就是语音识别、机器翻译、语音翻译等领域。">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2021-12-07T13:31:19.000Z">
+<meta property="article:modified_time" content="2022-08-07T14:52:51.000Z">
+<meta property="article:author" content="Fantast">
+<meta property="article:tag" content="Transformer">
+<meta property="article:tag" content="Self Attention">
+<meta property="article:tag" content="Seq2Seq">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://blog.fantast.top/2021/12/07/84769e08d06a/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://blog.fantast.top/2021/12/07/84769e08d06a/","path":"2021/12/07/84769e08d06a/","title":"Transformer系列笔记2——原始Transformer架构与Seq2Seq问题"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Transformer系列笔记2——原始Transformer架构与Seq2Seq问题 | Fantast's Blog</title>
+  
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<link rel="alternate" href="/atom.xml" title="Fantast's Blog" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Fantast's Blog</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li>
+        <li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li>
+        <li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li>
+        <li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li>
+        <li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%80%E7%9B%B8%E5%85%B3%E8%83%8C%E6%99%AF%E4%BB%8B%E7%BB%8D"><span class="nav-text">一、相关背景介绍</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BA%8Cseq2seq2%E7%BB%93%E5%B1%80%E6%96%B9%E6%A1%88origin-transformer"><span class="nav-text">二、Seq2Seq2结局方案——Origin
+Transformer</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#encoder"><span class="nav-text">1、Encoder</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#decoder"><span class="nav-text">2、Decoder</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%89%E5%A6%82%E4%BD%95%E8%AE%AD%E7%BB%83transformer"><span class="nav-text">三、如何训练Transformer</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9B%9B%E5%85%B3%E4%BA%8E%E8%AE%AD%E7%BB%83seq2seq%E7%B1%BB%E4%BC%BC%E6%A8%A1%E5%9E%8B%E7%9A%84tips"><span class="nav-text">四、关于训练Seq2Seq类似模型的Tips：</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#copy-mechanism"><span class="nav-text">1、Copy Mechanism</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#guided-attention"><span class="nav-text">2、Guided Attention</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#beam-search"><span class="nav-text">3、Beam Search</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#optimizing-evaluation-metric"><span class="nav-text">4、Optimizing Evaluation
+Metric</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#scheduled-sampling"><span class="nav-text">5、Scheduled Sampling</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Fantast"
+      src="/images/avatar.webp">
+  <p class="site-author-name" itemprop="name">Fantast</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">161</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">40</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">97</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/fantast416" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;fantast416" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:fantast416@gmail.com" title="E-Mail → mailto:fantast416@gmail.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll site-overview-item animated">
+    <div class="links-of-blogroll-title"><i class="fa fa-globe fa-fw"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://www.zhihu.com/people/shuo-shuo-3-41" title="https:&#x2F;&#x2F;www.zhihu.com&#x2F;people&#x2F;shuo-shuo-3-41" rel="noopener" target="_blank">ZhiHu</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="http://www.next.zju.edu.cn/" title="http:&#x2F;&#x2F;www.next.zju.edu.cn&#x2F;" rel="noopener" target="_blank">NextLab</a>
+        </li>
+    </ul>
+  </div>
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://blog.fantast.top/2021/12/07/84769e08d06a/">
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.webp">
+      <meta itemprop="name" content="Fantast">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Fantast's Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Transformer系列笔记2——原始Transformer架构与Seq2Seq问题
+        </h1>
+
+        <div class="post-meta-container">
+          
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2021-12-07 21:31:19" itemprop="dateCreated datePublished" datetime="2021-12-07T21:31:19+08:00">2021-12-07</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2022-08-07 22:52:51" itemprop="dateModified" datetime="2022-08-07T22:52:51+08:00">2022-08-07</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E2%93%B5-%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" itemprop="url" rel="index"><span itemprop="name">⓵ 深度学习笔记</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E2%93%B5-%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/Transformer%E7%B3%BB%E5%88%97%E7%AC%94%E8%AE%B0/" itemprop="url" rel="index"><span itemprop="name">Transformer系列笔记</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>6.1k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>17 分钟</span>
+    </span>
+</div>
+
+            <div class="post-description">Transformer架构最广泛用在Seq2Seq问题上，也就是Sequence-to-Sequence。区别于GAN所对应的Pix2Pix的问题，Seq2Seq的问题也会有非常多的应用和变式，其应用场景也是非常的广。Seq2Seq问题是指输入一个序列，输出一个序列，同时输出序列的长度由训练好的模型进行决定。比较经典的问题就是语音识别、机器翻译、语音翻译等领域。</div>
+            <div class="post-remind">Google Chrome is recommended, otherwise the image size may be wrong</div>
+            <div class="post-remind">FireFox is not recommended,Because it does not support the image zoom property</div>
+        </div>
+        
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h3 id="一相关背景介绍">一、相关背景介绍</h3>
+<p>​
+Transformer架构最广泛用在Seq2Seq问题上，也就是Sequence-to-Sequence。区别于GAN所对应的Pix2Pix的问题，Seq2Seq的问题也会有非常多的应用和变式，其应用场景也是非常的广。</p>
+<p>​
+Seq2Seq问题是指输入一个序列，输出一个序列，同时输出序列的长度由训练好的模型进行决定。比较经典的问题就是语音识别、机器翻译、语音翻译等领域。</p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220115112932803.png" /></p>
+<p>​
+同时，Seq2Seq也可以用于Chatbot聊天机器人，比如说如下所示：我们可以将Person1和Person2的一组对话视为一个input和一个对应的response，两者都是序列。或者一些其他的Question&amp;Answering问题都可以广泛的应用Seq2Seq的模型解决思想。</p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220115112939154.png" /></p>
+<p>​ 具体的一些相关论文可以参照下图所示的网址进一步了解。</p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220115112946229.png" /></p>
+<p>​ 同时，还有更多的可以应用Seq2Seq的例子，比如说对于一个Syntactic
+Parsing问题，也就是语法解析，我们也可以将其视为Seq2Seq的形式，来对其进行思考。输入是一句话，毫无疑问是一个Seq序列。但是，我们所需要的输出结果看上去像是一个树形结构【deep
+learning组成名词短语，very powerful 组成形容词短语，is 和 very
+powerful又组成动词短语，最后deep learning和 is very
+powerful组成一个句子】，但其实，如下图所示，我们可以将图最上方的这个句子作为输出结果，这样就将一个类似图结构的内容转换成了Seq的形式，同时也包含了所有我们需要的结果信息，然后用Seq2Seq的思想去训练模型即可。</p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220115112954818.png" /></p>
+<p>​
+再比如，Seq2Seq应用于图像领域的目标检测，感兴趣可以查看以下这篇论文。</p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220115113003795.png" /></p>
+<h3
+id="二seq2seq2结局方案origin-transformer">二、Seq2Seq2结局方案——Origin
+Transformer</h3>
+<p>​
+对于一般的Seq2Seq问题，笼统而言，我们一般就是将输入序列经过一个Encoder然后再通过一个Decoder就得到我们的输出序列。但是这个Encoder和Decoder内部的结构就大有讲究，最经典的架构就是Transformer。</p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220115113028194.png" /></p>
+<h4 id="encoder">1、Encoder</h4>
+<p>​
+首先我们关注Transformer的Encoder部分。下面是从输入输出的结果来看，Encoder的输入是一个序列，输出是一个编码过后的序列。（其实只从输入输出来看，像RNN、CNN都可以做到输入一个序列，输出一个序列，但是此篇讲的是Transformer）</p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220115113035456.png" /></p>
+<p>​
+Transfomer中的Encoder现在一般都由这样的架构组成，如下图所示，由非常多的Block组成，每一个Block并不是指一层网络，可能是有许多曾网络组成。那么输入经过许多个Block的处理，然后输出。那么在Transformer中，每一个Block内部的架构如右侧所示：输入一排向量，先经过Self-attention的机制，输出一排向量，然后这一排向量再经过全连接层，输出一排向量，这一排带红色框的向量就是Block的输出。</p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220115113045808.png" /></p>
+<p>​
+但实际上，在原来的Transformer中，Block内的结构稍微更复杂一些，其还增加了一个residual的过程，如下所示：</p>
+<p>​
+输入的某个向量b经过Self-attention以后，得到向量a,此向量a还要与向量b相加，得到一个新的向量a+b，然后再做Layer
+Norm,得到一个深蓝色的向量c。（左上角的那个框框代表的就是，接下去接右侧的过程）</p>
+<p>​
+然后这个Norm输出的深蓝色的向量c，经过FC层，得到新的向量d，此处还有一个residual的架构，c和d相加，得到新的向量e，然后e再做一次Layer
+Norm才会得到最终这个Block输出的结果向量。</p>
+<p>（LayerNorm本身的过程如图中央所示，先计算向量数据的均值和标准差，然后依据公式xi’
+= (xi-m)/σ即可完成归一化。）</p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220115113058827.png" /></p>
+<p>​
+讲完每一个Block内完成的事情，我们就可以看Transfomer中给出的这个完整的带细节的架构示意图，其实两者中有部分过程是重叠的，只是表示形式不一样。</p>
+<p>​
+首先将输入经过嵌入层，完成编码。如果对嵌入层没有印象，可以查看如下的文章。然后通过Positional
+Encoding向输入中增加序列不同地方的位置信息。然后经过多次结构的核心部分Nx。这个Nx其实就是我们刚才提到的一个Block。其中，Multi-Head
+Attention就是Self-Attention的一种扩展的架构，然后Add&amp;Norm就是上述的Residual
++ LayerNorm的过程。Feed
+Forward就是上图中通过FC层的过程。所以这张图中Nx内部的这个框框就是一个Block的过程，然后整个Transformer
+Encoder就由许多个这样的Block组成。【像先前所讲的】</p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220115113109977.png" /></p>
+<p>​ 其实Transformer
+Encoder的架构也是可以灵活改变的，此处只是讲了最初提出的Transformer时候文章中Encoder的架构。</p>
+<h4 id="decoder">2、Decoder</h4>
+<p>​
+然后的话我们关注Transformer的Decoder部分。Decoder分为两种，一种是Autoregressive（AT）的Decoder,还有一种是Non-Autoregressive（NAT）的Decoder。首先是Autoregressive的Decoder的介绍：</p>
+<p>​
+Decoder的输入，有两个内容，一个是Encoder输出的序列，还有一个是START标识符号所对应的One-hot编码，这两样东西经过Decoder后，输出一个各种字的概率分布，其中概率最大的那个字就会被作为最后的输出字符。</p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220115113200035.png" /></p>
+<p>​ 然后我们将START 和 机
+组成的one-hot向量的序列输入，再经过Decoder，得到一个概率分布，然后选出概率分布中最高的那个字“机”。以此类推，直到完成所有的输出。</p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220115113209026.png" /></p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220115113211451.png" /></p>
+<p>​ 在此处其实存在两个问题
+，一个问题是按照上述的过程，其实Decoder后面每一步的输入都来自于自己前一步的输出，就比如说，中间某一步输入是“机器”，输出了“学”，然后下一步输入是“机器学”，输出是“习”。那么，我们要如何避免一步错步步错的情况发生呢？也就是说，如果其中有一步发生了问题，我们应当怎么让机器在后面的步骤中仍然输出正确的结果。第二个问题是，如果按照上述的步骤生成下去，生成出来的序列是无穷无尽的，它永远不会停止，那么机器怎么去决定输出序列的长度呢？这两个问题，后文会有提及，我们先继续讲述Decoder内部到底经历了什么。</p>
+<p>​
+我们先来看一张Encoder和Decoder的对比图：从此图而言，我们发现Decoder除了中间那一块被盖住的，以及最后输出层的一些内容以外，Block内部的内容其实和Encoder是类似的。一个比较重要的差别点就是其使用的是Masked
+Multi-Head Attention。</p>
+<figure>
+<img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220115113222282.png"
+alt="image-20220115113222282" />
+<figcaption aria-hidden="true">image-20220115113222282</figcaption>
+</figure>
+<p>​ 我们先来看一下，这个Masked Multi-Head
+Attention是什么意思呢？图1是我们熟悉的Self-Attention，每一个输出的向量都是含有输入的所有向量的咨询的，右图是Masked
+Self
+Attention机制，也就是在生成b1的时候，是不能使用a1之后的输入向量的，只能使用a1的资讯，生成b2的时候，不能使用a2之后的输入向量，只能使用a1,a2的资讯，以此类推。</p>
+<figure>
+<img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220115113244478.png"
+alt="image-20220115113244478" />
+<figcaption aria-hidden="true">image-20220115113244478</figcaption>
+</figure>
+<p>下面是一个更为具体的示意图：</p>
+<figure>
+<img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220115113256453.png"
+alt="image-20220115113256453" />
+<figcaption aria-hidden="true">image-20220115113256453</figcaption>
+</figure>
+<p>​
+那么为什么要使用这样的架构呢？原因其实很简单，因为如果不这样子的话，AT形式的Decoder是没法的运作的。因为先前讲的AT的Decoder运作方式，输出的字是一个一个产生的。第一步只有一个输入的“START”标识符对应的One-Hot向量，生成一个字以后，再将START标识符和第一个字输入，得到第二个字，依次类推。所以在生成的时候，它只能参考它前面的输入的序列的资讯，没法获得它之后的资讯。</p>
+<p>​
+然后我们来看一下Encoder间和Decoder间是如何传递资讯的呢？也就是刚才那张图中，暂时被灰色遮住的部分：我们会发现，在这个红色框框框起来的模组中，有两个输入的箭头来自于Encoder，一个输入的箭头来自于Decoder的前一步的输出。</p>
+<figure>
+<img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220115113305054.png"
+alt="image-20220115113305054" />
+<figcaption aria-hidden="true">image-20220115113305054</figcaption>
+</figure>
+<p>​ 那么具体来说，是怎么工作的呢，如下所示：此步中的Multi-Head
+Attention指的是一个Cross-Attention的过程，具体如下所示：在Decoder解析的第一步时，输入是来自Encoder的一个序列，以及Decoder上一步的输出（因为Decoder上一步无输出，此步为第一步，所以这个应该是一个START标识符，表示句子的开始）。</p>
+<p>​
+然后Encoder这边输出的序列，a1,a2,a3向量分别乘以一个权重矩阵，形成k1,v1,k2,v2,k3,v3，Deocder这侧的START标识符对应的One-hot编码经过Masked-Self-Attention得到一个向量，然后该向量乘上一个权重矩阵，得到向量q,计算q和k1,k2,k3的相关性并且归一化，得到系数α1’，α2’，α3’.</p>
+<p>​
+得到系数α1’，α2’，α3’后，分别和v1,v2,v3相乘相加，得到向量v，然后再经过FC就是该步骤Cross
+attention的输出，至于后面就是需要再经过上述网络中描述的Add&amp;Norm，也就是Residual和Layer
+Norm的过程，才完成Decoder中一个Block的过程。</p>
+<figure>
+<img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220115113324988.png"
+alt="image-20220115113324988" />
+<figcaption aria-hidden="true">image-20220115113324988</figcaption>
+</figure>
+<p>​ 然后第二步以此类推，如下图所示，此处就不再赘述。</p>
+<figure>
+<img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220115113331325.png"
+alt="image-20220115113331325" />
+<figcaption aria-hidden="true">image-20220115113331325</figcaption>
+</figure>
+<p>​
+讲到这里的话，Decoder的基本架构也都已经清晰了，我们来解决一下先前的两个遗留问题之一，也就是机器怎么决定输出的序列的长度的？</p>
+<p>​
+在AT的Decoder中，我们其实可以在输出的字符集中增加一个叫做END的字符，它就代表一个句子的结束，如果某次Decoder输出的概率分布中，END字符的概率较高，就说明该句子结束了。</p>
+<figure>
+<img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220115113340249.png"
+alt="image-20220115113340249" />
+<figcaption aria-hidden="true">image-20220115113340249</figcaption>
+</figure>
+<p>​
+那么什么又是NAT的Decoder呢？我们先前看到AT的Decoder是一个个输出字符的，NAT的Decoder则是一次性的输入全是START的序列，然后一次性得到输出的字符序列。那么NAT的Decoder又是如何决定输出序列的长度的呢？有两种办法，一个是专门训练一个分类器或者预测器，去预测输出序列的长度，另一个就是我们先假设这个输出的序列不会超过每个定值，比如说300个字符，那么我们就输入一个300个START组成的序列，然后在输出的字符序列中，忽略END字符后面的字符即可。</p>
+<p>​
+相比AT来说，NAT有着并行化，更稳定的优势，但是NAT的效果往往比AT要差一些。</p>
+<figure>
+<img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220115113351438.png"
+alt="image-20220115113351438" />
+<figcaption aria-hidden="true">image-20220115113351438</figcaption>
+</figure>
+<h3 id="三如何训练transformer">三、如何训练Transformer</h3>
+<p>​
+首先，当我们丢入第一个START字符的时候，希望Decoder输出的Distribution分布，和我们的Ground
+Truth的结果，能够越接近越好，也就是要最小化cross entropy的值。</p>
+<figure>
+<img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220115113410387.png"
+alt="image-20220115113410387" />
+<figcaption aria-hidden="true">image-20220115113410387</figcaption>
+</figure>
+<p>​
+由于我们会输出好多次字符，所以我们最终是希望，能够最小化每次输出的Distribution和Ground
+Truth的cross
+entropy。不要忘记，最后一步输出段落的结尾符号，也要考虑在内。【此处有一个题外话，在实现的时候，其实有些时候可以将START的标识符和END标识符表示为同一个One-Hot编码，因为反正START标识符只会出现在句子的头部，仍然是可以分辨的，不需要区分START和END这两个字符】</p>
+<p>​
+同时，此处我们在训练的时候，Decoder的Input不是上一步输出的内容，而是给它正确的答案。这件事情就被我们叫做Teacher
+Focing。但是这样子和在实际生产使用的时候存在一个不匹配的问题，这个问题我们之后会有所讨论。</p>
+<figure>
+<img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220115113420273.png"
+alt="image-20220115113420273" />
+<figcaption aria-hidden="true">image-20220115113420273</figcaption>
+</figure>
+<h3
+id="四关于训练seq2seq类似模型的tips">四、关于训练Seq2Seq类似模型的Tips：</h3>
+<h4 id="copy-mechanism">1、Copy Mechanism</h4>
+<p>​
+这一个机制在聊天机器人或文档摘要等领域应用的比较广泛，举例来说，有的时候输出的某些内容可以从输入中Copy进行完成，这样就避免机器去学习一些奇怪的词汇，比如说在聊天机器人中库洛洛这样一个人名信息。感兴趣可以继续查看相关的论文</p>
+<figure>
+<img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220115113453661.png"
+alt="image-20220115113453661" />
+<figcaption aria-hidden="true">image-20220115113453661</figcaption>
+</figure>
+<figure>
+<img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220115113456022.png"
+alt="image-20220115113456022" />
+<figcaption aria-hidden="true">image-20220115113456022</figcaption>
+</figure>
+<h4 id="guided-attention">2、Guided Attention</h4>
+<p>​
+由于有的时候机器可能会忽略输入的某一些部分，此时就可以使用该种手段，该手段通常应用于语音合成、语音辨识领域。</p>
+<p>其就是要求机器在做Attention的时候以一个固定的方式，也就是说如果你对于某一个任务已经有了一些既定的发现，就可以将这种限制加入到训练的过程中，引导机器完成Attention的计算过程。</p>
+<figure>
+<img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220115113509972.png"
+alt="image-20220115113509972" />
+<figcaption aria-hidden="true">image-20220115113509972</figcaption>
+</figure>
+<h4 id="beam-search">3、Beam Search</h4>
+<p>​
+BeamSearch是为了解决如下的一个问题：如下图所示，举例而言，比如说我们输出的字符只有A和B两种，那么Decoder的输出序列，就可以表示为如下图所示的一颗数状结构。红色的路径是Decoder按照先前的贪婪规则得到的输出。但其实，有一条比红色路径更好的输出，就是绿色的路径。</p>
+<figure>
+<img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220115113522389.png"
+alt="image-20220115113522389" />
+<figcaption aria-hidden="true">image-20220115113522389</figcaption>
+</figure>
+<p>​
+可是，我们如果想要找到一个训练过程中这样一条绿色的最优路径是比较难的，因为我们不可能去穷举搜索每一条路径，因为在字符集比较大的情况下，几层叠加的可能就已经非常之多。这个时候就可以使用Beam
+Search这样一种技术。具体如何进行可以Google搜索详情</p>
+<h4 id="optimizing-evaluation-metric">4、Optimizing Evaluation
+Metric</h4>
+<p>​
+我们在训练的时候，目标是最小化每个一一对应的中文字的输出的分布和Ground
+Truth，而在评估一个模型好坏的时候，我们往往会使用输出的整句和GroundTruth之间的BLEU
+score来进行评估，所以我们的验证集应当使用BLEU
+score。那么我们的训练过程中为什么不使用BLEU
+score呢？简单来说就是如果在训练过程中我们要做两个句子之间的BLEU
+score，是根本没有办法做微分的也就没有办法做梯度下降去最优化求解。</p>
+<figure>
+<img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220115113543303.png"
+alt="image-20220115113543303" />
+<figcaption aria-hidden="true">image-20220115113543303</figcaption>
+</figure>
+<h4 id="scheduled-sampling">5、Scheduled Sampling</h4>
+<p>​
+这个方法是为了解决我们先前提出的两个问题中的第一个问题，以及在那之后提出的一个训练与实际应用过程中的那个Mismatch(也就是训练的时候Decoder的输入使用的是Ground
+Truth,可是输出的时候不行)。简单直接的想法，就是训练的时候，我们往输入中加入一些噪声，就可以了。具体而言的话，也有许多论文是做这个方向的，如果有兴趣的话可以自行查阅。</p>
+<figure>
+<img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220115113600427.png"
+alt="image-20220115113600427" />
+<figcaption aria-hidden="true">image-20220115113600427</figcaption>
+</figure>
+
+    </div>
+
+    
+    
+    
+      
+  <div class="popular-posts-header">相关文章</div>
+  <ul class="popular-posts">
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2021\12\06\59e48d4d462f\" rel="bookmark">Transformer系列笔记1——Self Attention机制</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2022\04\24\503bff4618b7\" rel="bookmark">《Vision Transformer with Deformable Attention》</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2022\04\24\22e32ee5ba59\" rel="bookmark">《Not All Tokens Are Equal Human-centric Visual Analysis via Token Clustering Transformer》</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2022\04\22\1076c1e77e53\" rel="bookmark">论文略读笔记——CVPR2022 Transformer相关（1）</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2022\03\21\58ee25c0143c\" rel="bookmark">《StyTr2 Unbiased Image Style Transfer with Transformers》</a></div>
+    </li>
+  </ul>
+
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Transformer/" rel="tag"># Transformer</a>
+              <a href="/tags/Self-Attention/" rel="tag"># Self Attention</a>
+              <a href="/tags/Seq2Seq/" rel="tag"># Seq2Seq</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2021/12/06/59e48d4d462f/" rel="prev" title="Transformer系列笔记1——Self Attention机制">
+                  <i class="fa fa-chevron-left"></i> Transformer系列笔记1——Self Attention机制
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2021/12/08/5899e5598f03/" rel="next" title="Transformer系列笔记3——Vision Transformer思想与架构">
+                  Transformer系列笔记3——Vision Transformer思想与架构 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments utterances-container"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Fantast</span>
+</div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+    <span title="站点总字数">725k</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">33:33</span>
+  </span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script><script src="/js/bookmark.js"></script>
+
+  
+<script src="https://cdn.jsdelivr.net/npm/hexo-generator-searchdb@1.4.0/dist/search.js" integrity="sha256-vXZMYLEqsROAXkEw93GGIvaB2ab+QW6w3+1ahD9nXXA=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdn.jsdelivr.net/npm/mathjax@3.2.0/es5/tex-mml-chtml.js","integrity":"sha256-r+3itOMtGGjap0x+10hu6jW/gZCzxHsoKrOd7gyRSGY="}}</script>
+<script src="/js/third-party/math/mathjax.js"></script>
+
+
+<script class="next-config" data-name="utterances" type="application/json">{"enable":true,"repo":"Fantast416/myblog-comment","issue_term":"pathname","theme":"github-light"}</script>
+<script src="/js/third-party/comments/utterances.js"></script>
+
+</body>
+</html>

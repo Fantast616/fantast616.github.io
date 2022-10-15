@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.2.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css" integrity="sha256-mUZM63G8m73Mcidfrv5E+Y61y7a12O5mW4ezU3bxqW4=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"blog.fantast.top","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.9.0","exturl":false,"sidebar":{"position":"left","width":250,"display":"always","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":true,"color":"#222","save":"manual"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"utterances","storage":true,"lazyload":false,"nav":null,"activeClass":"utterances"},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+<meta name="description" content="本文续上半篇，实现一些常见的梯度下降优化器类。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="用Python搭建深度学习框架系列笔记4——优化器类的代码实现（下）">
+<meta property="og:url" content="https://blog.fantast.top/2022/02/28/d9d77f183b68/index.html">
+<meta property="og:site_name" content="Fantast&#39;s Blog">
+<meta property="og:description" content="本文续上半篇，实现一些常见的梯度下降优化器类。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/6E1655AA36BAFF6E77328731A966D476.jpg">
+<meta property="og:image" content="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/B02ADB3A208B90C7E30118C018E24361.jpg">
+<meta property="og:image" content="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/35459FAB3F235381D94DED311CECB887.jpg">
+<meta property="og:image" content="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/F34B46DEC057822E872DE8B45F0EDB3F.jpg">
+<meta property="article:published_time" content="2022-02-28T02:59:19.000Z">
+<meta property="article:modified_time" content="2022-08-07T14:47:46.000Z">
+<meta property="article:author" content="Fantast">
+<meta property="article:tag" content="Framework">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/6E1655AA36BAFF6E77328731A966D476.jpg">
+
+
+<link rel="canonical" href="https://blog.fantast.top/2022/02/28/d9d77f183b68/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://blog.fantast.top/2022/02/28/d9d77f183b68/","path":"2022/02/28/d9d77f183b68/","title":"用Python搭建深度学习框架系列笔记4——优化器类的代码实现（下）"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>用Python搭建深度学习框架系列笔记4——优化器类的代码实现（下） | Fantast's Blog</title>
+  
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<link rel="alternate" href="/atom.xml" title="Fantast's Blog" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Fantast's Blog</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li>
+        <li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li>
+        <li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li>
+        <li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li>
+        <li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%85%ADmomentum%E5%86%B2%E9%87%8F%E4%BC%98%E5%8C%96%E5%99%A8%E7%9A%84%E5%AE%9E%E7%8E%B0"><span class="nav-text">六、Momentum冲量优化器的实现：</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%85%AC%E5%BC%8F"><span class="nav-text">1、公式：</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E4%BB%A3%E7%A0%81"><span class="nav-text">2、代码：</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%83adagrad%E4%BC%98%E5%8C%96%E5%99%A8%E7%9A%84%E5%AE%9E%E7%8E%B0"><span class="nav-text">七、AdaGrad优化器的实现：</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%85%AC%E5%BC%8F-1"><span class="nav-text">1、公式：</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E4%BB%A3%E7%A0%81-1"><span class="nav-text">2、代码：</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%85%ABrmsprop%E4%BC%98%E5%8C%96%E5%99%A8%E7%9A%84%E5%AE%9E%E7%8E%B0"><span class="nav-text">八、RMSProp优化器的实现：</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%85%AC%E5%BC%8F-2"><span class="nav-text">1、公式：</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E4%BB%A3%E7%A0%81-2"><span class="nav-text">2、代码：</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B9%9Dadam%E4%BC%98%E5%8C%96%E5%99%A8%E7%9A%84%E5%AE%9E%E7%8E%B0"><span class="nav-text">九、Adam优化器的实现：</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%85%AC%E5%BC%8F-3"><span class="nav-text">1、公式：</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E4%BB%A3%E7%A0%81-3"><span class="nav-text">2、代码：</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Fantast"
+      src="/images/avatar.webp">
+  <p class="site-author-name" itemprop="name">Fantast</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">161</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">40</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">97</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/fantast416" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;fantast416" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:fantast416@gmail.com" title="E-Mail → mailto:fantast416@gmail.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll site-overview-item animated">
+    <div class="links-of-blogroll-title"><i class="fa fa-globe fa-fw"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://www.zhihu.com/people/shuo-shuo-3-41" title="https:&#x2F;&#x2F;www.zhihu.com&#x2F;people&#x2F;shuo-shuo-3-41" rel="noopener" target="_blank">ZhiHu</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="http://www.next.zju.edu.cn/" title="http:&#x2F;&#x2F;www.next.zju.edu.cn&#x2F;" rel="noopener" target="_blank">NextLab</a>
+        </li>
+    </ul>
+  </div>
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://blog.fantast.top/2022/02/28/d9d77f183b68/">
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.webp">
+      <meta itemprop="name" content="Fantast">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Fantast's Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          用Python搭建深度学习框架系列笔记4——优化器类的代码实现（下）
+        </h1>
+
+        <div class="post-meta-container">
+          
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2022-02-28 10:59:19" itemprop="dateCreated datePublished" datetime="2022-02-28T10:59:19+08:00">2022-02-28</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2022-08-07 22:47:46" itemprop="dateModified" datetime="2022-08-07T22:47:46+08:00">2022-08-07</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E2%93%B5-%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" itemprop="url" rel="index"><span itemprop="name">⓵ 深度学习笔记</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E2%93%B5-%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/Basic%E7%B3%BB%E5%88%97%E7%AC%94%E8%AE%B0/" itemprop="url" rel="index"><span itemprop="name">Basic系列笔记</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E2%93%B5-%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/Python%E6%90%AD%E5%BB%BA%E7%AE%80%E6%98%93%E6%A1%86%E6%9E%B6%E7%AC%94%E8%AE%B0/" itemprop="url" rel="index"><span itemprop="name">Python搭建简易框架笔记</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>3.6k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>10 分钟</span>
+    </span>
+</div>
+
+            <div class="post-description">本文续上半篇，实现一些常见的梯度下降优化器类。</div>
+            <div class="post-remind">Google Chrome is recommended, otherwise the image size may be wrong</div>
+            <div class="post-remind">FireFox is not recommended,Because it does not support the image zoom property</div>
+        </div>
+        
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h4 id="六momentum冲量优化器的实现">六、Momentum冲量优化器的实现：</h4>
+<h5 id="公式">1、公式：</h5>
+<p>​
+由于先前的梯度下降法的速度向量v只依赖于当前的梯度，而不参考历史梯度，很容易让优化器陷入Critical
+Point中。</p>
+<p><img src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/6E1655AA36BAFF6E77328731A966D476.jpg" style="zoom:33%;" /></p>
+<p>​ <span class="math inline">\(\beta\)</span> 为衰减系数，一般为0.9</p>
+<h5 id="代码">2、代码：</h5>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Momentum</span>(<span class="title class_ inherited__">Optimizer</span>):</span><br><span class="line">    <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">    冲量法</span></span><br><span class="line"><span class="string">    &quot;&quot;&quot;</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, graph, target, learning_rate=<span class="number">0.01</span>, momentum=<span class="number">0.9</span></span>):</span><br><span class="line"></span><br><span class="line">        Optimizer.__init__(self, graph, target)</span><br><span class="line">        self.learning_rate = learning_rate</span><br><span class="line">        <span class="comment"># 衰减系数，默认为0.9</span></span><br><span class="line">        self.momentum = momentum</span><br><span class="line">        <span class="comment"># 积累历史速度的字典</span></span><br><span class="line">        self.v = <span class="built_in">dict</span>()</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">_update</span>(<span class="params">self</span>):</span><br><span class="line"></span><br><span class="line">        <span class="keyword">for</span> node <span class="keyword">in</span> self.graph.nodes:</span><br><span class="line">            <span class="keyword">if</span> <span class="built_in">isinstance</span>(node, Variable) <span class="keyword">and</span> node.trainable:</span><br><span class="line">                <span class="comment"># 取得该节点在当前批的平均梯度</span></span><br><span class="line">                gradient = self.get_gradient(node)</span><br><span class="line">                </span><br><span class="line">                <span class="comment"># 该节点没有历史速度，也就是说如果是第一次对该节点更新梯度</span></span><br><span class="line">                <span class="keyword">if</span> node <span class="keyword">not</span> <span class="keyword">in</span> self.v:</span><br><span class="line">                    self.v[node] = - self.learning_rate * gradient</span><br><span class="line">                <span class="keyword">else</span>: <span class="comment"># 如果该节点有历史速度</span></span><br><span class="line">                    <span class="comment"># 更新当前节点的速度</span></span><br><span class="line">                    self.v[node] = self.momentum * self.v[node] - self.learning_rate * gradient</span><br><span class="line"></span><br><span class="line">                <span class="comment"># 利用计算所得的速度 更新变量节点的值</span></span><br><span class="line">                node.set_value(node.value + self.v[node])</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<h4 id="七adagrad优化器的实现">七、AdaGrad优化器的实现：</h4>
+<h5 id="公式-1">1、公式：</h5>
+<p>​
+<strong>针对梯度的每个分量各自的历史，采用不同的学习率。</strong></p>
+<p><img src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/B02ADB3A208B90C7E30118C018E24361.jpg" style="zoom: 25%;" /></p>
+<p>​ s 是
+一个和梯度同维度的向量，<strong>其会在各个分量上累加历史梯度各个分量的平方</strong>。<strong>更新梯度时，求s各个分量的平方根,然后用学习率去除，得到自适应的一个向量，里面每个分量代表的就是各个分量对应的合适的学习率</strong>，将这个向量与梯度向量做内积，就可以得到一个合理的下降方向。从严格意义上来讲，这已经不是再向梯度的反方向下降了。<span
+class="math inline">\(\epsilon\)</span>是用于防止除数为0.</p>
+<p>​ <span class="math inline">\(\bigotimes\)</span>
+代表向量内各个分量分别相乘，将会得到一个和原来向量维度一致的新向量</p>
+<h5 id="代码-1">2、代码：</h5>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">AdaGrad</span>(<span class="title class_ inherited__">Optimizer</span>):</span><br><span class="line">    <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">    不同分量，自适应学习率</span></span><br><span class="line"><span class="string">    &quot;&quot;&quot;</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, graph, target, learning_rate=<span class="number">0.01</span></span>):</span><br><span class="line"></span><br><span class="line">        Optimizer.__init__(self, graph, target)</span><br><span class="line">        self.learning_rate = learning_rate</span><br><span class="line">        <span class="comment"># 极小量，为了防止除数为0</span></span><br><span class="line">        self.epsilon = <span class="number">1e-10</span></span><br><span class="line">        <span class="comment"># 积累历史梯度向量的字典</span></span><br><span class="line">        self.s = <span class="built_in">dict</span>()</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">_update</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="keyword">for</span> node <span class="keyword">in</span> self.graph.nodes:</span><br><span class="line">            <span class="keyword">if</span> <span class="built_in">isinstance</span>(node, Variable) <span class="keyword">and</span> node.trainable:</span><br><span class="line">                <span class="comment"># 取得该节点在当前批的平均梯度</span></span><br><span class="line">                gradient = self.get_gradient(node)</span><br><span class="line">                </span><br><span class="line">                <span class="comment"># 该节点没有历史的向量s，也就是说如果是第一次对该节点更新梯度</span></span><br><span class="line">                <span class="keyword">if</span> node <span class="keyword">not</span> <span class="keyword">in</span> self.s:</span><br><span class="line">                    self.s[node] = np.power(gradient,<span class="number">2</span>)</span><br><span class="line">                <span class="keyword">else</span>: <span class="comment"># 如果该节点有历史累积的向量s</span></span><br><span class="line">                    <span class="comment"># 更新当前节点的历史累积的s</span></span><br><span class="line">                    self.s[node] = self.s[node] + np.power(gradient,<span class="number">2</span>)</span><br><span class="line"></span><br><span class="line">                <span class="comment"># 利用计算所得的速度 更新变量节点的值</span></span><br><span class="line">                node.set_value(node.value - self.learning_rate * gradient / (np.sqrt(self.s[node] + self.epsilon)))</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<h4 id="八rmsprop优化器的实现">八、RMSProp优化器的实现：</h4>
+<h5 id="公式-2">1、公式：</h5>
+<p>​
+AdaGrad累积了全部的历史梯度，而我们其实应该更多地考虑近期地历史梯度。</p>
+<p><img src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/35459FAB3F235381D94DED311CECB887.jpg" style="zoom:25%;" /></p>
+<p>​ <span class="math inline">\(\beta\)</span> 为衰减系数，一般为0.9</p>
+<h5 id="代码-2">2、代码：</h5>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">RMSProp</span>(<span class="title class_ inherited__">Optimizer</span>):</span><br><span class="line">    <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">    RMSProp优化器</span></span><br><span class="line"><span class="string">    &quot;&quot;&quot;</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, graph, target, learning_rate=<span class="number">0.01</span>, beta=<span class="number">0.9</span></span>):</span><br><span class="line"></span><br><span class="line">        Optimizer.__init__(self, graph, target)</span><br><span class="line"></span><br><span class="line">        self.learning_rate = learning_rate</span><br><span class="line">        <span class="comment"># 极小量，为了防止除数为0</span></span><br><span class="line">        self.epsilon = <span class="number">1e-10</span></span><br><span class="line">        <span class="comment"># 衰减系数</span></span><br><span class="line">        <span class="keyword">assert</span> <span class="number">0.0</span> &lt; beta &lt; <span class="number">1.0</span></span><br><span class="line">        self.beta = beta</span><br><span class="line">        <span class="comment"># 积累历史梯度向量的字典</span></span><br><span class="line">        self.s = <span class="built_in">dict</span>()</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">_update</span>(<span class="params">self</span>):</span><br><span class="line"></span><br><span class="line">        <span class="keyword">for</span> node <span class="keyword">in</span> self.graph.nodes:</span><br><span class="line">            <span class="keyword">if</span> <span class="built_in">isinstance</span>(node, Variable) <span class="keyword">and</span> node.trainable:</span><br><span class="line">                <span class="comment"># 取得该节点在当前批的平均梯度</span></span><br><span class="line">                gradient = self.get_gradient(node)</span><br><span class="line"></span><br><span class="line">                <span class="comment"># 滑动加权累积梯度各分量的平方和</span></span><br><span class="line">                <span class="keyword">if</span> node <span class="keyword">not</span> <span class="keyword">in</span> self.s:</span><br><span class="line">                    self.s[node] = np.power(gradient, <span class="number">2</span>) <span class="comment"># 注意此处不要乘系数</span></span><br><span class="line">                <span class="keyword">else</span>:</span><br><span class="line">                    self.s[node] = self.beta * self.s[node] + (<span class="number">1</span> - self.beta) * np.power(gradient, <span class="number">2</span>)</span><br><span class="line"></span><br><span class="line">                <span class="comment"># 更新变量节点的值</span></span><br><span class="line">                node.set_value(node.value - self.learning_rate *</span><br><span class="line">                               gradient / (np.sqrt(self.s[node] + self.epsilon)))</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<h4 id="九adam优化器的实现">九、Adam优化器的实现：</h4>
+<h5 id="公式-3">1、公式：</h5>
+<p>​ 集大成者，结合冲量与RMSProp的思想：</p>
+<p><img src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/F34B46DEC057822E872DE8B45F0EDB3F.jpg" style="zoom:25%;" /></p>
+<h5 id="代码-3">2、代码：</h5>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Adam</span>(<span class="title class_ inherited__">Optimizer</span>):</span><br><span class="line">    <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">    Adam优化器</span></span><br><span class="line"><span class="string">    &quot;&quot;&quot;</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, graph, target, learning_rate=<span class="number">0.01</span>, beta1=<span class="number">0.9</span>,beta2=<span class="number">0.99</span></span>):</span><br><span class="line"></span><br><span class="line">        Optimizer.__init__(self, graph, target)</span><br><span class="line"></span><br><span class="line">        self.learning_rate = learning_rate</span><br><span class="line">        <span class="comment"># 极小量，为了防止除数为0</span></span><br><span class="line">        self.epsilon = <span class="number">1e-10</span></span><br><span class="line">        <span class="comment"># 衰减系数1</span></span><br><span class="line">        <span class="keyword">assert</span> <span class="number">0.0</span> &lt; beta1 &lt; <span class="number">1.0</span></span><br><span class="line">        self.beta1 = beta1</span><br><span class="line">        <span class="comment"># 衰减系数2</span></span><br><span class="line">        <span class="keyword">assert</span> <span class="number">0.0</span> &lt; beta2 &lt; <span class="number">1.0</span></span><br><span class="line">        self.beta2 = beta2</span><br><span class="line">        <span class="comment"># 积累历史梯度向量的字典</span></span><br><span class="line">        self.s = <span class="built_in">dict</span>()</span><br><span class="line">        <span class="comment"># 积累历史速度向量的字典</span></span><br><span class="line">        self.v = <span class="built_in">dict</span>()</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">_update</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="keyword">for</span> node <span class="keyword">in</span> self.graph.nodes:</span><br><span class="line">            <span class="keyword">if</span> <span class="built_in">isinstance</span>(node, Variable) <span class="keyword">and</span> node.trainable:</span><br><span class="line">                <span class="comment"># 取得该节点在当前批的平均梯度</span></span><br><span class="line">                gradient = self.get_gradient(node)</span><br><span class="line"></span><br><span class="line">                <span class="comment"># 滑动加权累积梯度各分量的平方和</span></span><br><span class="line">                <span class="keyword">if</span> node <span class="keyword">not</span> <span class="keyword">in</span> self.s:</span><br><span class="line">                    self.s[node] = np.power(gradient, <span class="number">2</span>) <span class="comment"># 注意此处不要乘系数</span></span><br><span class="line">                    self.v[node] = gradient <span class="comment"># 注意此处不要乘系数</span></span><br><span class="line">                <span class="keyword">else</span>:</span><br><span class="line">                    <span class="comment"># 梯度累积</span></span><br><span class="line">                    self.v[node] = self.beta1 * self.v[node] + (<span class="number">1</span> - self.beta1) * gradient</span><br><span class="line"></span><br><span class="line">                    <span class="comment"># 各分量平方累积</span></span><br><span class="line">                    self.s[node] = self.beta2 * self.s[node] + (<span class="number">1</span> - self.beta2) * np.power(gradient, <span class="number">2</span>)</span><br><span class="line"></span><br><span class="line">                <span class="comment"># 更新变量节点的值</span></span><br><span class="line">                node.set_value(node.value - self.learning_rate *</span><br><span class="line">                               self.v[node] / np.sqrt(self.s[node] + self.epsilon))</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+    </div>
+
+    
+    
+    
+      
+  <div class="popular-posts-header">相关文章</div>
+  <ul class="popular-posts">
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2022\03\02\c830e3a9e023\" rel="bookmark">用Python搭建深度学习框架系列笔记5——逻辑回归中的损失函数节点</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2022\02\23\c051c3782dfb\" rel="bookmark">用Python搭建深度学习框架系列笔记3——优化器类的代码实现（上）</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2022\02\22\6bfa5496ebc4\" rel="bookmark">用Python搭建深度学习框架系列笔记2——计算图、前向传播、反向传播与自动微分的代码实现</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2022\02\10\f5cccb7aefe2\" rel="bookmark">Python搭建深度学习框架系列笔记1——计算图、梯度下降、反向传播、自动微分的理论部分</a></div>
+    </li>
+  </ul>
+
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Framework/" rel="tag"># Framework</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2022/02/26/84b3fb3c559e/" rel="prev" title="毕业相关事项">
+                  <i class="fa fa-chevron-left"></i> 毕业相关事项
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2022/03/02/c830e3a9e023/" rel="next" title="用Python搭建深度学习框架系列笔记5——逻辑回归中的损失函数节点">
+                  用Python搭建深度学习框架系列笔记5——逻辑回归中的损失函数节点 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments utterances-container"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Fantast</span>
+</div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+    <span title="站点总字数">725k</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">33:33</span>
+  </span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script><script src="/js/bookmark.js"></script>
+
+  
+<script src="https://cdn.jsdelivr.net/npm/hexo-generator-searchdb@1.4.0/dist/search.js" integrity="sha256-vXZMYLEqsROAXkEw93GGIvaB2ab+QW6w3+1ahD9nXXA=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdn.jsdelivr.net/npm/mathjax@3.2.0/es5/tex-mml-chtml.js","integrity":"sha256-r+3itOMtGGjap0x+10hu6jW/gZCzxHsoKrOd7gyRSGY="}}</script>
+<script src="/js/third-party/math/mathjax.js"></script>
+
+
+<script class="next-config" data-name="utterances" type="application/json">{"enable":true,"repo":"Fantast416/myblog-comment","issue_term":"pathname","theme":"github-light"}</script>
+<script src="/js/third-party/comments/utterances.js"></script>
+
+</body>
+</html>

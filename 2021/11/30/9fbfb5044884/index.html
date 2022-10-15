@@ -1,0 +1,661 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.2.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css" integrity="sha256-mUZM63G8m73Mcidfrv5E+Y61y7a12O5mW4ezU3bxqW4=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"blog.fantast.top","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.9.0","exturl":false,"sidebar":{"position":"left","width":250,"display":"always","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":true,"color":"#222","save":"manual"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"utterances","storage":true,"lazyload":false,"nav":null,"activeClass":"utterances"},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+<meta name="description" content="本篇笔记为观看李宏毅老师的GAN相关课程后所记录，文中所有图片及内容均来源于李宏毅老师的课程，此处只是搬运+以自己的理解进行记录。全文按照李宏毅老师讲课的逻辑进行记录，先从GAN的基本理论概念讲起，中间提及了Structure Learning的问题，然后回答了GAN中的两个经典的问题，然后对VAE和GAN的结果做了简单的比较，最后做了总结，看完以后应该会对GAN有一个完整的概念与理解。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="GAN系列笔记1——GAN的基本理念与思想">
+<meta property="og:url" content="https://blog.fantast.top/2021/11/30/9fbfb5044884/index.html">
+<meta property="og:site_name" content="Fantast&#39;s Blog">
+<meta property="og:description" content="本篇笔记为观看李宏毅老师的GAN相关课程后所记录，文中所有图片及内容均来源于李宏毅老师的课程，此处只是搬运+以自己的理解进行记录。全文按照李宏毅老师讲课的逻辑进行记录，先从GAN的基本理论概念讲起，中间提及了Structure Learning的问题，然后回答了GAN中的两个经典的问题，然后对VAE和GAN的结果做了简单的比较，最后做了总结，看完以后应该会对GAN有一个完整的概念与理解。">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2021-11-30T09:31:19.000Z">
+<meta property="article:modified_time" content="2022-08-07T14:46:03.000Z">
+<meta property="article:author" content="Fantast">
+<meta property="article:tag" content="GAN">
+<meta property="article:tag" content="Deep Learning">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://blog.fantast.top/2021/11/30/9fbfb5044884/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://blog.fantast.top/2021/11/30/9fbfb5044884/","path":"2021/11/30/9fbfb5044884/","title":"GAN系列笔记1——GAN的基本理念与思想"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>GAN系列笔记1——GAN的基本理念与思想 | Fantast's Blog</title>
+  
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<link rel="alternate" href="/atom.xml" title="Fantast's Blog" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Fantast's Blog</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li>
+        <li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li>
+        <li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li>
+        <li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li>
+        <li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%89%8D%E8%A8%80"><span class="nav-text">前言：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%80basic-idea-%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5"><span class="nav-text">一、Basic Idea 基本概念</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BA%8Cstructure-learning"><span class="nav-text">二、Structure Learning</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%89structure-learning%E7%9A%84%E4%B8%80%E4%BA%9B%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88"><span class="nav-text">三、Structure
+Learning的一些解决方案</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9B%9B%E4%B8%BA%E4%BB%80%E4%B9%88generator%E4%B8%8D%E8%83%BD%E8%87%AA%E5%B7%B1%E5%AD%A6%E4%B8%BA%E4%BB%80%E4%B9%88discriminator%E4%B8%8D%E8%83%BD%E8%87%AA%E5%B7%B1%E7%94%9F%E6%88%90"><span class="nav-text">四、为什么Generator不能自己学？为什么Discriminator不能自己生成？</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#generator%E4%B8%BA%E4%BB%80%E4%B9%88%E4%B8%8D%E8%83%BD%E8%87%AA%E5%B7%B1%E5%AD%A6"><span class="nav-text">1、Generator为什么不能自己学？</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#discriminator%E4%B8%BA%E4%BB%80%E4%B9%88%E4%B8%8D%E8%83%BD%E8%87%AA%E5%B7%B1%E4%BA%A7%E7%94%9Fimage"><span class="nav-text">2、Discriminator为什么不能自己产生Image？</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BA%94%E6%AF%94%E8%BE%83vae%E5%92%8Cgan%E7%9A%84%E7%BB%93%E6%9E%9C"><span class="nav-text">五、比较VAE和GAN的结果：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%AD%E6%80%BB%E7%BB%93"><span class="nav-text">六、总结</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Fantast"
+      src="/images/avatar.webp">
+  <p class="site-author-name" itemprop="name">Fantast</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">161</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">40</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">97</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/fantast416" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;fantast416" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:fantast416@gmail.com" title="E-Mail → mailto:fantast416@gmail.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll site-overview-item animated">
+    <div class="links-of-blogroll-title"><i class="fa fa-globe fa-fw"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://www.zhihu.com/people/shuo-shuo-3-41" title="https:&#x2F;&#x2F;www.zhihu.com&#x2F;people&#x2F;shuo-shuo-3-41" rel="noopener" target="_blank">ZhiHu</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="http://www.next.zju.edu.cn/" title="http:&#x2F;&#x2F;www.next.zju.edu.cn&#x2F;" rel="noopener" target="_blank">NextLab</a>
+        </li>
+    </ul>
+  </div>
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://blog.fantast.top/2021/11/30/9fbfb5044884/">
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.webp">
+      <meta itemprop="name" content="Fantast">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Fantast's Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          GAN系列笔记1——GAN的基本理念与思想
+        </h1>
+
+        <div class="post-meta-container">
+          
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2021-11-30 17:31:19" itemprop="dateCreated datePublished" datetime="2021-11-30T17:31:19+08:00">2021-11-30</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2022-08-07 22:46:03" itemprop="dateModified" datetime="2022-08-07T22:46:03+08:00">2022-08-07</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E2%93%B5-%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" itemprop="url" rel="index"><span itemprop="name">⓵ 深度学习笔记</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E2%93%B5-%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/GAN%E7%B3%BB%E5%88%97%E7%AC%94%E8%AE%B0/" itemprop="url" rel="index"><span itemprop="name">GAN系列笔记</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>5.9k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>16 分钟</span>
+    </span>
+</div>
+
+            <div class="post-description">本篇笔记为观看李宏毅老师的GAN相关课程后所记录，文中所有图片及内容均来源于李宏毅老师的课程，此处只是搬运+以自己的理解进行记录。全文按照李宏毅老师讲课的逻辑进行记录，先从GAN的基本理论概念讲起，中间提及了Structure Learning的问题，然后回答了GAN中的两个经典的问题，然后对VAE和GAN的结果做了简单的比较，最后做了总结，看完以后应该会对GAN有一个完整的概念与理解。</div>
+            <div class="post-remind">Google Chrome is recommended, otherwise the image size may be wrong</div>
+            <div class="post-remind">FireFox is not recommended,Because it does not support the image zoom property</div>
+        </div>
+        
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h3 id="前言">前言：</h3>
+<p>​
+本篇笔记为观看李宏毅老师的GAN相关课程后所记录，文中所有图片及内容均来源于李宏毅老师的课程，此处只是搬运+以自己的理解进行记录。全文按照李宏毅老师讲课的逻辑进行记录，先从GAN的基本理论概念讲起，中间提及了Structure
+Learning的问题，然后回答了GAN中的两个经典的问题，然后对VAE和GAN的结果做了简单的比较，最后做了总结，看完以后应该会对GAN有一个完整的概念与理解。全文共4800字左右。</p>
+<h3 id="一basic-idea-基本概念">一、Basic Idea 基本概念</h3>
+<p>​
+GAN是完成了一个Generation的任务，从目标上而言，其实就是我们要训练一个NN的generator，这个generator可以完成下述任务：你给机器一个随机的向量，机器就可以给你输出你想要的物体（可以是图像也可以是其他）。（当然，这种类型的generator看上去是没什么用的，因为你不知道随机向量到底会生成什么样子的东西，但通常向量的每个维度可能就是用于控制输出图像的一个特征部分，现在暂时我们只专注于完成这样一个随机的任务部分）。</p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220114214941737.png" /></p>
+<figure>
+<img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220114214945273.png"
+alt="image-20220114214945273" />
+<figcaption aria-hidden="true">image-20220114214945273</figcaption>
+</figure>
+<figure>
+<img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220114214948402.png"
+alt="image-20220114214948402" />
+<figcaption aria-hidden="true">image-20220114214948402</figcaption>
+</figure>
+<p>​
+GAN比较神奇的点在于其还会同时训练一个Discriminator，即判别器。从目标上而言，其要完成如下任务:输入一个图像，输出一个值，这个值越大，代表图像越真实。值越小，代表图像越虚假。</p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220114214959500.png" /></p>
+<p>​
+那么在GAN中，Generator和Discriminator的关系其实就是对抗竞争，或者说互相帮助互相进步的关系。如下图所示：第一代的生成器生成的东西，交给第一代判别器。第一代生成器在第一代判别器的反馈下，进化为第二代的生成器，然后判别器也随之进化为第二代，循环往复下去（有一种道高一尺，魔高一丈的感觉）</p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220114215010569.png" /></p>
+<p>​
+一个更好的比方，下图中，Generator和Discriminator就像是学生和老师在对话一样，在这个过程中，学生逐渐进步。老师的要求标准也越来越高。</p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220114215031820.png" /></p>
+<p>​
+在这样一个过程中，留下两个疑问：Generator做生成为什么不自己学提高水平呢？Discriminator这么会批评，为什么不自己做生成呢？【解释与回答见第四章】</p>
+<p>​ 现在我们先来讨论一下整个训练的算法伪代码过程，如下所示：</p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220114215049291.png" /></p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220114215052840.png" /></p>
+<p>​
+首先我们初始化生成器和判别器，然后在每一个训练迭代阶段，进行两件事：</p>
+<p>​
+1、我们将Generator固定住，训练Discriminator的参数。具体而言，我们首先随机的输入一些向量，通过G生成一些随机的generated
+objects，然后再从真实数据库中取出一些objects，将这两部分图片作为D的输入，来训练D。目的是要让D看到generated
+objects
+就给出尽可能接近0的分数，让D看到真实的objects就给出尽可能接近1的分数。(其实就是给两部分图片打个标，然后训练一个分类器，如上图所示)</p>
+<p>​
+2、固定住Discriminator的参数，调整生成器的参数。具体而言就是：将一个随机的vector丢入生成器里，生成一张图片，将图片放入判别器中，得到一个分数，我们训练此步的目标是要使最后输出的那个分数越接近1越好。从代码上，这个要怎么进行操作呢？我们往往会将生成器的NN和判别器的NN合并成一个大的网络，锁住判别器部分层的参数，这相当于这个大的网络中间有一层很宽的隐藏层（就是输出图片那一层），然后我们要使得最后生成的结果越大越好，就是Gradient
+Ascent，其实就是在Objective
+Function上加一个负号，就可以完成这个任务。</p>
+<p>​ 下述是更为正式的算法伪代码：</p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220114215114053.png" /></p>
+<p>要注意，在这个算法中，有一些超参数是需要手工去调整以找到最佳效果的：</p>
+<p>​ 1、输入的向量的维度，5维、10维、……</p>
+<p>​ 2、在每一个迭代过程中：更新判别器的次数，可以是1~n次。</p>
+<p><strong>算法中的一些解释：</strong></p>
+<p>​ 1、更新判别器参数的时候的Objective Function：</p>
+<p>​ 第一项：<img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220114215147446.png" />代表真实数据集的图像进到判别器中的分数均值。</p>
+<p>​ 第二项：<img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220114215201515.png" />代表生成的图像进到判别器中的分数被1减去后的均值。</p>
+<p>​
+我们要让这个目标函数最大，其实就是完成了最开始说的，真实数据集图像进到判别器中，分数越接近1越好，生成图像进入，分数越接近0越好。</p>
+<p>​ 2、更新生成器参数的时候的Objective Function：</p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220114215238651.png" /></p>
+<p>​
+其实就是随机向量通过生成器，再通过判别器后，得到的均值越大越好。然后用梯度上升方法，去最大化这个目标函数。</p>
+<h3 id="二structure-learning">二、Structure Learning</h3>
+<p>​ 首先，什么是Structure
+Learning？机器学习本身其实就是找到一个函数f，去完成X-&gt;Y这样一件事情。回归问题，其实就是输出一个分数。分类问题就是输出一个类别，结构化学习其实就是输出一个更复杂的比如说一个序列，一个矩阵，一个图，一个树等等这样的问题。往往这种复杂的结构是由很多个组件组成，并且这些组件之间是有关联关系的。</p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220114215309664.png" /></p>
+<p>​ 为什么Structure
+Learning是很Challenging的呢？其实就是如下图所说的，一个的话是它可以被视为One-shot
+Learning或者是Zero-shot Learning。那什么是One-Shot Learning
+或者说Zero-shot
+Learning呢？例如，在分类作业中，我们如果需要训练，每个类别都需要给出一系列的数据范例。而One-Shot
+Learning 或者Zero-shot
+Learning就是指，可能有些类别完全没有范例，或者说只有很少的范例。</p>
+<p>​ Structure
+Learning里面，输出的是一个结构体，也就是说很有可能训练的句子里面是完全不会有重复的东西的。如果我们把所有的可能输出都视为一个类的话，输出的空间是很巨大的。并且大多数的类都是没有任何训练数据的。所以机器需要一定的创造性。</p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220114215320786.png" /></p>
+<p>​ 第二点的话，在Structure
+Learning中，机器必须学会规划。机器可以一个个组件的去产生，但是它一定要学会组件和组件之间的关系与限制。需要全局的去进行考虑。</p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220114215331213.png" /></p>
+<h3 id="三structure-learning的一些解决方案">三、Structure
+Learning的一些解决方案</h3>
+<p>​ 在传统的方法分类中，其实有两类：一类是Bottom Up的方法，一类是Top
+Down的方法。自底而上的方法主要是学习怎么去生成Component，然后再进行合并，这个很像Generator做的事情，但是这样很容易失去大局观。自上而下的方法是学会评估一个物体，然后找到最好的那个，这个很像Discriminator做的事情，但是这样做的问题是很难做生成。【为什么这么说见第四章】其实GAN就是解决Structure
+Learning的一个解决方案，他就像是把两种方法做了结合。</p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220114215356504.png" /></p>
+<h3
+id="四为什么generator不能自己学为什么discriminator不能自己生成">四、为什么Generator不能自己学？为什么Discriminator不能自己生成？</h3>
+<h4 id="generator为什么不能自己学">1、Generator为什么不能自己学？</h4>
+<p>​
+在传统的有监督学习中，我们只要有大量的真实图片数据，以及他们对应的标签，我就可以完成生成图片这样一个任务。</p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220114215423815.png" /></p>
+<p>​
+但是问题就来了，我们怎么给这些真实图片数据打标签呢？如果是随机赋给他们一些向量标签，那最后的训练是会很困难的。因为比如说我们看两个1的图片比较相似，当然希望向量中有一部分的标签内容是类似的，而不是说这两个1的图片对应的向量标签完全不一致。</p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220114215433669.png" /></p>
+<p>​
+也就是说，我们总是希望这个input和output的内容是存在一些联系的，而不是毫无联系。说到这里，其实问题还是可以解决的，怎么去解决这个编码问题呢？</p>
+<p>​
+正巧，我的上一篇文章中讲了各种自动编码器的相关知识，这个编码问题，我们可以训练一个NN编码器来进行解决。这个编码器完成一件什么事呢？给它一个图片，它输出一个向量，来表示这个图片的相关特征。具体而言，自动编码器怎么进行训练，详见自动编码器的文章，如下：这里的话也给一张李宏毅老师课程的截图示意：</p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220114215447872.png" /></p>
+<p>​
+仔细想来，其实这个Decoder干的是不是就是Generator的事情？是的！因为它也是接收一个Vector向量，输出一张图片，如下图所示：</p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220114215456226.png" /></p>
+<p>​
+这样看来，其实理论上来讲，只要我们训练好了一个自动编码器，把Decoder部分拿出来，就是一个生成器。然后我们随便给一个向量，他就会输出一个对应的图像。</p>
+<p>​
+但是Auto-Encoder存在什么样的问题呢？如下图所示：比如说，我们已知a向量可以产生一个图片，b向量可以产生一个图片，那么0.5<em>a+0.5</em>b会产生什么呢？很有可能会产生Noise，因为这样的生成器本身是一个神经网络，不是线性的。</p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220114215508501.png" /></p>
+<p>​
+说到这里，其实还没有正面回答Generator为什么不能自己学这个问题，但大家不要着急。我们继续说，这个问题其实我们可以用VAE来解决，也就是上篇文章末尾重点讲过的变分自动编码器。</p>
+<p>​
+如下图所示：有了变分编码器，因为变分自动编码器是对一个概率分布进行了编码，而不是固定的。所以我们能够将这个decoder训练的更为稳定。</p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220114215517660.png" /></p>
+<p>​ 那么，现在看来，好像Auto-Encoder就能解决Structure
+Learning这样一个任务了，那为什么我们还需要GAN这个技术呢？接下去要说的就是Auto-Encoder这套技术所缺少的内容。</p>
+<p>​
+在Auto-Encoder的技术中，我们实现的目标是：让生成的图片和目标图像越像越好。那么问题来了，什么叫越像越好？正常来说，我们就是把这个图像展开成一个vector，然后逐像素的计算距离差。</p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220114215528542.png" /></p>
+<p>​
+我们先前说过，自动编码器是不能让它完整的保留所有的信息的，不然就失去了编码的意义，机器只要学习复制就可以了。所以自动编码器的生成器部分，生成的目标总是和源图像会有一些差距，会有一些取舍。这个时候，取舍在哪里就很重要！如下图所示：右上角是目标图像，下面四个是生成的图像。生成图像第一排，只偏差了1个像素，第二排，偏差了6个像素。从计算相似度而言，第一排优于第二排，但是从人的感知而言，第二排优于第一排。所以我们如果只是单纯的计算距离差，让两者越像越好，就有可能会产生第一排的结果。</p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220114215538491.png" /></p>
+<p>​ 在做Structure
+Learning的过程中，我们说过组件和组件之间的关系是很重要的，需要考虑全局观念。这个偏差出来的多的像素本身没有错误，有错的是它如果是有像素值的，那么它周边的组件，也应当是有填充的，而不是空白的。这个像素要和周围的像素一致，这个其实就是组件和组件的一种关联。</p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220114215546546.png" /></p>
+<p>​
+但是我们训练一个生成器的时候，当我们训练一个网络的时候，是很难把组件和组件的关系放进去的。因为在NN网络这个架构里面，如果前一层的权重都已经确定了，最后的输出之间是独立的。每个输出神经元之间没法互相进行配合。</p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220114215603961.png" /></p>
+<p>​
+其实像这种也可以解决，只不过需要更深的网络结构。更深的网络结构能够帮助你把这种组件与组件之间的相关性考虑进去。所以，如果有一个GAN网络，一个Auto-Encoder网络，要完成一个目标，往往Auto-Encoder的网络需要更深，才能达到和GAN类似的效果。</p>
+<p>​
+其实讲到这里，都没有明确的回答Generator为什么不能自己学这个问题，但是其实已经回答掉了。因为我们刚才讲的，Auto-Encoder就是训练了一个单的Generator，是抛弃了Discriminator的一个架构。如果这样子让Generator自己学，当然可以，只不过会存在上述所说的种种问题和难处。</p>
+<h4
+id="discriminator为什么不能自己产生image">2、Discriminator为什么不能自己产生Image？</h4>
+<p>​
+Discriminator总的来说干了一件什么事呢？它其实就是输入一个对象，输出一个分数，这个分数表示这个对象多好或多差，进行评估。对于Discriminator来说，它要考虑组件和组件之间的关系就很容易了，因为他是看到整个图片的。</p>
+<p>​
+那么我们其实是可以用Discriminator来产生Image的，只不过会非常的卡，非常的慢，为什么这么说呢，我们先看，如果硬要用Discriminator来产生Image，步骤应该是怎样的：</p>
+<p>​
+假设我们已经训练好了一个好的判别器，那么我们只需要执行如下公式即可：</p>
+<p>​ 穷举所有的x，然后一个个丢到判别器里，让它看是不是高分。</p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220114215739478.png" /></p>
+<p>​
+虽然这看上去不是很合理，对于穷举而言。但是这其实并不是关键所在。我们现在先假设这个方法确实可行，那难道就可以了吗？别忘了，我们先前的假设：“假设我们已经训练好了一个好的判别器”，那么我们怎么训练这个判别器呢？这才是问题的关键！</p>
+<p>​
+理论上讲很简单，我给他好的样例，让他输出高分，烂的样例，让他输出低分。但是实际上呢，我们手上只有好的样例。如果只有这样的训练实例，会导致网络看到啥都给高分。所以，怎么去产生不好的样例，产生怎样不好的样例，就是一个很关键的问题：</p>
+<p>​
+如果不好的样例就只是一些噪音，那其实机器很容易会给一些尚可的模糊的图片打高分，这并不是我们希望看到的。如下图所示。所以<strong>只有差的样例足够的好，才能让机器真正的学会评判好的图片和坏的图片</strong>，</p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220114215749015.png" /></p>
+<p>​ 所以现在如何生成足够好的
+差的样例就很重要，那么我们就需要一个生成差的样例的过程，在没有Generator的前提下，这就是一个鸡生蛋蛋生鸡的循环问题了。所以如果真的想要完成这件事情，只能通过一个迭代的形式去完成：</p>
+<p>​
+我先学一个最差的Discriminator出来，然后用这个去做生成，生成出来的样例用来训练更好的Discriminator，循环往复。你会发现这个过程好像跟GAN差不多，但是如果没有generator，要比GAN累好多，慢很多。</p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220114215808954.png" /></p>
+<p>​
+这时候再来看如果我们把Generator加上，GAN就是利用Generator来求解这个argmax的问题，用于生成一些负面的样例。</p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220114215815222.png" /></p>
+<h3 id="五比较vae和gan的结果">五、比较VAE和GAN的结果：</h3>
+<p>​
+下图是各个GAN和VAE在不同参数下，所表现出来的性能分数的值的区间。还附带了一个VAE和GAN生成人物头像的直观结果。</p>
+<p>1、VAE比较稳定，给它不同的参数，所表现出来的性能相差不大。</p>
+<p>2、GAN相对而言比较吃参数，但是只要参数正确，所生成的最好结果也是远远优于VAE产生的结果的。<img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/2222sdsa.png" /></p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220114215842339.png" /></p>
+<h3 id="六总结">六、总结</h3>
+<p>1）生成器：</p>
+<p>​ 优势：很快就能生成一个东西</p>
+<p>​ 劣势：很难察觉组件和组件之间的关系，只是模仿一个表象</p>
+<p>2）判别器：</p>
+<p>​ 优势：可以考虑大局观</p>
+<p>​ 劣势：生成一个东西非常的困难</p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220114222543440.png" /></p>
+<p>3）GAN的优势：</p>
+<p>1、从判别器的角度而言，使用Generator来进行negative
+example的生成，更为高效。</p>
+<p>2、从生成器的角度而言，它虽然仍然是一个组件一个组件的生成对象，但是相比传统的计算L1,L2的损失而言，它会从Discriminator那边得到全局视野的反馈，更能理解组件与组件之间的关系。</p>
+
+    </div>
+
+    
+    
+    
+      
+  <div class="popular-posts-header">相关文章</div>
+  <ul class="popular-posts">
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2022\01\26\8f68bd6cb4f4\" rel="bookmark">《HandWritting Transformers》(更新中)</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2021\12\05\59cf77767a4c\" rel="bookmark">GAN系列笔记6——评估GAN的相关方法指标</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2021\12\04\554e29d255b4\" rel="bookmark">GAN系列笔记5——GAN应用于特征提取（InfoGAN，VAEGAN，BiGAN）</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2021\12\03\ce02100bd0a0\" rel="bookmark">GAN系列笔记4——GAN训练过程中的一些Tips与改进的GAN网络（含LSGAN、WGAN、EBGAN）</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2021\12\02\147dd3a9b3ed\" rel="bookmark">GAN系列笔记3——GAN的数学理论支撑</a></div>
+    </li>
+  </ul>
+
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/GAN/" rel="tag"># GAN</a>
+              <a href="/tags/Deep-Learning/" rel="tag"># Deep Learning</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2021/11/24/379e9f408368/" rel="prev" title="机器学习基础系列笔记2——数据表征与自动编码器">
+                  <i class="fa fa-chevron-left"></i> 机器学习基础系列笔记2——数据表征与自动编码器
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2021/12/01/85bccde5409d/" rel="next" title="GAN系列笔记2——常见GAN变种（ConditionalGAN，PatchGAN，CycleGAN等）">
+                  GAN系列笔记2——常见GAN变种（ConditionalGAN，PatchGAN，CycleGAN等） <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments utterances-container"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Fantast</span>
+</div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+    <span title="站点总字数">725k</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">33:33</span>
+  </span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script><script src="/js/bookmark.js"></script>
+
+  
+<script src="https://cdn.jsdelivr.net/npm/hexo-generator-searchdb@1.4.0/dist/search.js" integrity="sha256-vXZMYLEqsROAXkEw93GGIvaB2ab+QW6w3+1ahD9nXXA=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdn.jsdelivr.net/npm/mathjax@3.2.0/es5/tex-mml-chtml.js","integrity":"sha256-r+3itOMtGGjap0x+10hu6jW/gZCzxHsoKrOd7gyRSGY="}}</script>
+<script src="/js/third-party/math/mathjax.js"></script>
+
+
+<script class="next-config" data-name="utterances" type="application/json">{"enable":true,"repo":"Fantast416/myblog-comment","issue_term":"pathname","theme":"github-light"}</script>
+<script src="/js/third-party/comments/utterances.js"></script>
+
+</body>
+</html>

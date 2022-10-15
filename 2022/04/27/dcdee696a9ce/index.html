@@ -1,0 +1,771 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.2.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css" integrity="sha256-mUZM63G8m73Mcidfrv5E+Y61y7a12O5mW4ezU3bxqW4=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"blog.fantast.top","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.9.0","exturl":false,"sidebar":{"position":"left","width":250,"display":"always","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":true,"color":"#222","save":"manual"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"utterances","storage":true,"lazyload":false,"nav":null,"activeClass":"utterances"},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+<meta name="description" content="计网微课堂Chap1——计网基础知识与概述">
+<meta property="og:type" content="article">
+<meta property="og:title" content="计网微课堂Chap1——计网基础知识与概述">
+<meta property="og:url" content="https://blog.fantast.top/2022/04/27/dcdee696a9ce/index.html">
+<meta property="og:site_name" content="Fantast&#39;s Blog">
+<meta property="og:description" content="计网微课堂Chap1——计网基础知识与概述">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220428140515599.png">
+<meta property="og:image" content="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220428141032502.png">
+<meta property="og:image" content="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220428141314096.png">
+<meta property="og:image" content="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220428142115539.png">
+<meta property="og:image" content="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220428150509644.png">
+<meta property="og:image" content="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220428173106779.png">
+<meta property="og:image" content="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220428173800437.png">
+<meta property="og:image" content="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220428173913426.png">
+<meta property="og:image" content="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220429160500448.png">
+<meta property="og:image" content="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220429160803014.png">
+<meta property="og:image" content="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220429161416991.png">
+<meta property="og:image" content="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220429161454976.png">
+<meta property="og:image" content="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220429162242434.png">
+<meta property="og:image" content="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220429162801442.png">
+<meta property="og:image" content="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220429202752020.png">
+<meta property="og:image" content="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220429202822644.png">
+<meta property="og:image" content="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220429203352501.png">
+<meta property="article:published_time" content="2022-04-27T09:43:19.000Z">
+<meta property="article:modified_time" content="2022-10-11T00:46:27.000Z">
+<meta property="article:author" content="Fantast">
+<meta property="article:tag" content="Computer Network">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220428140515599.png">
+
+
+<link rel="canonical" href="https://blog.fantast.top/2022/04/27/dcdee696a9ce/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://blog.fantast.top/2022/04/27/dcdee696a9ce/","path":"2022/04/27/dcdee696a9ce/","title":"计网微课堂Chap1——计网基础知识与概述"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>计网微课堂Chap1——计网基础知识与概述 | Fantast's Blog</title>
+  
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<link rel="alternate" href="/atom.xml" title="Fantast's Blog" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Fantast's Blog</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li>
+        <li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li>
+        <li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li>
+        <li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li>
+        <li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%80%E7%BD%91%E7%BB%9C%E4%BA%92%E8%81%94%E7%BD%91%E5%92%8C%E5%9B%A0%E7%89%B9%E7%BD%91%E6%A6%82%E8%BF%B0"><span class="nav-text">一、网络、互联网和因特网概述：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BA%8C%E5%9B%A0%E7%89%B9%E7%BD%91%E5%8F%91%E5%B1%95%E9%98%B6%E6%AE%B5"><span class="nav-text">二、因特网发展阶段：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%89%E5%9B%A0%E7%89%B9%E7%BD%91%E6%9C%8D%E5%8A%A1%E6%8F%90%E4%BE%9B%E8%80%85isp"><span class="nav-text">三、因特网服务提供者ISP：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%9B%9B%E5%9F%BA%E4%BA%8Eisp%E7%9A%84%E4%B8%89%E5%B1%82%E7%BB%93%E6%9E%84%E7%9A%84%E5%9B%A0%E7%89%B9%E7%BD%91"><span class="nav-text">四、基于ISP的三层结构的因特网：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BA%94%E5%9B%A0%E7%89%B9%E7%BD%91%E7%9A%84%E6%A0%87%E5%87%86%E5%8C%96%E5%B7%A5%E4%BD%9C"><span class="nav-text">五、因特网的标准化工作：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%85%AD%E5%9B%A0%E7%89%B9%E7%BD%91%E7%9A%84%E7%BB%84%E6%88%90"><span class="nav-text">六、因特网的组成：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%83%E4%B8%89%E7%A7%8D%E4%BA%A4%E6%8D%A2%E6%96%B9%E5%BC%8F"><span class="nav-text">七、三种交换方式：</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E7%94%B5%E8%B7%AF%E4%BA%A4%E6%8D%A2-circuit-switching"><span class="nav-text">1、电路交换 Circuit Switching</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%88%86%E7%BB%84%E4%BA%A4%E6%8D%A2-packet-switching"><span class="nav-text">2、分组交换 Packet Switching</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%8A%A5%E6%96%87%E4%BA%A4%E6%8D%A2"><span class="nav-text">3、报文交换：</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%AF%B9%E6%AF%94"><span class="nav-text">4、对比：</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%85%AB%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E5%88%86%E7%B1%BB"><span class="nav-text">八、计算机网络分类：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B9%9D%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E7%9A%84%E6%80%A7%E8%83%BD%E6%8C%87%E6%A0%87"><span class="nav-text">九、计算机网络的性能指标：</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E9%80%9F%E7%8E%87"><span class="nav-text">1、速率</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%B8%A6%E5%AE%BD"><span class="nav-text">2、带宽</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%90%9E%E5%90%90%E9%87%8F"><span class="nav-text">3、吞吐量</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%97%B6%E5%BB%B6"><span class="nav-text">4、时延</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%97%B6%E5%BB%B6%E5%B8%A6%E5%AE%BD%E7%A7%AF"><span class="nav-text">5、时延带宽积</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%BE%80%E8%BF%94%E6%97%B6%E9%97%B4-rtt"><span class="nav-text">6、往返时间 RTT</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%88%A9%E7%94%A8%E7%8E%87"><span class="nav-text">7、利用率</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E4%B8%A2%E5%8C%85%E7%8E%87"><span class="nav-text">8、丢包率</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%8D%81%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84"><span class="nav-text">十、计算机网络体系结构：</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%B8%B8%E8%A7%81%E7%9A%84%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84"><span class="nav-text">1、常见的计算机网络体系结构：</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E8%AE%A1%E7%BD%91%E7%BB%93%E6%9E%84%E5%88%86%E5%B1%82%E7%9A%84%E5%BF%85%E8%A6%81%E6%80%A7"><span class="nav-text">2、计网结构分层的必要性：</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%88%86%E5%B1%82%E6%80%9D%E6%83%B3%E4%B8%BE%E4%BE%8B"><span class="nav-text">3、分层思想举例：</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E4%B8%93%E7%94%A8%E6%9C%AF%E8%AF%AD"><span class="nav-text">4、专用术语：</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%8D%81%E4%B8%80%E4%B9%A0%E9%A2%98"><span class="nav-text">十一、习题：</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#section"><span class="nav-text">1、</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#section-1"><span class="nav-text">2、</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#section-2"><span class="nav-text">3、</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Fantast"
+      src="/images/avatar.webp">
+  <p class="site-author-name" itemprop="name">Fantast</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">161</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">40</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">97</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/fantast416" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;fantast416" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:fantast416@gmail.com" title="E-Mail → mailto:fantast416@gmail.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll site-overview-item animated">
+    <div class="links-of-blogroll-title"><i class="fa fa-globe fa-fw"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://www.zhihu.com/people/shuo-shuo-3-41" title="https:&#x2F;&#x2F;www.zhihu.com&#x2F;people&#x2F;shuo-shuo-3-41" rel="noopener" target="_blank">ZhiHu</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="http://www.next.zju.edu.cn/" title="http:&#x2F;&#x2F;www.next.zju.edu.cn&#x2F;" rel="noopener" target="_blank">NextLab</a>
+        </li>
+    </ul>
+  </div>
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://blog.fantast.top/2022/04/27/dcdee696a9ce/">
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.webp">
+      <meta itemprop="name" content="Fantast">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Fantast's Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          计网微课堂Chap1——计网基础知识与概述
+        </h1>
+
+        <div class="post-meta-container">
+          
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2022-04-27 17:43:19" itemprop="dateCreated datePublished" datetime="2022-04-27T17:43:19+08:00">2022-04-27</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2022-10-11 08:46:27" itemprop="dateModified" datetime="2022-10-11T08:46:27+08:00">2022-10-11</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E2%93%B9-%E5%9F%BA%E7%A1%80%E7%B1%BB%E7%AC%94%E8%AE%B0/" itemprop="url" rel="index"><span itemprop="name">⓹ 基础类笔记</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E2%93%B9-%E5%9F%BA%E7%A1%80%E7%B1%BB%E7%AC%94%E8%AE%B0/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/" itemprop="url" rel="index"><span itemprop="name">计算机网络</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>3.7k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>10 分钟</span>
+    </span>
+</div>
+
+            <div class="post-description">计网微课堂Chap1——计网基础知识与概述</div>
+            <div class="post-remind">Google Chrome is recommended, otherwise the image size may be wrong</div>
+            <div class="post-remind">FireFox is not recommended,Because it does not support the image zoom property</div>
+        </div>
+        
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p>视频地址：https://www.bilibili.com/video/BV1c4411d7jb?p=2</p>
+<h4 id="一网络互联网和因特网概述">一、网络、互联网和因特网概述：</h4>
+<p>1、网络（Network）由若干结点（Node）和连接这些结点的链路（Link）组成。</p>
+<p>2、多个网络可以通过路由器互联，就构成了一个覆盖范围更大的网络，即<strong>互联网</strong></p>
+<p>3、<strong>因特网</strong>是世界上给最大的互联网。</p>
+<h4 id="二因特网发展阶段">二、因特网发展阶段：</h4>
+<p>1、从单个网络ARPANET向互联网发展</p>
+<p>2、逐步构成三级结构的因特网</p>
+<p>3、逐步形成多层次ISP结构的因特网（ISP：因特网服务提供者）</p>
+<h4 id="三因特网服务提供者isp">三、因特网服务提供者ISP：</h4>
+<p>​ ISP拥有接入因特网的能力，个人或企业需要向ISP申请IP。</p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220428140348424.png" /></p>
+<h4
+id="四基于isp的三层结构的因特网">四、基于ISP的三层结构的因特网：</h4>
+<ul>
+<li>第一层：国际性区域</li>
+<li>第二层：区域性或国家性覆盖规模</li>
+<li>第三层：本地范围</li>
+</ul>
+<p><img src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220428140515599.png" style="zoom: 33%;" /></p>
+<p>​
+一个个人主机在接入因特网后也可以成为一个ISP，只要使用路由器等内容将其他主机连入即可。</p>
+<h4 id="五因特网的标准化工作">五、因特网的标准化工作：</h4>
+<p>​
+因特网在制定其标准上的一个很大的特点是<strong>面向公众。</strong></p>
+<p>​ 因特网所有的RFC（Request For
+Comments）技术文档都可从因特网上免费下载；</p>
+<p>​
+因特网协会ISOC是一个国际性组织，它负责对因特网进行全面管理，以及在世界范围内促进其发展和使用。</p>
+<h4 id="六因特网的组成">六、因特网的组成：</h4>
+<ul>
+<li>边缘部分：
+<ul>
+<li>由所有连接在因特网上的主机组成。这部分是用户直接使用的，用来进行通信（传送数据、音频或视频）和资源共享。</li>
+</ul></li>
+<li>核心部分：
+<ul>
+<li>由大量网络和连接这些网络的路由器组成。这部分是为边缘部分提供服务的（<strong>提供连通性和交换</strong>）。</li>
+</ul></li>
+</ul>
+<h4 id="七三种交换方式">七、三种交换方式：</h4>
+<h5 id="电路交换-circuit-switching">1、电路交换 Circuit Switching</h5>
+<p>​
+当电话数量增多时，无法使得两两电话机之间接通，只能使用电话交换机来完成电话机之间两两的通信任务。</p>
+<p>​
+<strong>电话交换机接通电话线的方式称为电路交换；</strong>从通信资源的分配角度来看，<strong>交换（Switching）就是按照某种方式动态地分配传输线路的资源；</strong></p>
+<p><img src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220428141032502.png" alt="image-20220428141032502" style="zoom:33%;" /></p>
+<p><strong>电路交换的三个步骤</strong>：</p>
+<ul>
+<li><p>建立连接：分配通信资源（一条固定的物理连接，在双方通信时不会被其他用户占用）</p></li>
+<li><p>通话（一直占用通信资源）</p></li>
+<li><p>释放连接（归还通信资源）</p>
+<p><img src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220428141314096.png" style="zoom: 33%;" /></p>
+<p>​
+当使用电路交换来传送计算机数据时，其线路的传输效率往往很低。<strong>这是由于计算机的数据往往是突发的出现在链路上的</strong></p></li>
+</ul>
+<h5 id="分组交换-packet-switching">2、分组交换 Packet Switching</h5>
+<p>​ <strong>路由器是分组交换中最重要的设备</strong></p>
+<p>发送方：</p>
+<ul>
+<li>构造分组 + 发送分组</li>
+</ul>
+<p>路由器：</p>
+<ul>
+<li>缓存分组 + 转发分组</li>
+</ul>
+<p>接收方：</p>
+<ul>
+<li>接受分组 + 还原报文</li>
+</ul>
+<h5 id="报文交换">3、报文交换：</h5>
+<p>​
+大致与分组交换一致，但是报文交换<strong>不限制报文的大小，也就要求转发的中间节点有足够的缓存空间</strong>，而分组交换是会把整个报文分成一个个分组，从而进行传输。</p>
+<h5 id="对比">4、对比：</h5>
+<p><img src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220428142115539.png" alt="image-20220428142115539" style="zoom:50%;" /></p>
+<ul>
+<li>电路交换：
+<ul>
+<li>通信延时小、有序传输、无冲突、适用范围广（传输模拟、数字信号都可）、实时性强</li>
+<li>建立连接时间长，线路独占，使用效率低、灵活性差（只要中间有一个点出错就要重新拨号）</li>
+</ul></li>
+<li>报文交换：
+<ul>
+<li>无需建立连接</li>
+<li>动态分配线路（节点交换机会先存储整个报文，再选择合适的空闲路径转发报文）</li>
+<li>提高线路利用率，可靠性。</li>
+<li>提供多目标服务</li>
+<li>存在转发时延、需要较大存储缓存空间、需要传输额外信息量（报文头等）</li>
+</ul></li>
+<li>分组交换：
+<ul>
+<li>优点：报文交换所拥有的所有优点，同时简化了存储管理，因为分组的大小固定，所有缓冲区大小也会固定，方便管理。加速传输、减少出错概率和重发数据量（如果出错，只需要重传出错分组即可）</li>
+<li>缺点：存在转发时延、需要较大存储缓存空间、需要传输额外信息量（控制信息等）。</li>
+</ul></li>
+<li>分组交换中：
+<ul>
+<li>对于数据报服务而言：存在失序、丢序、或者重复分组的问题</li>
+<li>对于虚电路服务而言：存在呼叫建立、数据传输、虚电路释放三个过程</li>
+</ul></li>
+</ul>
+<h4 id="八计算机网络分类">八、计算机网络分类：</h4>
+<ul>
+<li>按照覆盖范围分类：
+<ul>
+<li>广域网WAN（覆盖范围最广，用于高速长途传输）</li>
+<li>城域网MAN（通常作为城市骨干网）</li>
+<li>局域网LAN</li>
+<li>个域网PAN</li>
+</ul></li>
+<li>按拓扑结构分类：
+<ul>
+<li>总线型网络</li>
+<li>星型网络</li>
+<li>环型网络</li>
+<li>网状型网络</li>
+</ul></li>
+</ul>
+<p><img src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220428150509644.png" style="zoom:50%;" /></p>
+<h4 id="九计算机网络的性能指标">九、计算机网络的性能指标：</h4>
+<h5 id="速率">1、速率</h5>
+<p>​
+连接在计算机网络上的<strong>主机在数字信道上传送比特的速率</strong>，也称为比特率或数据率。</p>
+<h5 id="带宽">2、带宽</h5>
+<ul>
+<li>在模拟信号系统中的意义：
+<ul>
+<li>信号所包含的各种不同频率成分所占据的频率范围；</li>
+<li>单位：Hz ，带宽3.1Hz( 300Hz ~ 3.4kHz)</li>
+</ul></li>
+<li>在计算机网络中的意义：
+<ul>
+<li>用来表示<strong>网络的通信线路所能传送数据的能力</strong>，因此<strong>网络带宽表示在单位时间内从网络中的某一点到另一点所能通过的“最高数据率”；</strong></li>
+<li>单位：b/s</li>
+</ul></li>
+</ul>
+<h5 id="吞吐量">3、吞吐量</h5>
+<p>​ 吞吐量表示在单位时间内通过某个网络（或信道、接口）的数据量。</p>
+<p>​ 吞吐量受网络的带宽或额定速率的限制</p>
+<p><img src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220428173106779.png" style="zoom: 50%;" /></p>
+<h5 id="时延">4、时延</h5>
+<p>​
+网络时延由三部分组成：发送时延、传播时延、处理时延，计算公式如下所示：（处理时延一般不做计算）</p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220428173416712.png" /></p>
+<h5 id="时延带宽积">5、时延带宽积</h5>
+<ul>
+<li><p>时延带宽积 = 传播时延 * 带宽</p>
+<p>若发送端连续发送数据，则在所发送的第一个比特即将到达终点时，发送端就已经发送了时延带宽积个比特；</p></li>
+</ul>
+<p>​ 链路的时延带宽积又称为以比特为单位的链路长度。</p>
+<p><img src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220428173800437.png" style="zoom:50%;" /></p>
+<h5 id="往返时间-rtt">6、往返时间 RTT</h5>
+<p>​ 从源主机到目标主机，直到源主机收到目标主机的答复所花费的时间</p>
+<p>​
+<img src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220428173913426.png" style="zoom: 67%;" /></p>
+<h5 id="利用率">7、利用率</h5>
+<ul>
+<li>信道利用率
+<ul>
+<li>用来表示某信道有百分之几的时间是被利用的（有数据通过）。</li>
+</ul></li>
+<li>网络利用率
+<ul>
+<li>全网络的信道利用率的加权平均。</li>
+</ul></li>
+</ul>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220428174105464.png" /></p>
+<h5 id="丢包率">8、丢包率</h5>
+<p>​
+是指在一定的时间范围内，<strong>传输过程中丢失的分组数量与总分组数量的比率。</strong></p>
+<p>​ <strong>分组丢失一般有两种情况</strong>：</p>
+<ul>
+<li>分组在传输过程中出现误码，被节点丢弃</li>
+<li>分组到达一台队列已满的分组交换机时被丢弃，在通信量较大时就可能造成网络拥塞。</li>
+</ul>
+<p>因此，丢包率反映了网络的拥塞情况：</p>
+<ul>
+<li>无拥塞时路径丢包率为0</li>
+<li>轻度拥塞时路径丢包率为1%~4%</li>
+<li>严重拥塞时路径丢包率为5%~15%</li>
+</ul>
+<h4 id="十计算机网络体系结构">十、计算机网络体系结构：</h4>
+<h5 id="常见的计算机网络体系结构">1、常见的计算机网络体系结构：</h5>
+<p>​ OSI体系结构 （法律上的国际标准）、TCP/IP
+体系结构（事实上的国际标准）</p>
+<ul>
+<li>OSI协议制定较为复杂，运行效率低，层次划分并不合理，被TCP/IP体系代替</li>
+</ul>
+<p><img src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220429160500448.png" style="zoom:50%;" /></p>
+<p>​
+如果用户主机需要接入因特网，必须含有TCP/IP协议族。路由器也需要含有TCP/IP协议族，但是往往路由器只具有
+网际层和网络接口层。</p>
+<p>​
+TCP/IP的网络接口层并没有做过多规定，可以兼容多种网络接口，如有线网络、WIFI接口等。</p>
+<p><img src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220429160803014.png" style="zoom:50%;" /></p>
+<p>​
+使用IP协议互联不同的网络接口，为向其上的TCP协议和UDP协议提供网络互联服务，TCP协议在享受IP提供的网络互联服务基础上，可向应用层部分协议提供可靠传输的服务，而UDP协议在享受IP提供的网络互联服务基础上，可向应用层部分协议提供不可靠传输的服务。</p>
+<h5 id="计网结构分层的必要性">2、计网结构分层的必要性：</h5>
+<p>在实现计算机网络的过程中常见需要考虑的问题，并将相应问题划分给相应的层去进行处理：</p>
+<p><strong>情况1：</strong></p>
+<p><img src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220429161416991.png" alt="两台直连计算机间的传输" style="zoom:50%;" /></p>
+<ul>
+<li><p>物理层问题</p>
+<ul>
+<li><p>采用何种传输媒体</p></li>
+<li><p>采用怎样的物理接口</p></li>
+<li><p>使用怎样的信号表示比特0和比特1</p></li>
+</ul></li>
+</ul>
+<p><strong>情况2：在上述问题解决前提下，考虑如下总线型网络：（现在已经不常用了）</strong></p>
+<p><img src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220429161454976.png" alt="总线型网络" style="zoom:50%;" /></p>
+<ul>
+<li><p>数据链路层问题：</p>
+<ul>
+<li><p>如何标识网络中各主机（主机编址问题，例如MAC地址）</p></li>
+<li><p>如何从信号所标识的一连串比特流中区分出<strong>地址和数据</strong></p></li>
+<li><p>如何协调各个主机争用总线</p></li>
+<li><p>使用以太网交换机将多台主机互联形成的交换式以太网中：以太网交换机是如何实现的</p></li>
+</ul></li>
+</ul>
+<p><strong>情况3：解决以上问题后，分组就可以在一组网络中传输了，然而我们日常使用的因特网更为复杂，其是由许多路由器将多个网络进行互连起来的互联网，考虑如下由3个路由器和4个网络构成的小型互联网</strong></p>
+<p><img src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220429162242434.png" alt="=" style="zoom:50%;" /></p>
+<ul>
+<li><p>网络层:</p>
+<ul>
+<li><p>如何标识各个网络以及网络中的各主机（网络和主机共同编址的问题，如IP地址）</p></li>
+<li><p>分组从源主机到目的主机可走路径不止一条，路由器应当如何转发分组，如何进行路由选择</p></li>
+</ul></li>
+</ul>
+<p><strong>情况4：解决以上问题后，可以实现分组在网络两主机间传输的问题，对于计算机网络应用而言远远不够，对于一台主机而言，可能存在多个进程</strong></p>
+<ul>
+<li><p>运输层</p>
+<ul>
+<li><p><strong>如何标识与网络通信相关的应用进程</strong>，即解决进程之间基于网络的通信问题</p></li>
+<li><p>出现传输错误时，如何处理？（某个分组在传输过程中出现误码，或由于路由器繁忙丢弃分组）</p></li>
+</ul></li>
+</ul>
+<p><strong>情况5：解决上述问题后，可以实现进程之间，基于网络的通信，在此基础上，制定应用层协议，根据协议内容完成特定网络应用即可</strong></p>
+<ul>
+<li>应用层
+<ul>
+<li>支持万维网应用的HTTP</li>
+<li>支持邮件服务的SMTP</li>
+<li>……</li>
+</ul></li>
+</ul>
+<p><img src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220429162801442.png" style="zoom:50%;" /></p>
+<h5 id="分层思想举例">3、分层思想举例：</h5>
+<video src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/2022_04_29_19_04_47_435.mp4">
+</video>
+<h5 id="专用术语">4、专用术语：</h5>
+<ul>
+<li>实体：任何可发送或接收信息的硬件或软件进程。</li>
+<li>对等实体：收发双发相同层次中的实体
+<ul>
+<li><img src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220429202752020.png" style="zoom:50%;" /></li>
+</ul></li>
+<li>协议：控制两个对等实体<strong>进行逻辑通信</strong>的规则的集合。
+<ul>
+<li>协议的三要素：
+<ul>
+<li>语法：定义所交换信息的格式</li>
+<li>语义：定义收发双方所要完成的操作</li>
+<li>同步：定义收发双方的时序关系（ 例如 TCP客户端与
+TCP服务器之间的时序关系，状态转换）</li>
+</ul></li>
+<li><img src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220429202822644.png" style="zoom:50%;" /></li>
+</ul></li>
+<li>服务：在协议的控制下，两个对等实体间的逻辑通信使得本层能够向上一层提供服务。
+<ul>
+<li>要实现本层协议，还需要使用下面一层所提供的服务。</li>
+<li>协议是“水平的"，服务是“垂直的"。</li>
+<li>实体看得见相邻下层所提供的服务，但并不知道实现该服务的具体协议。也就是说，下面的协议对上面的实体是“透明”的。</li>
+<li><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220429203246032.png" /></li>
+</ul></li>
+<li>服务访问点：在同一系统中相邻两层的实体交换信息的逻辑接口，用于区分不同的服务类型。</li>
+<li>服务原语：上层使用下层所提供的服务必须通过与下层交换一些命令，这些命令称为服务原语。</li>
+<li>协议数据单元PDU：对等层次之间传送的数据包称为该层的<strong>协议数据单元</strong>。
+<ul>
+<li>比特流、帧、IP数据报、TCP报文段、UDP用户数据报、报文</li>
+<li><img src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220429203352501.png" style="zoom:67%;" /></li>
+</ul></li>
+<li>服务数据单元SDU：同一系统内，层与层之间交换的数据包称为服务数据单元。</li>
+</ul>
+<h4 id="十一习题">十一、习题：</h4>
+<h5 id="section">1、</h5>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220430113545991.png" /></p>
+<h5 id="section-1">2、</h5>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220430113940223.png" /></p>
+<h5 id="section-2">3、</h5>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220430114621627.png" /></p>
+
+    </div>
+
+    
+    
+    
+      
+  <div class="popular-posts-header">相关文章</div>
+  <ul class="popular-posts">
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2022\07\17\78c11b2eddea\" rel="bookmark">计网微课堂Chap6——应用层原理</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2022\07\15\b846bd0fbb3c\" rel="bookmark">计网微课堂Chap5——运输层原理</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2022\07\12\a63746099b02\" rel="bookmark">计网微课堂Chap4——网络层原理</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2022\05\12\feb80abbdc95\" rel="bookmark">计网微课堂Chap3——数据链路层原理</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2022\05\01\81ac33552c19\" rel="bookmark">计网微课堂Chap2——物理层原理</a></div>
+    </li>
+  </ul>
+
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Computer-Network/" rel="tag"># Computer Network</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2022/04/27/70c42ee7d534/" rel="prev" title="计网微课堂Chap1——计网基础知识与概述">
+                  <i class="fa fa-chevron-left"></i> 计网微课堂Chap1——计网基础知识与概述
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2022/04/27/5b4ea41fcadf/" rel="next" title="计算机组成原理Chapter1—概述">
+                  计算机组成原理Chapter1—概述 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments utterances-container"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Fantast</span>
+</div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+    <span title="站点总字数">725k</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">33:33</span>
+  </span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script><script src="/js/bookmark.js"></script>
+
+  
+<script src="https://cdn.jsdelivr.net/npm/hexo-generator-searchdb@1.4.0/dist/search.js" integrity="sha256-vXZMYLEqsROAXkEw93GGIvaB2ab+QW6w3+1ahD9nXXA=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdn.jsdelivr.net/npm/mathjax@3.2.0/es5/tex-mml-chtml.js","integrity":"sha256-r+3itOMtGGjap0x+10hu6jW/gZCzxHsoKrOd7gyRSGY="}}</script>
+<script src="/js/third-party/math/mathjax.js"></script>
+
+
+<script class="next-config" data-name="utterances" type="application/json">{"enable":true,"repo":"Fantast416/myblog-comment","issue_term":"pathname","theme":"github-light"}</script>
+<script src="/js/third-party/comments/utterances.js"></script>
+
+</body>
+</html>

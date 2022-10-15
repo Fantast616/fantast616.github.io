@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.2.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css" integrity="sha256-mUZM63G8m73Mcidfrv5E+Y61y7a12O5mW4ezU3bxqW4=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"blog.fantast.top","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.9.0","exturl":false,"sidebar":{"position":"left","width":250,"display":"always","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":true,"color":"#222","save":"manual"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"utterances","storage":true,"lazyload":false,"nav":null,"activeClass":"utterances"},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+<meta name="description" content="本篇笔记为刷LeetCode过程中，对一些题目进行优化的时候进行的些许思考与记录，持续更新">
+<meta property="og:type" content="article">
+<meta property="og:title" content="LeetCode 算法解题Tricks（持续更新）">
+<meta property="og:url" content="https://blog.fantast.top/2022/02/02/e7e76d98fb52/index.html">
+<meta property="og:site_name" content="Fantast&#39;s Blog">
+<meta property="og:description" content="本篇笔记为刷LeetCode过程中，对一些题目进行优化的时候进行的些许思考与记录，持续更新">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2022-02-02T08:34:19.000Z">
+<meta property="article:modified_time" content="2022-08-07T14:49:04.000Z">
+<meta property="article:author" content="Fantast">
+<meta property="article:tag" content="leetcode">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://blog.fantast.top/2022/02/02/e7e76d98fb52/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://blog.fantast.top/2022/02/02/e7e76d98fb52/","path":"2022/02/02/e7e76d98fb52/","title":"LeetCode 算法解题Tricks（持续更新）"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>LeetCode 算法解题Tricks（持续更新） | Fantast's Blog</title>
+  
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<link rel="alternate" href="/atom.xml" title="Fantast's Blog" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Fantast's Blog</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li>
+        <li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li>
+        <li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li>
+        <li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li>
+        <li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-overview-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Fantast"
+      src="/images/avatar.webp">
+  <p class="site-author-name" itemprop="name">Fantast</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">161</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">40</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">97</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/fantast416" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;fantast416" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:fantast416@gmail.com" title="E-Mail → mailto:fantast416@gmail.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll site-overview-item animated">
+    <div class="links-of-blogroll-title"><i class="fa fa-globe fa-fw"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://www.zhihu.com/people/shuo-shuo-3-41" title="https:&#x2F;&#x2F;www.zhihu.com&#x2F;people&#x2F;shuo-shuo-3-41" rel="noopener" target="_blank">ZhiHu</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="http://www.next.zju.edu.cn/" title="http:&#x2F;&#x2F;www.next.zju.edu.cn&#x2F;" rel="noopener" target="_blank">NextLab</a>
+        </li>
+    </ul>
+  </div>
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://blog.fantast.top/2022/02/02/e7e76d98fb52/">
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.webp">
+      <meta itemprop="name" content="Fantast">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Fantast's Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          LeetCode 算法解题Tricks（持续更新）
+        </h1>
+
+        <div class="post-meta-container">
+          
+            <i class="fa fa-thumb-tack"></i>
+            <font color=ffff00>置顶</font>
+            <span class="post-meta-divider">|</span>
+          
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2022-02-02 16:34:19" itemprop="dateCreated datePublished" datetime="2022-02-02T16:34:19+08:00">2022-02-02</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2022-08-07 22:49:04" itemprop="dateModified" datetime="2022-08-07T22:49:04+08:00">2022-08-07</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E2%93%B7-%E7%AE%97%E6%B3%95%E7%B1%BB%E7%AC%94%E8%AE%B0/" itemprop="url" rel="index"><span itemprop="name">⓷ 算法类笔记</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E2%93%B7-%E7%AE%97%E6%B3%95%E7%B1%BB%E7%AC%94%E8%AE%B0/%E9%A2%98%E9%9B%86%E6%95%B4%E7%90%86/" itemprop="url" rel="index"><span itemprop="name">题集整理</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>9.1k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>25 分钟</span>
+    </span>
+</div>
+
+            <div class="post-description">本篇笔记为刷LeetCode过程中，对一些题目进行优化的时候进行的些许思考与记录，持续更新</div>
+            <div class="post-remind">Google Chrome is recommended, otherwise the image size may be wrong</div>
+            <div class="post-remind">FireFox is not recommended,Because it does not support the image zoom property</div>
+        </div>
+        
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <div class="hbe hbe-container" id="hexo-blog-encrypt" data-wpm="Oh, this is an invalid password. Check and try again, please." data-whm="OOPS, these decrypted content may changed, but you can still have a look.">
+  <script id="hbeData" type="hbeData" data-hmacdigest="48a19f5fc8e92bbfcd92f6b1cfa38edd5bb0e1cfef63cfea388c6ab5011f40d9">0b64cd3abe5b0a0a039a37d86c66d75e6ec8e220ebc13f2625638343d94e3b65f9d86782f69c158406c39071ab7e76a8d5cc95c136b737bb12ebe1033945ebf69ae7711e0f9664644f3bd4df64f659ee684506f786f8e3beeb0f5c810ef1aa85b2f7c0ecc8c7e21430346aad87dbc3fb5b36e37311a56ee0c28f8177dfdc0c4ce1f014da184041183e4dad1cb841e9b7cd9daaf2a180b8bc459f71cf44a1b09c0758b403f805704aa22ccdf62aa0d94334b5e4927e97c6378606c74ebc684a24227ab47441c8aade6b59cd39c4d74073e57f972117a956b9a39de39c651a635f3a3b263fb89a02b2e64bbcdb00a01e37fd0b211a49788cb8050e628abbcc02a44fe8274f191cba721f7835d8e734a422bb8eed312ce7b16b04a9a9d41ffd21410f316159e99edbada25ad170d3dabfe9535d5cd5cae3c4c685ab521adac136783bf90f99aa7c2d75e5abda6579b754c070456fdd4064632d95f49ef94a4e760e970ff04b20ee63ba14dab1ba9766563abe4c727eb1784af3361906a674579a328999ddce6720acb642cd6e08b5111ed9869c260b03b24c87f21e4c75a10327973636c98d159e608eb6f0aa7478212092d1192e62a58a843323e0a5d75f9a332e22ea95e4e66ccb66c1e7c2c52d9102a4b33969a385ddef8303b44360c5e2f8354107875d74e1d54b2d3d68d18517643cac87cd6fe05048bce0d0a928d75e1eb91ab005fc7ab56f1e4d4bbf1788a4bd48adbf0894f13af19218c2c9d1a7c206b9303f58640bf7e666703e32150fc29f876986d066006c6126ab676ed474c4e70705076913f14ad0d836995fa042173c3c98bb033074ca54e2ce1e110a92a2c64ded4ac35d3d11294b66c30dbd1723ec84ee8bd6bae914a18392fd6b96287668614ff41437d5345b015b1d2363dc82bdc3b48a6e1dc47ac9c8e3e3fa16683a7b58e0f7629690f083741a2c1aab04e0b9eb3106a96c22dbc2878cbbe8f344c958aa647e198282d65534c48bf710c2b015361db79353de260c9cd325ab3c39b4de74c3a98d01f385c7e970ffd25c2e47071f15e6993297f0090ca3524f27797b47cd1b2179ea82de87e070835bd6341af98c5fcb2b96166b813b6ac49e4dc03ff65423014a3bddb54f3609d6c7a2568c58ddacc8b62ae8c776e008f06c5eb4c3f01e0d9f8de813d2d50d869bf0a94b16e0817abcbfcde0bcf531a0550ae5a99bfb51a23f476841a8380da7d6e29397102e215db81ffe7d518a1fa64e032bb33723595bec61b8c279d323e68ab532da8a4c08e6b9921aa595a2cb04c835c438f781dad84c3c1a1f7249798e413bf9a3af362d251a630aef80f2fd4e60aa98b2493788df48fd53314ee5d688f515bfc59de8131cdd240955704149d9193b53094a69ef0b0e8dfdc122d7bd227ec4e2041cf213069148e431787c0a164f38aeb5d1a6e47bb64abb0445246e193f5ec4a1d078b3e947ace6e7d2a68dc142b79319e2d477dca081a467ea849669effac28372130ed05386187904c0aee9b4c9940106eb6ab87463060beec23f86951667033d44fe3bb752493a4e209464e63de1ec785f200b36da004a75fecb9cc1dd8b84f92b6ad5dda435b51475151617e2f79ae673c7aedd45df150cab6f3c017318d6a8150c9275081cae7ff3a7a13481938e5c2092be071364993bc373db72d4dd1fe2807edc91076106bd011d7e6c9f4915163e941ff9352b05405099b45726aee8039db5954acb02c1ddceea1c073ce9b4f121c790846b203342df3f95c8642ab023185b6a547af1a935670a4d1f7ea56c5444325c07f93fa209cdb5114366cb55babfb6544a5f88cb2188a58888cec9d9fe677ca9c6461beb298f78378a7620330b2db03197d3a49a980de1e122cc74c813b17b886f1785a119332d9477d87dd6e9208ef29b19f7586facaf2b4a20643dddafc2e1d4e034a85d0c6ccbbb4d6933f6b0bd7573b336d2f1022e6961e60cb40e867df0a7f73f13419ac1bc0aa2efa64b0ce79d19963830a23220ecf9168d90b86a8754804ebb41bc053a3fc1349679f6dfd5dce622a8e429a6dd6269022f5f9ab75fed32e8244eba9bf80c14bc696e10b9b8cbe38a9ef6557e8a294fc8e307b782788d6ea060ee465012d97fb7a4bdb32806301be25be23a966359d8d0be5a24a55d321dd71ff0f49590682d2b7b677f741e78e1b18805fba37d877fc03fb90ea712688fc40457bcc714e3489977c111ab41a88951a5e33d324027dcf4d0ba83b3a7cc4fc323bc53c0aaf9ac0dbf47ed17269379abdc14131d44518fd065d979f1310fbc6da95023cc58e3a649f2c030751abaddeec7f53d98d8e1404146e144f1ea4208a1d72dd6a2aac6986e0ece996a44ef9e71916e1a3bf9b2d3746921c7b24d987f95bb70131842f922d5f7b807a3a7d82f9bf0553272acc49c43d8f05c667e7ffeba075e48b83667c3a98bfcb7b6c4c91dafce58b8d6cc3be00462b33e73b084c425d8606f18ef28996603873ef9440df1bf933b2a2a5df31036451ca7617f3c4eb0fefd15a92a7884f81146faa71761b7e03f478f5db363ddb5ec816a716f173954ce189b059aa17c24e67a582e9973a8407eca416695bce27657eb90fecd5200801ce753bb6807faf486f883aeb0969916ee37a973117187fecee95214ac409dc33e6b395d27f43f2fa14292344d5ff0fe7ce3d940f0e0a3fa2a202088ff7fa5584c2adb7f7f340f1ac790a0e70d7ce01cf81e748566bb09b6c6523a1e8d0330674e2d7f62e959f2f345cc838a404a75d87b11d4b3b4471e26de279a8eafc99a417652fce4fe9fb1fa665e882dbceaa96ad9fbcaca2e420951944c916752dde271cf46f9c63551b82d75c17e26fde35fdc8fbf7b480a5fe9258ed62d124fc99cca079000d47cebbe661ab999e07953e54835389eeef287a73318709a82e10cbc32f5b132e3d2d04cb3ef4c4bfc31d53bddb6afda4c560021642d5ccbdb3ec9f2dbd987409b5152c9f4752eff6a2b6a50a563729fc3273e4c0401f46062221c506a894a5d63657c268e69a7bcb74e1084fb94567e9c05fb777880baf9ba0ecb0c09a75071b6bf17a2d9b1c89763029cc6fb23a181e2e6006d05e93bc24924408498f757a6a99a5eb4022057f3136c570d35c2c21806362df938fe49df86328db4b8b6afc1bbb5d37b6130855812b3db5d1d6da962bb85551d964796934123574185c98965098edd65fd178f3c66e4fa82a34b324ec7fc007e61734e61a13290b408614f6afc6729a8d2b8fb8300d530c73273d98bc2da2ee8e9398a9c7bbebe89b5eeb05dc819503077fab864bf4c648bbca8451da54903c3ec92b234a9c13b8a5165a5a903be2951e47bd85c30c3dde7fc4dc3d3d7d7731c7d6e14f9c632ba216529e8bd73e2a99ed086c034e21a8ef18acf9edd874645be49977bef56d03006883e10d8a3daf0c63c8329f7651043fd3edcda304e0f84b07d1fc1bdb88375f2435a213c933e726ea9f05974f9e7ee3fc86c5fad852d3db04b14b9d9fcb6de4541c8639e99702c2eb7d8a33b320babdde206aad3965bc73ed4aab8eb4c38770ef0d4cecf463b5d44438653fff03598438ecea01174f34f969b2828d080ab3fdde7b98a82e02b50e6ebc79d16321b4f0e628d83d3a55e1dac2a8395f0c51e82c77079fa10386b816e90c63c83c043550eb5d9b836391e97bed7dd36a5df23aebdb1a58cb300a1b48b5202fd467648c4be700be1c9e63303cc4ae1df895c0ae872a7004f2deb51bfa5b34fda8f448a9f5c38f2405bac3d5459569fca94b5ef2226c144f78d1c6ddf79926d36a576aa892440b237f479c4336e24e13a4b25c1fb489e60a2b33d4a5eceb725d84f0418700ae3c28fd7c1d9a96e4e572654709dec4fb3efa676cf7e97a4b780f839d96a9b205e4a2cd81f53576d02e189c52609534210ee287f4cf0033f2e1ff370c3c7d406eebd88b6be6e8ecd7713f31172aa80f5cda23b798bf41a01be23692d10669b4bdbaf97333ae9a9d61ead478556b0fd8f811596a0b6f325be9fac551566e48c2b5e7538909de8d5af3cfba6cff86a5c00eaa012102bb8e1626d83b695c6b6ff4b33f3a8336e7b43a6ffda46b410079b3e80871396d2ba444542c5fd644e5947171a2fa119f4e474936ccefbbc9718c73620a83cb0d26af176040094121ac55038557dbd18339b7fcc6c538c0ed995d44d8dd3f3fc1bb893d48c25ae475d8f2dcf663f8f708d443fe251b5cda9653dbabedf1c94ed4b25574672f8d9593e640fa502508a976716f7175e41b28e76b059ce5a1b821a6d2af14478ddc43d34015c1bf3a72eaaeec8292de705b8c2309ba5089d5be72432277f82a42caaa914a442385f5647e41d0e1d4f718560285b8b5089aecb32c6eb5159baa0a77c0a234813431d43c66b058e4b33f450359fd757794e014cb3ab9c1468d099429d065402387e0717095c13c52ce5d777c690652afc52f88ce6ccfeb9471273e72319cf5df4e5ada174096a2b1b62aaffc3f5a02ab3159b7a79432aed3f6558a6c8405408f48fc0a7af49bd46fc50929dbd68e51a915f954af9ecefc1cb104c44ec762ab922c57720f4038df2c842d7cf82f2962d126adee9bb43055439e9ad5acae91b1370ac4ca7b48aea23b5f819f706b571c5653a2ecf31fd918e4de358926be3cc6aee4347f5d489ac87455f4ae1711b84f3a898eb5349779ea2e3013eec3d17af6b9f20ee363c357e8a2f47c79872e6f0084680d33f147d9c139245d5b2c47fa8bd63f1d255f56f57d304739a48c3cd654f994ebcab3b57d56301c727132b670e46e52aae6df4b71532d14e45a0ac15f8fbd67470981468b117166de101a2d81ed815658ead7ffaaecacfdc42ba888a0fc3b98ecdeb602a5bc4ae7c37e125ca35b23c74c82ce7ca765e0d74b6f3723612be6db7768ce61ecb5db3ca2a230bdaaed77cd19a764e66751ca5c9f8efbe4add54ed0b94efb539b7dc60546f1fe82e9e518abdf9ca0bdff389db2318762559dac96ebf03d2b1b07f232995b471b80446a3a9125fcc6404ffcc5f07e13458369f8c2462231d9561c16acd93bacbc5be2f77da560e79c119337cbd57cddf52429fa7916c770c0f9d26198ee614d841a51d4fb0f3d35cf76825888a5893cc01a3ec962746bfa68da554734f6e3307c52f69add55bba87ea360ea8f78e0be2b82b695510f273f89fd264c50999c1e7433706051248dda5aa0b4fe8f7198ebbd392e51c66e33fb37c897a9ef9ee5ecf03c69655b3ab96c40f58a887d57fc96beeb63b31ea1c3936b29f0032f48d1710c0863fb775d2e535d51b8eb1180d0aeffed024e7f7181a51cfffc60f7daaa21c42e2607de58c1b1aff310a22aa65a20b89d2b99149ad76866862bc0b785829f2af8fd22b0f213c6fab5c63d485aca230dbeea6442ed38ee45a2a1712be1be645e67062f2c86835bbd1502dc347269712ed1aa2dd62cab8beba0a9dfd17d359f26109e411ab037113d921a3ede55be6f3cbf89be78d78b25dc83187b9c7ecb1ae5c09dea894b7b817daa22b2f28f9173fedcf3e849e37b11bb79b6b4d465c2765ddf73aff1f34477fe2d5b57639ab9d55eaf4cf166bd9be3597ac5d306162748eaf33d0dfe8c721ead8c286338e0ab060f724169dbbf5e5b627359a076174fac2f7ebcccdd824095d99c6d8c706f05c0a0d136b766b3183c2d3b6bbd13717e2519d0f42f341d920c59c45117103fe476828c5a029fb4d6a51fbf8b72d44c301fc0751c7c5b57035a9622671b5a8628572d5c687a8352dd8be5fc4823736c9973733e3f6f46887c0bc4d175a929299e9ea13b61e5d14a1a34f91a2135f478f0fbfa718882410f3da687cc0cdf563f3928cdce9e338c46d17dfb2504eac943b2484f6c92b7beb7dc1c289eaa6d9601ac534efdb9214cbcbed371b1832a8ac6a28ddbf6474b6f60b42138900d9d24d6b27156c452a3eb9a78702a5afd8211d87b2810f437e04cac8f73845e4c5c68f53ab63f1f59baefa8d28ed7bbe8d3a9155b8b2778c8b6fabad6e9a70662effc4694adece146f4da37de1280be1b2789db6b73ddbaef2445f5e04b0cf5dc4dd651e6e2ac832352fee161b944502b1b64e0368bf55ef68e1f99060809f2ce5d7b264a73344a34c5f283ada627a4cde1130233b422211e7b1ce24256dd652cb1addb81805fa7065643f14ecbd222e87e17d23a3cb93fcd78e2ab6ba9ef212934ff8c54903e54f02ed6c940323e3cbcb13ac7fb3d448b4078b4cc71bdaf06c7ad544f18e71526d5d3dcac5f574bc82953f27c0dd54e65f0bc98f61e373f0df32fd194cbae897c21285d5a88444ae80da4291c6cd96b9889c185bed8863f72fbf7569d2bcb158945dd6f4cf0ab89e8c7d24af7de1ba25d2fca4f0fd122e25144aa0022753a54dda195d</script>
+  <div class="hbe hbe-content">
+    <div class="hbe hbe-input hbe-input-default">
+      <input class="hbe hbe-input-field hbe-input-field-default" type="password" id="hbePass">
+      <label class="hbe hbe-input-label hbe-input-label-default" for="hbePass">
+        <span class="hbe hbe-input-label-content hbe-input-label-content-default">Hey, password is required here.</span>
+      </label>
+    </div>
+  </div>
+</div>
+<script data-pjax src="/lib/hbe.js"></script><link href="/css/hbe.style.css" rel="stylesheet" type="text/css">
+    </div>
+
+    
+    
+    
+      
+  <div class="popular-posts-header">相关文章</div>
+  <ul class="popular-posts">
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2022\02\03\b62f2c89d90c\" rel="bookmark">LeetCode《剑指Offer》题目情况整理（持续更新）</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2022\02\26\3e00524469fb\" rel="bookmark">DFS系列——DFS多种形式变体整理</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2022\02\26\16bfad4011e0\" rel="bookmark">图系列——重建序列</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2022\02\26\994b03ade281\" rel="bookmark">数组系列——值和下标之差都在给定范围内</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2022\02\25\4e6244e39183\" rel="bookmark">图系列——外星文字典</a></div>
+    </li>
+  </ul>
+
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/leetcode/" rel="tag"># leetcode</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2022/02/02/dc49710223cc/" rel="prev" title="java系列笔记11——java正则表达式">
+                  <i class="fa fa-chevron-left"></i> java系列笔记11——java正则表达式
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2022/02/02/0f0611fa7b0b/" rel="next" title="数组系列——连续子串问题">
+                  数组系列——连续子串问题 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments utterances-container"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Fantast</span>
+</div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+    <span title="站点总字数">725k</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">33:33</span>
+  </span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script><script src="/js/bookmark.js"></script>
+
+  
+<script src="https://cdn.jsdelivr.net/npm/hexo-generator-searchdb@1.4.0/dist/search.js" integrity="sha256-vXZMYLEqsROAXkEw93GGIvaB2ab+QW6w3+1ahD9nXXA=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdn.jsdelivr.net/npm/mathjax@3.2.0/es5/tex-mml-chtml.js","integrity":"sha256-r+3itOMtGGjap0x+10hu6jW/gZCzxHsoKrOd7gyRSGY="}}</script>
+<script src="/js/third-party/math/mathjax.js"></script>
+
+
+<script class="next-config" data-name="utterances" type="application/json">{"enable":true,"repo":"Fantast416/myblog-comment","issue_term":"pathname","theme":"github-light"}</script>
+<script src="/js/third-party/comments/utterances.js"></script>
+
+</body>
+</html>

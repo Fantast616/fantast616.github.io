@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.2.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css" integrity="sha256-mUZM63G8m73Mcidfrv5E+Y61y7a12O5mW4ezU3bxqW4=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"blog.fantast.top","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.9.0","exturl":false,"sidebar":{"position":"left","width":250,"display":"always","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":true,"color":"#222","save":"manual"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"utterances","storage":true,"lazyload":false,"nav":null,"activeClass":"utterances"},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+<meta name="description" content="本文结合上一节中的理论部分，使用Python搭建深度学习框架，实现其中最为基础核心的计算图、前向传播、反向传播以及自动微分的代码，对各个类以及其内的函数做了详细的介绍。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="用Python搭建深度学习框架系列笔记2——计算图、前向传播、反向传播与自动微分的代码实现">
+<meta property="og:url" content="https://blog.fantast.top/2022/02/22/6bfa5496ebc4/index.html">
+<meta property="og:site_name" content="Fantast&#39;s Blog">
+<meta property="og:description" content="本文结合上一节中的理论部分，使用Python搭建深度学习框架，实现其中最为基础核心的计算图、前向传播、反向传播以及自动微分的代码，对各个类以及其内的函数做了详细的介绍。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/202202271a.png">
+<meta property="og:image" content="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/F9061B9E26F869EA36F4575B07A65B27.jpg">
+<meta property="og:image" content="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/BD69F402E360C2A1B6CCD85DF5881C28.jpg">
+<meta property="og:image" content="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/7FFCABE5A3D35DAAD995E76633F94DDE.jpg">
+<meta property="og:image" content="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/2022020272258.png">
+<meta property="og:image" content="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/C165EA4E4C9DE67CF1EE6AF9551DB327.jpg">
+<meta property="og:image" content="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/B504A835005C3AAF0BA61984E976F3F9.jpg">
+<meta property="og:image" content="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/64F57EE82EDE412BA304CD345F290E57.jpg">
+<meta property="article:published_time" content="2022-02-22T15:11:19.000Z">
+<meta property="article:modified_time" content="2022-08-07T14:47:46.000Z">
+<meta property="article:author" content="Fantast">
+<meta property="article:tag" content="Framework">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/202202271a.png">
+
+
+<link rel="canonical" href="https://blog.fantast.top/2022/02/22/6bfa5496ebc4/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://blog.fantast.top/2022/02/22/6bfa5496ebc4/","path":"2022/02/22/6bfa5496ebc4/","title":"用Python搭建深度学习框架系列笔记2——计算图、前向传播、反向传播与自动微分的代码实现"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>用Python搭建深度学习框架系列笔记2——计算图、前向传播、反向传播与自动微分的代码实现 | Fantast's Blog</title>
+  
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<link rel="alternate" href="/atom.xml" title="Fantast's Blog" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Fantast's Blog</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li>
+        <li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li>
+        <li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li>
+        <li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li>
+        <li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#graph%E8%AE%A1%E7%AE%97%E5%9B%BE%E7%B1%BB-%E4%B8%80%E4%BA%9B%E5%9F%BA%E6%9C%AC%E5%87%BD%E6%95%B0"><span class="nav-text">1、Graph计算图类
+（一些基本函数）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#node%E7%B1%BB%E5%9F%BA%E7%B1%BB---%E9%9D%9E%E6%8A%BD%E8%B1%A1%E7%B1%BB"><span class="nav-text">2、Node类（基类 - 非抽象类）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8F%98%E9%87%8F%E8%8A%82%E7%82%B9%E7%BB%A7%E6%89%BF%E8%87%AAnode%E7%B1%BB"><span class="nav-text">3、变量节点（继承自Node类）：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BF%90%E7%AE%97%E7%AC%A6%E6%93%8D%E4%BD%9C%E5%AD%90%E8%8A%82%E7%82%B9%E7%BB%A7%E6%89%BF%E8%87%AAnode%E7%B1%BB%E9%9C%80%E8%A6%81%E8%A6%86%E5%86%99compute%E5%92%8Cget_jacobi%E4%B8%A4%E4%B8%AA%E5%87%BD%E6%95%B0"><span class="nav-text">4、运算符操作子节点（继承自Node类，需要覆写compute和get_jacobi两个函数）</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%AE%9A%E4%B9%89-add-%E6%93%8D%E4%BD%9C%E7%AC%A6"><span class="nav-text">1） 定义 Add 操作符：</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%AE%9A%E4%B9%89-matmul-%E6%93%8D%E4%BD%9C%E7%AC%A6"><span class="nav-text">2） 定义 Matmul 操作符：</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%AE%9A%E4%B9%89-relu-%E6%93%8D%E4%BD%9C%E7%AC%A6"><span class="nav-text">3） 定义 ReLU 操作符：</span></a></li></ol></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Fantast"
+      src="/images/avatar.webp">
+  <p class="site-author-name" itemprop="name">Fantast</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">161</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">40</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">97</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/fantast416" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;fantast416" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:fantast416@gmail.com" title="E-Mail → mailto:fantast416@gmail.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll site-overview-item animated">
+    <div class="links-of-blogroll-title"><i class="fa fa-globe fa-fw"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://www.zhihu.com/people/shuo-shuo-3-41" title="https:&#x2F;&#x2F;www.zhihu.com&#x2F;people&#x2F;shuo-shuo-3-41" rel="noopener" target="_blank">ZhiHu</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="http://www.next.zju.edu.cn/" title="http:&#x2F;&#x2F;www.next.zju.edu.cn&#x2F;" rel="noopener" target="_blank">NextLab</a>
+        </li>
+    </ul>
+  </div>
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://blog.fantast.top/2022/02/22/6bfa5496ebc4/">
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.webp">
+      <meta itemprop="name" content="Fantast">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Fantast's Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          用Python搭建深度学习框架系列笔记2——计算图、前向传播、反向传播与自动微分的代码实现
+        </h1>
+
+        <div class="post-meta-container">
+          
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2022-02-22 23:11:19" itemprop="dateCreated datePublished" datetime="2022-02-22T23:11:19+08:00">2022-02-22</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2022-08-07 22:47:46" itemprop="dateModified" datetime="2022-08-07T22:47:46+08:00">2022-08-07</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E2%93%B5-%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" itemprop="url" rel="index"><span itemprop="name">⓵ 深度学习笔记</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E2%93%B5-%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/Basic%E7%B3%BB%E5%88%97%E7%AC%94%E8%AE%B0/" itemprop="url" rel="index"><span itemprop="name">Basic系列笔记</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E2%93%B5-%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/Python%E6%90%AD%E5%BB%BA%E7%AE%80%E6%98%93%E6%A1%86%E6%9E%B6%E7%AC%94%E8%AE%B0/" itemprop="url" rel="index"><span itemprop="name">Python搭建简易框架笔记</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>8.7k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>24 分钟</span>
+    </span>
+</div>
+
+            <div class="post-description">本文结合上一节中的理论部分，使用Python搭建深度学习框架，实现其中最为基础核心的计算图、前向传播、反向传播以及自动微分的代码，对各个类以及其内的函数做了详细的介绍。</div>
+            <div class="post-remind">Google Chrome is recommended, otherwise the image size may be wrong</div>
+            <div class="post-remind">FireFox is not recommended,Because it does not support the image zoom property</div>
+        </div>
+        
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p>​
+首先，我们看完上一节的理论以后，应该需要知晓在上述过程中，我们需要在代码中实现的最核心的节点相关的类如下所示，我们以以下这张经典的计算图来分析：</p>
+<p>​
+其中，存储整个图我们需要一个类，<strong>也就是计算图类</strong>，然后图中又有许多类型的节点，第一种类型的节点是<strong>变量节点</strong>，也就是x、w这种，是无父节点的，第二种类型是<strong>Op操作符节点</strong>，也就是+、x这种节点，剩下的就是普通的中间节点。故而我们需要实现的类如下所示：</p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/屏幕捕获_2022_02_10_15_03_30_21.png" /></p>
+<p>​</p>
+<ul>
+<li><strong>Node类（基类-非抽象类）</strong>
+<ul>
+<li>普通中间节点（直接使用Node类即可）</li>
+<li>变量节点（继承Node类，无父节点，构造函数接受变量的形状，是否初始化以及是否参与训练的标识）</li>
+<li><strong>Op操作符节点（继承Node类，抽象类，然后根据不同的运算符定义类来继承它，其他运算符类需要实现两个方法：compute
+和
+get_jacobi，</strong>分别用于<strong>根据父节点的值计算本节点的值</strong>，以及<strong>计算本节点对某个父节点的雅可比矩阵</strong>）。</li>
+</ul></li>
+<li><strong>Graph计算图类</strong></li>
+</ul>
+<p>接下来，我们来一一看它们的实现代码：</p>
+<h3 id="graph计算图类-一些基本函数">1、Graph计算图类
+（一些基本函数）</h3>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Graph</span>:</span><br><span class="line">    <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">    计算图类</span></span><br><span class="line"><span class="string">    &quot;&quot;&quot;</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self</span>):</span><br><span class="line">        self.nodes = []  <span class="comment"># 计算图内的节点的列表</span></span><br><span class="line">        self.name_scope = <span class="literal">None</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">add_node</span>(<span class="params">self, node</span>):</span><br><span class="line">        <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">        添加节点</span></span><br><span class="line"><span class="string">        &quot;&quot;&quot;</span></span><br><span class="line">        self.nodes.append(node)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">clear_jacobi</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">        清除图中全部节点的雅可比矩阵</span></span><br><span class="line"><span class="string">        &quot;&quot;&quot;</span></span><br><span class="line">        <span class="keyword">for</span> node <span class="keyword">in</span> self.nodes:</span><br><span class="line">            node.clear_jacobi()</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">reset_value</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">        重置图中全部节点的值</span></span><br><span class="line"><span class="string">        &quot;&quot;&quot;</span></span><br><span class="line">        <span class="keyword">for</span> node <span class="keyword">in</span> self.nodes:</span><br><span class="line">            node.reset_value(<span class="literal">False</span>)  <span class="comment"># 每个节点不递归清除自己的子节点的值</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">node_count</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="keyword">return</span> <span class="built_in">len</span>(self.nodes)</span><br><span class="line">    </span><br><span class="line"><span class="comment"># 全局默认计算图</span></span><br><span class="line">default_graph = Graph()</span><br></pre></td></tr></table></figure>
+<h3 id="node类基类---非抽象类">2、Node类（基类 - 非抽象类）</h3>
+<ul>
+<li><strong>Part1：构造函数</strong>
+<ul>
+<li>此部分较好理解，做一些初始化，将节点添加到计算图的list里，然后将该节点添加到父节点的子节点列表中。</li>
+<li>需要注意的是：构造函数需要传入两个参数，第一个参数是父节点列表，第二个参数是一些参数列表</li>
+</ul></li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Node</span>(<span class="title class_ inherited__">object</span>):</span><br><span class="line">    <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">    计算图节点类基类</span></span><br><span class="line"><span class="string">    &quot;&quot;&quot;</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, *parents, **kargs</span>):</span><br><span class="line"></span><br><span class="line">        <span class="comment"># 计算图对象，默认为全局对象default_graph</span></span><br><span class="line">        self.kargs = kargs</span><br><span class="line">        self.graph = kargs.get(<span class="string">&#x27;graph&#x27;</span>, default_graph) <span class="comment"># 节点所属的计算图，默认为 全局计算图default_graph</span></span><br><span class="line">        self.need_save = kargs.get(<span class="string">&#x27;need_save&#x27;</span>, <span class="literal">True</span>)  <span class="comment"># 是否需要被保存</span></span><br><span class="line">        self.gen_node_name(**kargs)     <span class="comment"># 依据参数生成节点名称，节点名称在模型保存和导入时会用到</span></span><br><span class="line"></span><br><span class="line">        self.parents = <span class="built_in">list</span>(parents)  <span class="comment"># 父节点列表</span></span><br><span class="line">        self.children = []  <span class="comment"># 子节点列表</span></span><br><span class="line">        self.value = <span class="literal">None</span>  <span class="comment"># 本节点的值，Numpy的Matrix类</span></span><br><span class="line">        self.jacobi = <span class="literal">None</span>  <span class="comment"># 结果节点对本节点的雅可比矩阵</span></span><br><span class="line"></span><br><span class="line">        <span class="comment"># 将本节点添加到父节点的子节点列表中</span></span><br><span class="line">        <span class="keyword">for</span> parent <span class="keyword">in</span> self.parents:</span><br><span class="line">            parent.children.append(self)</span><br><span class="line"></span><br><span class="line">        <span class="comment"># 将本节点添加到计算图中</span></span><br><span class="line">        self.graph.add_node(self)</span><br></pre></td></tr></table></figure>
+<ul>
+<li><strong>Part2: 常见函数</strong>:
+<ul>
+<li>此部分也是Node类中一些基本的工具型函数，其中gen_node_name就是在构造函数中生成节点名称用的。</li>
+<li>dimension 和 shape 函数是用来返回节点值的维度的</li>
+<li>reset_value 递归重置该节点 + 该节点下游的节点的值</li>
+</ul></li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">get_parents</span>(<span class="params">self</span>):</span><br><span class="line">       <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">       获取本节点的父节点</span></span><br><span class="line"><span class="string">       &quot;&quot;&quot;</span></span><br><span class="line">       <span class="keyword">return</span> self.parents</span><br><span class="line"></span><br><span class="line">   <span class="keyword">def</span> <span class="title function_">get_children</span>(<span class="params">self</span>):</span><br><span class="line">       <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">       获取本节点的子节点</span></span><br><span class="line"><span class="string">       &quot;&quot;&quot;</span></span><br><span class="line">       <span class="keyword">return</span> self.children</span><br><span class="line"></span><br><span class="line">   <span class="keyword">def</span> <span class="title function_">gen_node_name</span>(<span class="params">self, **kargs</span>):</span><br><span class="line">       <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">       生成节点名称，如果用户不指定，则根据节点类型生成类似于&quot;MatMul:3&quot;的节点名，</span></span><br><span class="line"><span class="string">       如果指定了name_scope，则生成类似&quot;Hidden/MatMul:3&quot;的节点名</span></span><br><span class="line"><span class="string">       &quot;&quot;&quot;</span></span><br><span class="line">       self.name = kargs.get(<span class="string">&#x27;name&#x27;</span>, <span class="string">&#x27;&#123;&#125;:&#123;&#125;&#x27;</span>.<span class="built_in">format</span>(</span><br><span class="line">           self.__class__.__name__, self.graph.node_count()))</span><br><span class="line">       <span class="keyword">if</span> self.graph.name_scope:</span><br><span class="line">           self.name = <span class="string">&#x27;&#123;&#125;/&#123;&#125;&#x27;</span>.<span class="built_in">format</span>(self.graph.name_scope, self.name)</span><br><span class="line">       <span class="keyword">def</span> <span class="title function_">clear_jacobi</span>(<span class="params">self</span>):</span><br><span class="line">       <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">       清空结果节点对本节点的雅可比矩阵</span></span><br><span class="line"><span class="string">       &quot;&quot;&quot;</span></span><br><span class="line">       self.jacobi = <span class="literal">None</span></span><br><span class="line"></span><br><span class="line">   <span class="keyword">def</span> <span class="title function_">dimension</span>(<span class="params">self</span>):</span><br><span class="line">       <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">       返回本节点的值展平成向量后的维数</span></span><br><span class="line"><span class="string">       &quot;&quot;&quot;</span></span><br><span class="line">       <span class="keyword">return</span> self.value.shape[<span class="number">0</span>] * self.value.shape[<span class="number">1</span>]</span><br><span class="line"></span><br><span class="line">   <span class="keyword">def</span> <span class="title function_">shape</span>(<span class="params">self</span>):</span><br><span class="line">       <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">       返回本节点的值作为矩阵的形状：（行数，列数）</span></span><br><span class="line"><span class="string">       &quot;&quot;&quot;</span></span><br><span class="line">       <span class="keyword">return</span> self.value.shape</span><br><span class="line"></span><br><span class="line">   <span class="keyword">def</span> <span class="title function_">reset_value</span>(<span class="params">self, recursive=<span class="literal">True</span></span>):</span><br><span class="line">       <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">       重置本节点的值，并递归重置本节点的下游节点的值。（因为如果本节点的值被重置了，所有下游子节点的值也就都失去了意义，下游子节点的值是依赖于该节点进行计算的）</span></span><br><span class="line"><span class="string">       &quot;&quot;&quot;</span></span><br><span class="line"></span><br><span class="line">       self.value = <span class="literal">None</span></span><br><span class="line"></span><br><span class="line">       <span class="keyword">if</span> recursive:</span><br><span class="line">           <span class="keyword">for</span> child <span class="keyword">in</span> self.children:</span><br><span class="line">               child.reset_value()</span><br></pre></td></tr></table></figure>
+<ul>
+<li><strong>Part3：虚函数</strong>：
+<ul>
+<li>这两个函数，是等会儿
+操作符节点需要重载的函数内容，在forward和backword中有用到。</li>
+</ul></li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@abc.abstractmethod</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">compute</span>(<span class="params">self</span>):</span><br><span class="line">    <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">    抽象方法，根据父节点的值计算本节点的值，用于前向传播中计算该节点的值</span></span><br><span class="line"><span class="string">    &quot;&quot;&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="meta">@abc.abstractmethod</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">get_jacobi</span>(<span class="params">self, parent</span>):</span><br><span class="line">    <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">    抽象方法，计算本节点对某个父节点的雅可比矩阵的计算，因为计算父节点的雅可比矩阵可能需要该父节点以及其他父节点的值，所以只能够在子节点中完成。父节点调用子节点的getjacobi方法，就可以得到子节点对自己的雅可比矩阵。</span></span><br><span class="line"><span class="string">    &quot;&quot;&quot;</span></span><br></pre></td></tr></table></figure>
+<ul>
+<li><strong>Part4：核心函数</strong>：
+<ul>
+<li>forward() 和 backward() 函数,
+都是以递归的形式进行计算，请注意这边的两个函数的含义和pytorch库中的同名函数含义相差较大，不要搞混。</li>
+</ul></li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line">  <span class="keyword">def</span> <span class="title function_">forward</span>(<span class="params">self</span>):</span><br><span class="line">      <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">      前向传播计算本节点的值，若父节点的值未被计算，则递归调用父节点的forward方法</span></span><br><span class="line"><span class="string">      &quot;&quot;&quot;</span></span><br><span class="line">      <span class="keyword">for</span> node <span class="keyword">in</span> self.parents:</span><br><span class="line">          <span class="keyword">if</span> node.value <span class="keyword">is</span> <span class="literal">None</span>:</span><br><span class="line">              node.forward()</span><br><span class="line"><span class="comment"># 递归完成，所有父节点的值都就位了，调用子类已经覆写好的compute函数，根据父节点的值计算该节点值，例如如果该节点是 + 号 类节点，compute函数中，就会书写将所有的父节点的值相加的过程。</span></span><br><span class="line">      self.compute()</span><br><span class="line">	</span><br><span class="line">  <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">  属性jacobi用于保存最终结果对自己的雅可比矩阵，在代码一开始先判断自己的jacobi属性是否为None,如果不是说明最终结果对自己的雅可比矩阵已经计算过了（因为一次反向传播中，某个节点可能被多次访问）。</span></span><br><span class="line"><span class="string">  result参数传进来的是最终的结果节点。</span></span><br><span class="line"><span class="string">  &quot;&quot;&quot;</span></span><br><span class="line">  <span class="keyword">def</span> <span class="title function_">backward</span>(<span class="params">self, result</span>):</span><br><span class="line">      <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">      反向传播，计算结果节点对本节点的雅可比矩阵</span></span><br><span class="line"><span class="string">      &quot;&quot;&quot;</span></span><br><span class="line">      <span class="keyword">if</span> self.jacobi <span class="keyword">is</span> <span class="literal">None</span>:</span><br><span class="line">          <span class="keyword">if</span> self <span class="keyword">is</span> result:  <span class="comment"># 如果本节点自身就是最终的结果节点</span></span><br><span class="line">              self.jacobi = np.mat(np.eye(self.dimension()))  <span class="comment">#构造一个维度正确的单位矩阵即可</span></span><br><span class="line">          <span class="keyword">else</span>:   <span class="comment"># 如果本节点不是最终的结果节点，而是正常的一个节点</span></span><br><span class="line">              self.jacobi = np.mat(  <span class="comment"># 先构造一个维度正确的全为0的矩阵，作为之后的累加器</span></span><br><span class="line">                  np.zeros((result.dimension(), self.dimension())))</span><br><span class="line">		<span class="comment"># 然后遍历所有子节点</span></span><br><span class="line">              <span class="keyword">for</span> child <span class="keyword">in</span> self.get_children():</span><br><span class="line">                   <span class="comment"># 如果子节点的值不为空，说明它在本次的计算路径上，因为对于某些复杂的计算图而言，有些节点可能不在某次前向传播的计算路径上，它们是无关的节点。</span></span><br><span class="line">                  <span class="keyword">if</span> child.value <span class="keyword">is</span> <span class="keyword">not</span> <span class="literal">None</span>:</span><br><span class="line">                      <span class="comment"># 递归调用child的backward()方法，得到最终结果对子节点的雅可比，再乘上 子节点对该节点的雅可比，就得到了最终结果对该节点的雅可比，将其累加到之前初始化好的全为0的矩阵中。</span></span><br><span class="line">                      self.jacobi += child.backward(result) * child.get_jacobi(self)</span><br><span class="line"><span class="comment"># 返回雅可比矩阵即可</span></span><br><span class="line">      <span class="keyword">return</span> self.jacobi</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<h3 id="变量节点继承自node类">3、变量节点（继承自Node类）：</h3>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Variable</span>(<span class="title class_ inherited__">Node</span>):</span><br><span class="line">    <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">    变量节点</span></span><br><span class="line"><span class="string">    &quot;&quot;&quot;</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, dim, init=<span class="literal">False</span>, trainable=<span class="literal">True</span>, **kargs</span>):</span><br><span class="line">        <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">        变量节点没有父节点，构造函数接受变量的形状，是否初始化以及是否参与训练的标识</span></span><br><span class="line"><span class="string">        &quot;&quot;&quot;</span></span><br><span class="line">        Node.__init__(self,  **kargs)</span><br><span class="line">        self.dim = dim</span><br><span class="line">        </span><br><span class="line">        <span class="comment"># 如果需要初始化，则以正态分布随机初始化变量的值</span></span><br><span class="line">        <span class="comment"># 像保存样本和标签的节点不用初始化，而保存参数的节点需要初始化</span></span><br><span class="line">        <span class="keyword">if</span> init:</span><br><span class="line">            self.value = np.mat(np.random.normal(<span class="number">0</span>, <span class="number">0.001</span>, self.dim))</span><br><span class="line">            </span><br><span class="line">        <span class="comment"># 变量节点是否参与训练，比如样本和标签不参与训练，可以不计算它们的雅可比矩阵，而参数参与训练，就需要计算雅可比矩阵。</span></span><br><span class="line">        self.trainable = trainable</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">set_value</span>(<span class="params">self, value</span>):</span><br><span class="line">        <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">        为变量赋值</span></span><br><span class="line"><span class="string">        &quot;&quot;&quot;</span></span><br><span class="line">        <span class="comment"># 判定赋值的值matrix 是不是和dim一致</span></span><br><span class="line">        <span class="keyword">assert</span> <span class="built_in">isinstance</span>(value, np.matrix) <span class="keyword">and</span> value.shape == self.dim</span><br><span class="line"></span><br><span class="line">        <span class="comment"># 先重置该节点及所有下游节点的值，然后再对该节点进行赋值</span></span><br><span class="line">        self.reset_value()</span><br><span class="line">        self.value = value</span><br></pre></td></tr></table></figure>
+<h3
+id="运算符操作子节点继承自node类需要覆写compute和get_jacobi两个函数">4、运算符操作子节点（继承自Node类，需要覆写compute和get_jacobi两个函数）</h3>
+<p>抽象类如下：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Operator</span>(<span class="title class_ inherited__">Node</span>):</span><br><span class="line">    <span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"><span class="string">    定义操作符抽象类</span></span><br><span class="line"><span class="string">    &#x27;&#x27;&#x27;</span></span><br><span class="line">    <span class="keyword">pass</span></span><br></pre></td></tr></table></figure>
+<h5 id="定义-add-操作符">1） 定义 Add 操作符：</h5>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Add</span>(<span class="title class_ inherited__">Operator</span>):</span><br><span class="line">    <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">    （多个）矩阵加法</span></span><br><span class="line"><span class="string">    &quot;&quot;&quot;</span></span><br><span class="line">	<span class="comment">## 根据父节点的值计算本节点的值</span></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">compute</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="comment"># assert len(self.parents) == 2 and self.parents[0].shape() == self.parents[1].shape()</span></span><br><span class="line">        self.value = np.mat(np.zeros(self.parents[<span class="number">0</span>].shape()))</span><br><span class="line">		<span class="comment"># 把所有的父节点的值相加，就是正向传播计算的值</span></span><br><span class="line">        <span class="keyword">for</span> parent <span class="keyword">in</span> self.parents:</span><br><span class="line">            self.value += parent.value</span><br><span class="line">            </span><br><span class="line">	<span class="comment">## 计算本节点对某个父节点的雅可比矩阵的计算</span></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">get_jacobi</span>(<span class="params">self, parent</span>):</span><br><span class="line">        <span class="keyword">return</span> np.mat(np.eye(self.dimension()))  <span class="comment"># 矩阵之和对其中任一个矩阵的雅可比矩阵是单位矩阵</span></span><br><span class="line">    </span><br><span class="line"><span class="comment">## 比如说： 父节点为矩阵 A，B(维度为 3 * 2)，子节点为矩阵 A + B（维度为3 * 2）</span></span><br><span class="line"><span class="comment">## 子节点为 Add操作符节点</span></span><br><span class="line"><span class="comment">## 那么这样一个映射函数就是 6维向量 -》映射到-》 6维向量 的映射函数</span></span><br><span class="line"><span class="comment">## A 展平 [ a1 a2 a3 a4 a5 a6 ] B 展平 [ b1 b2 b3 b4 b5 b6]  均为6维向量</span></span><br><span class="line"><span class="comment">## A+B 展平 [a1+b1 a2+b2 a3+b3 a4+b4 a5+b5 a6+b6] 6维向量</span></span><br><span class="line"><span class="comment">## 最终得到的雅可比矩阵是 6 * 6 的单位阵</span></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">   [d(a1+b1)/d(a1) d(a1+b1)/d(a2) d(a1+b1)/d(a3) d(a1+b1)/d(a4) d(a1+b1)/d(a5) d(a1+b1)/d(a6)  ]</span></span><br><span class="line"><span class="string">   [d(a2+b2)/d(a1) d(a2+b2)/d(a2) d(a2+b2)/d(a3) d(a2+b2)/d(a4) d(a2+b2)/d(a5) d(a2+b2)/d(a6)  ]</span></span><br><span class="line"><span class="string">    	……………………………………………………………………………………………………………………………………………………………………………………………………………………</span></span><br><span class="line"><span class="string">        ……………………………………………………………………………………………………………………………………………………………………………………………………………………</span></span><br><span class="line"><span class="string">        ……………………………………………………………………………………………………………………………………………………………………………………………………………………</span></span><br><span class="line"><span class="string">   [d(a6+b6)/d(a1) d(a6+b6)/d(a2) d(a6+b6)/d(a3) d(a6+b6)/d(a4) d(a6+b6)/d(a5) d(a6+b6)/d(a6)  ]</span></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">   [1 0 0 0 0 0]</span></span><br><span class="line"><span class="string">   [0 1 0 0 0 0]</span></span><br><span class="line"><span class="string">   [0 0 1 0 0 0]</span></span><br><span class="line"><span class="string">   [0 0 0 1 0 0]</span></span><br><span class="line"><span class="string">   [0 0 0 0 1 0]</span></span><br><span class="line"><span class="string">   [0 0 0 0 0 1]</span></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br></pre></td></tr></table></figure>
+<h5 id="定义-matmul-操作符">2） 定义 Matmul 操作符：</h5>
+<p>推导如下：</p>
+<ul>
+<li><p>定义矩阵A： 形状为 M x N</p></li>
+<li><p>定义矩阵B： 形状为 N x K</p></li>
+<li><p>矩阵乘法得到的结果C： 形状为 M X K</p></li>
+</ul>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/92352E558AF386F3CEFAE57985019633.jpg" /></p>
+<p>​ 我们先求解<strong>矩阵C对矩阵A的雅可比矩阵</strong>：</p>
+<p>​
+我们将矩阵乘法视为多到多映射，如下：以左矩阵A为自变量，以右矩阵B为常量，将矩阵A视为
+<span class="math inline">\(M \times N\)</span>
+维的向量，将映射的结果矩阵C视为 <span class="math inline">\(M \times
+K\)</span> 维的向量。如下所示：</p>
+<p><img src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/202202271a.png" style="zoom: 50%;" /></p>
+<p>​ 最终获得的雅可比矩阵的第一行，就是C矩阵的第1个元素，分别对A 的 MN
+个元素求导：得到的如下所示：C的第一个分量对A的第一行元素的偏导数就是B的第一列，对A其余元素的偏导数是0，所以雅可比矩阵的第一行如下：</p>
+<p><img src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/F9061B9E26F869EA36F4575B07A65B27.jpg" style="zoom: 25%;" /></p>
+<p>​ 第二行同理，如下所示：</p>
+<p><img src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/BD69F402E360C2A1B6CCD85DF5881C28.jpg" style="zoom:25%;" /></p>
+<p>​
+一直到雅可比矩阵的第K行，都是这样的规律。然后接下去雅可比矩阵的K+1行是这样的：</p>
+<p><img src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/7FFCABE5A3D35DAAD995E76633F94DDE.jpg" style="zoom:25%;" /></p>
+<p>​
+我们会发现一个规律，如下所示，也就是最终的结论：C对A的雅可比矩阵如下所示：</p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/15BB5E4AF6FBE51D7701F361B7BE64FE.jpg" /></p>
+<p>​ <span class="math inline">\(B^T 是 B的转置\)</span>，我们把 m 个
+形状为 <span class="math inline">\(K \times N\)</span> 的<span
+class="math inline">\(B^T\)</span>矩阵放在对角线上，得到一个 <span
+class="math inline">\(MK \times MN\)</span> 的矩阵。</p>
+<p>​</p>
+<p>​ 然后来看<strong>矩阵C对矩阵B的雅可比矩阵</strong>：</p>
+<p>​
+同样我们将矩阵乘法视为多到多映射，如下：以左矩阵A为常量，以右矩阵B为自变量，将矩阵B视为
+<span class="math inline">\(N \times K\)</span>
+维的向量，将映射的结果矩阵C视为 <span class="math inline">\(M \times
+K\)</span> 维的向量。如下所示：</p>
+<p><img src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/2022020272258.png" style="zoom:33%;" /></p>
+<p>​ 这是一个NK维向量，C对B的雅可比矩阵是<span class="math inline">\(MK
+\times NK\)</span>
+的矩阵。C的第一个分量对B的第1列元素的偏导数就是A的第一行，所以雅可比矩阵的第1行如下：</p>
+<p><img src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/C165EA4E4C9DE67CF1EE6AF9551DB327.jpg" style="zoom: 33%;" /></p>
+<p>​ 雅可比矩阵的第2行如下：</p>
+<p><img src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/B504A835005C3AAF0BA61984E976F3F9.jpg" style="zoom: 33%;" /></p>
+<p>​
+这一行中每个长度维k的段的第2个元素是A的第1行的对应元素，其余元素维0.以此类推，雅可比矩阵的前k行是一个<span
+class="math inline">\(k \times
+NK\)</span>的矩阵，包含横着排列的N个对角阵。整个雅可比矩阵由M个这样的矩阵竖着摞在一起构成。</p>
+<p><img src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/64F57EE82EDE412BA304CD345F290E57.jpg" style="zoom:50%;" /></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">MatMul</span>(<span class="title class_ inherited__">Operator</span>):</span><br><span class="line">    <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">    矩阵乘法</span></span><br><span class="line"><span class="string">    &quot;&quot;&quot;</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">compute</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="keyword">assert</span> <span class="built_in">len</span>(self.parents) == <span class="number">2</span> <span class="keyword">and</span> self.parents[<span class="number">0</span>].shape()[</span><br><span class="line">            <span class="number">1</span>] == self.parents[<span class="number">1</span>].shape()[<span class="number">0</span>]</span><br><span class="line">        self.value = self.parents[<span class="number">0</span>].value * self.parents[<span class="number">1</span>].value</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">get_jacobi</span>(<span class="params">self, parent</span>):</span><br><span class="line">        <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">        将矩阵乘法视作映射，求映射对参与计算的矩阵的雅克比矩阵。</span></span><br><span class="line"><span class="string">        &quot;&quot;&quot;</span></span><br><span class="line">        zeros = np.mat(np.zeros((self.dimension(), parent.dimension())))</span><br><span class="line">        <span class="keyword">if</span> parent <span class="keyword">is</span> self.parents[<span class="number">0</span>]:  <span class="comment"># C对A的雅可比矩阵</span></span><br><span class="line">            <span class="keyword">return</span> fill_diagonal(zeros, self.parents[<span class="number">1</span>].value.T)</span><br><span class="line">        <span class="keyword">else</span>:	<span class="comment"># C对B的雅可比矩阵</span></span><br><span class="line">            jacobi = fill_diagonal(zeros, self.parents[<span class="number">0</span>].value)</span><br><span class="line">            row_sort = np.arange(self.dimension()).reshape(</span><br><span class="line">                self.shape()[::-<span class="number">1</span>]).T.ravel()</span><br><span class="line">            col_sort = np.arange(parent.dimension()).reshape(</span><br><span class="line">                parent.shape()[::-<span class="number">1</span>]).T.ravel()</span><br><span class="line">            <span class="keyword">return</span> jacobi[row_sort, :][:, col_sort]</span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<h5 id="定义-relu-操作符">3） <strong>定义 ReLU 操作符：</strong></h5>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">ReLU</span>(<span class="title class_ inherited__">Operator</span>):</span><br><span class="line">    <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">    对矩阵的元素施加ReLU函数</span></span><br><span class="line"><span class="string">    &quot;&quot;&quot;</span></span><br><span class="line"></span><br><span class="line">    nslope = <span class="number">0.1</span>  <span class="comment"># 负半轴的斜率</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">compute</span>(<span class="params">self</span>):</span><br><span class="line">        self.value = np.mat(np.where(</span><br><span class="line">            self.parents[<span class="number">0</span>].value &gt; <span class="number">0.0</span>,</span><br><span class="line">            self.parents[<span class="number">0</span>].value,</span><br><span class="line">            self.nslope * self.parents[<span class="number">0</span>].value)</span><br><span class="line">        )</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">get_jacobi</span>(<span class="params">self, parent</span>):</span><br><span class="line">        <span class="keyword">return</span> np.diag(np.where(self.parents[<span class="number">0</span>].value.A1 &gt; <span class="number">0.0</span>, <span class="number">1.0</span>, self.nslope))</span><br></pre></td></tr></table></figure>
+<p><strong>参考资料：</strong></p>
+<p>代码实现参考：https://github.com/zc911/MatrixSlow</p>
+<p>1、《用python实现深度学习框架》张觉非、陈震</p>
+
+    </div>
+
+    
+    
+    
+      
+  <div class="popular-posts-header">相关文章</div>
+  <ul class="popular-posts">
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2022\03\02\c830e3a9e023\" rel="bookmark">用Python搭建深度学习框架系列笔记5——逻辑回归中的损失函数节点</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2022\02\28\d9d77f183b68\" rel="bookmark">用Python搭建深度学习框架系列笔记4——优化器类的代码实现（下）</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2022\02\23\c051c3782dfb\" rel="bookmark">用Python搭建深度学习框架系列笔记3——优化器类的代码实现（上）</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2022\02\10\f5cccb7aefe2\" rel="bookmark">Python搭建深度学习框架系列笔记1——计算图、梯度下降、反向传播、自动微分的理论部分</a></div>
+    </li>
+  </ul>
+
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Framework/" rel="tag"># Framework</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2022/02/22/2c663a313e31/" rel="prev" title="BFS系列——开密码锁">
+                  <i class="fa fa-chevron-left"></i> BFS系列——开密码锁
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2022/02/23/c051c3782dfb/" rel="next" title="用Python搭建深度学习框架系列笔记3——优化器类的代码实现（上）">
+                  用Python搭建深度学习框架系列笔记3——优化器类的代码实现（上） <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments utterances-container"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Fantast</span>
+</div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+    <span title="站点总字数">725k</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">33:33</span>
+  </span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script><script src="/js/bookmark.js"></script>
+
+  
+<script src="https://cdn.jsdelivr.net/npm/hexo-generator-searchdb@1.4.0/dist/search.js" integrity="sha256-vXZMYLEqsROAXkEw93GGIvaB2ab+QW6w3+1ahD9nXXA=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdn.jsdelivr.net/npm/mathjax@3.2.0/es5/tex-mml-chtml.js","integrity":"sha256-r+3itOMtGGjap0x+10hu6jW/gZCzxHsoKrOd7gyRSGY="}}</script>
+<script src="/js/third-party/math/mathjax.js"></script>
+
+
+<script class="next-config" data-name="utterances" type="application/json">{"enable":true,"repo":"Fantast416/myblog-comment","issue_term":"pathname","theme":"github-light"}</script>
+<script src="/js/third-party/comments/utterances.js"></script>
+
+</body>
+</html>

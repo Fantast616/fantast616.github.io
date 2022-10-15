@@ -1,0 +1,624 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.2.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css" integrity="sha256-mUZM63G8m73Mcidfrv5E+Y61y7a12O5mW4ezU3bxqW4=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"blog.fantast.top","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.9.0","exturl":false,"sidebar":{"position":"left","width":250,"display":"always","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":true,"color":"#222","save":"manual"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"utterances","storage":true,"lazyload":false,"nav":null,"activeClass":"utterances"},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+<meta name="description" content="计网微课堂Chap2——物理层原理">
+<meta property="og:type" content="article">
+<meta property="og:title" content="计网微课堂Chap2——物理层原理">
+<meta property="og:url" content="https://blog.fantast.top/2022/05/01/81ac33552c19/index.html">
+<meta property="og:site_name" content="Fantast&#39;s Blog">
+<meta property="og:description" content="计网微课堂Chap2——物理层原理">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="c:/Users/14012/AppData/Roaming/Typora/typora-user-images/image-20220501094821175.png">
+<meta property="og:image" content="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220501095538393.png">
+<meta property="og:image" content="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220501095701647.png">
+<meta property="og:image" content="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220501100428195.png">
+<meta property="og:image" content="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220501135008970.png">
+<meta property="og:image" content="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220501135556799.png">
+<meta property="og:image" content="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220501135724678.png">
+<meta property="og:image" content="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220501155644426.png">
+<meta property="og:image" content="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220501155815683.png">
+<meta property="og:image" content="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220501160421428.png">
+<meta property="article:published_time" content="2022-05-01T01:36:19.000Z">
+<meta property="article:modified_time" content="2022-08-07T14:51:07.000Z">
+<meta property="article:author" content="Fantast">
+<meta property="article:tag" content="Computer Network">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="c:/Users/14012/AppData/Roaming/Typora/typora-user-images/image-20220501094821175.png">
+
+
+<link rel="canonical" href="https://blog.fantast.top/2022/05/01/81ac33552c19/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://blog.fantast.top/2022/05/01/81ac33552c19/","path":"2022/05/01/81ac33552c19/","title":"计网微课堂Chap2——物理层原理"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>计网微课堂Chap2——物理层原理 | Fantast's Blog</title>
+  
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<link rel="alternate" href="/atom.xml" title="Fantast's Blog" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Fantast's Blog</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li>
+        <li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li>
+        <li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li>
+        <li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li>
+        <li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%80%E7%89%A9%E7%90%86%E5%B1%82%E7%9A%84%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5"><span class="nav-text">一、物理层的基本概念：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BA%8C%E7%89%A9%E7%90%86%E5%B1%82%E4%B8%8B%E9%9D%A2%E7%9A%84%E4%BC%A0%E8%BE%93%E5%AA%92%E4%BD%93"><span class="nav-text">二、物理层下面的传输媒体：</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%AF%BC%E5%BC%95%E5%9E%8B%E4%BC%A0%E8%BE%93%E5%AA%92%E4%BD%93%E5%9B%BA%E4%BD%93%E7%BA%BF%E7%BC%86"><span class="nav-text">1、导引型传输媒体（固体线缆）</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E9%9D%9E%E5%AF%BC%E5%BC%95%E5%9E%8B%E4%BC%A0%E8%BE%93%E5%AA%92%E4%BD%93%E8%87%AA%E7%94%B1%E7%A9%BA%E9%97%B4%E7%94%B5%E7%A3%81%E6%B3%A2"><span class="nav-text">2、非导引型传输媒体（自由空间，电磁波）</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%89%E4%BC%A0%E8%BE%93%E6%96%B9%E5%BC%8F"><span class="nav-text">三、传输方式：</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E4%B8%B2%E8%A1%8C%E4%BC%A0%E8%BE%93%E5%92%8C%E5%B9%B6%E8%A1%8C%E4%BC%A0%E8%BE%93"><span class="nav-text">1、串行传输和并行传输：</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%90%8C%E6%AD%A5%E4%BC%A0%E8%BE%93%E4%B8%8E%E5%BC%82%E6%AD%A5%E4%BC%A0%E8%BE%93"><span class="nav-text">2、同步传输与异步传输：</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%8D%95%E5%B7%A5%E5%8D%8A%E5%8F%8C%E5%B7%A5%E5%85%A8%E5%8F%8C%E5%B7%A5"><span class="nav-text">3、单工、半双工、全双工：</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%9B%9B%E7%BC%96%E7%A0%81%E4%B8%8E%E8%B0%83%E5%88%B6"><span class="nav-text">四、编码与调制：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BA%94%E5%B8%B8%E7%94%A8%E7%BC%96%E7%A0%81"><span class="nav-text">五、常用编码：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%85%AD%E5%B8%B8%E7%94%A8%E8%B0%83%E5%88%B6%E6%96%B9%E6%B3%95"><span class="nav-text">六、常用调制方法：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%83%E4%BF%A1%E9%81%93%E7%9A%84%E6%9E%81%E9%99%90%E5%AE%B9%E9%87%8F"><span class="nav-text">七、信道的极限容量：</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%A5%88%E6%B0%8F%E5%87%86%E5%88%99"><span class="nav-text">1、奈氏准则：</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%9C%A8%E5%81%87%E5%AE%9A%E7%9A%84%E7%90%86%E6%83%B3%E6%9D%A1%E4%BB%B6%E4%B8%8B%E4%B8%BA%E4%BA%86%E9%81%BF%E5%85%8D%E7%A0%81%E9%97%B4%E4%B8%B2%E6%89%B0%E7%A0%81%E5%85%83%E7%9A%84%E4%BC%A0%E8%BE%93%E9%80%9F%E7%8E%87%E6%98%AF%E6%9C%89%E4%B8%8A%E9%99%90%E7%9A%84"><span class="nav-text">在假定的理想条件下，为了避免码间串扰，码元的传输速率是有上限的。</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E9%A6%99%E5%86%9C%E5%85%AC%E5%BC%8F"><span class="nav-text">2、香农公式：</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Fantast"
+      src="/images/avatar.webp">
+  <p class="site-author-name" itemprop="name">Fantast</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">161</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">40</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">97</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/fantast416" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;fantast416" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:fantast416@gmail.com" title="E-Mail → mailto:fantast416@gmail.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll site-overview-item animated">
+    <div class="links-of-blogroll-title"><i class="fa fa-globe fa-fw"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://www.zhihu.com/people/shuo-shuo-3-41" title="https:&#x2F;&#x2F;www.zhihu.com&#x2F;people&#x2F;shuo-shuo-3-41" rel="noopener" target="_blank">ZhiHu</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="http://www.next.zju.edu.cn/" title="http:&#x2F;&#x2F;www.next.zju.edu.cn&#x2F;" rel="noopener" target="_blank">NextLab</a>
+        </li>
+    </ul>
+  </div>
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://blog.fantast.top/2022/05/01/81ac33552c19/">
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.webp">
+      <meta itemprop="name" content="Fantast">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Fantast's Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          计网微课堂Chap2——物理层原理
+        </h1>
+
+        <div class="post-meta-container">
+          
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2022-05-01 09:36:19" itemprop="dateCreated datePublished" datetime="2022-05-01T09:36:19+08:00">2022-05-01</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2022-08-07 22:51:07" itemprop="dateModified" datetime="2022-08-07T22:51:07+08:00">2022-08-07</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E2%93%B9-%E5%9F%BA%E7%A1%80%E7%B1%BB%E7%AC%94%E8%AE%B0/" itemprop="url" rel="index"><span itemprop="name">⓹ 基础类笔记</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E2%93%B9-%E5%9F%BA%E7%A1%80%E7%B1%BB%E7%AC%94%E8%AE%B0/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/" itemprop="url" rel="index"><span itemprop="name">计算机网络</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>1.6k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>4 分钟</span>
+    </span>
+</div>
+
+            <div class="post-description">计网微课堂Chap2——物理层原理</div>
+            <div class="post-remind">Google Chrome is recommended, otherwise the image size may be wrong</div>
+            <div class="post-remind">FireFox is not recommended,Because it does not support the image zoom property</div>
+        </div>
+        
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p>视频地址：https://www.bilibili.com/video/BV1c4411d7jb?p=14</p>
+<h4 id="一物理层的基本概念">一、物理层的基本概念：</h4>
+<p>​
+解决在各种传输媒体上传输比特0和1流的问题，从而给数据链路层提供透明的传输比特流的服务。</p>
+<p>​ <strong>物理层为数据链路层屏蔽了各种传输媒体的差异。</strong></p>
+<p>物理层协议的主要任务：</p>
+<ul>
+<li>机械特性：指明接口所用接线器的形状和尺寸、引脚数目和排列、固定和锁定装置。</li>
+<li>电气特性：指明在接口电缆的各条线上出现的电压的范围。</li>
+<li>功能特性：指明某条线上出现的某一国平的电压表示何种意义。</li>
+<li>过程特性：指明对于不同功能的各种可能事件的出现顺序。</li>
+</ul>
+<p>由于物理层传输媒体众多，物理层协议众多，主要需要把握以上四个任务。</p>
+<h4 id="二物理层下面的传输媒体">二、物理层下面的传输媒体：</h4>
+<h5 id="导引型传输媒体固体线缆">1、导引型传输媒体（固体线缆）</h5>
+<ul>
+<li>同轴电缆：</li>
+</ul>
+<p><img src="C:\Users\14012\AppData\Roaming\Typora\typora-user-images\image-20220501094821175.png" style="zoom:50%;" /></p>
+<ul>
+<li>双绞线：
+<ul>
+<li>常用于局域网传输</li>
+</ul></li>
+</ul>
+<p>​ <img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220501094949365.png" /></p>
+<ul>
+<li><p>光纤：</p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220501095410880.png" /></p>
+<ul>
+<li>通信容量大（25000~30000GHz的带宽）</li>
+<li>传输损耗小，远距离传输时更加经济。</li>
+<li>抗雷电和电磁干扰性能好。这在大电流脉冲干扰的环境下尤为重要。</li>
+<li>无串音干扰，保密性好，不易被窃听。</li>
+<li>体积小，重量轻。</li>
+<li>割接需要专用设备</li>
+<li>接口价格较贵</li>
+</ul></li>
+<li><p>电力线</p></li>
+</ul>
+<h5
+id="非导引型传输媒体自由空间电磁波">2、非导引型传输媒体（自由空间，电磁波）</h5>
+<p><img src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220501095538393.png" style="zoom: 67%;" /></p>
+<p><img src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220501095701647.png" style="zoom:67%;" /></p>
+<ul>
+<li>无线电波：</li>
+</ul>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220501095636403.png" /></p>
+<ul>
+<li><p>微波：</p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220501095750323.png" /></p></li>
+<li><p>红外线：</p>
+<ul>
+<li>电视、空调等遥控器</li>
+<li>点对点无线传输，</li>
+<li>直线传输，中间不能有障碍物，</li>
+<li>传输距离短传输速率低（4Mb/s~16Mb/s）</li>
+</ul></li>
+</ul>
+<h4 id="三传输方式">三、传输方式：</h4>
+<h5 id="串行传输和并行传输">1、串行传输和并行传输：</h5>
+<p><img src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220501100428195.png" style="zoom:67%;" /></p>
+<h5 id="同步传输与异步传输">2、同步传输与异步传输：</h5>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220501100542991.png" /></p>
+<ul>
+<li><p>同步传输比特流逐一发送，接收方在比特信号的中间时刻进行检测，由于不同设备的时钟频率不一样，容易产生时钟误差累积，导致比特信号的误检测。所以我们需要一种方法实现收发双方时钟同步：</p>
+<ul>
+<li><p>外同步：在收发双方之间添加一条单独的时钟信号线</p></li>
+<li><p>内同步：发送端将时钟同步信号编码到发送数据中一起传输（例如传统以太网采用的曼彻斯特编码）</p></li>
+</ul></li>
+</ul>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220501100823960.png" /></p>
+<ul>
+<li>异步传输以字节为单位，接收端仅在每个字节的起始处对字节内的比特实现同步，故而需要在字节前后加上起始位和结束位。</li>
+</ul>
+<h5 id="单工半双工全双工">3、单工、半双工、全双工：</h5>
+<ul>
+<li>单工示例：广播</li>
+<li>半双工示例：对讲机</li>
+<li>全双工示例：电话</li>
+</ul>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220501101002739.png" /></p>
+<h4 id="四编码与调制">四、编码与调制：</h4>
+<p>​
+<strong>计算机中二进制数据是运送消息的实体，计算机的网卡会将二进制的数据调制成电信号，</strong>通过网线发送出去。信源发送的原始电信号成为基带信号，其又分为数字基带信号与模拟基带信号。</p>
+<p>​ 信号需要在信道中进行传输，信道又分数字信道和模拟信道。</p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220501134907767.png" /></p>
+<ul>
+<li><p>码元：代表不同离散数值的基本波形。</p>
+<p><img src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220501135008970.png" style="zoom:50%;" /></p></li>
+<li><p>计算机网络中，常用的是将数字信号编码或调制后在信道中进行传输</p></li>
+</ul>
+<h4 id="五常用编码">五、常用编码：</h4>
+<ul>
+<li>归零编码：自同步，但编码效率低。</li>
+</ul>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220501135231432.png" /></p>
+<ul>
+<li><p>曼彻斯特编码：</p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220501135335053.png" /></p></li>
+<li><p>曼彻斯特差分编码：</p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220501135411267.png" /></p></li>
+</ul>
+<h4 id="六常用调制方法">六、常用调制方法：</h4>
+<ul>
+<li>基本调制方法，1个码元只能包含1个比特信息</li>
+</ul>
+<p><img src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220501135556799.png" style="zoom:50%;" /></p>
+<ul>
+<li><p>混合调制：</p>
+<p>正交振幅调制QAM:</p>
+<p><img src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220501135724678.png" style="zoom:50%;" /></p></li>
+<li><p>12种相位</p></li>
+<li><p>每种相位有1或2种振幅可选,故可以调制出16种码元（波形）</p></li>
+<li><p>每种码元可以对应表示4个比特</p></li>
+<li><p>码元与4个比特的对应关系采用格雷码，即任意两个码元只有一个比特不同</p></li>
+</ul>
+<p><img src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220501155644426.png" style="zoom:50%;" /></p>
+<h4 id="七信道的极限容量">七、信道的极限容量：</h4>
+<p><img src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220501155815683.png" style="zoom: 50%;" /></p>
+<h5 id="奈氏准则"><strong>1、奈氏准则：</strong></h5>
+<h5
+id="在假定的理想条件下为了避免码间串扰码元的传输速率是有上限的"><strong>在假定的理想条件下，为了避免码间串扰，码元的传输速率是有上限的。</strong></h5>
+<ul>
+<li><p>理想低通信道的最高码元传输速率=2W Baud=2W码元/秒</p></li>
+<li><p>理想带通信道的最高码元传输速率=W Baud =W码元/秒</p></li>
+<li><p>W：信道带宽（单位为Hz）</p></li>
+<li><p>Baud：波特，即码元/秒</p></li>
+</ul>
+<p><strong>码元传输速率又称为波特率</strong>：</p>
+<ul>
+<li>当1个码元只携带一比特的信息量时，波特率 = 比特率</li>
+<li>当1个码元携带 N 比特的信息量时，波特率 = 比特率 / N</li>
+</ul>
+<p><strong>要提高信息传输速率（比特率），就必须设法使每一个码元能携带更多个比特的信息量。</strong></p>
+<p><strong>实际的信道所能传输的最高码元速率，要明显低于奈氏准则给出的这个上限数值。</strong></p>
+<h5 id="香农公式">2、香农公式：</h5>
+<p>​
+按照上述公式所说，难道只要采用更好的调制方法，使得码元可以携带更多的比特，就能无限制地提高信息的传输速率？</p>
+<p>​
+答案是否定的。因为<strong>信道的极限信息传输速率还要受限于实际的信号在信道中传输时的信噪比。</strong></p>
+<p><strong>香农公式</strong>：</p>
+<p>​
+带宽受限且有高斯白噪声干扰的信道的<strong>极限信息传输速率如下</strong>：</p>
+<p><img src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220501160421428.png" style="zoom: 67%;" /></p>
+<p><strong>信道带宽或信道中信噪比越大，信息的极限传输速率越高。</strong></p>
+
+    </div>
+
+    
+    
+    
+      
+  <div class="popular-posts-header">相关文章</div>
+  <ul class="popular-posts">
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2022\07\17\78c11b2eddea\" rel="bookmark">计网微课堂Chap6——应用层原理</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2022\07\15\b846bd0fbb3c\" rel="bookmark">计网微课堂Chap5——运输层原理</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2022\07\12\a63746099b02\" rel="bookmark">计网微课堂Chap4——网络层原理</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2022\05\12\feb80abbdc95\" rel="bookmark">计网微课堂Chap3——数据链路层原理</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2022\04\27\dcdee696a9ce\" rel="bookmark">计网微课堂Chap1——计网基础知识与概述</a></div>
+    </li>
+  </ul>
+
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Computer-Network/" rel="tag"># Computer Network</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2022/04/27/698edcb24aab/" rel="prev" title="计算机科学笔记1——P1~P10集内容笔记">
+                  <i class="fa fa-chevron-left"></i> 计算机科学笔记1——P1~P10集内容笔记
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2022/05/12/feb80abbdc95/" rel="next" title="计网微课堂Chap3——数据链路层原理">
+                  计网微课堂Chap3——数据链路层原理 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments utterances-container"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Fantast</span>
+</div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+    <span title="站点总字数">725k</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">33:33</span>
+  </span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script><script src="/js/bookmark.js"></script>
+
+  
+<script src="https://cdn.jsdelivr.net/npm/hexo-generator-searchdb@1.4.0/dist/search.js" integrity="sha256-vXZMYLEqsROAXkEw93GGIvaB2ab+QW6w3+1ahD9nXXA=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdn.jsdelivr.net/npm/mathjax@3.2.0/es5/tex-mml-chtml.js","integrity":"sha256-r+3itOMtGGjap0x+10hu6jW/gZCzxHsoKrOd7gyRSGY="}}</script>
+<script src="/js/third-party/math/mathjax.js"></script>
+
+
+<script class="next-config" data-name="utterances" type="application/json">{"enable":true,"repo":"Fantast416/myblog-comment","issue_term":"pathname","theme":"github-light"}</script>
+<script src="/js/third-party/comments/utterances.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.2.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css" integrity="sha256-mUZM63G8m73Mcidfrv5E+Y61y7a12O5mW4ezU3bxqW4=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"blog.fantast.top","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.9.0","exturl":false,"sidebar":{"position":"left","width":250,"display":"always","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":true,"color":"#222","save":"manual"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"utterances","storage":true,"lazyload":false,"nav":null,"activeClass":"utterances"},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+<meta name="description" content="本篇笔记讲解了Self Attention的基本机制，Self Attention是Transformer的核心机制之一。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Transformer系列笔记1——Self Attention机制">
+<meta property="og:url" content="https://blog.fantast.top/2021/12/06/59e48d4d462f/index.html">
+<meta property="og:site_name" content="Fantast&#39;s Blog">
+<meta property="og:description" content="本篇笔记讲解了Self Attention的基本机制，Self Attention是Transformer的核心机制之一。">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2021-12-06T13:31:19.000Z">
+<meta property="article:modified_time" content="2022-08-07T14:52:46.000Z">
+<meta property="article:author" content="Fantast">
+<meta property="article:tag" content="Transformer">
+<meta property="article:tag" content="Self Attention">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://blog.fantast.top/2021/12/06/59e48d4d462f/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://blog.fantast.top/2021/12/06/59e48d4d462f/","path":"2021/12/06/59e48d4d462f/","title":"Transformer系列笔记1——Self Attention机制"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Transformer系列笔记1——Self Attention机制 | Fantast's Blog</title>
+  
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<link rel="alternate" href="/atom.xml" title="Fantast's Blog" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Fantast's Blog</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li>
+        <li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li>
+        <li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li>
+        <li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li>
+        <li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%80%E8%83%8C%E6%99%AF%E4%BB%8B%E7%BB%8D%E9%97%AE%E9%A2%98%E5%BC%95%E5%85%A5"><span class="nav-text">一、背景介绍问题引入</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BA%8Cself-attention%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88%E5%BC%95%E5%85%A5"><span class="nav-text">二、Self-Attention解决方案引入：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%89self-attention%E6%9E%B6%E6%9E%84%E4%BB%8B%E7%BB%8D"><span class="nav-text">三、Self-Attention架构介绍</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9B%9Bself-attention%E6%9E%B6%E6%9E%84%E6%89%A9%E5%B1%95%E6%94%B9%E8%BF%9B"><span class="nav-text">四、Self-Attention架构扩展改进</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#multi-head-self-attention-%E5%A4%9A%E5%A4%B4%E6%B3%A8%E6%84%8F%E5%8A%9B%E6%9C%BA%E5%88%B6"><span class="nav-text">1、Multi-head
+Self-Attention 多头注意力机制</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#positional-encoding"><span class="nav-text">2、Positional Encoding</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BA%94self-attention%E5%BA%94%E7%94%A8"><span class="nav-text">五、Self-Attention应用</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Fantast"
+      src="/images/avatar.webp">
+  <p class="site-author-name" itemprop="name">Fantast</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">161</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">40</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">97</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/fantast416" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;fantast416" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:fantast416@gmail.com" title="E-Mail → mailto:fantast416@gmail.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll site-overview-item animated">
+    <div class="links-of-blogroll-title"><i class="fa fa-globe fa-fw"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://www.zhihu.com/people/shuo-shuo-3-41" title="https:&#x2F;&#x2F;www.zhihu.com&#x2F;people&#x2F;shuo-shuo-3-41" rel="noopener" target="_blank">ZhiHu</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="http://www.next.zju.edu.cn/" title="http:&#x2F;&#x2F;www.next.zju.edu.cn&#x2F;" rel="noopener" target="_blank">NextLab</a>
+        </li>
+    </ul>
+  </div>
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://blog.fantast.top/2021/12/06/59e48d4d462f/">
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.webp">
+      <meta itemprop="name" content="Fantast">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Fantast's Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Transformer系列笔记1——Self Attention机制
+        </h1>
+
+        <div class="post-meta-container">
+          
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2021-12-06 21:31:19" itemprop="dateCreated datePublished" datetime="2021-12-06T21:31:19+08:00">2021-12-06</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2022-08-07 22:52:46" itemprop="dateModified" datetime="2022-08-07T22:52:46+08:00">2022-08-07</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E2%93%B5-%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" itemprop="url" rel="index"><span itemprop="name">⓵ 深度学习笔记</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E2%93%B5-%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/Transformer%E7%B3%BB%E5%88%97%E7%AC%94%E8%AE%B0/" itemprop="url" rel="index"><span itemprop="name">Transformer系列笔记</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>4k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>11 分钟</span>
+    </span>
+</div>
+
+            <div class="post-description">本篇笔记讲解了Self Attention的基本机制，Self Attention是Transformer的核心机制之一。</div>
+            <div class="post-remind">Google Chrome is recommended, otherwise the image size may be wrong</div>
+            <div class="post-remind">FireFox is not recommended,Because it does not support the image zoom property</div>
+        </div>
+        
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h3 id="一背景介绍问题引入">一、背景介绍问题引入</h3>
+<p>​
+在先前的网络架构中，我们一般输入的都是一个向量，但是有的时候我们需要考虑更为复杂的输入，如下图所示，比如说一个向量的集合，并且向量集合的长度还会发生变化。</p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220115111555364.png" /></p>
+<p>​
+一般按来说对于输入是向量集合的话，我们先要对其进行编码处理，一种编码方案为One-hot
+Encoding,称为独热向量编码，另一种编码方案为Word
+Embedding方法，称为词嵌入方式。</p>
+<p>为了更好的理解，输入为一个向量的集合，下面有一些相关的例子：</p>
+<p>​
+<strong>示例1：</strong>比如说，输入是一段语音，我们可以将一段1s中的语音视为一个向量的集合输入，每25ms视为一个window窗口，称为1帧，将里面的信息提取出来以后，就成为一个向量。我们将这个窗口每次向后移动10ms，每移动10ms就重新取一次样，也就是多输出一个向量。这样预处理的话，其实就是一段1s的语音我们可以把它视作为100个向量的一个集合输入。
+（在上述处理的过程中，至于为什么25ms视为一个window，每次要向后移动10ms，这些都需要视具体的语音任务而定，有兴趣可以进一步看语音处理方面相关的文章）</p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220115111649129.png" /></p>
+<p>​
+<strong>示例2</strong>：比如说一个图，也可以被视作一个向量的集合，每个节点都被当作一个向量，这个向量中编码了关于这个节点所有的相关信息。</p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220115112432503.png" /></p>
+<p>​
+那么对于这样复杂的输入而言，输出可能是什么呢？如下图所示，有三种可能，第一个是对于每个输入的向量，都输出一个label结果，比如说POS
+tagging任务。第二个是整体就输出一个label结果，比如说Sentiment
+analysis任务。又或者是第三个所示的seq2seq的任务，比如说语句翻译，或者是语音识别的任务。此篇文章聚焦于第一种情况探讨Self-Attention机制与整体的架构。</p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220115112440152.png" /></p>
+<h3
+id="二self-attention解决方案引入">二、Self-Attention解决方案引入：</h3>
+<p>​
+为了解决上面我们说的对于每个输入的vector都输出一个label结果的事情，最简单也最为直观的方法就是如下图所示，假设输入的向量集合长度为4，那么我们将每个输入的向量单独考虑，然后进行结果的输出。</p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220115112458834.png" /></p>
+<p>​
+但是这样一来，我们相当于没有考虑向量与向量之间的关系，那么这种架构下我们可能考虑上下文吗？答案是可以的，如下图所示：我们可以将前后的向量也输入到当前的全连接层中，这就考虑到了上下文信息。但是这样一来问题又发生了，如果我们想要考虑整个序列的上下文呢？那么这个窗口的长度到底应该选多少呢？要知道我们输入的向量的个数是会变化的。同时，如果将每个向量都要连接到每个FC中的话，需要训练的参数就会大大增加，随之而来的就是非常容易过拟合。</p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220115112507468.png" /></p>
+<p>​
+在这样一个问题背景下，Self-Attention机制应运而生。如下面两张图片所示，我们可以理解为，每一个单独的向量经过Self-Attention机制计算后，得到一个新的向量，这个新的向量中是含有所有的上下文信息的。同时Self-Attention也可以做好多层，也就是说我们可以像第二张图一样，先走一次Self-Attention然后过FC层，然后再走一次Self-Attention层，然后再过全连接层，然后输出。使得Self-Attention发扬光大的是一篇叫做《Attention
+is All you
+Need》的论文，那么Self-Attention内部，到底是如何考虑进上下文之间的关系的呢？</p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220115112528529.png" /></p>
+<h3 id="三self-attention架构介绍">三、Self-Attention架构介绍</h3>
+<p>​
+我们首先从结果来看Self-Attention做了一件什么事情，它的输入可以是原始input，也可以是隐藏层。然后经过该结构后，就可以将向量a1变成一个带着上下文信息的向量b1。</p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220115112544934.png" /></p>
+<p>​
+首先，我们以生成向量b1为例，记录整一个过程。如下图所示，首先我们需要考虑a1和另外三个向量的相关性，然后用一个变量α去进行衡量。</p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220115112553361.png" /></p>
+<p>​
+那么如何计算得到这个α的值呢，我们就需要一个如下所示的模块，这个模块输入两个向量，一个向量乘以矩阵Wq得到向量q，一个乘以矩阵Wk得到向量k，然后我们再把q和k做点积，就得到了α，这个α就代表输入的两个向量之间的相关性。至于Wq和Wk内部是什么我们先不用管，因为其内部的参数是我们需要用训练集训练网络得到的。</p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220115112601252.png" /></p>
+<p>​
+所以，我们就能够依据上述这个框架计算出a1分别和a1,a2,a3,a4的相关性α(1,1),α(1,2),α(1,3),α(1,4)，我们将之称为Attention
+Score。具体写成公式的形式就是下图下面的半部分。然后的话呢我们需要将之通过Soft-max函数，做一个归约化，使得他们的和为1，得到α’(1,1),α’(1,2),α’(1,3),α’(1,4)。</p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220115112614866.png" /></p>
+<p>​
+有了α’(1,1),α’(1,2),α’(1,3),α’(1,4)之后，我们先将a1,a2,a3,a4乘上矩阵Wv得到v1,v2,v3,v4，然后用对应的α’和v做叉积，从v中提取信息，最终将所有对应的叉积相加，就得到了最终的结果b1。形式化的公式写在下图的右上方。然后b2,b3,b4也是同样的过程去进行计算。</p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220115112623695.png" /></p>
+<p>​
+按照我们介绍的顺序b1,b2,b3,b4我们需要一一算出，其实这一计算过程是可以通过矩阵乘法并行执行的。首先，我们将a1,a2,a3,a4拼接组合成一个大的矩阵，称为I。将I分别乘上矩阵Wq，Wk，Wv之后，就会得到大的矩阵Q,K,V。从结果上而言，大的矩阵Q,K,V就是先前一个个向量计算时候得到的结果向量q1,q2,q3,q4拼接组合而成。</p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220115112631291.png" /></p>
+<p>​
+我们现在拥有Q,K,V三个矩阵，我们可以用矩阵K的转置乘上矩阵Q就会得到一个α的矩阵，其从结果上而言等价于一个个α计算得到的结果组成的矩阵。具体的推导过程见下图，还是比较好理解的，只是把一些重复的矩阵运算进行了合并而已。得到对应的矩阵A以后，我们对每一列做SoftMax归一化操作，得到矩阵A’。</p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220115112638932.png" /></p>
+<p>​
+最后我们将矩阵A’和矩阵V相乘，就能生成结果矩阵O。O就是b1,b2,b3,b4向量的拼接。</p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220115112647706.png" /></p>
+<p>​
+最后，我们可以将整个过程表示如下图：Wq,Wk,Wv三个矩阵内部的参数就是我们需要训练的参数，A’就是我们常说的Attention
+Matrix.</p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220115112657080.png" /></p>
+<h3
+id="四self-attention架构扩展改进">四、Self-Attention架构扩展改进</h3>
+<h4 id="multi-head-self-attention-多头注意力机制">1、Multi-head
+Self-Attention 多头注意力机制</h4>
+<p>​
+在上述的计算过程中，我们就是用qi去找相关的ki，但是相关可能会存在很多种，所以我们应该需要有不同的q，然后不同的q去负责不同的相关性，于是乎出现了Multi-head
+Self-Attention架构。如下所示，相比于Self-Attention，其只是将计算得到的qi和ki进行拆分。我们先从a乘上矩阵Wq变成q，然后再将q乘上两个不同的矩阵W(q,1)，W(q,2)，分别变成两个不同的向量q1和q2。k和v也是同样的进行操作。然后的话用q1,k1,v1去按照之前的方法计算出一个b1出来，再用q2,k2,v2去计算出一个b2出来</p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220115112728011.png" /></p>
+<p>最后再将b1和b2组合起来，乘上一个权重矩阵，得到最终的结果向量b.</p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220115112737330.png" /></p>
+<h4 id="positional-encoding">2、Positional Encoding</h4>
+<p>​
+我们会发现，在先前的Self-Attention架构中，其并没有考虑输入向量组之间向量的远近对于其相关性的影响。就比如a1如果和a2换了位置，也不会影响a1和a4的相关性度量。所以我们会想要有如下的想法：对于输入向量集合中的每个向量来说，都先加上一个不同的向量e，然后再去进行先前的操作。这个e可以是人工指定的，也可以是机器学到的规律。</p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220115112754051.png" /></p>
+<p>​
+关于e究竟需要是怎么样的东西效果才会好，有许许多多的文章研究。此处只是讲解一个基本的做法，具体感兴趣可以查看下面的论文。</p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220115112802708.png" /></p>
+<h3 id="五self-attention应用">五、Self-Attention应用</h3>
+<p>​
+Self-Attention机制应用广泛，最多的就是应用在Transformer架构和BERT架构中，广泛的用于NLP领域。但除了NLP领域，其实其在很多领域也适用。</p>
+<p>​
+比如说下图所示的语音处理领域，我们最开始就说过如何将一段语音看作是一个向量集合作为输入，然后就可以采用Self-Attention的机制，进行相关的任务。</p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220115112819190.png" /></p>
+<p>​
+或者在图像处理的领域，我们可以将一张RGB图的每一个像素点的RGB三个值，视为一个向量输入，然后一张Image就可以被视为一个ImageWidth*ImageHeight长度的向量的集合。</p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220115112827842.png" /></p>
+<p>​
+以下两篇是使用了Self-Attention架构的有关与图像生成和图像检测的论文，后续可能会出相关的论文阅读笔记。</p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220115112836400.png" /></p>
+<p>​
+那么Self-Attention和CNN到底有啥区别呢？其实按照我们上面对图像的理解，CNN可以看作是一个只有一小部分感知域的Self-Attention。因为CNN的其中一个特征，就是它有独特的感知域，只感知某像素周围一部分和该像素的关联，而Self-Attetion则是会考虑整个序列，也就是该像素和所有像素之间的关联。</p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220115112848232.png" /></p>
+<p>​ 有人做过研究，在《On the Relationship between Self-Attention and
+Convolutional
+Layers》这篇论文中，以严格的数学证明了CNN是Self-Attention的子集。也就是说在一定条件下，Self-Attention可以和CNN实现完全相同的效果。</p>
+<p>​ 同时，在《An Image is Worth 16x16 Words: Transformers for Image
+Recognition at
+Scale》这篇文章中，作者也比较了两者的差别。训练数据越多，Self-Attention最后拟合的效果越好，而CNN在训练数据较少时，效果较好。</p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220115112858420.png" /></p>
+<p>​
+此处还有一些Self-Attention用于RNN和Graph领域的内容，由于与我所学习的领域相关性不大，所以就暂且忽略了，感兴趣可以去李宏毅老师的Attention的课程最后找到对应的论文内容。</p>
+
+    </div>
+
+    
+    
+    
+      
+  <div class="popular-posts-header">相关文章</div>
+  <ul class="popular-posts">
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2021\12\07\84769e08d06a\" rel="bookmark">Transformer系列笔记2——原始Transformer架构与Seq2Seq问题</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2022\04\24\503bff4618b7\" rel="bookmark">《Vision Transformer with Deformable Attention》</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2022\04\24\22e32ee5ba59\" rel="bookmark">《Not All Tokens Are Equal Human-centric Visual Analysis via Token Clustering Transformer》</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2022\04\22\1076c1e77e53\" rel="bookmark">论文略读笔记——CVPR2022 Transformer相关（1）</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2022\03\21\58ee25c0143c\" rel="bookmark">《StyTr2 Unbiased Image Style Transfer with Transformers》</a></div>
+    </li>
+  </ul>
+
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Transformer/" rel="tag"># Transformer</a>
+              <a href="/tags/Self-Attention/" rel="tag"># Self Attention</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2021/12/05/59cf77767a4c/" rel="prev" title="GAN系列笔记6——评估GAN的相关方法指标">
+                  <i class="fa fa-chevron-left"></i> GAN系列笔记6——评估GAN的相关方法指标
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2021/12/07/84769e08d06a/" rel="next" title="Transformer系列笔记2——原始Transformer架构与Seq2Seq问题">
+                  Transformer系列笔记2——原始Transformer架构与Seq2Seq问题 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments utterances-container"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Fantast</span>
+</div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+    <span title="站点总字数">725k</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">33:33</span>
+  </span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script><script src="/js/bookmark.js"></script>
+
+  
+<script src="https://cdn.jsdelivr.net/npm/hexo-generator-searchdb@1.4.0/dist/search.js" integrity="sha256-vXZMYLEqsROAXkEw93GGIvaB2ab+QW6w3+1ahD9nXXA=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdn.jsdelivr.net/npm/mathjax@3.2.0/es5/tex-mml-chtml.js","integrity":"sha256-r+3itOMtGGjap0x+10hu6jW/gZCzxHsoKrOd7gyRSGY="}}</script>
+<script src="/js/third-party/math/mathjax.js"></script>
+
+
+<script class="next-config" data-name="utterances" type="application/json">{"enable":true,"repo":"Fantast416/myblog-comment","issue_term":"pathname","theme":"github-light"}</script>
+<script src="/js/third-party/comments/utterances.js"></script>
+
+</body>
+</html>

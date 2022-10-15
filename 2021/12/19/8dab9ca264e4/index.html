@@ -1,0 +1,898 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.2.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css" integrity="sha256-mUZM63G8m73Mcidfrv5E+Y61y7a12O5mW4ezU3bxqW4=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"blog.fantast.top","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.9.0","exturl":false,"sidebar":{"position":"left","width":250,"display":"always","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":true,"color":"#222","save":"manual"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"utterances","storage":true,"lazyload":false,"nav":null,"activeClass":"utterances"},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+<meta name="description" content="本篇为机器学习训练任务攻略,其中将会介绍一些机器学习深度学习训练过程中，容易发生的一些问题例如ModelBias,OverFitting等，以及经常使用的用于Optimization的一些基础Tricks">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ML2021课程系列笔记2——机器学习训练任务攻略">
+<meta property="og:url" content="https://blog.fantast.top/2021/12/19/8dab9ca264e4/index.html">
+<meta property="og:site_name" content="Fantast&#39;s Blog">
+<meta property="og:description" content="本篇为机器学习训练任务攻略,其中将会介绍一些机器学习深度学习训练过程中，容易发生的一些问题例如ModelBias,OverFitting等，以及经常使用的用于Optimization的一些基础Tricks">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://mypic416.oss-cn-hangzhou.aliyuncs.com/imac/image-20220114110835052.png">
+<meta property="og:image" content="https://mypic416.oss-cn-hangzhou.aliyuncs.com/imac/image-20220114110905969.png">
+<meta property="og:image" content="https://mypic416.oss-cn-hangzhou.aliyuncs.com/imac/image-20220114110925311.png">
+<meta property="og:image" content="https://mypic416.oss-cn-hangzhou.aliyuncs.com/imac/image-20220114111434996.png">
+<meta property="og:image" content="https://mypic416.oss-cn-hangzhou.aliyuncs.com/imac/image-20220114111512628.png">
+<meta property="og:image" content="https://mypic416.oss-cn-hangzhou.aliyuncs.com/imac/image-20220114111606224.png">
+<meta property="og:image" content="https://mypic416.oss-cn-hangzhou.aliyuncs.com/imac/image-20220114111622606.png">
+<meta property="og:image" content="https://mypic416.oss-cn-hangzhou.aliyuncs.com/imac/image-20220114111700084.png">
+<meta property="og:image" content="https://mypic416.oss-cn-hangzhou.aliyuncs.com/imac/image-20220114111856862.png">
+<meta property="og:image" content="https://mypic416.oss-cn-hangzhou.aliyuncs.com/imac/image-20220114111918585.png">
+<meta property="og:image" content="https://mypic416.oss-cn-hangzhou.aliyuncs.com/imac/image-20220114112021653.png">
+<meta property="og:image" content="https://mypic416.oss-cn-hangzhou.aliyuncs.com/imac/image-20220114112044178.png">
+<meta property="og:image" content="https://mypic416.oss-cn-hangzhou.aliyuncs.com/imac/image-20220114112216322.png">
+<meta property="og:image" content="https://mypic416.oss-cn-hangzhou.aliyuncs.com/imac/image-20220114112238183.png">
+<meta property="og:image" content="https://mypic416.oss-cn-hangzhou.aliyuncs.com/imac/image-20220114112259806.png">
+<meta property="og:image" content="https://mypic416.oss-cn-hangzhou.aliyuncs.com/imac/image-20220114112443208.png">
+<meta property="og:image" content="https://mypic416.oss-cn-hangzhou.aliyuncs.com/imac/image-20220114112505138.png">
+<meta property="og:image" content="https://mypic416.oss-cn-hangzhou.aliyuncs.com/imac/image-20220114112600293.png">
+<meta property="og:image" content="https://mypic416.oss-cn-hangzhou.aliyuncs.com/imac/image-20220114112658511.png">
+<meta property="og:image" content="https://mypic416.oss-cn-hangzhou.aliyuncs.com/imac/image-20220114112717272.png">
+<meta property="og:image" content="https://mypic416.oss-cn-hangzhou.aliyuncs.com/imac/image-20220114112747946.png">
+<meta property="og:image" content="https://mypic416.oss-cn-hangzhou.aliyuncs.com/imac/image-20220114112807695.png">
+<meta property="og:image" content="https://mypic416.oss-cn-hangzhou.aliyuncs.com/imac/image-20220114112827827.png">
+<meta property="og:image" content="https://mypic416.oss-cn-hangzhou.aliyuncs.com/imac/image-20220114112849800.png">
+<meta property="og:image" content="https://mypic416.oss-cn-hangzhou.aliyuncs.com/imac/image-20220114112915300.png">
+<meta property="og:image" content="https://mypic416.oss-cn-hangzhou.aliyuncs.com/imac/image-20220114112942271.png">
+<meta property="og:image" content="https://mypic416.oss-cn-hangzhou.aliyuncs.com/imac/image-20220114113022761.png">
+<meta property="og:image" content="https://mypic416.oss-cn-hangzhou.aliyuncs.com/imac/image-20220114113348655.png">
+<meta property="og:image" content="https://mypic416.oss-cn-hangzhou.aliyuncs.com/imac/image-20220114113547513.png">
+<meta property="og:image" content="https://mypic416.oss-cn-hangzhou.aliyuncs.com/imac/image-20220114113613777.png">
+<meta property="og:image" content="https://mypic416.oss-cn-hangzhou.aliyuncs.com/imac/image-20220114113634056.png">
+<meta property="og:image" content="https://mypic416.oss-cn-hangzhou.aliyuncs.com/imac/image-20220114113649974.png">
+<meta property="og:image" content="https://mypic416.oss-cn-hangzhou.aliyuncs.com/imac/image-20220114113710215.png">
+<meta property="og:image" content="https://mypic416.oss-cn-hangzhou.aliyuncs.com/imac/image-20220114113737186.png">
+<meta property="og:image" content="https://mypic416.oss-cn-hangzhou.aliyuncs.com/imac/image-20220114113805989.png">
+<meta property="og:image" content="https://mypic416.oss-cn-hangzhou.aliyuncs.com/imac/image-20220114113828593.png">
+<meta property="og:image" content="https://mypic416.oss-cn-hangzhou.aliyuncs.com/imac/image-20220114113903161.png">
+<meta property="og:image" content="https://mypic416.oss-cn-hangzhou.aliyuncs.com/imac/image-20220114113948987.png">
+<meta property="og:image" content="https://mypic416.oss-cn-hangzhou.aliyuncs.com/imac/image-20220114114013901.png">
+<meta property="og:image" content="https://mypic416.oss-cn-hangzhou.aliyuncs.com/imac/image-20220114114036461.png">
+<meta property="og:image" content="https://mypic416.oss-cn-hangzhou.aliyuncs.com/imac/image-20220114114056586.png">
+<meta property="og:image" content="https://mypic416.oss-cn-hangzhou.aliyuncs.com/imac/image-20220114114125892.png">
+<meta property="og:image" content="https://mypic416.oss-cn-hangzhou.aliyuncs.com/imac/image-20220114114217069.png">
+<meta property="og:image" content="https://mypic416.oss-cn-hangzhou.aliyuncs.com/imac/image-20220114114244676.png">
+<meta property="og:image" content="https://mypic416.oss-cn-hangzhou.aliyuncs.com/imac/image-20220114114310723.png">
+<meta property="og:image" content="https://mypic416.oss-cn-hangzhou.aliyuncs.com/imac/image-20220114114331145.png">
+<meta property="og:image" content="https://mypic416.oss-cn-hangzhou.aliyuncs.com/imac/image-20220114114355882.png">
+<meta property="og:image" content="https://mypic416.oss-cn-hangzhou.aliyuncs.com/imac/image-20220114114421588.png">
+<meta property="og:image" content="https://mypic416.oss-cn-hangzhou.aliyuncs.com/imac/image-20220114114447990.png">
+<meta property="article:published_time" content="2021-12-19T02:29:19.000Z">
+<meta property="article:modified_time" content="2022-08-07T14:47:31.000Z">
+<meta property="article:author" content="Fantast">
+<meta property="article:tag" content="Machine Learning">
+<meta property="article:tag" content="Training Tricks">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://mypic416.oss-cn-hangzhou.aliyuncs.com/imac/image-20220114110835052.png">
+
+
+<link rel="canonical" href="https://blog.fantast.top/2021/12/19/8dab9ca264e4/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://blog.fantast.top/2021/12/19/8dab9ca264e4/","path":"2021/12/19/8dab9ca264e4/","title":"ML2021课程系列笔记2——机器学习训练任务攻略"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>ML2021课程系列笔记2——机器学习训练任务攻略 | Fantast's Blog</title>
+  
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<link rel="alternate" href="/atom.xml" title="Fantast's Blog" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Fantast's Blog</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li>
+        <li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li>
+        <li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li>
+        <li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li>
+        <li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#hung-yi-lee-%E6%9D%8E%E5%AE%8F%E6%AF%85-machine-learning-2021-spring%E8%AF%BE%E7%A8%8B-week2%E7%AC%94%E8%AE%B0"><span class="nav-text">Hung-yi
+Lee (李宏毅) MACHINE LEARNING 2021 SPRING课程 Week2笔记</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%AF%BE%E7%A8%8B%E9%93%BE%E6%8E%A5httpsspeech.ee.ntu.edu.twhyleeml2021-spring.html"><span class="nav-text">课程链接：https:&#x2F;&#x2F;speech.ee.ntu.edu.tw&#x2F;~hylee&#x2F;ml&#x2F;2021-spring.html</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%80model-bias%E9%97%AE%E9%A2%98"><span class="nav-text">一、Model Bias问题</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%8Coptimization"><span class="nav-text">二、Optimization</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%89%E5%A6%82%E4%BD%95%E5%8C%BA%E5%88%86%E6%98%AFmodel-bias%E8%BF%98%E6%98%AFoptimization%E5%AF%BC%E8%87%B4%E7%9A%84train-loss%E8%BF%87%E5%A4%A7"><span class="nav-text">三、如何区分是Model
+Bias还是Optimization导致的Train Loss过大？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9B%9B%E8%AE%AD%E7%BB%83%E6%97%B6%E8%83%BD%E5%A4%9F%E9%81%BF%E5%85%8D%E4%B8%8A%E8%BF%B0%E6%83%85%E5%86%B5%E5%8F%91%E7%94%9F%E7%9A%84%E4%B8%80%E4%BA%9Btips"><span class="nav-text">四、训练时能够避免上述情况发生的一些Tips？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%94overfitting%E9%97%AE%E9%A2%98"><span class="nav-text">五、OverFitting问题</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%AD%E5%A6%82%E4%BD%95%E8%A7%A3%E5%86%B3overfitting%E9%97%AE%E9%A2%98"><span class="nav-text">六、如何解决OverFitting问题</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%83%E5%A6%82%E4%BD%95%E9%81%BF%E5%85%8D%E5%9C%A8training-data%E4%B8%8A%E8%A1%A8%E7%8E%B0%E5%BE%88%E5%A5%BD%E4%BD%86%E6%98%AFtesting-data%E4%B8%8A%E8%A1%A8%E7%8E%B0%E5%BE%88%E5%B7%AE%E7%9A%84%E9%97%AE%E9%A2%98cross-validation%E4%BA%A4%E5%8F%89%E9%AA%8C%E8%AF%81%E6%8A%80%E6%9C%AF"><span class="nav-text">七、如何避免在Training
+Data上表现很好但是Testing Data上表现很差的问题——Cross
+Validation交叉验证技术？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%ABoptimization%E9%97%AE%E9%A2%98%E4%BA%A7%E7%94%9F%E7%9A%84%E5%8E%9F%E5%9B%A0small-gradient"><span class="nav-text">八、Optimization问题产生的原因：Small
+Gradient</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B9%9Doptimize%E8%AE%AD%E7%BB%83tips-batch-and-momentum"><span class="nav-text">九、Optimize训练Tips:
+Batch and Momentum:</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#batch%E6%8A%80%E6%9C%AF"><span class="nav-text">1、Batch技术</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#momentum%E6%8A%80%E6%9C%AF"><span class="nav-text">2、Momentum技术</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8D%81optimize%E8%AE%AD%E7%BB%83tips-automatic-learning-rate"><span class="nav-text">十、Optimize训练Tips:
+Automatic Learning Rate</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8D%81%E4%B8%80%E7%BB%BC%E5%90%88%E5%90%84%E7%A7%8D%E8%AE%AD%E7%BB%83%E6%8A%80%E5%B7%A7%E7%9A%84%E4%BC%98%E5%8C%96%E5%99%A8adam"><span class="nav-text">十一、综合各种训练技巧的优化器：Adam</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8D%81%E4%BA%8C%E6%94%B9%E5%8F%98loss%E5%87%BD%E6%95%B0%E4%B9%9F%E6%9C%89%E5%8F%AF%E8%83%BD%E5%BD%B1%E5%93%8D%E8%AE%AD%E7%BB%83"><span class="nav-text">十二、改变Loss函数，也有可能影响训练：</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8D%81%E4%B8%89feature-normalization-batch-normalization-%E6%8A%80%E6%9C%AF"><span class="nav-text">十三、Feature
+Normalization: Batch Normalization 技术</span></a></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Fantast"
+      src="/images/avatar.webp">
+  <p class="site-author-name" itemprop="name">Fantast</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">161</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">40</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">97</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/fantast416" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;fantast416" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:fantast416@gmail.com" title="E-Mail → mailto:fantast416@gmail.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll site-overview-item animated">
+    <div class="links-of-blogroll-title"><i class="fa fa-globe fa-fw"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://www.zhihu.com/people/shuo-shuo-3-41" title="https:&#x2F;&#x2F;www.zhihu.com&#x2F;people&#x2F;shuo-shuo-3-41" rel="noopener" target="_blank">ZhiHu</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="http://www.next.zju.edu.cn/" title="http:&#x2F;&#x2F;www.next.zju.edu.cn&#x2F;" rel="noopener" target="_blank">NextLab</a>
+        </li>
+    </ul>
+  </div>
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://blog.fantast.top/2021/12/19/8dab9ca264e4/">
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.webp">
+      <meta itemprop="name" content="Fantast">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Fantast's Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          ML2021课程系列笔记2——机器学习训练任务攻略
+        </h1>
+
+        <div class="post-meta-container">
+          
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2021-12-19 10:29:19" itemprop="dateCreated datePublished" datetime="2021-12-19T10:29:19+08:00">2021-12-19</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2022-08-07 22:47:31" itemprop="dateModified" datetime="2022-08-07T22:47:31+08:00">2022-08-07</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E2%93%B5-%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" itemprop="url" rel="index"><span itemprop="name">⓵ 深度学习笔记</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E2%93%B5-%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/ML2021%E8%AF%BE%E7%A8%8B%E7%B3%BB%E5%88%97%E7%AC%94%E8%AE%B0/" itemprop="url" rel="index"><span itemprop="name">ML2021课程系列笔记</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>11k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>30 分钟</span>
+    </span>
+</div>
+
+            <div class="post-description">本篇为机器学习训练任务攻略,其中将会介绍一些机器学习深度学习训练过程中，容易发生的一些问题例如ModelBias,OverFitting等，以及经常使用的用于Optimization的一些基础Tricks</div>
+            <div class="post-remind">Google Chrome is recommended, otherwise the image size may be wrong</div>
+            <div class="post-remind">FireFox is not recommended,Because it does not support the image zoom property</div>
+        </div>
+        
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h3
+id="hung-yi-lee-李宏毅-machine-learning-2021-spring课程-week2笔记">Hung-yi
+Lee (李宏毅) MACHINE LEARNING 2021 SPRING课程 Week2笔记</h3>
+<h3
+id="课程链接httpsspeech.ee.ntu.edu.twhyleeml2021-spring.html">课程链接：https://speech.ee.ntu.edu.tw/~hylee/ml/2021-spring.html</h3>
+<p>​
+本篇将会介绍一些机器学习深度学习训练过程中，容易发生的一些问题，以及经常使用的一些基础的Tricks。上篇已经阐明了机器学习任务的训练分为以下三个阶段。</p>
+<p>​
+<img src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/imac/image-20220114110835052.png" alt="image-20220114110835052" style="zoom:25%;" /></p>
+<p>​ 同时也会有对应的测试集数据进行验证的部分。</p>
+<p>​
+<img src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/imac/image-20220114110905969.png" alt="image-20220114110905969" style="zoom: 25%;" /></p>
+<p>​
+那么在训练与测试的过程中，可能会出现一些问题，下面的图就是一个整体的Guidance，基本阐述了当在训练时我们遇到不同的现象时，大概是何种问题所致。</p>
+<p>​ 此篇将会顺着以下这个分支树进行前序遍历，一条条往下进行讲解。</p>
+<p>​
+<img src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/imac/image-20220114110925311.png" alt="image-20220114110925311" style="zoom:25%;" /></p>
+<h2 id="一model-bias问题">一、Model Bias问题</h2>
+<p>​ 当在训练数据上得到的Loss函数值较大的话，其中一种可能就是Model
+Bias.Model
+Bias一般指模型不够复杂，无法很好的拟合数据。从形式化的角度来讲就是，能够拟合数据的函数，不在你所寻找的函数空间中。举个例子来说：你在第一步中设定的拟合函数为Y
+= a +
+bx，然后使用梯度下降想要寻找使得Loss最低的一组a和b，但是你会发现，即使你找到了使得Loss最低的一组a和b，这组a和b计算得到的Loss还是很高。原因可能是，你需要拟合的数据其实是一个二次函数，或是更复杂的函数，而你却想要使用线性函数去进行拟合。</p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220129151628264.png" /></p>
+<h2 id="二optimization">二、Optimization</h2>
+<p>​
+当在训练数据上得到的Loss函数值较大的话，另外一种可能就是Optimization导致的。此种情况与第一种不同，其模型是有能力拟合数据的，但是由于优化方法的限制，我们没法找到能够使得Loss函数值最小的那一组未知参数。我们先前使用的Gradient
+Descent用于求解优化的方法，还是存在比较多的限制的。如下图为例，假设Loss函数的图像如下图所示，我们设定的θ的起点在左侧，那么经过一段时间的梯度下降后，其会到达图中蓝线所示的Local
+Minimum，也就是局部最优，但是其永远也无法找到右侧的全局最优。往往优化算法无法很好的执行是由于模型过于复杂，或不同的特征数据的尺度相差过大等原因导致。</p>
+<p>​
+此处仅先简单的介绍Optimization是怎样一种问题，后续第八章中会继续探讨这类问题的产生原因以及在第九章中讲如何解决优化这一问题（如何逃出Shaddle
+Point）。</p>
+<p>​
+<img src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/imac/image-20220114111434996.png" alt="image-20220114111434996" style="zoom: 25%;" /></p>
+<h2
+id="三如何区分是model-bias还是optimization导致的train-loss过大">三、如何区分是Model
+Bias还是Optimization导致的Train Loss过大？</h2>
+<p>​
+我们先前说，当在训练数据上得到的Loss函数值较大的话，这两种问题都有可能，那么一般而言如何区分呢？一般来说，我们需要通过模型与模型的比较来获得一些见解。如下所示，在右侧的Training
+Data显示的图像中，20层的网络已经能够将Training
+Error降至比较低的水准了，那么56层的这个网络Training
+Error还处于一个较高的水准，那么肯定是Optimizaiton问题，而不是Model
+Bias的问题。为何这么说呢？因为56层的网络肯定比20层的网路复杂，如果20层的网络已经能够很好的拟合训练数据了，那么56层的网络肯定是具有拟合训练数据的能力的，但是现在Training
+Error还居高不下，说明是优化的时候出现了问题，或者是进入了一个局部最优点中，导致其找不到最好的那一组参数。</p>
+<p>​
+<img src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/imac/image-20220114111512628.png" alt="image-20220114111512628" style="zoom:25%;" /></p>
+<h2
+id="四训练时能够避免上述情况发生的一些tips">四、训练时能够避免上述情况发生的一些Tips？</h2>
+<p>​
+一般新执行一个训练任务的时候，从较浅的网络开始训练，因为一般较浅的网络不会出现优化的问题。如果发现较浅的网络复杂度不够拟合数据，再逐渐加深网络。</p>
+<p>​ 如果更深的网络没有获得更小的损失训练数据，则存在优化问题。</p>
+<h2 id="五overfitting问题">五、OverFitting问题</h2>
+<p>​ 当Training
+Loss已经降至较低水平，但是在Testing集上的Loss值仍然较高，其中一种可能就是出现了Overfitting过拟合的问题。如下图所示，很好的表现了过拟合问题。由于我们的模型非常有弹性，所以可能在训练集上（蓝色点）时非常好的拟合了，但是在测试集（橙色）上的表现就会比较差。</p>
+<p>​
+<img src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/imac/image-20220114111606224.png" alt="image-20220114111606224" style="zoom:25%;" /></p>
+<p>​
+更为极端的情况就是训练出如下图所示的函数：在训练集上的数据，都是完全拟合的，但是对于不在训练集上的数据就是一个随机值。</p>
+<p>​
+<img src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/imac/image-20220114111622606.png" alt="image-20220114111622606" style="zoom: 15%;" /></p>
+<h2 id="六如何解决overfitting问题">六、如何解决OverFitting问题</h2>
+<p>​ 下述是一个随着模型逐渐变得复杂，Training Loss和Testing Loss
+的值变化曲线。</p>
+<p><img src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/imac/image-20220114111700084.png" alt="image-20220114111700084" style="zoom:16%;" /></p>
+<p>​ 对于Overfitting我们有如下的几种解决方案：</p>
+<ul>
+<li><p>1、更多的训练数据</p>
+<ul>
+<li><p>如果我们能够收集到更多的训练数据，就可以一定程度上减轻过拟合的问题。比较常用的增加训练数据的方法，叫做Data
+Augmentation.
+如下图所示，比如说在一个图像检测的任务中，我们最开始数据集里的图片只有最左侧一张图片，我们可以将其左右翻转、或者进行放缩，就能够形成新的一些训练数据，来扩充我们的数据集。然而，上下翻转形成的新的图像，一般不会被我们放入数据集中，因为它并不是正常形成的图片，如果加入数据集中很可能让机器学到奇怪的内容。因此，Augmentation也不是随意的对数据进行变换，是需要有一定依据的。</p>
+<figure>
+<img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/imac/image-20220114111733247.png"
+alt="image-20220114111733247" />
+<figcaption aria-hidden="true">image-20220114111733247</figcaption>
+</figure></li>
+</ul></li>
+<li><p>2、减少未知参数或共享部分参数：</p>
+<ul>
+<li>减少模型的复杂度，或者使得模型中某些层共享一些参数，能够一定程度上解决Overfitting的问题。</li>
+</ul></li>
+<li><p>3、使用更少的特征</p>
+<ul>
+<li>将一些对于结果影响较为不显著的特征进行丢弃，只保留一些关键重要的特征，也可以一定程度上解决Overfitting。例如：我们要训练一个模型预测车的价格，根据车的如下特征：车大小、车颜色、车品牌、车动力等。其实，在这么多特征中，车颜色应该是对价格影响较少的，所以我们在训练时可以将这个特征舍去，不参与训练。</li>
+</ul></li>
+<li><p>4、Early Stopping机制（在Week1的Hw中已经提及）</p></li>
+<li><p>5、Regularization正则化技术（见后）</p></li>
+<li><p>6、DropOut技术（见后）</p></li>
+</ul>
+<h2
+id="七如何避免在training-data上表现很好但是testing-data上表现很差的问题cross-validation交叉验证技术">七、如何避免在Training
+Data上表现很好但是Testing Data上表现很差的问题——Cross
+Validation交叉验证技术？</h2>
+<p>​ 我们将Training Set分割为Training Set和Validation
+Set两个集合，一般而言比例为9：1。我们使用划分后的Training
+Set进行训练，在每个Epoch结束后使用训练期间机器没有见到过的Validation进行验证，依据验证集得到的Loss值来进行模型好坏的衡量。</p>
+<p>​
+<img src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/imac/image-20220114111856862.png" alt="image-20220114111856862" style="zoom:15%;" /></p>
+<p>​
+那么该如何进行划分呢？一般来说随即划分即可。但随即划分也可能带来一些问题，比如说可能训练集中的数据都偏向于某一类，而验证集的数据偏向于另一类，就可能导致Validation出现问题.故而又出现了N-Fold
+Cross Validation.如下图所示,我们将Training
+Set分为N个集合(示例中为3个),其中N-1个集合用于训练,1个集合用于验证,然后每轮Epoch中,都执行N遍,每一遍都拿不同的集合用于训练与验证,然后计算一遍Loss值,最终选取平均Loss最小的那一组参数进行模型的更新.</p>
+<p>​
+<img src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/imac/image-20220114111918585.png" alt="image-20220114111918585" style="zoom: 25%;" /></p>
+<h2
+id="八optimization问题产生的原因small-gradient">八、Optimization问题产生的原因：Small
+Gradient</h2>
+<p>​
+我们先来看一下优化无法进行的根本原因是什么？无论是训练了一段时间以后Loss无法再下降，还是一开始Loss就无法下降，其终极原因就是达到了梯度接近于0的点，我们通常称为critical
+point。注意，此处千万不能说是碰到了local
+minimum，因为这样子会非常不严谨。Critical point 不仅仅指Local
+Minimum，还有可能是 Saddle Point（鞍点）等情况。</p>
+<p>​
+<img src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/imac/image-20220114112021653.png" alt="image-20220114112021653" style="zoom:15%;" /></p>
+<p>​ 所以我们首先要知道，当我们遇到一个Critical
+Point的时候，需要区分这到底是一个Local Minimum还是一个Saddle
+Point。因为如果是一个局部最小值，那么其实就已经无路可走了，但是如果是一个Saddle
+Point的话，周边仍然是有比他低的值的。还是有办法可以解决一番.</p>
+<p><img src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/imac/image-20220114112044178.png" alt="image-20220114112044178" style="zoom:25%;" /></p>
+<p>​ <span
+class="math inline">\(L(\theta)\)</span>函数本身会是一个非常复杂的函数,我们没法知道它的全貌,但是我们可以动用如下的数学手段来判断某一个Critical
+Point到底是Local Minimum还是Saddle Point,如下所示:</p>
+<p>​ 利用泰勒展开,我们可以知道<span
+class="math inline">\(L(\theta)\)</span>在某一个点<span
+class="math inline">\(\theta^{&#39;}\)</span>周围的函数的近似值: <span
+class="math inline">\(g\)</span>为梯度,是<span
+class="math inline">\(L\)</span>对<span
+class="math inline">\(\theta\)</span>的一阶导数组成的向量.<span
+class="math inline">\(H\)</span>为海森矩阵,为<span
+class="math inline">\(L\)</span>对<span
+class="math inline">\(\theta\)</span>的二阶微分组成的矩阵.</p>
+<p><img src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/imac/image-20220114112216322.png" alt="image-20220114112216322" style="zoom:15%;" /></p>
+<p>​ 我们知道,在Critical
+Point上,梯度为0,所以我们可以将上述公式中中间那一项划掉不看,那么L(θ)在θ’周围的函数值就可以近似为L(θ’)
+加上后面这一项.</p>
+<p>​
+<img src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/imac/image-20220114112238183.png" alt="image-20220114112238183" style="zoom:25%;" /></p>
+<p>​
+因此,我们其实可以通过后面红色方框内的这一项的正负,来判断θ’周围的值的分布到底是如下图所示的三种中的哪一种:</p>
+<p>​
+<img src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/imac/image-20220114112259806.png" alt="image-20220114112259806" style="zoom: 25%;" /></p>
+<p>​ 为了后续的数学表示,我们先将<span class="math inline">\((\theta -
+\theta^{&#39;})\)</span>表示为符号<span
+class="math inline">\(v\)</span>,那么如下图所示:
+上述近似式子中的红色方框的那项,值有如下三种情况:</p>
+<p>​ 如果对于所有的<span
+class="math inline">\(v\)</span>来说,该项恒大于0,那就代表在<span
+class="math inline">\(\theta^{&#39;}\)</span>周围,所有的值都比该点大,该点即为局部最小值.但是问题在于我们没法验证所有的<span
+class="math inline">\(v\)</span>,那应该如何呢?</p>
+<p>​ 已经有人为我们证明了, 对于所有<span
+class="math inline">\(v\)</span>,<span
+class="math inline">\(v^THv\)</span>恒大于0这件事情,和海森矩阵H是一个正定矩阵
+是等价的, 也等价于 H矩阵的所有特征值都是正的这件事情.</p>
+<p>​ 所以理论上我们如果想要知道<span
+class="math inline">\(v^THv\)</span>的情况,知道θ’周围的分布,那么其实只要计算出H矩阵的所有特征值,看一下分布即可.</p>
+<p>​
+<img src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/imac/image-20220114112443208.png" alt="image-20220114112443208" style="zoom:25%;" /></p>
+<p>​ 那么如果我们发现这个点是一个Saddle Point的话, 应当如何去继续优化呢?
+我们可以利用H进行优化, 我们找到一个矩阵H的特征向量u, 其对应的特征值为λ,
+λ&lt;0 ,那么如下图所示: <span
+class="math inline">\(u^THu\)</span>这一项就应当为 &lt; 0 的值.</p>
+<p>​
+<img src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/imac/image-20220114112505138.png" alt="image-20220114112505138" style="zoom:15%;" /></p>
+<p>​ 故而: 我们令<span class="math inline">\((\theta - \theta^{&#39;}) =
+u\)</span>即可得到一个比<span
+class="math inline">\(L(\theta^{&#39;})\)</span>小的值,完成了L值的优化.</p>
+<p>​
+<img src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/imac/image-20220114112600293.png" alt="image-20220114112600293" style="zoom: 25%;" /></p>
+<p>​
+从执行上来讲,其实就是找一个H矩阵的特征值为负的特征向量u,这个向量u就指明了梯度下降的方向,沿着该方向走一小步,就可以完成Loss函数的值的优化.</p>
+<p>​ 到此为止,已经记录了Saddle Point和Local Minimum怎么去区分,
+并且也发现Saddle Point并不可怕,可以通过计算H矩阵来进行求解.</p>
+<p>​ 在实际我们的训练过程中,其实达到Local
+Minimum的机会是很少的,基本上都会停留在Saddle
+Point上,那么这是不是就意味着我们如果碰到了Critical
+Point也就是梯度为0的点,基本上就可以用求解H来继续训练呢?
+理论上应该是可以的,但是在实际操作中,其实我们并不会去这样子做,因为计算H矩阵所需要花费的时间代价太过昂贵了.我们会有其他的训练技巧,来帮助绕过这一些Saddle
+Point.
+这些内容在下面的第9章中会讲述。同时最后的话还需要提及一点，其实大部分的训练优化做不下去了，并不是由于到达了Critical
+Point，而是由于学习率的原因，在一个山谷的两侧来回震荡，这一点会在10章中进行详细的叙述。</p>
+<h2 id="九optimize训练tips-batch-and-momentum">九、Optimize训练Tips:
+Batch and Momentum:</h2>
+<h4 id="batch技术">1、Batch技术</h4>
+<p>​
+先前我们说过在训练的过程中，每次进行梯度下降并不是参考所有的训练数据来计算Loss函数的，而是会像下图一样通过一个Batch一个Batch的进行计算。我们在每一轮Epoch之前，一般而言都会对数据集重新划分Batch，也就是说在不同的Epoch中，每一个Batch都是不一样的，这件事情叫做Shuffle。</p>
+<p><img src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/imac/image-20220114112658511.png" alt="image-20220114112658511" style="zoom:25%;" /></p>
+<p>​
+接下去的问题就是我们为什么要使用Batch呢？考虑如下的一个例子，左侧的Full
+batch就是每一次机器都要看过所有的数据集以后再更新参数，而右侧的Batch
+Size =
+1则是会在看过每个样例以后都更新一遍参数。从直观上来看，BatchSize越大，其就更新一次参数而言所需要花费的时间越大，但是其更新更有效。那么按照这样子说的话，我们为什么还要分Batch呢？实际状况跟我们的直觉有一些不同。</p>
+<p>​
+<img src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/imac/image-20220114112717272.png" alt="image-20220114112717272" style="zoom:25%;" /></p>
+<p>​
+下面这张图显示了单次update以及一轮epoch训练的时间和BatchSize的关系，我们发现单次update的时间，对于batchsize
+=
+1和=1000来说，竟然差别不大。导致这个的原因是我们考虑了并行计算的因素，也就是使用GPU进行运算的原因。当然，如果BatchSize再增长下去，我们的GPU也是有一定的上限的所以后面也会有较大的一个时间增长。那么，右侧的这幅图就比较好理解了，对于一轮Epoch来说，如果我们的Batch
+Size比较小的话，在一轮Epoch中，更新Update次数就会比较多，相对而言整体的一轮Epoch的耗时就会较长。所以随着Batch
+Size的增大，反而一轮Epoch的时间会变长。</p>
+<p>​
+<img src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/imac/image-20220114112747946.png" alt="image-20220114112747946" style="zoom:25%;" /></p>
+<p>​
+这样看来，BatchSize越大，反而训练速度越快。这样的话BatchSize越大，速度又快，更新又准确，那为什么还要分Batch呢？下面一张图表示了BatchSize大小对训练出的网络的准确率的影响，我们可以看到，在BatchSize较大的时候，准确率直线下降，这是为什么呢？原因在于：我们先前所说BatchSize较大的话，每次Update较为准确，没有问题。但是对于网络而言，并不是一次Update就能解决问题的。</p>
+<p>​
+<img src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/imac/image-20220114112807695.png" alt="image-20220114112807695" style="zoom:23%;" /></p>
+<p>​
+如果BatchSize过大，会导致优化问题的出现，如左图所示，原因就是因为其每次update都太准确，如果遇到
+critical point或者是local
+minimum，那么其就会深陷其中，无法继续优化了。如过分了Batch的话，由于每次使用的是不同的Batch，所以每次的L函数都会有些许不一样，如果在L1处到达了一个critical
+point，在一个Batch训练的时候，也许该点又重新可以继续梯度下降训练了。所以，Batch
+Size较小的时候带来的单次更新的”Noisy”反而对整体的网络训练能够带来好处。那么，如何衡量就是一个需要我们手工调整的问题了。</p>
+<p>​
+<img src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/imac/image-20220114112827827.png" alt="image-20220114112827827" style="zoom:27%;" /></p>
+<p>​
+最后，先辈们还发现了一个有趣的现象，就是如果我们使用BatchSize不一样的训练方法，训练同一个网络，将Training
+Loss训练到一样好以后，我们将其在测试集上进行测试，往往是BatchSize小的训练出来的网络，准确率较高。大致原因如下图所示：large
+batch容易让网络的参数进入一些Sharp
+Minima峡谷中，这样子的话，一旦训练数据集和测试数据集的分布有些许不同，在训练集上处于很低点的参数应用到测试集上可能会有一个比较大的Loss。相比较而言，small
+batch往往会跳出这种sharp minima的峡谷，找到一些较为平坦的flat
+minima，对于这些flat
+minima的参数来说，即使训练集与分布集的数据分布不同，表现出来的loss性能也不会相差太多。有兴趣的可以研读这篇paper.《On
+Large-Batch Training for Deep Learning: Generalization Gap and Sharp
+Minima 》</p>
+<p><img src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/imac/image-20220114112849800.png" alt="image-20220114112849800" style="zoom:25%;" /></p>
+<h4 id="momentum技术">2、Momentum技术</h4>
+<p>​
+除了使用Batch来帮助我们训练以外，还有一种借鉴了物理世界的Momentum技术，可以帮助我们走出一些Critical
+point。</p>
+<p>​ 如下图所示，在梯度下降中，也许我们训练至一些critical
+point，参数就不会继续优化了，但是在物理世界中，如果一个小球从高处滚下，其将会靠着动量滚下saddle
+point，也有可能靠着动量滚出local minimum。</p>
+<p><img src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/imac/image-20220114112915300.png" alt="image-20220114112915300" style="zoom:25%;" /></p>
+<p>​ 如下图所示是我们普通梯度下降的算法示意图：从<span
+class="math inline">\(\theta_0\)</span>开始计算梯度，然后沿着梯度反方向移动下降，一步步进行优化。</p>
+<p>​
+<img src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/imac/image-20220114112942271.png" alt="image-20220114112942271" style="zoom:25%;" /></p>
+<p>​ 那么在Gradient Descent +
+Momentum的算法如下：最开始第一步和原来的一样，从<span
+class="math inline">\(\theta^0\)</span>开始计算梯度，然后沿着梯度反方向移动下降，达到<span
+class="math inline">\(\theta^1\)</span>时，此时和原先就会发生不同了，其现在的移动会结合前一步的movement（即<span
+class="math inline">\(m^1\)</span>）以及当前点的梯度<span
+class="math inline">\(g^1\)</span>，计算出一个新的下降方向<span
+class="math inline">\(m^2\)</span>，然后进行更新。如图所示：<span
+class="math inline">\(m^2\)</span>是由 <span
+class="math inline">\(m^1\)</span>和 <span
+class="math inline">\(-g^1\)</span>两个向量相加所得到的。从公式上来讲就是$m^1
+- g^1 $，两者都有自己的参数，来控制影响整个梯度下降方向的比例。</p>
+<p><img src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/imac/image-20220114113022761.png" alt="image-20220114113022761" style="zoom:25%;" /></p>
+<p>​ 其实从另一个角度来看，mi其实是先前所有的梯度的和，也就是g0 -
+gi-1的和。所以我们可以说Momentum是考虑了上一步的movement，也可以说Momentum是考虑了先前所有更新点的梯度值。</p>
+<p>​
+<img src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/imac/image-20220114113348655.png" alt="image-20220114113348655" style="zoom:15%;" /></p>
+<h2
+id="十optimize训练tips-automatic-learning-rate">十、Optimize训练Tips:
+Automatic Learning Rate</h2>
+<p>​
+其实，当我们训练卡住的时候，并不一定是碰到了梯度较低的地方，很有可能是在某个山谷的两侧由于学习率过大的问题来回震荡。那么这种现象是怎么产生的呢？</p>
+<p>​
+在Week1的HW1笔记中，曾经记录数据预处理归一化的重要性，否则很有可能因为不同特征的数据尺度相差太大导致震荡，从而导致训练不出结果，如下图所示：</p>
+<p>​ 下图是一个Error
+Surface,就是Loss函数的平面，我们使用两种不同大小的学习率去进行梯度下降，黄色的叉叉代表训练终点。我们发现整个Error
+Surface中，上下维度的梯度比较陡，左右维度的梯度比较缓。如果我们采用较大的学习率，就会产生左图这样子的黑色训练线，在竖直方向疯狂震荡。但是如果我们使用如右图所示的较小的学习率，一开始是可以沿着竖直方向的梯度慢慢更新，但是当要开始沿水平方向更新的时候，会发现学习率太小了，以至于更新了10w次，还距离我们的训练重点遥遥无期。</p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220121170751170.png" /></p>
+<p>​
+所以，我们发现，一个固定的学习率在训练中是不太合适的，最好的话是如图所示，要对不同的参数有不同的学习率，学习率要随着梯度的变化以及参数的变化而进行变化。</p>
+<p>​ 于是我们首先提出了如下想法，将原来的学习率η修改成 η/(σit),
+这个σit既跟参数相关又跟训练步骤（不同点所在的梯度）相关。</p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220121170754841.png" /></p>
+<p>​
+以下就是一种最为简单的σ的计算方式，通过计算每次更新得到的参数空间所在点的梯度的Norm值的平方的平均，即RMS来计算每步中σ。</p>
+<p><img src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/imac/image-20220114113547513.png" alt="image-20220114113547513" style="zoom:25%;" /></p>
+<p>​
+这种方法被用在Adagrad中，主要思想就是，如果Loss函数在某个方向上比较平坦,梯度比较小，那么我们希望Learning
+Rate比较大，快速的走过这一片平坦的区域。如果在某个方向上比较陡峭，我们希望Learning
+Rate比较小.</p>
+<p>​
+<img src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/imac/image-20220114113613777.png" alt="image-20220114113613777" style="zoom:25%;" /></p>
+<p>​
+接下来一种较为进阶的做法叫做RMSProp，它在计算每一步的σ的时候，结合了上一步的σ以及该步的梯度g，同时还有一个超参数α，可以进行调整。如果我们调整α比较大的话，代表其参考当前的梯度较多，也就是说如果梯度突然产生较大变化，其就能快速的反应过来，对LearningRate进行快速的调整。相较于前RMS所有先前的梯度都平均权值考虑的做法，这一做法能够更快速的对梯度的变化进行响应。</p>
+<p><img src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/imac/image-20220114113634056.png" alt="image-20220114113634056" style="zoom:25%;" /></p>
+<p>​ 如下所示，是一个较为公式化的写法，以及一个简单的示意图。</p>
+<p><img src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/imac/image-20220114113649974.png" alt="image-20220114113649974" style="zoom: 25%;" /></p>
+<p>​
+其实按照这种方法，进行训练的话，可能出现如下图所示的训练曲线：为何训练时过一段时间就会突然上下暴走呢？因为其σ是累积平均得到的，在先前的一段时间里，上下方向的更新梯度都近乎为0，累积一段时间以后，上下的梯度就会很小，然后学习率就会变得很大，但是马上又会因为我们的机制更新学习率回来，从而只会出现这样的震荡一下的现象，而不是一直的上下乱窜。</p>
+<p>​
+<img src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/imac/image-20220114113710215.png" alt="image-20220114113710215" style="zoom:25%;" /></p>
+<p>​ 在自动修改学习率的方法中，还有一种形式叫做Learning Rate
+Scheduling：它在原先的基础上对η也进行了一些调整。</p>
+<p>​
+<img src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/imac/image-20220114113737186.png" alt="image-20220114113737186" style="zoom:8%;" /></p>
+<p>​ 较为常见的就是Learning Rate
+Decay这种，随着优化的更新深入，我们使得η逐渐变小。这种想法也是比较能够理解的。类似于越往后快要到达终点了，我们就越要慢慢的靠近，精细的调整，而一开始可以以较大的速率进行更新。</p>
+<p>​
+<img src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/imac/image-20220114113805989.png" alt="image-20220114113805989" style="zoom:25%;" /></p>
+<p>​ 也有一些网络会用到类似下面的Warming Up的黑科技：</p>
+<p>​
+<img src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/imac/image-20220114113828593.png" alt="image-20220114113828593" style="zoom:25%;" /></p>
+<h2
+id="十一综合各种训练技巧的优化器adam">十一、综合各种训练技巧的优化器：Adam</h2>
+<p>​
+Adam是一种综合了RMSProp和Momentum技术的优化器，其大致算法如下图所示，在此处就不多赘述。原论文网址：https://arxiv.org/pdf/1412.6980.pdf</p>
+<p>​
+<img src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/imac/image-20220114113903161.png" alt="image-20220114113903161" style="zoom:33%;" /></p>
+<h2
+id="十二改变loss函数也有可能影响训练">十二、改变Loss函数，也有可能影响训练：</h2>
+<p>​
+此部分通过描述分类任务，来顺带阐明改变Loss函数的形式，也有可能影响训练这样一件事情。下图是回归与分类的任务一些差别，在分类任务中，最终的结果往往是一个类别，而不是一个数值，同时，类别往往会由One-hot向量进行表示。所以，我们分类任务所输出的内容往往是一个多个数值的向量y。然后我们需要比较y和
+真实类别的标签直接的差别，尽可能的最小化这个差别即可。那么，由于标签往往都是One-hot
+向量，所以我们为了比较y和标签的值，往往都会先对y做一个softmax函数进行处理，将y中的所有值归约化至0-1之间，并且所有值的和为1.</p>
+<p>​
+<img src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/imac/image-20220114113948987.png" alt="image-20220114113948987" style="zoom:23%;" /></p>
+<p>​
+Soft-Max内部对输入进行的处理如下图所示，我们假设输入y1,y2,y3，我们先将三个输入计算exp(y1),exp(y2),exp(y3),然后求和，然后计算输出。</p>
+<p>​
+<img src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/imac/image-20220114114013901.png" alt="image-20220114114013901" style="zoom: 25%;" /></p>
+<p>​ 那么在得到归一化后的y’之后，我们如何去计算y’和label y
+的差距呢？按照先前回归的想法是计算两个向量之间的MSE，也就是如下图所示：</p>
+<p><img src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/imac/image-20220114114036461.png" alt="image-20220114114036461" style="zoom:25%;" /></p>
+<p>​
+但其实一般而言，我们在分类任务中，都会采用Cross-Entropy作为Loss函数，即如下所示的公式：</p>
+<p>​
+<img src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/imac/image-20220114114056586.png" alt="image-20220114114056586" style="zoom:9%;" /></p>
+<p>​</p>
+<p>​
+一个简单的解释是，最小化Cross-Entropy和最大化似然概率是完全等同的一件事情（至于为什么完全等同，可以找相关资料），分类任务就是要找出计算得到的y属于哪一类的概率最大，所以我们往往采用Cross-Entropy作为Loss函数。而计算Cross-Entropy之前，我们往往就是要对网络的输出进行SoftMax函数的处理。所以往往SoftMax会和Cross-Entropy绑定在一起，有趣的是Pytorch的底部实现中，如果你的Loss函数使用了Cross-Entropy，那么你在网络结构中是不需要实现SoftMax层的，因为它会自动将SoftMax层加到你的网络的最上面。</p>
+<p>​ 如下所示是一个比较直观的结果：当我们采用不同的Loss函数的时候，Error
+Map也会截然不同。左侧采用MSE的Error map在左上角的区域上（也就是Large
+Loss）的区域上，梯度就很平坦，就很难训练，而采用Cross-Entropy则会好训练很多。这也就是为什么说有的时候改变Loss函数，也可以改变训练的难度。</p>
+<p>​
+<img src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/imac/image-20220114114125892.png" alt="image-20220114114125892" style="zoom:25%;" /></p>
+<h2
+id="十三feature-normalization-batch-normalization-技术">十三、Feature
+Normalization: Batch Normalization 技术</h2>
+<p>​
+我们先前提及过，当训练数据不同维度的特征的尺度相差较大时，训练难度会较大，那么Feature
+Normalization就是为了使得不同特征的尺度类似，从而使得Error
+Surface较为平滑。如下图所示：左侧的Loss函数平面，不同特征的梯度变化不同，有Smooth和Steep两类不同的内容。右侧就是做了一个Feature
+Normalization以后的Error Surface，各个维度都较为平滑。</p>
+<p>​
+<img src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/imac/image-20220114114217069.png" alt="image-20220114114217069" style="zoom:25%;" /></p>
+<p>​
+那么最为平常的特征正则化，如下所示：比如说给出一组x向量，我们计算向量中每个维度的平均值与方差，然后通过如下公式进行计算，我们就可以将所有维度的数据归约化至一个mean为0，deviation为1的一个分布中，使得大致的数据尺度差不多。</p>
+<p>​
+<img src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/imac/image-20220114114244676.png" alt="image-20220114114244676" style="zoom:25%;" /></p>
+<p>​
+上述的归约化处理在HW1的代码中也已经有所体现，那么先前我们在说的是数据预处理步骤中，对于所有数据的归约化。那么对于深度学习来说，可能存在如下问题：</p>
+<p>​
+如下图所示，输入的特征经过归一化以后，在第一层的训练参数是比较正常的，但是经过第一层的参数以后，输出的不同维度的数据又可能回到了不同尺度这样一种状态。这样的话，对于第二层的网络来讲，参数优化又会变得较为困难。</p>
+<p>​
+<img src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/imac/image-20220114114310723.png" alt="image-20220114114310723" style="zoom:25%;" /></p>
+<p>​
+所以我们需要在层与层之间也进行归一化的操作，如下示例来讲，就是通过z1,z2,z3计算出u和σ。</p>
+<p>​
+<img src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/imac/image-20220114114331145.png" alt="image-20220114114331145" style="zoom:25%;" /></p>
+<p>​
+然后我们再将z1,z2,z3根据公式来进行归一化的操作，得到归约化后的z1,z2,z3。这边的话其实有一个有趣的内容：原本来说，如果参数更新了，z1更新了，那么只会影响a1的改变，但是现在而言，加入了BN以后，z1更新了以后，会影响到u和σ,从而会再影响归约化后的z1,z2,z3，随后a2,a3也会受到影响。所以，当我们加入归约化的时候，就需要将整个考虑成一个大的网络。所以就把BN做成一个Batch
+Normalization层。</p>
+<p>​
+<img src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/imac/image-20220114114355882.png" alt="image-20220114114355882" style="zoom:25%;" /></p>
+<p>​
+并且，我们在训练过程中，由于输入数据往往是一个Batch一个Batch输入的，所以训练时计算的u和σ我们往往不会去计算所有的训练数据，而是计算该Batch内部的所有数据的u（向量）和σ（向量）。故而，这个技术叫Batch
+Normalization。</p>
+<p>​ 所以，Batch
+Normalization往往需要在Batch比较大的时候才会可以使用，会比较好一些。不然的话计算得到的u和σ并不能代表训练数据的一些分布，归约化就会出现一些问题。同时，再归约化时也会有一些小的问题如下：</p>
+<p>​ 因为我们归约化至了mean = 0,
+deviation=1的数据分布，会不会影响后续机器学习的性能，所以我们再归约化后又加入了γ和β两个参数，在训练开始时，γ
+一般为1，β一般为0，帮助其更好的拟合后续的特征，同时又能较大程度的保持各个维度的数据在统一尺度下。</p>
+<p>​
+<img src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/imac/image-20220114114421588.png" alt="image-20220114114421588" style="zoom:26%;" /></p>
+<p>​
+那么先前所讲的是在训练过程中的BatchNoramlization,那么如果在Testing的过程中，</p>
+<p>​
+每次输入一个数据，没有凑齐一个Batch的情况下，BatchNormalization又应当如何执行呢？此时，我们的u和σ就不来源于测试的Batch了，而是来源于训练时候每一个Batches计算得到的u的均值依据一些权重累加得到。</p>
+<p>​
+<img src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/imac/image-20220114114447990.png" alt="image-20220114114447990" style="zoom:25%;" /></p>
+<p>​ 总而言之，Batch Normalization能让你的error surface
+更加平滑，从而降低训练的难度，让网络拥有更好的性能，这样的解释无论是理论还是实验都已经被人所证实。具体可以参见这篇论文《How
+Does Batch Normalization Help Optimization?》。</p>
+
+    </div>
+
+    
+    
+    
+      
+  <div class="popular-posts-header">相关文章</div>
+  <ul class="popular-posts">
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2022\01\12\8c9b3da724b3\" rel="bookmark">机器学习基础系列笔记6——全卷积网络FCN & U-Net结构</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2022\01\07\3664afb64da5\" rel="bookmark">机器学习基础系列笔记5——1x1卷积 & 部分卷积 & 空洞卷积 & 可变形卷积</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2022\01\05\d37a1913ba03\" rel="bookmark">机器学习基础系列笔记4——Depth-wise卷积 & Point-wise卷积</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2022\01\04\16c9f87609b5\" rel="bookmark">机器学习基础系列笔记3——反卷积Deconvolution</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2021\12\23\9bb28e693fc9\" rel="bookmark">ML2021课程系列笔记4——海森矩阵计算（课程作业）</a></div>
+    </li>
+  </ul>
+
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Machine-Learning/" rel="tag"># Machine Learning</a>
+              <a href="/tags/Training-Tricks/" rel="tag"># Training Tricks</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2021/12/17/d3d6f910aaf2/" rel="prev" title="ML2021课程系列笔记1——DeepLearning基本介绍">
+                  <i class="fa fa-chevron-left"></i> ML2021课程系列笔记1——DeepLearning基本介绍
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2021/12/20/cedd3c9597c5/" rel="next" title="ML2021课程系列笔记3——卷积神经网络CNN">
+                  ML2021课程系列笔记3——卷积神经网络CNN <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments utterances-container"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Fantast</span>
+</div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+    <span title="站点总字数">725k</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">33:33</span>
+  </span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script><script src="/js/bookmark.js"></script>
+
+  
+<script src="https://cdn.jsdelivr.net/npm/hexo-generator-searchdb@1.4.0/dist/search.js" integrity="sha256-vXZMYLEqsROAXkEw93GGIvaB2ab+QW6w3+1ahD9nXXA=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdn.jsdelivr.net/npm/mathjax@3.2.0/es5/tex-mml-chtml.js","integrity":"sha256-r+3itOMtGGjap0x+10hu6jW/gZCzxHsoKrOd7gyRSGY="}}</script>
+<script src="/js/third-party/math/mathjax.js"></script>
+
+
+<script class="next-config" data-name="utterances" type="application/json">{"enable":true,"repo":"Fantast416/myblog-comment","issue_term":"pathname","theme":"github-light"}</script>
+<script src="/js/third-party/comments/utterances.js"></script>
+
+</body>
+</html>

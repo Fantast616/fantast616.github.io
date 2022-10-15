@@ -1,0 +1,783 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.2.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css" integrity="sha256-mUZM63G8m73Mcidfrv5E+Y61y7a12O5mW4ezU3bxqW4=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"blog.fantast.top","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.9.0","exturl":false,"sidebar":{"position":"left","width":250,"display":"always","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":true,"color":"#222","save":"manual"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"utterances","storage":true,"lazyload":false,"nav":null,"activeClass":"utterances"},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+<meta name="description" content="作者提出了可变形生成网络（Deformable Generative Networks）来做非监督的字体生成。其利用提供的目标字体图像（style image input）来将一种字体的字符变形和转换为另一种字体。DG-FONT 分离了字体的style和content，然后再将两个domain的表示进行融合，生成新的字体的字符。其核心模块为一个叫做FDSC（feature deformation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="《DG-Font Deformable Generative Networks for Unsupervised Font Generation》">
+<meta property="og:url" content="https://blog.fantast.top/2022/01/20/4c71dd4cca5d/index.html">
+<meta property="og:site_name" content="Fantast&#39;s Blog">
+<meta property="og:description" content="作者提出了可变形生成网络（Deformable Generative Networks）来做非监督的字体生成。其利用提供的目标字体图像（style image input）来将一种字体的字符变形和转换为另一种字体。DG-FONT 分离了字体的style和content，然后再将两个domain的表示进行融合，生成新的字体的字符。其核心模块为一个叫做FDSC（feature deformation">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220322105213541.png">
+<meta property="og:image" content="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220322105408955.png">
+<meta property="article:published_time" content="2022-01-20T10:12:19.000Z">
+<meta property="article:modified_time" content="2022-08-07T14:48:40.000Z">
+<meta property="article:author" content="Fantast">
+<meta property="article:tag" content="Font Generation">
+<meta property="article:tag" content="Deformable Convolution Skip Connection">
+<meta property="article:tag" content="Unsupervised Learning">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220322105213541.png">
+
+
+<link rel="canonical" href="https://blog.fantast.top/2022/01/20/4c71dd4cca5d/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://blog.fantast.top/2022/01/20/4c71dd4cca5d/","path":"2022/01/20/4c71dd4cca5d/","title":"《DG-Font Deformable Generative Networks for Unsupervised Font Generation》"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>《DG-Font Deformable Generative Networks for Unsupervised Font Generation》 | Fantast's Blog</title>
+  
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<link rel="alternate" href="/atom.xml" title="Fantast's Blog" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Fantast's Blog</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li>
+        <li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li>
+        <li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li>
+        <li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li>
+        <li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%AE%BA%E6%96%87%E5%90%8D%E7%A7%B0dg-font-deformable-generative-networks-for-unsupervised-font-generationcvpr2021"><span class="nav-text">论文名称：《DG-Font:
+Deformable Generative Networks for Unsupervised Font
+Generation》CVPR2021</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%AE%BA%E6%96%87%E5%9C%B0%E5%9D%80-httpsopenaccess.thecvf.comcontentcvpr2021htmlxie_dg-font_deformable_generative_networks_for_unsupervised_font_generation_cvpr_2021_paper.html"><span class="nav-text">论文地址：
+https:&#x2F;&#x2F;openaccess.thecvf.com&#x2F;content&#x2F;CVPR2021&#x2F;html&#x2F;Xie_DG-Font_Deformable_Generative_Networks_for_Unsupervised_Font_Generation_CVPR_2021_paper.html</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%B3%E9%94%AE%E8%AF%8D"><span class="nav-text">1、关键词：</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%A2%86%E5%9F%9F%E8%83%8C%E6%99%AF"><span class="nav-text">2、领域背景：</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%88%E5%89%8D%E5%B7%A5%E4%BD%9C%E6%8F%8F%E8%BF%B0%E4%B8%8E%E6%AF%94%E8%BE%83"><span class="nav-text">3、先前工作描述与比较：</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#image-to-image-translation"><span class="nav-text">1) Image-To-Image Translation</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#font-generation"><span class="nav-text">2) Font-Generation</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#deformable-convolution"><span class="nav-text">3) Deformable Convolution</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%BB%E8%A6%81%E8%AE%BE%E8%AE%A1%E6%80%9D%E6%83%B3"><span class="nav-text">4、主要设计思想：</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%B7%E4%BD%93%E6%96%B9%E6%B3%95%E4%B8%8E%E7%BD%91%E7%BB%9C%E6%9E%B6%E6%9E%84"><span class="nav-text">5、具体方法与网络架构：</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%95%B4%E4%BD%93%E6%9E%B6%E6%9E%84overall-pipeline"><span class="nav-text">1) 整体架构（Overall Pipeline）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#style-encoder"><span class="nav-text">2) Style Encoder</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#content-encoder"><span class="nav-text">3) Content Encoder</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#feature-deformation-skip-connection-fdsc-module"><span class="nav-text">4) Feature
+Deformation Skip Connection ( FDSC Module)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#mixer"><span class="nav-text">5) Mixer</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#multi-task-discriminator"><span class="nav-text">6) Multi-Task Discriminator</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0"><span class="nav-text">6、损失函数</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#adversarial-loss"><span class="nav-text">1） Adversarial loss</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#content-consistency"><span class="nav-text">2）Content Consistency</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#reconstruction-loss"><span class="nav-text">3）Reconstruction Loss</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#deformation-offset-normalization"><span class="nav-text">4）Deformation offset
+normalization</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%9C%80%E7%BB%88loss%E5%8A%A0%E6%9D%83%E7%9B%B8%E5%8A%A0"><span class="nav-text">5）最终Loss：加权相加</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Fantast"
+      src="/images/avatar.webp">
+  <p class="site-author-name" itemprop="name">Fantast</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">161</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">40</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">97</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/fantast416" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;fantast416" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:fantast416@gmail.com" title="E-Mail → mailto:fantast416@gmail.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll site-overview-item animated">
+    <div class="links-of-blogroll-title"><i class="fa fa-globe fa-fw"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://www.zhihu.com/people/shuo-shuo-3-41" title="https:&#x2F;&#x2F;www.zhihu.com&#x2F;people&#x2F;shuo-shuo-3-41" rel="noopener" target="_blank">ZhiHu</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="http://www.next.zju.edu.cn/" title="http:&#x2F;&#x2F;www.next.zju.edu.cn&#x2F;" rel="noopener" target="_blank">NextLab</a>
+        </li>
+    </ul>
+  </div>
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://blog.fantast.top/2022/01/20/4c71dd4cca5d/">
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.webp">
+      <meta itemprop="name" content="Fantast">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Fantast's Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          《DG-Font Deformable Generative Networks for Unsupervised Font Generation》
+        </h1>
+
+        <div class="post-meta-container">
+          
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2022-01-20 18:12:19" itemprop="dateCreated datePublished" datetime="2022-01-20T18:12:19+08:00">2022-01-20</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2022-08-07 22:48:40" itemprop="dateModified" datetime="2022-08-07T22:48:40+08:00">2022-08-07</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E2%93%B6-%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB%E7%AC%94%E8%AE%B0/" itemprop="url" rel="index"><span itemprop="name">⓶ 论文阅读笔记</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E2%93%B6-%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB%E7%AC%94%E8%AE%B0/CV%E7%9B%B8%E5%85%B3%E8%AE%BA%E6%96%87/" itemprop="url" rel="index"><span itemprop="name">CV相关论文</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>8.1k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>23 分钟</span>
+    </span>
+</div>
+
+            <div class="post-description">作者提出了可变形生成网络（Deformable Generative Networks）来做非监督的字体生成。其利用提供的目标字体图像（style image input）来将一种字体的字符变形和转换为另一种字体。DG-FONT 分离了字体的style和content，然后再将两个domain的表示进行融合，生成新的字体的字符。其核心模块为一个叫做FDSC（feature deformation skip connection）的东西，可以用来预测一个位移映射map然后使用位移映射map去对low-level的特征图做变形卷积。然后FDSC的输出被送入一个混合器，然后生成最终的结果。FDSC模块将会对内容图像的低层级特征进行变换，其能够保留文字本身的模式，比如笔画和偏旁部首信息。因为对于内容相同的两种不同风格的字体，它们的每一笔画通常都是对应的（如下图所示）。利用字体的空间关系，利用FDSC进行空间变形，有效地保证了生成的字符具有完整的结构。</div>
+            <div class="post-remind">Google Chrome is recommended, otherwise the image size may be wrong</div>
+            <div class="post-remind">FireFox is not recommended,Because it does not support the image zoom property</div>
+        </div>
+        
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h4
+id="论文名称dg-font-deformable-generative-networks-for-unsupervised-font-generationcvpr2021">论文名称：《DG-Font:
+Deformable Generative Networks for Unsupervised Font
+Generation》CVPR2021</h4>
+<h4
+id="论文地址-httpsopenaccess.thecvf.comcontentcvpr2021htmlxie_dg-font_deformable_generative_networks_for_unsupervised_font_generation_cvpr_2021_paper.html">论文地址：
+https://openaccess.thecvf.com/content/CVPR2021/html/Xie_DG-Font_Deformable_Generative_Networks_for_Unsupervised_Font_Generation_CVPR_2021_paper.html</h4>
+<h2 id="关键词">1、关键词：</h2>
+<p>​ Font-Generation、Deformable Convolution Skip
+Connection、Unsupervised Learning</p>
+<h2 id="领域背景">2、领域背景：</h2>
+<p>​
+字体生成是一个具有挑战的任务，现存的大部分方法都是通过<strong>有监督学习</strong>的方法进行字体的生成，他们需要大量的<strong>paired
+data</strong>（例如对应风格的字符图像），然而大量的这些数据需要花费非常昂贵的代价去进行收集。</p>
+<p>​
+字体生成目标是自动的能够生成某种特定字体的字符，并且创造一个字体字符集。</p>
+<p>​
+在传统的字符集的创造方式中，严重依赖于专家设计者，独立的去绘制每一个字体的图像，这对于一些基于语标的语言（比如中文、日文、韩文）很不友好。专家们需要有大量的工作量去进行设计，字体生成领域就是为了解决这样一个问题，使用神经网络去学习从一种风格到另一种风格的映射关系，从而生成特定语言的某种风格的一个字符集。</p>
+<p>​ 与字体生成最相关的<strong>图像生成领域 （Image-To-Image
+Translation）</strong>，在通常的image-to-image的转换模型中通常将<strong>style</strong>定义为<strong>纹理和颜色</strong>，而字体的<strong>style</strong>往往是指<strong>字体的格式几何形状、笔画粗细、笔尖和连笔书写的模式等内容。（geometric
+transformation, stroke thickness, tips, and joined-up writing
+pattern）</strong>，故而没法直接应用到字体的生成上。同时在图像中往往采用的<strong>AdaIN-based</strong>方法（这种方法是在统计学上对齐特征来迁移图像的纹理和颜色特征）对于字体这种变换局部的特征模式的任务是不合适的。</p>
+<p>​
+同时，对于image-to-image的生成任务而言，一系列的<strong>无监督</strong>的方法，都是使用对抗<strong>训练结合Consistent
+Contrains</strong>来进行的。如果使用image-to-image的方法直接应用到字体生成任务中的话，即使Consistent
+Constraints会帮助我们<strong>保留一个字符图片内容的结构</strong>，但是他们仍然会导致<strong>诸如模糊、丢失笔画</strong>等问题。</p>
+<h2 id="先前工作描述与比较">3、先前工作描述与比较：</h2>
+<h4 id="image-to-image-translation">1) Image-To-Image Translation</h4>
+<p>​ <strong>image-to-image迁移的任务，就是学习一个从source
+domain到target
+domain的映射关系。其可以用于艺术风格迁移、语义分割、图像动画等等。</strong></p>
+<ul>
+<li>Pix2Pix是基于Conditional
+GAN的第一个做Image-to-Image的迁移任务。</li>
+<li>Cycle-GAN通过Cycle Consistency 做到了无监督学习。</li>
+</ul>
+<p>​
+<strong>这类工作无法直接应用至Font-Generation中，原因在Part2的领域背景最后已经做了简略的描述</strong></p>
+<h4 id="font-generation">2) Font-Generation</h4>
+<p>​
+<strong>字体生成目标是自动的能够生成某种特定字体的字符，并且创造一个字体字符集。</strong></p>
+<p>​ <strong>一般而言，从前的方法有两大条路径：</strong></p>
+<ul>
+<li><strong>基于paired data进行训练</strong>
+<ul>
+<li>EMD和SAVAE设计的神经网络，分割开了字体的内容和风格（content &amp;
+style）的表示，可以生成新的风格的字符内容。</li>
+<li>zi2zi和rewrite这两篇论文，通过上千对匹配的字符，基于GAN进行了有监督学习。其之后，很多文章基于zi2zi进行了生成质量的改进。</li>
+</ul></li>
+<li><strong>基于辅助标识（例如笔画、部首等内容）</strong>
+<ul>
+<li><strong>这类方法往往都依赖于先验知识，并且只能应用到特定的书写系统中去。
+并且这些方法仍旧需要数千匹配的数据以及辅助注释</strong></li>
+<li>《Scfont: Structure-guided chinese font generation via deep stacked
+networks.》给每个笔画打上标签，来通过书写轨迹的合成，生成字的图像</li>
+<li>DM-FONT
+提出解纠缠策略来解纠缠复杂的字形结构，这有助于在富文本设计中捕获局部细节</li>
+<li>CalliGAN
+进一步将字符分解为组件，并提供包括笔画顺序在内的低级结构信息来指导生成过程。</li>
+<li>《RD-GAN: few/zero-shot chinese character styletransfer via radical
+decomposition and rendering》
+使用对字符偏旁部首的分解，来达到字体的生成</li>
+<li>其他一些的方法也通过提取字符的骨架和笔画的算法来进行生成</li>
+</ul></li>
+</ul>
+<p>​
+<strong>相比之下，该篇论文提出的DG-FONT不需要其他的辅助标识，并且是无监督的形式进行的</strong></p>
+<h4 id="deformable-convolution">3) Deformable Convolution</h4>
+<p>​
+<strong>介绍链接：https://blog.fantast.top/2022/01/07/basic5/</strong></p>
+<p>​ <strong>可变形卷积Deformable
+Convolution</strong>，<strong>其加强了CNN的变换建模能力</strong>，它通过额外的偏移量增加了模块中的空间采样位置。
+可变形卷积已被应用于解决几个高级视觉任务，例如对象检测、视频对象检测采样、语义分割和人体姿态估计。</p>
+<p>​ 最近，一些方法尝试在图像生成任务中应用可变形卷积。 TDAN[48]
+通过使用可变形卷积对齐两个连续帧并输出高分辨率帧来解决视频超分辨率任务。</p>
+<p>​ <strong>在我们提出的 DG-Font 中，可变形卷积的偏移量是通过 learned
+latent style code来进行估计的。</strong>（具体内容见后细节）</p>
+<h2 id="主要设计思想">4、主要设计思想：</h2>
+<p>​ 作者提出了可变形生成网络（Deformable Generative
+Networks）来做<strong>非监督的字体生成</strong>。其利用提供的目标字体图像（<strong>style
+image input</strong>）来将一种字体的字符变形和转换为另一种字体。</p>
+<p>​ DG-FONT
+分离了字体的style和content，然后再将两个domain的表示进行融合，生成新的字体的字符。</p>
+<p>​ 其核心模块为一个叫做<strong>FDSC（feature deformation skip
+connection）的东西</strong>，可以用来预测一个位移映射map然后使用位移映射map去对low-level的特征图做变形卷积。然后FDSC的输出被送入一个混合器，然后生成最终的结果。</p>
+<p>​
+FDSC模块将会<strong>对内容图像的低层级特征进行变换，其能够保留文字本身的模式</strong>，比如笔画和偏旁部首信息。因为对于内容相同的两种不同风格的字体，<strong>它们的每一笔画通常都是对应的</strong>（如下图所示）。利用字体的空间关系，利用FDSC进行空间变形，<strong>有效地保证了生成的字符具有完整的结构</strong>。</p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220116172624229.png" /></p>
+<p>​</p>
+<p>​
+同时，为了区分不同的风格，模型还使用了一个多任务标识符判别器Multi-Task
+Discriminator，以保证每个风格都可以被独立判定。</p>
+<h2 id="具体方法与网络架构">5、具体方法与网络架构：</h2>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220116160758876.png" /></p>
+<h3 id="整体架构overall-pipeline">1) 整体架构（Overall Pipeline）</h3>
+<ul>
+<li><p><strong>概述</strong>：如上图所示，整个网络包含一个 Style
+Encoder、一个Content Encoder、一个Mixer、和两个FDSC模块。</p>
+<ul>
+<li><p><strong>Style Encoder</strong> 从输入图像中学习Style
+Representation。具体而言，其将一个Style
+Image作为输入，将其映射至一个Style Latent Vector <span
+class="math inline">\(Z_S\)</span>。</p></li>
+<li><p><strong>Content Encoder</strong> 提取Content
+Images的结构特征，将其 映射到一个空间特征图 <span
+class="math inline">\(Z_C\)</span></p></li>
+<li><p><strong>Deformable Convolution</strong>能够使得<em>Content
+Encoder</em>去识别到相同内容的字中Style-Invariant的特征</p></li>
+<li><p><strong>Mixer</strong> 通过混合<span
+class="math inline">\(Z_C\)</span>和<span
+class="math inline">\(Z_S\)</span>来生成输出字符。其使用<strong>AdaIN</strong>方法将style特征注入Mixer中。</p></li>
+<li><p><strong>FDSC</strong>
+模块能够将变形的<em>Low-Level</em>特征从<em>Content
+Encoder</em>中传输到Mixer中</p></li>
+<li><p><strong>Multi-Task Discriminator</strong>
+：当字符图像从生成网络生成后，该判别器用来对每个单独的 Style
+同时执行判断任务。对于每一个style来说，
+Discriminator的输出是一个二元分类器，
+判断其是真实图片还是生成图片。同时，因为在训练集中，有多种不同的字体风格，所以判别器的输出是一个数组，它的长度是所有风格的数量，数组里的每个元素是一个二元向量【例如，假设总共有5个风格，最终判别器输出的应当是如下的一个向量：</p>
+<p>​ [ [ 1 0 ] , [ 0 0 ] , [ 0 0 ] , [ 0 0 ] , [ 0 0 ] ]</p>
+<p>】</p></li>
+</ul></li>
+<li><p><strong>输入</strong>：<strong>Style
+Image</strong>【风格A，汉字1】、<strong>Content
+Image</strong>【风格B，汉字2】</p></li>
+<li><p><strong>输出</strong>：<strong>Output
+Image</strong>【风格A，汉字2】</p></li>
+</ul>
+<h3 id="style-encoder">2) Style Encoder</h3>
+<ul>
+<li><strong>概述</strong>：从输入图像中学习 Style
+Representation。具体而言，其将一个Style
+Image作为输入，将其映射至一个Style Latent Vector <span
+class="math inline">\(Z_S\)</span>。</li>
+<li><strong>输入</strong>：Style Image <span class="math inline">\(I_s
+\in R^{H*W}\)</span></li>
+<li><strong>输出</strong>：Style Latent Vector <span
+class="math inline">\(Z_s \in R\)</span></li>
+<li><strong>网络结构</strong>：如下所示
+<ul>
+<li><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220119151744473.png" /></li>
+</ul></li>
+<li><strong>公式表达</strong>：</li>
+<li><strong>实现细节（官方代码）</strong>
+<ul>
+<li>其在源代码中，其为GuidingNet文件部分，可供选择的项有Vgg11，Vgg13，Vgg16，Vgg19等。这个StyleEncoder网络将输入的StyleImage进行特征的提取以后，得到特征向量，在Decoder中使用AdaIn融合之前，源代码中还经过了一个MLP模块。然后，利用MLP模块输出的内容，对AdaIN2d里面的weight和bias进行初始化，最终达到</li>
+</ul></li>
+</ul>
+<h3 id="content-encoder">3) Content Encoder</h3>
+<ul>
+<li><p><strong>概述</strong>：提取Content Images的结构特征，将其
+映射到一个空间特征图 <span class="math inline">\(Z_C\)</span></p></li>
+<li><p><strong>输入</strong>：Content Image <span
+class="math inline">\(I_c \in R^{H*W}\)</span></p></li>
+<li><p><strong>输出</strong>：Content Latent Vector <span
+class="math inline">\(Z_c \in R\)</span></p></li>
+<li><p><strong>网络结构细节</strong>：</p>
+<ul>
+<li><p>in_channel = 3,out_channel=64,kernel_size=7 x 7,stride =
+1,padding = 3 的变形卷积层 + IN(64) 归一化 + Activation(ReLu)</p></li>
+<li><p>得到FDSC-1模块的输入 skip1 [32, 64, 80, 80]</p></li>
+<li><p>in_channel = 64,out_channel=128,kernel_size =4 x
+4,stride=2,padding=1 的变形卷积层 + IN(128) 归一化 +
+Activation(ReLu)</p></li>
+<li><p>得到FDSC-2模块的输入 skip2 [30,128,40,40]</p></li>
+<li><p>in_channel =128,out_channel=256,kernel_size =4 x
+4,stride=2,padding=1 的变形卷积层 + IN(256) 归一化 +
+Activation(ReLu)</p></li>
+<li><p>N个ResBlock</p>
+<ul>
+<li><p>每个ResBlock如下：</p></li>
+<li><p>Input---&gt;Conv2D---&gt;Conv2D---&gt; + ---&gt; output</p>
+<p><span
+class="math inline">\(\downarrow\)</span>-------------------------------------------<span
+class="math inline">\(\uparrow\)</span></p></li>
+<li><p>Conv2D,in_dim=256,out_dim=256,kernel_size=3x3,stride=1,padding=1
+普通卷积层</p></li>
+</ul></li>
+</ul></li>
+<li><p><strong>举例</strong>：</p>
+<ul>
+<li>假设输入图像为 80 * 80 ，Batch_Size = 32 ,
+那么：skip1,skip2和最终的output <span
+class="math inline">\(Z_c\)</span>的大小分别如下：</li>
+<li>skip1.shape: torch.Size([32, 64, 80, 80])</li>
+<li>skip2.shape: torch.Size([32, 128, 40, 40])</li>
+<li>ouput.shape: torch.Size([32, 256, 20, 20])</li>
+</ul></li>
+<li><p><strong>意义</strong>：提取Content
+Images的结构特征，应用变形卷积层能够保持字体笔画结构</p></li>
+</ul>
+<h3 id="feature-deformation-skip-connection-fdsc-module">4) Feature
+Deformation Skip Connection ( FDSC Module)</h3>
+<ul>
+<li><p><strong>概述</strong>：其由一个变形卷积层组成，具体的作用作者在书写时写在了Mixer的卷积层后的内容里</p></li>
+<li><p><strong>实现细节</strong></p>
+<ul>
+<li><p>首先，其输入来自于Content
+Encoder，也就是文中提及的skip1和skip2，我们以skip1为例继续讲解：</p></li>
+<li><p>其次，它会将Skip1和Mixer中经过了Conv以后的内容A，Concat一起，然后将这个Concat完的东西放入变形卷积模块中，得到一个新计算的Concat_Pre,最后将这个Concat_Pre和A再Concat到一起，得到最终的输出。</p></li>
+<li><p>这就是为什么在论文的示意图中：这个FDSC模块有来回的箭头表示：</p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/屏幕捕获_2022_01_19_15_31_59_728.png" /></p></li>
+</ul></li>
+</ul>
+<h3 id="mixer">5) Mixer</h3>
+<ul>
+<li><p><strong>概述</strong>：通过混合<span
+class="math inline">\(Z_C\)</span>和<span
+class="math inline">\(Z_S\)</span>来生成输出字符。其使用<strong>AdaIN</strong>方法将style特征注入Mixer中。</p></li>
+<li><p><strong>输入</strong>： <span class="math inline">\(Z_c \in
+R\)</span>即ContentEncoder的输出，256通道的特征图
+[32,256,20,20]</p></li>
+<li><p><strong>输出</strong>：</p></li>
+<li><p><strong>网络结构及细节</strong>：</p>
+<ul>
+<li>2个ResBlock，输出仍然为256通道的特征图 [32,256,20,20]</li>
+<li>Upsample上采样 ，特征图大小变为 40 x 40</li>
+<li>Conv2dBlock，in_channel = 256,out_channel=128,kernel_size =5 x
+5,stride=1,padding=2 的卷积层 + AdIN(128) 归一化 + Activation(ReLu),
+经过该层后，计算得到的大小应当为 [32,128,40,40]
+<ul>
+<li>然后，需要将此层输出的output和skip2在Channel通道Concat起来，得到deformable_concat
+[32,256,40,40]</li>
+<li>然后将deformable_concat与skip2 输入 FDSC的变形卷积模块中，得到
+concat_pre [32,128,40,40] 和 offset2 [32,18,40,40]</li>
+<li>最后将cancat_pre和最开始的output
+Concat起来，得到该步的最终输出，大小为 [32，256，40，40]</li>
+</ul></li>
+<li>Upsample上采样，特征图大小变为80 x 80</li>
+<li>Conv2dBlock，in_channel = 256,out_channel=64,kernel_size =5 x
+5,stride=1,padding=2 的卷积层 + AdIN(64) 归一化 + Activation(ReLu),
+经过该层后，计算得到的大小应当为 [32,64,80,80]
+<ul>
+<li>然后，需要将此层输出的output和skip1在Channel通道Concat起来，得到deformable_concat
+[32,128,80,80]</li>
+<li>然后将deformable_concat与skip1 输入 变形卷积模块中，得到 Concat_pre
+[32,128,40,40] 和 offset2 [32,18,40,40]</li>
+<li>最后将cancat_pre和最开始的outputConcat起来，得到该步的最终输出，大小为
+[32，256，40，40]</li>
+</ul></li>
+<li>Conv2dBlock，in_channel = 128,out_channel=3,kernel_size =7 x
+7,stride=1,padding=3 的卷积层 + Activation(Tanh),
+经过该层后，计算得到的大小应当为 [32,3,80,80]</li>
+</ul></li>
+</ul>
+<h3 id="multi-task-discriminator">6) Multi-Task Discriminator</h3>
+<ul>
+<li><p><strong>概述</strong>：当字符图像从生成网络生成后，该判别器用来对每个单独的
+Style 同时执行判断任务。对于每一个style来说，
+Discriminator的输出是一个二元分类器，
+判断其是真实图片还是生成图片。</p></li>
+<li><p><strong>输入</strong>：</p>
+<ul>
+<li>- x: images of shape (batch, 3, image_size, image_size).，例如为 4个
+3 * 64 * 64的图像</li>
+<li>- y: domain indices of shape (batch). 例如 y_in 为 4个需要其判断的
+domain的标号</li>
+</ul></li>
+<li><p><strong>输出</strong>：各个需要判断的得分情况</p></li>
+<li><p><strong>示例</strong>：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line">D = Discriminator(<span class="number">64</span>, <span class="number">4</span>)  <span class="comment"># 初始化判别器参数 64 为图像大小，4为该判别器需要判别区分的domain的数量</span></span><br><span class="line">x_in = torch.randn(<span class="number">2</span>, <span class="number">3</span>, <span class="number">64</span>, <span class="number">64</span>)  <span class="comment"># x_in 为 2个 3*64*64的图像  y_in 为 2个需要其判断的 domain的标号</span></span><br><span class="line">y_in = torch.randint(<span class="number">0</span>, <span class="number">10</span>, size=(<span class="number">2</span>, )) <span class="comment"># 假设为[1,3] 就是要让D去判断，第一个图是否属于domain1，第二个图是否属于domain3……</span></span><br><span class="line">out, feat = D(x_in, y_in)</span><br><span class="line"><span class="built_in">print</span>(out, feat)    </span><br><span class="line"><span class="built_in">print</span>(out.shape, feat.shape)  <span class="comment"># out为Discriminator打的分数（内部简化过）,feat为没处理过的原始输出，差别见下示例</span></span><br><span class="line"></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">out。shape = 1 * 2 ,out的第一个值相当于取了feat中[1,1,1,1]因为是第一个图片，并且是判断是否属于domain1的值，即为1.7796</span></span><br><span class="line"><span class="string">out的第二个值相当于取了feat中[2,3,1,1]因为是第二个图片，并且是判断是否属于domain3的值，即为0.9986</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">out: [1.7796, 0.9986]    </span></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">feat。shape = 2 * 4 * 1 * 1 ，其有2张需要判断的图像，第一张图像有4个值，分别是根据domain0-domain3打的分数</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">feat:tensor([[[[-0.8181]],  </span></span><br><span class="line"><span class="string">         [[ 1.7796]],</span></span><br><span class="line"><span class="string">         [[ 3.0122]],</span></span><br><span class="line"><span class="string">         [[ 0.9614]]],</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">        [[[-0.5011]],</span></span><br><span class="line"><span class="string">         [[ 0.5076]],</span></span><br><span class="line"><span class="string">         [[ 3.4774]],</span></span><br><span class="line"><span class="string">         [[ 0.9986]]]]</span></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br></pre></td></tr></table></figure></li>
+<li><p><strong>网络细节（官方代码）</strong></p>
+<ul>
+<li>与论文附录一致：</li>
+<li><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220119155654674.png" /></li>
+</ul></li>
+</ul>
+<h2 id="损失函数">6、损失函数</h2>
+<p>​
+该论文的模型旨在通过无监督方法实现字体的自动生成。为此，其采用四种损失。</p>
+<ul>
+<li>使用 Adversarial loss 来产生逼真的图像。</li>
+<li>引入Content
+Consistency损失，鼓励生成的图像内容与参考的内容图像一致;</li>
+<li>利用图像重建损失来保持图像的域不变特征</li>
+<li>Deformation offset 归一化，防止FDSC模块偏移量过大。</li>
+</ul>
+<h4 id="adversarial-loss">1） Adversarial loss</h4>
+<p>​
+该网络旨在通过求解一个极小极大优化问题来生成可信的图像。就是GAN常用的损失函数。</p>
+<p><img src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220322105213541.png" style="zoom: 80%;" /></p>
+<p>​ 其中<span
+class="math inline">\(D_s\)</span>表示对应类型<strong>判别器</strong>输出的<span
+class="math inline">\(logit\)</span>分数。</p>
+<h4 id="content-consistency">2）Content Consistency</h4>
+<p>​
+在忽略内容正确性的情况下，采用对抗性损失来帮助模型生成逼真的风格。为了防止模式崩溃，并确保从相同内容中提取的特征在经过内容编码器后得到的特征序列一致，论文设置了内容一致损失</p>
+<p><img src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220322105408955.png" style="zoom:80%;" /></p>
+<p>​ 确保给定的内容图像<span
+class="math inline">\(I_c\)</span>和生成器生成的图像，经过内容编码器<span
+class="math inline">\(f_c\)</span>后是一致的。</p>
+<h4 id="reconstruction-loss">3）Reconstruction Loss</h4>
+<p>​ 为了确保在给定参考内容图像<span
+class="math inline">\(I_c\)</span>和参考风格图像也是<span
+class="math inline">\(I_c\)</span>时，生成器能够重构出源图像<span
+class="math inline">\(I_c\)</span>，我们施加了一个重构损失:</p>
+<figure>
+<img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220322105551098.png"
+alt="image-20220322105551098" />
+<figcaption aria-hidden="true">image-20220322105551098</figcaption>
+</figure>
+<p>​ 该损失有助于保持其输入图像<span
+class="math inline">\(I_c\)</span>的域不变特征(例如，内容)。</p>
+<h4 id="deformation-offset-normalization">4）Deformation offset
+normalization</h4>
+<p>​
+可变形的偏移使得卷积时候的采样网格可以自由变形。由于输入图像和生成图像之间存在大量相同颜色的区域(如背景色和字符色)，这使得问题难以优化，且偏移方案不唯一。
+​
+同时，字体生成主要关注内容字符图像与目标字符图像之间的笔画关系，如笔画的粗细、笔尖等。但是，对于内容相同但风格不同的图像，同一笔画在这两幅图像中的位置是相近的。为了有效地使用这个可变形的卷积网络，我们对偏移量施加了一个约束<span
+class="math inline">\(\delta_p\)</span>:</p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220322105756227.png" /></p>
+<p>其中<span
+class="math inline">\(\delta_p\)</span>为可变形卷积核的偏移量，<span
+class="math inline">\(R\)</span>为卷积核的个数。</p>
+<h4 id="最终loss加权相加">5）最终Loss：加权相加</h4>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220322105847411.png" /></p>
+
+    </div>
+
+    
+    
+    
+      
+  <div class="popular-posts-header">相关文章</div>
+  <ul class="popular-posts">
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2022\04\01\f225f383e158\" rel="bookmark">字体生成论文研究进度</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2022\03\16\827639831232\" rel="bookmark">字体生成效果评价指标</a></div>
+    </li>
+  </ul>
+
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Font-Generation/" rel="tag"># Font Generation</a>
+              <a href="/tags/Deformable-Convolution-Skip-Connection/" rel="tag"># Deformable Convolution Skip Connection</a>
+              <a href="/tags/Unsupervised-Learning/" rel="tag"># Unsupervised Learning</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2022/01/18/acaa679c551a/" rel="prev" title="Pytorch学习笔记10——PyTorch 中，nn与nn.functional有什么区别？（搬运）">
+                  <i class="fa fa-chevron-left"></i> Pytorch学习笔记10——PyTorch 中，nn与nn.functional有什么区别？（搬运）
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2022/01/21/d692eb11c4b5/" rel="next" title="机器学习基础系列笔记10——L1、L2正则化以及为什么正则化能够防止过拟合">
+                  机器学习基础系列笔记10——L1、L2正则化以及为什么正则化能够防止过拟合 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments utterances-container"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Fantast</span>
+</div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+    <span title="站点总字数">725k</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">33:33</span>
+  </span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script><script src="/js/bookmark.js"></script>
+
+  
+<script src="https://cdn.jsdelivr.net/npm/hexo-generator-searchdb@1.4.0/dist/search.js" integrity="sha256-vXZMYLEqsROAXkEw93GGIvaB2ab+QW6w3+1ahD9nXXA=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdn.jsdelivr.net/npm/mathjax@3.2.0/es5/tex-mml-chtml.js","integrity":"sha256-r+3itOMtGGjap0x+10hu6jW/gZCzxHsoKrOd7gyRSGY="}}</script>
+<script src="/js/third-party/math/mathjax.js"></script>
+
+
+<script class="next-config" data-name="utterances" type="application/json">{"enable":true,"repo":"Fantast416/myblog-comment","issue_term":"pathname","theme":"github-light"}</script>
+<script src="/js/third-party/comments/utterances.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.2.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css" integrity="sha256-mUZM63G8m73Mcidfrv5E+Y61y7a12O5mW4ezU3bxqW4=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"blog.fantast.top","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.9.0","exturl":false,"sidebar":{"position":"left","width":250,"display":"always","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":true,"color":"#222","save":"manual"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"utterances","storage":true,"lazyload":false,"nav":null,"activeClass":"utterances"},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+<meta name="description" content="本文介绍逻辑回归中常见的一些损失函数的实现">
+<meta property="og:type" content="article">
+<meta property="og:title" content="用Python搭建深度学习框架系列笔记5——逻辑回归中的损失函数节点">
+<meta property="og:url" content="https://blog.fantast.top/2022/03/02/c830e3a9e023/index.html">
+<meta property="og:site_name" content="Fantast&#39;s Blog">
+<meta property="og:description" content="本文介绍逻辑回归中常见的一些损失函数的实现">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/屏幕捕获_2022_03_02_20_45_52_846.png">
+<meta property="og:image" content="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/屏幕捕获_2022_03_02_20_46_33_157.png">
+<meta property="og:image" content="https://bkimg.cdn.bcebos.com/pic/f3d3572c11dfa9ec71464f3e60d0f703918fc1ab?x-bce-process=image/watermark,image_d2F0ZXIvYmFpa2U4MA==,g_7,xp_5,yp_5/format,f_auto">
+<meta property="og:image" content="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/654F54B060F55AD5E7433929CC7A48B3.jpg">
+<meta property="article:published_time" content="2022-03-02T12:42:19.000Z">
+<meta property="article:modified_time" content="2022-08-07T14:47:46.000Z">
+<meta property="article:author" content="Fantast">
+<meta property="article:tag" content="Framework">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/屏幕捕获_2022_03_02_20_45_52_846.png">
+
+
+<link rel="canonical" href="https://blog.fantast.top/2022/03/02/c830e3a9e023/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://blog.fantast.top/2022/03/02/c830e3a9e023/","path":"2022/03/02/c830e3a9e023/","title":"用Python搭建深度学习框架系列笔记5——逻辑回归中的损失函数节点"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>用Python搭建深度学习框架系列笔记5——逻辑回归中的损失函数节点 | Fantast's Blog</title>
+  
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<link rel="alternate" href="/atom.xml" title="Fantast's Blog" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Fantast's Blog</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li>
+        <li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li>
+        <li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li>
+        <li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li>
+        <li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%80%E6%84%9F%E7%9F%A5%E6%9C%BA%E6%8D%9F%E5%A4%B1%E4%B8%8E%E5%AF%B9%E6%95%B0%E6%8D%9F%E5%A4%B1"><span class="nav-text">一、感知机损失与对数损失：</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%8E%9F%E7%90%86%E5%8F%8A%E5%88%A9%E5%BC%8A"><span class="nav-text">1、原理及利弊</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BB%A3%E7%A0%81%E5%AE%9E%E7%8E%B0"><span class="nav-text">2、代码实现：</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E6%8A%BD%E8%B1%A1%E7%B1%BB"><span class="nav-text">1）损失函数抽象类：</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%AE%9E%E7%8E%B0%E6%84%9F%E7%9F%A5%E6%9C%BA%E6%8D%9F%E5%A4%B1"><span class="nav-text">2）实现感知机损失：</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%AE%9E%E7%8E%B0%E5%AF%B9%E6%95%B0%E6%8D%9F%E5%A4%B1%E7%B1%BB"><span class="nav-text">3）实现对数损失类：</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BA%8Clogistic%E5%87%BD%E6%95%B0"><span class="nav-text">二、Logistic函数</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%8E%9F%E7%90%86%E5%8F%8A%E6%93%8D%E4%BD%9C"><span class="nav-text">1、原理及操作：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#logistic%E6%93%8D%E4%BD%9C%E8%8A%82%E7%82%B9%E5%AE%9E%E7%8E%B0"><span class="nav-text">2、Logistic操作节点实现：</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%89%E9%80%BB%E8%BE%91%E5%9B%9E%E5%BD%92"><span class="nav-text">三、逻辑回归：</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BA%8C%E5%88%86%E7%B1%BB%E9%80%BB%E8%BE%91%E5%9B%9E%E5%BD%92"><span class="nav-text">1、二分类逻辑回归：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%A4%9A%E5%88%86%E7%B1%BB%E9%80%BB%E8%BE%91%E5%9B%9E%E5%BD%92"><span class="nav-text">2、多分类逻辑回归：</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#softmax%E8%8A%82%E7%82%B9%E5%AE%9E%E7%8E%B0"><span class="nav-text">SoftMax节点实现：</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#crossentropywithsoftmax-%E5%AE%9E%E7%8E%B0"><span class="nav-text">CrossEntropyWithSoftMax
+实现：</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%B8%A6%E4%BA%A4%E5%8F%89%E7%86%B5%E7%9A%84%E5%A4%9A%E5%88%86%E7%B1%BB%E9%80%BB%E8%BE%91%E5%9B%9E%E5%BD%92%E8%AE%A1%E7%AE%97%E5%9B%BE%E7%A4%BA%E4%BE%8B"><span class="nav-text">3、带交叉熵的多分类逻辑回归计算图示例：</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Fantast"
+      src="/images/avatar.webp">
+  <p class="site-author-name" itemprop="name">Fantast</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">161</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">40</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">97</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/fantast416" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;fantast416" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:fantast416@gmail.com" title="E-Mail → mailto:fantast416@gmail.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll site-overview-item animated">
+    <div class="links-of-blogroll-title"><i class="fa fa-globe fa-fw"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://www.zhihu.com/people/shuo-shuo-3-41" title="https:&#x2F;&#x2F;www.zhihu.com&#x2F;people&#x2F;shuo-shuo-3-41" rel="noopener" target="_blank">ZhiHu</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="http://www.next.zju.edu.cn/" title="http:&#x2F;&#x2F;www.next.zju.edu.cn&#x2F;" rel="noopener" target="_blank">NextLab</a>
+        </li>
+    </ul>
+  </div>
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://blog.fantast.top/2022/03/02/c830e3a9e023/">
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.webp">
+      <meta itemprop="name" content="Fantast">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Fantast's Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          用Python搭建深度学习框架系列笔记5——逻辑回归中的损失函数节点
+        </h1>
+
+        <div class="post-meta-container">
+          
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2022-03-02 20:42:19" itemprop="dateCreated datePublished" datetime="2022-03-02T20:42:19+08:00">2022-03-02</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2022-08-07 22:47:46" itemprop="dateModified" datetime="2022-08-07T22:47:46+08:00">2022-08-07</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E2%93%B5-%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" itemprop="url" rel="index"><span itemprop="name">⓵ 深度学习笔记</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E2%93%B5-%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/Basic%E7%B3%BB%E5%88%97%E7%AC%94%E8%AE%B0/" itemprop="url" rel="index"><span itemprop="name">Basic系列笔记</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E2%93%B5-%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/Python%E6%90%AD%E5%BB%BA%E7%AE%80%E6%98%93%E6%A1%86%E6%9E%B6%E7%AC%94%E8%AE%B0/" itemprop="url" rel="index"><span itemprop="name">Python搭建简易框架笔记</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>3.6k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>10 分钟</span>
+    </span>
+</div>
+
+            <div class="post-description">本文介绍逻辑回归中常见的一些损失函数的实现</div>
+            <div class="post-remind">Google Chrome is recommended, otherwise the image size may be wrong</div>
+            <div class="post-remind">FireFox is not recommended,Because it does not support the image zoom property</div>
+        </div>
+        
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h3 id="一感知机损失与对数损失">一、感知机损失与对数损失：</h3>
+<h4 id="原理及利弊">1、原理及利弊</h4>
+<p>​
+<strong>感知机损失</strong>在原点处有一个硬转折，该点不可导。同时，在x大于0的区间范围内，其函数值一直为0，但这并不太好，虽然此部分的模型分类正确，但是我们希望模型能够更正确，也就是x越大越好。</p>
+<p><img src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/屏幕捕获_2022_03_02_20_45_52_846.png" style="zoom: 50%;" /></p>
+<p>​ 介于上述情况，引入了<strong>对数损失函数</strong>，<span
+class="math inline">\(L(x) =
+log(1+e^{-x})\)</span>，处处可导，且在x&gt;0的时候，x越大，函数值越接近0，作了一定的区分。也就是说，对不那么正确的情况施加了一定的惩罚。</p>
+<p><img src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/屏幕捕获_2022_03_02_20_46_33_157.png" style="zoom:50%;" /></p>
+<h4 id="代码实现">2、代码实现：</h4>
+<h5 id="损失函数抽象类">1）损失函数抽象类：</h5>
+<p>​
+按照先前所述，损失函数也可以抽象为计算图中的一个节点，首先定义一个抽象类，继承Node类</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">LossFunction</span>(<span class="title class_ inherited__">Node</span>):</span><br><span class="line">    <span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"><span class="string">    定义损失函数抽象类</span></span><br><span class="line"><span class="string">    &#x27;&#x27;&#x27;</span></span><br><span class="line">    <span class="keyword">pass</span></span><br></pre></td></tr></table></figure>
+<h5 id="实现感知机损失">2）实现感知机损失：</h5>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">PerceptionLoss</span>(<span class="title class_ inherited__">LossFunction</span>):</span><br><span class="line">    <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">    感知机损失，输入为正时为0，输入为负时为输入的相反数</span></span><br><span class="line"><span class="string">    &quot;&quot;&quot;</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">compute</span>(<span class="params">self</span>): </span><br><span class="line">        <span class="keyword">assert</span> <span class="built_in">len</span>(self.parents) == <span class="number">1</span>  <span class="comment"># 只接受一个父节点</span></span><br><span class="line">        </span><br><span class="line">        x = self.parents[<span class="number">0</span>].value </span><br><span class="line">        </span><br><span class="line">        <span class="comment"># 对父节点中每一个元素，执行上述操作</span></span><br><span class="line">        self.value = np.mat( np.where( x &gt;= <span class="number">0.0</span>, <span class="number">0.0</span>, -x ) )  </span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">get_jacobi</span>(<span class="params">self, parent</span>):</span><br><span class="line">        <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">        雅克比矩阵为对角阵，每个对角线元素对应一个父节点元素。若父节点元素大于0，则</span></span><br><span class="line"><span class="string">        相应对角线元素（偏导数）为0，否则为-1。</span></span><br><span class="line"><span class="string">        &quot;&quot;&quot;</span></span><br><span class="line">        diag = np.where(parent.value &gt;= <span class="number">0.0</span>, <span class="number">0.0</span>, -<span class="number">1</span>)</span><br><span class="line">        <span class="keyword">return</span> np.diag(diag.ravel())  </span><br><span class="line">    	<span class="comment"># ravel 函数将 多维数组 扁平化展开</span></span><br><span class="line">        <span class="comment"># np.diag(array) 中</span></span><br><span class="line">        <span class="comment"># array是一个1维数组时，结果形成一个以一维数组为对角线元素的矩阵</span></span><br><span class="line">        <span class="comment"># array是一个二维矩阵时，结果输出矩阵的对角线元素</span></span><br></pre></td></tr></table></figure>
+<h5 id="实现对数损失类">3）实现对数损失类：</h5>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">LogLoss</span>(<span class="title class_ inherited__">LossFunction</span>):</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">compute</span>(<span class="params">self</span>):  <span class="comment"># 根据父节点的值，计算该节点的值</span></span><br><span class="line"></span><br><span class="line">        <span class="keyword">assert</span> <span class="built_in">len</span>(self.parents) == <span class="number">1</span>  <span class="comment"># 只接受一个父节点</span></span><br><span class="line"></span><br><span class="line">        x = self.parents[<span class="number">0</span>].value </span><br><span class="line"></span><br><span class="line">        self.value = np.log(<span class="number">1</span> + np.power(np.e, np.where(-x &gt; <span class="number">1e2</span>, <span class="number">1e2</span>, -x))) <span class="comment"># 对于父节点的每个元素都依据公式进行运算，为了防止溢出，对指数进行了截断</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">get_jacobi</span>(<span class="params">self, parent</span>): <span class="comment"># 计算本节点对某个父节点的雅可比矩阵</span></span><br><span class="line"></span><br><span class="line">        x = parent.value</span><br><span class="line">        diag = -<span class="number">1</span> / (<span class="number">1</span> + np.power(np.e, np.where(x &gt; <span class="number">1e2</span>, <span class="number">1e2</span>, x))) <span class="comment"># 通过计算可以得到，其实就是对数损失的导数，放在对角线的每个元素上</span></span><br><span class="line">        <span class="keyword">return</span> np.diag(diag.ravel())</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<h3 id="二logistic函数">二、Logistic函数</h3>
+<h4 id="原理及操作">1、原理及操作：</h4>
+<p><span class="math display">\[
+Logistic(x) = \frac{1}{1 + e^{-x}}
+\]</span></p>
+<p><img src="https://bkimg.cdn.bcebos.com/pic/f3d3572c11dfa9ec71464f3e60d0f703918fc1ab?x-bce-process=image/watermark,image_d2F0ZXIvYmFpa2U4MA==,g_7,xp_5,yp_5/format,f_auto" style="zoom:50%;" /></p>
+<p>​ 我们可以对模型的线性部分施加这个变换，来代替原先的阶跃函数。</p>
+<h4 id="logistic操作节点实现">2、Logistic操作节点实现：</h4>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Logistic</span>(<span class="title class_ inherited__">Operator</span>):</span><br><span class="line">    <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">    对向量的分量施加Logistic函数</span></span><br><span class="line"><span class="string">    &quot;&quot;&quot;</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">compute</span>(<span class="params">self</span>):</span><br><span class="line">        x = self.parents[<span class="number">0</span>].value</span><br><span class="line">        <span class="comment"># 对父节点的每个分量施加Logistic</span></span><br><span class="line">        self.value = np.mat(</span><br><span class="line">            <span class="number">1.0</span> / (<span class="number">1.0</span> + np.power(np.e, np.where(-x &gt; <span class="number">1e2</span>, <span class="number">1e2</span>, -x))))</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">get_jacobi</span>(<span class="params">self, parent</span>):</span><br><span class="line">        <span class="keyword">return</span> np.diag(np.mat(np.multiply(self.value, <span class="number">1</span> - self.value)).A1)  <span class="comment"># 这个计算依赖于Logistic函数对x的导数，在化简后其实就等于 Logistic(x) * (1-Logistic(x))</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<h3 id="三逻辑回归">三、逻辑回归：</h3>
+<h4 id="二分类逻辑回归">1、二分类逻辑回归：</h4>
+<p>​
+当我们将先前的AdaLine模型的阶跃函数替换成Logistic函数，得到输出。并且对线性部分施加对数损失，就可以得到逻辑回归模型。</p>
+<p>​
+需要注意的是：由于我们的训练集男女标签为1/-1，但是使用Logistic函数输出的值是在0-1之间的，输出的内容是正类（男性）的概率值，而没有判定样本具体的类别。所以我们可以以0.5为阈值，进行判定。阈值大小也是可以根据具体情况自定义的。</p>
+<p>​
+<strong>故而，二分类逻辑回归模型只提供概率，选择阈值的决定权还是在人</strong></p>
+<p>​ <strong>总结</strong>：</p>
+<p>​ 用Logistic函数，得到<strong>最终的概率值输出</strong>。</p>
+<p>​ 对线性部分施加<strong>对数损失，以用于训练</strong>。</p>
+<h4 id="多分类逻辑回归">2、多分类逻辑回归：</h4>
+<p>​
+我们一般采用SoftMax来代替“硬”的Max函数，将所有值归约至0-1之间，进而进行概率值的输出</p>
+<h5 id="softmax节点实现">SoftMax节点实现：</h5>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">SoftMax</span>(<span class="title class_ inherited__">Operator</span>):</span><br><span class="line">    <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">    SoftMax函数</span></span><br><span class="line"><span class="string">    &quot;&quot;&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="meta">    @staticmethod</span></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">softmax</span>(<span class="params">a</span>):</span><br><span class="line">        a[a &gt; <span class="number">1e2</span>] = <span class="number">1e2</span>  <span class="comment"># 防止指数过大</span></span><br><span class="line">        ep = np.power(np.e, a)</span><br><span class="line">        <span class="keyword">return</span> ep / np.<span class="built_in">sum</span>(ep)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">compute</span>(<span class="params">self</span>):</span><br><span class="line">        self.value = SoftMax.softmax(self.parents[<span class="number">0</span>].value)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">get_jacobi</span>(<span class="params">self, parent</span>):</span><br><span class="line">        <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">        我们不实现SoftMax节点的get_jacobi函数，        训练时，不会通过SoftMax节点进行反向传播</span></span><br><span class="line"><span class="string">        训练时使用CrossEntropyWithSoftMax节点</span></span><br><span class="line"><span class="string">        &quot;&quot;&quot;</span></span><br><span class="line">        <span class="keyword">raise</span> NotImplementedError(<span class="string">&quot;Don&#x27;t use SoftMax&#x27;s get_jacobi&quot;</span>)</span><br></pre></td></tr></table></figure>
+<p>​
+一般使用交叉熵，来衡量SoftMax输出的分布，与真实标签的分布是否相似，具体的公式见常见的损失函数章节。</p>
+<figure>
+<img
+src="https://www.zhihu.com/equation?tex=H%28p%2Cq%29%3D-%5Csum_%7Bi%3D1%7D%5Enp%28x_i%29log%28q%28x_i%29%29"
+alt="[公式]" />
+<figcaption aria-hidden="true">[公式]</figcaption>
+</figure>
+<p>​ <span class="math inline">\(q(x_i)\)</span>是预测分布，<span
+class="math inline">\(p(x_i)\)</span>是标签的分布。交叉熵是符合直觉得，当样本属于第i类的时候，只有<span
+class="math inline">\(p(x_i)\)</span>为1，其他p的分量都为0，最小化交叉熵函数，其实就是在最大化<span
+class="math inline">\(log(q(x_i))\)</span>这一项的值，也就是在最大化<span
+class="math inline">\(q(x_i)\)</span>，及最大化模型输出的第i类概率。</p>
+<h5 id="crossentropywithsoftmax-实现">CrossEntropyWithSoftMax
+实现：</h5>
+<p>​
+在上面实现Softmax节点的时候，并没有实现get_jacobi方法，原因就是它的输出会和独热向量一起被送给交叉熵。计算交叉熵对于线性部分的雅可比矩阵，比计算对Softmax输出的雅可比矩阵会更容易。Pytorch框架中也是这么干的。将Softmax操作附在了CrossEntropy损失函数中。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">CrossEntropyWithSoftMax</span>(<span class="title class_ inherited__">LossFunction</span>):</span><br><span class="line">    <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">    对第一个父节点施加SoftMax之后，再以第二个父节点为标签One-Hot向量计算交叉熵</span></span><br><span class="line"><span class="string">    self.parents[0] 为logit向量，也就是线性部分</span></span><br><span class="line"><span class="string">    self.parents[1] 为One-Hot编码的向量标签</span></span><br><span class="line"><span class="string">    &quot;&quot;&quot;</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">compute</span>(<span class="params">self</span>):</span><br><span class="line">        prob = SoftMax.softmax(self.parents[<span class="number">0</span>].value)      </span><br><span class="line">        self.value = np.mat(</span><br><span class="line">            -np.<span class="built_in">sum</span>(np.multiply(self.parents[<span class="number">1</span>].value, np.log(prob + <span class="number">1e-10</span>))))</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">get_jacobi</span>(<span class="params">self, parent</span>):</span><br><span class="line">        <span class="comment"># 这里存在重复计算，但为了代码清晰简洁，舍弃进一步优化</span></span><br><span class="line">        <span class="comment"># 推导见下，参考《用Python实现深度学习框架》</span></span><br><span class="line">        prob = SoftMax.softmax(self.parents[<span class="number">0</span>].value)</span><br><span class="line">        <span class="keyword">if</span> parent <span class="keyword">is</span> self.parents[<span class="number">0</span>]:</span><br><span class="line">            <span class="keyword">return</span> (prob - self.parents[<span class="number">1</span>].value).T</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            <span class="keyword">return</span> (-np.log(prob)).T</span><br></pre></td></tr></table></figure>
+<h4
+id="带交叉熵的多分类逻辑回归计算图示例">3、带交叉熵的多分类逻辑回归计算图示例：</h4>
+<p><img src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/654F54B060F55AD5E7433929CC7A48B3.jpg" style="zoom: 25%;" /></p>
+<p>​</p>
+
+    </div>
+
+    
+    
+    
+      
+  <div class="popular-posts-header">相关文章</div>
+  <ul class="popular-posts">
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2022\02\28\d9d77f183b68\" rel="bookmark">用Python搭建深度学习框架系列笔记4——优化器类的代码实现（下）</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2022\02\23\c051c3782dfb\" rel="bookmark">用Python搭建深度学习框架系列笔记3——优化器类的代码实现（上）</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2022\02\22\6bfa5496ebc4\" rel="bookmark">用Python搭建深度学习框架系列笔记2——计算图、前向传播、反向传播与自动微分的代码实现</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2022\02\10\f5cccb7aefe2\" rel="bookmark">Python搭建深度学习框架系列笔记1——计算图、梯度下降、反向传播、自动微分的理论部分</a></div>
+    </li>
+  </ul>
+
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Framework/" rel="tag"># Framework</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2022/02/28/d9d77f183b68/" rel="prev" title="用Python搭建深度学习框架系列笔记4——优化器类的代码实现（下）">
+                  <i class="fa fa-chevron-left"></i> 用Python搭建深度学习框架系列笔记4——优化器类的代码实现（下）
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2022/03/11/b7e4aac04426/" rel="next" title="1.1 操作系统概念与基础">
+                  1.1 操作系统概念与基础 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments utterances-container"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Fantast</span>
+</div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+    <span title="站点总字数">725k</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">33:33</span>
+  </span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script><script src="/js/bookmark.js"></script>
+
+  
+<script src="https://cdn.jsdelivr.net/npm/hexo-generator-searchdb@1.4.0/dist/search.js" integrity="sha256-vXZMYLEqsROAXkEw93GGIvaB2ab+QW6w3+1ahD9nXXA=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdn.jsdelivr.net/npm/mathjax@3.2.0/es5/tex-mml-chtml.js","integrity":"sha256-r+3itOMtGGjap0x+10hu6jW/gZCzxHsoKrOd7gyRSGY="}}</script>
+<script src="/js/third-party/math/mathjax.js"></script>
+
+
+<script class="next-config" data-name="utterances" type="application/json">{"enable":true,"repo":"Fantast416/myblog-comment","issue_term":"pathname","theme":"github-light"}</script>
+<script src="/js/third-party/comments/utterances.js"></script>
+
+</body>
+</html>

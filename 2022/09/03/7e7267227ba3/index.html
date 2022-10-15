@@ -1,0 +1,612 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.2.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css" integrity="sha256-mUZM63G8m73Mcidfrv5E+Y61y7a12O5mW4ezU3bxqW4=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"blog.fantast.top","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.9.0","exturl":false,"sidebar":{"position":"left","width":250,"display":"always","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":true,"color":"#222","save":"manual"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"utterances","storage":true,"lazyload":false,"nav":null,"activeClass":"utterances"},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+<meta name="description" content="Chap1——Mysql数据库基础与概述精简复习版，包含基本查询，多表查询，排序分页等">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Mysql基本查询内容">
+<meta property="og:url" content="https://blog.fantast.top/2022/09/03/7e7267227ba3/index.html">
+<meta property="og:site_name" content="Fantast&#39;s Blog">
+<meta property="og:description" content="Chap1——Mysql数据库基础与概述精简复习版，包含基本查询，多表查询，排序分页等">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220905112815584.png">
+<meta property="article:published_time" content="2022-09-03T06:43:19.000Z">
+<meta property="article:modified_time" content="2022-09-05T09:03:55.000Z">
+<meta property="article:author" content="Fantast">
+<meta property="article:tag" content="Database">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220905112815584.png">
+
+
+<link rel="canonical" href="https://blog.fantast.top/2022/09/03/7e7267227ba3/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://blog.fantast.top/2022/09/03/7e7267227ba3/","path":"2022/09/03/7e7267227ba3/","title":"Mysql基本查询内容"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Mysql基本查询内容 | Fantast's Blog</title>
+  
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<link rel="alternate" href="/atom.xml" title="Fantast's Blog" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Fantast's Blog</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li>
+        <li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li>
+        <li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li>
+        <li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li>
+        <li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%80%E4%BA%9B%E9%9D%9E%E5%85%B3%E7%B3%BB%E5%9E%8B%E6%95%B0%E6%8D%AE%E5%BA%93"><span class="nav-text">1、一些非关系型数据库</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E9%94%AE%E5%80%BC%E5%9E%8B%E6%95%B0%E6%8D%AE%E5%BA%93"><span class="nav-text">键值型数据库：</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%96%87%E6%A1%A3%E5%9E%8B%E6%95%B0%E6%8D%AE%E5%BA%93"><span class="nav-text">文档型数据库：</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%90%9C%E7%B4%A2%E5%BC%95%E6%93%8E%E6%95%B0%E6%8D%AE%E5%BA%93"><span class="nav-text">搜索引擎数据库：</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%88%97%E5%BC%8F%E6%95%B0%E6%8D%AE%E5%BA%93"><span class="nav-text">列式数据库：</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%9B%BE%E5%BD%A2%E6%95%B0%E6%8D%AE%E5%BA%93"><span class="nav-text">图形数据库：</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#er%E6%A8%A1%E5%9E%8B%E4%B8%8E%E8%A1%A8%E8%AE%B0%E5%BD%95"><span class="nav-text">2、ER模型与表记录</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E4%B8%80%E5%AF%B9%E4%B8%80%E5%85%B3%E7%B3%BB"><span class="nav-text">1) 一对一关系：</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E4%B8%80%E5%AF%B9%E5%A4%9A%E5%85%B3%E7%B3%BB%E5%A4%9A%E5%AF%B9%E5%A4%9A%E5%85%B3%E7%B3%BB%E7%AD%89"><span class="nav-text">2) 一对多关系、多对多关系等</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#sql%E5%88%86%E7%B1%BB"><span class="nav-text">3、SQL分类：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#sql%E4%BD%BF%E7%94%A8%E8%A7%84%E8%8C%83%E4%B8%8E%E8%A7%84%E5%88%99"><span class="nav-text">4、SQL使用规范与规则</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#select%E5%9F%BA%E7%A1%80%E6%93%8D%E4%BD%9C"><span class="nav-text">5、SELECT基础操作：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%AF%94%E8%BE%83%E8%BF%90%E7%AE%97%E7%AC%A6%E4%BD%BF%E7%94%A8%E5%85%B3%E9%94%AE%E6%98%AFnull%E5%80%BC%E5%8F%82%E4%B8%8E%E6%AF%94%E8%BE%83%E6%97%B6%E8%A7%84%E5%88%99"><span class="nav-text">6、比较运算符使用：（关键是NULL值参与比较时规则）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%8E%92%E5%BA%8F%E4%B8%8E%E5%88%86%E9%A1%B5"><span class="nav-text">7、排序与分页：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%A4%9A%E8%A1%A8%E6%9F%A5%E8%AF%A2"><span class="nav-text">8、多表查询：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#union%E5%85%B3%E9%94%AE%E5%AD%97"><span class="nav-text">9、UNION关键字</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%A7%8Dsql%E7%9A%84-join%E6%93%8D%E4%BD%9C"><span class="nav-text">10、7种SQL的 JOIN操作：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#natural-join-%E5%92%8C-using-%E8%BF%9E%E6%8E%A5sql99%E6%96%B0%E7%89%B9%E6%80%A7"><span class="nav-text">11、NATURAL JOIN 和 USING
+连接（SQL99新特性）</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Fantast"
+      src="/images/avatar.webp">
+  <p class="site-author-name" itemprop="name">Fantast</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">161</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">40</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">97</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/fantast416" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;fantast416" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:fantast416@gmail.com" title="E-Mail → mailto:fantast416@gmail.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll site-overview-item animated">
+    <div class="links-of-blogroll-title"><i class="fa fa-globe fa-fw"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://www.zhihu.com/people/shuo-shuo-3-41" title="https:&#x2F;&#x2F;www.zhihu.com&#x2F;people&#x2F;shuo-shuo-3-41" rel="noopener" target="_blank">ZhiHu</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="http://www.next.zju.edu.cn/" title="http:&#x2F;&#x2F;www.next.zju.edu.cn&#x2F;" rel="noopener" target="_blank">NextLab</a>
+        </li>
+    </ul>
+  </div>
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://blog.fantast.top/2022/09/03/7e7267227ba3/">
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.webp">
+      <meta itemprop="name" content="Fantast">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Fantast's Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Mysql基本查询内容
+        </h1>
+
+        <div class="post-meta-container">
+          
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2022-09-03 14:43:19" itemprop="dateCreated datePublished" datetime="2022-09-03T14:43:19+08:00">2022-09-03</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2022-09-05 17:03:55" itemprop="dateModified" datetime="2022-09-05T17:03:55+08:00">2022-09-05</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E2%93%B9-%E5%9F%BA%E7%A1%80%E7%B1%BB%E7%AC%94%E8%AE%B0/" itemprop="url" rel="index"><span itemprop="name">⓹ 基础类笔记</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E2%93%B9-%E5%9F%BA%E7%A1%80%E7%B1%BB%E7%AC%94%E8%AE%B0/%E6%95%B0%E6%8D%AE%E5%BA%93%E7%B2%BE%E7%AE%80%E7%AC%94%E8%AE%B0/" itemprop="url" rel="index"><span itemprop="name">数据库精简笔记</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>3k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>8 分钟</span>
+    </span>
+</div>
+
+            <div class="post-description">Chap1——Mysql数据库基础与概述精简复习版，包含基本查询，多表查询，排序分页等</div>
+            <div class="post-remind">Google Chrome is recommended, otherwise the image size may be wrong</div>
+            <div class="post-remind">FireFox is not recommended,Because it does not support the image zoom property</div>
+        </div>
+        
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h4 id="一些非关系型数据库">1、一些非关系型数据库</h4>
+<h5 id="键值型数据库">键值型数据库：</h5>
+<p>​
+查找速度极快，但无法使用条件过滤。最典型的应用场景为内存缓存，Redis是最流行的键值型数据库</p>
+<h5 id="文档型数据库">文档型数据库：</h5>
+<p>​
+存放并获取文档，文档作为基本单位，一个文档为一条记录，可以是XML或JSON格式，MongoDB是最常见的文档型数据库</p>
+<h5 id="搜索引擎数据库">搜索引擎数据库：</h5>
+<p>​ 核心是“倒排索引”。</p>
+<h5 id="列式数据库">列式数据库：</h5>
+<p>​ 大量降低系统IO，适合于分布式文件系统</p>
+<h5 id="图形数据库">图形数据库：</h5>
+<p>​ 利用了图这种数据结构存储实体对象之间的关系 比如Neo4J</p>
+<h4 id="er模型与表记录">2、ER模型与表记录</h4>
+<ul>
+<li>ER模型，三个主要概念：<strong>实体集、属性、联系集</strong></li>
+<li>ORM思想：Object Relational Mapping 对象关系映射 【 数据库中的一个表
+对应编程语言中的一个类】</li>
+</ul>
+<h5 id="一对一关系">1) 一对一关系：</h5>
+<p>​
+实际应用中不多，因为1对1的关系实际上可以建立成一张表。<strong>主要应用于优化性能。</strong>比如说设计学生表，把他拆解为基础信息表和不常用信息表，这样子快速查询时只需要查询基础信息表即可，提升查询速度</p>
+<h5 id="一对多关系多对多关系等">2) 一对多关系、多对多关系等</h5>
+<h4 id="sql分类">3、SQL分类：</h4>
+<ul>
+<li>DDL：数据定义语言（CREATE ALTER TRUNCATE等）</li>
+<li>DML：数据操作语言（INSERT DELETE等）</li>
+<li>DCL：数据控制语言（COMMIT ROLLBACK SAVEPOINT GRANT REVOKE）</li>
+</ul>
+<h4 id="sql使用规范与规则">4、SQL使用规范与规则</h4>
+<ul>
+<li>MYSQL在Windows环境下是大小写不敏感的</li>
+<li>MYSQL在Linux环境下：数据库名、表名、变量名严格区分大小写</li>
+<li>在Linux环境下：关键字、函数名、列名忽略大小写</li>
+</ul>
+<h4 id="select基础操作">5、SELECT基础操作：</h4>
+<ul>
+<li>列的别名</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">SELECT employee_id AS emp_id,last_name AS lname,salary * 12 AS sal</span><br><span class="line">FROM employees</span><br></pre></td></tr></table></figure>
+<ul>
+<li>去除重复：</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">SELECT DISTINCT department_id</span><br><span class="line">FROM employees</span><br><span class="line">/** 将department_id 和 salary视作一个整体去重**/</span><br><span class="line">SELECT DISTINCT department_id,salary</span><br><span class="line">FROM employees</span><br></pre></td></tr></table></figure>
+<ul>
+<li>空值NULL如何参与运算</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">SELECT salary AS &quot;月工资&quot;,salary * (1 + IFNULL(commission_pct,0)) * 12 AS &quot;年工资&quot;</span><br><span class="line">FROM employees</span><br></pre></td></tr></table></figure>
+<ul>
+<li>显示表结构,显示表字段的相关信息</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">DESCRIBE employees</span><br></pre></td></tr></table></figure>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220903195253736.png" /></p>
+<h4
+id="比较运算符使用关键是null值参与比较时规则">6、比较运算符使用：（关键是NULL值参与比较时规则）</h4>
+<ul>
+<li><p>= 运算符：</p>
+<ul>
+<li><p>在MYSQL中，如果数值和字符串比较，字符串存在隐式转换，如果转换数值不成功，则看作0</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">SELECT 0 = &#x27;a&#x27;  # 为 1</span><br><span class="line">FROM DUAL;</span><br></pre></td></tr></table></figure></li>
+<li><p>只要有NULL参与比较，则结果均为NULL</p></li>
+</ul></li>
+<li><p>若使用安全等于运算符 &lt;=&gt; 会有所不同</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">1 &lt;=&gt; NULL  #为0   </span><br><span class="line">NULL&lt;=&gt;NULL #为1</span><br></pre></td></tr></table></figure></li>
+<li><p>LEAST  GREATEST 运算符：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">SELECT LEAST(first_name,last_name)</span><br><span class="line">FROM employees</span><br></pre></td></tr></table></figure></li>
+<li><p>IN  NOT IN运算符： 离散值查找</p></li>
+</ul>
+<p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">SELECT last_name</span><br><span class="line">FROM employees</span><br><span class="line">WHERE department_id IN (10,20,30)</span><br></pre></td></tr></table></figure></p>
+<ul>
+<li><p>LIKE 模糊查询：</p>
+<ul>
+<li>% 0个及以上的字符占位符</li>
+<li>_ 1个字符占位符</li>
+</ul></li>
+<li><p>REGEXP 使用正则表达式进行匹配</p></li>
+</ul>
+<h4 id="排序与分页">7、排序与分页：</h4>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">SELECT employee_id</span><br><span class="line">FROM employees</span><br><span class="line">ORDER BY salary DESC;</span><br></pre></td></tr></table></figure>
+<ul>
+<li><p>可以使用列的别名进行排序，但不可以使用列的别名在WHERE中</p></li>
+<li><p>可以使用不在SELECT中的字段进行排序操作</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">SELECT employee_id,salary,salary*12 AS annual_sal</span><br><span class="line">FROM employees</span><br><span class="line">WHERE department_id &lt; 50</span><br><span class="line">ORDER BY annual_sal;</span><br></pre></td></tr></table></figure></li>
+<li><p>数据库查询操作的执行顺序：</p>
+<ul>
+<li>FROM + WHERE部分最优先</li>
+<li>执行SELECT 部分，确定要查询的字段</li>
+<li>执行ORDER BY部分</li>
+<li>执行LIMIT部分</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">LIMIT $&#123;offset&#125;,$&#123;count&#125;</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h4 id="多表查询">8、多表查询：</h4>
+<ul>
+<li>连接条件，笛卡尔积，A表中的每一条记录都去对应B表中的每一条记录，进行组合。</li>
+<li>如果查询语句中出现了多个表中都存在的字段，则必须指明此字段所在的表。</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">SELECT employee id，department name #两个表的连接条件</span><br><span class="line">FROM employees,departments</span><br><span class="line">WHERE employees.&#x27;department_id&#x27;=departments.department_id</span><br></pre></td></tr></table></figure>
+<ul>
+<li><p>可以给表起别名，在SELECT和WHERE中使用表的别名。注意：如果给表起了别名，一旦在SELECT或WHERE中使用表名的话，则必须使用表的别名，而不能再使用表的原名。</p></li>
+<li><p>如果有n个表实现多表的查询，则需要至少n-1个连接条件</p></li>
+<li><p>自连接</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">SELECT employee _id, last name, employee id, last_name</span><br><span class="line">FROM employees emy, employees mgr</span><br><span class="line">WHERE emp.manager_id = mgr. employee_id</span><br></pre></td></tr></table></figure></li>
+<li><p>内连接：合并具有同一列的两个以上的表的行，结果集中不包含一个表与另一个表不匹配的行</p></li>
+<li><p>外连接：合并具有同一列的两个以上的表的行，结果集中除了包含一个表与另一个表匹配的行之外，还查询到了左表或右表中不匹配的行。</p>
+<ul>
+<li>左外连接 &amp; 右外连接</li>
+<li>两个表在连接过程中除了返回满足连接条件的行以外还返回左表（右表）中不满足条件的行，</li>
+</ul></li>
+<li><p>示例：查询<strong>所有的</strong>员工的last_name，department_name信息</p></li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">SELECT last name, department name</span><br><span class="line">FROM employees e LEFT OUTER JOIN departments d</span><br><span class="line">ON e.department_id = d.department_id</span><br></pre></td></tr></table></figure>
+<ul>
+<li>示例：查询<strong>有部门的</strong>员工的last_name，department_name信息(内连接)，使用
+JOIN ON语法</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">SELECT last name, department name</span><br><span class="line">FROM employees e INNER JOIN departments d</span><br><span class="line">ON e.department_id = d.department_id</span><br></pre></td></tr></table></figure>
+<h4 id="union关键字">9、UNION关键字</h4>
+<p>​ 用于合并两个结果集</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">SELECT ... FROM ... </span><br><span class="line">UNION</span><br><span class="line">SELECT ... FROM ...</span><br></pre></td></tr></table></figure>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220905112924821.png" /></p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220905112945650.png" /></p>
+<p>​
+<strong>注意：执行UNIONALL语句时所需要的资源比UNION语句少。如果明确知道合并数据后的结果数据不存在重复数据，或者不需要去除重复的数据，则尽量使用UNIONALL语句，以提高数据查询的效率。</strong></p>
+<h4 id="种sql的-join操作">10、7种SQL的 JOIN操作：</h4>
+<p>​ 有些具体数据库不支持的操作，可以通过UNION或UNION
+ALL来合并支持操作的结果集</p>
+<p><img src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220905112815584.png" style="zoom: 80%;" /></p>
+<h4 id="natural-join-和-using-连接sql99新特性">11、NATURAL JOIN 和 USING
+连接（SQL99新特性）</h4>
+<ul>
+<li>Natural Join
+它会帮你自动查询两张连接表中所有柯同的字段，然后进行等值连接。</li>
+</ul>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220905113547787.png" /></p>
+<ul>
+<li>以下两条语句等价：</li>
+</ul>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220905113555008.png" /></p>
+<ul>
+<li>Using 优化：
+<ul>
+<li>USING指定了具体的相同的字段名称，你需要在USING的括号（）中填入要指定的同名字段。同时使用JOIN...USING可以简化JOIN
+ON的等值连接。它与下面的SQL查询结果是相同的：</li>
+</ul></li>
+</ul>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220905113740065.png" /></p>
+
+    </div>
+
+    
+    
+    
+      
+  <div class="popular-posts-header">相关文章</div>
+  <ul class="popular-posts">
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2022\09\13\26db2c268982\" rel="bookmark">Mysql 架构相关</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2022\09\13\5dad16fcb018\" rel="bookmark">Mysql 架构相关</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2022\09\12\108274e25ef3\" rel="bookmark">Mysql 视图，存储过程与函数</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2022\09\12\2c85f3f81b49\" rel="bookmark">Mysql 变量与游标.触发器</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2022\09\10\ee0ee8e192df\" rel="bookmark">Mysql 约束</a></div>
+    </li>
+  </ul>
+
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Database/" rel="tag"># Database</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2022/09/03/d1df501c920c/" rel="prev" title="设计模式1">
+                  <i class="fa fa-chevron-left"></i> 设计模式1
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2022/09/05/22f2ef21dade/" rel="next" title="Mysql各类函数与子查询">
+                  Mysql各类函数与子查询 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments utterances-container"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Fantast</span>
+</div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+    <span title="站点总字数">725k</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">33:33</span>
+  </span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script><script src="/js/bookmark.js"></script>
+
+  
+<script src="https://cdn.jsdelivr.net/npm/hexo-generator-searchdb@1.4.0/dist/search.js" integrity="sha256-vXZMYLEqsROAXkEw93GGIvaB2ab+QW6w3+1ahD9nXXA=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdn.jsdelivr.net/npm/mathjax@3.2.0/es5/tex-mml-chtml.js","integrity":"sha256-r+3itOMtGGjap0x+10hu6jW/gZCzxHsoKrOd7gyRSGY="}}</script>
+<script src="/js/third-party/math/mathjax.js"></script>
+
+
+<script class="next-config" data-name="utterances" type="application/json">{"enable":true,"repo":"Fantast416/myblog-comment","issue_term":"pathname","theme":"github-light"}</script>
+<script src="/js/third-party/comments/utterances.js"></script>
+
+</body>
+</html>

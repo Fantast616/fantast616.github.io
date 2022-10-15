@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.2.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css" integrity="sha256-mUZM63G8m73Mcidfrv5E+Y61y7a12O5mW4ezU3bxqW4=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"blog.fantast.top","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.9.0","exturl":false,"sidebar":{"position":"left","width":250,"display":"always","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":true,"color":"#222","save":"manual"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"utterances","storage":true,"lazyload":false,"nav":null,"activeClass":"utterances"},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+<meta name="description" content="本文介绍了机器学习中的数据表征以及常见的自动编码器，例如堆叠式自动编码器、卷积自动编码器、变分自动编码器等">
+<meta property="og:type" content="article">
+<meta property="og:title" content="机器学习基础系列笔记2——数据表征与自动编码器">
+<meta property="og:url" content="https://blog.fantast.top/2021/11/24/379e9f408368/index.html">
+<meta property="og:site_name" content="Fantast&#39;s Blog">
+<meta property="og:description" content="本文介绍了机器学习中的数据表征以及常见的自动编码器，例如堆叠式自动编码器、卷积自动编码器、变分自动编码器等">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220114205901462.png">
+<meta property="og:image" content="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220114205946184.png">
+<meta property="article:published_time" content="2021-11-24T11:27:19.000Z">
+<meta property="article:modified_time" content="2022-08-07T14:46:29.000Z">
+<meta property="article:author" content="Fantast">
+<meta property="article:tag" content="Machine Learning">
+<meta property="article:tag" content="Basic Concepts">
+<meta property="article:tag" content="Auto Encoder">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220114205901462.png">
+
+
+<link rel="canonical" href="https://blog.fantast.top/2021/11/24/379e9f408368/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://blog.fantast.top/2021/11/24/379e9f408368/","path":"2021/11/24/379e9f408368/","title":"机器学习基础系列笔记2——数据表征与自动编码器"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>机器学习基础系列笔记2——数据表征与自动编码器 | Fantast's Blog</title>
+  
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<link rel="alternate" href="/atom.xml" title="Fantast's Blog" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Fantast's Blog</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li>
+        <li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li>
+        <li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li>
+        <li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li>
+        <li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E8%A1%A8%E5%BE%81%E4%B8%8E%E8%87%AA%E5%8A%A8%E7%BC%96%E7%A0%81%E5%99%A8"><span class="nav-text">数据表征与自动编码器</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%89%8D%E8%A8%80"><span class="nav-text">前言：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF%E6%95%B0%E6%8D%AE%E8%A1%A8%E5%BE%81"><span class="nav-text">1、什么是数据表征？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%80%E4%B8%AA%E7%AE%80%E5%8D%95%E8%87%AA%E5%8A%A8%E7%BC%96%E7%A0%81%E5%99%A8%E7%9A%84%E7%BB%84%E6%88%90"><span class="nav-text">2、一个简单自动编码器的组成</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A0%86%E5%8F%A0%E5%BC%8F%E8%87%AA%E5%8A%A8%E7%BC%96%E7%A0%81%E5%99%A8"><span class="nav-text">3、堆叠式自动编码器</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%B6%E4%BB%96%E7%B1%BB%E5%9E%8B%E7%9A%84%E8%87%AA%E5%8A%A8%E7%BC%96%E7%A0%81%E5%99%A8"><span class="nav-text">5、其他类型的自动编码器</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%80%E4%BA%9B%E6%9C%89%E8%B6%A3%E7%9A%84%E5%BA%94%E7%94%A8"><span class="nav-text">一些有趣的应用：</span></a></li></ol></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Fantast"
+      src="/images/avatar.webp">
+  <p class="site-author-name" itemprop="name">Fantast</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">161</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">40</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">97</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/fantast416" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;fantast416" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:fantast416@gmail.com" title="E-Mail → mailto:fantast416@gmail.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll site-overview-item animated">
+    <div class="links-of-blogroll-title"><i class="fa fa-globe fa-fw"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://www.zhihu.com/people/shuo-shuo-3-41" title="https:&#x2F;&#x2F;www.zhihu.com&#x2F;people&#x2F;shuo-shuo-3-41" rel="noopener" target="_blank">ZhiHu</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="http://www.next.zju.edu.cn/" title="http:&#x2F;&#x2F;www.next.zju.edu.cn&#x2F;" rel="noopener" target="_blank">NextLab</a>
+        </li>
+    </ul>
+  </div>
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://blog.fantast.top/2021/11/24/379e9f408368/">
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.webp">
+      <meta itemprop="name" content="Fantast">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Fantast's Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          机器学习基础系列笔记2——数据表征与自动编码器
+        </h1>
+
+        <div class="post-meta-container">
+          
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2021-11-24 19:27:19" itemprop="dateCreated datePublished" datetime="2021-11-24T19:27:19+08:00">2021-11-24</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2022-08-07 22:46:29" itemprop="dateModified" datetime="2022-08-07T22:46:29+08:00">2022-08-07</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E2%93%B5-%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" itemprop="url" rel="index"><span itemprop="name">⓵ 深度学习笔记</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E2%93%B5-%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/Basic%E7%B3%BB%E5%88%97%E7%AC%94%E8%AE%B0/" itemprop="url" rel="index"><span itemprop="name">Basic系列笔记</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>3.7k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>10 分钟</span>
+    </span>
+</div>
+
+            <div class="post-description">本文介绍了机器学习中的数据表征以及常见的自动编码器，例如堆叠式自动编码器、卷积自动编码器、变分自动编码器等</div>
+            <div class="post-remind">Google Chrome is recommended, otherwise the image size may be wrong</div>
+            <div class="post-remind">FireFox is not recommended,Because it does not support the image zoom property</div>
+        </div>
+        
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h2 id="数据表征与自动编码器">数据表征与自动编码器</h2>
+<h3 id="前言">前言：</h3>
+<p>​
+本文简单讲解了数据表征与自动编码器的相关知识，主要来说涵盖数据表征的概念与理解，简单自动编码器的组成，堆叠式自动编码器的组成与训练方法，卷积、循环、去噪、稀疏自动编码器的简单介绍，以及变分自动编码器较为详细的概念与一个有趣的应用。</p>
+<h3 id="什么是数据表征">1、什么是数据表征？</h3>
+<p>以下是两组数字顺序：</p>
+<p>​ 40，27，25，36，81，57，10，73</p>
+<p>​ 1，2，3，4，5，6，7，8，9，10，11，12，13，14，15，16，17</p>
+<p>​
+简单来看，第一行的数据更少，信息量更小，但是其实第二行的数据具有很好的递增特征，反而更容易进行记忆。数据中的类似于这种的模式被我们称为数据表征。模式可以更好的帮助我们有效的存储信息。</p>
+<h3 id="一个简单自动编码器的组成">2、一个简单自动编码器的组成</h3>
+<p>​
+自动编码器由两部分组成：将输入转换为潜在表征的编码器（识别网络），以及将内部表征转换为输出的解码器（生成网络）。</p>
+<p>​
+<img src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220114205901462.png" alt="image-20220114205901462" style="zoom:150%;" /></p>
+<p>​
+上述示例就是一个由3个神经元组成的隐藏层（编码器），以及由6个神经元组成的输出层（解码器）。输出又通常称为重构，自动编码器会试图重构输入，且成本函数包含一个重构损失，重构和输入不一致的时候会进行惩罚。</p>
+<p>​
+注意：自动编码器的输出数量应等于输入数量。同时，自动编码器本身其实是一个在学习数据潜在表征，然后再由表征还原数据的一个过程。它通常用于降维或者无监督的预训练。</p>
+<h3 id="堆叠式自动编码器">3、堆叠式自动编码器</h3>
+<p>​
+自动编码器可以有许多个隐藏层，就成为了堆叠式自动编码器（深度自动编码器）。但是我们需要注意不能使编码器太过于强大了。为什么呢？仍然以下述为例：</p>
+<p>​ 40，27，25，36，81，57，10，73</p>
+<p>​ 1，2，3，4，5，6，7，8，9，10，11，12，13，14，15，16，17</p>
+<p>​
+如果编码器太过于强大了，可能他就会准确的记住每一个数字（也就是做了一个简单的一一映射，而没有去学习潜在的模式）。就好比一个记忆力非常好的人看到这两串数字，说我不需要去看这个数字里面到底存在什么样的模式，只要直接背就完了，没有区别。</p>
+<p>​
+<img src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220114205946184.png" alt="image-20220114205946184" style="zoom: 150%;" /></p>
+<p>​
+上图是一个常见的堆叠式自动编码器的示意图，往往会是这样一个类三明治结构。下图是一组输入与重构的可视化结果：</p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220114210006336.png" /></p>
+<p>​ 为了更好的帮助理解自动编码器降维的用处，我们举一个简单的例子：</p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220114210017508.png" /></p>
+<p>​
+在上图中这样一个简单的自动编码器网络中，其实质就是将一组3维数据通过编码器降到了2维。然后在通过解码器将2维数据重构至3维。实际操作过程中，构建好这样一组自动编码器网络后，你可以先使用解码器将数据降维，然后做一些学习，然后再将数据进行重构，能够帮助进行更好的实例泛化。</p>
+<p>​
+同样，为了更好的帮助理解自动编码器用于无监督预训练的用处，我们也举一个简单的例子：</p>
+<p>​
+先我们学过如果要处理一个复杂的有监督任务，但是没有很多标记好的数据，那么可以在网上寻找已知的类似任务的神经网络，并且重用其较低层的网络，然后用少量数据对高层网络进行训练即可。这样其就不必从底层特征开始学起，只会重用原有网络的底层特征检测。</p>
+<p>​
+讲到这里，应该明白了，自动编码器其实也是同一个原理。刚才说了，自动编码器的第一步是编码器，编码器的本质是寻找数据的潜在表征，那不也就相当于做了底层的特征检测嘛，而且训练数据还是可以不需要标签的。</p>
+<p>​ <img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220114210030274.png" /></p>
+<p>​</p>
+<p>​
+所以，如上图所示，如果我们手上有一个大型数据集，但是难受的是大部分的数据都是未标记状态的，只有少数打上了标签。那么我们可以先使用所有的数据来训练一个自动编码器，训练完以后，将编码器部分的网络复制到我们新的神经网络中，然后在此基础上构建高层的神经网络，这样的话只要再用少部分带标记的数据训练一下该神经网络的高层部分就可以得到一个较好的效果了。</p>
+<p>### 4、如何训练堆叠式自动编码器：</p>
+<p>一般情况下，我们有两种方式可以用于训练自动编码器。</p>
+<p>​ 1.
+将解码器层的权重与编码器层的权重绑定起来。这样的话可以将模型中整体的训练参数减半，并且加快训练速度并且降低了过拟合的风险。</p>
+<ol start="2" type="1">
+<li><p>一次训练一个浅层自动编码器然后将他们进行堆叠。（这种技术现在用的较少），示意图如下：</p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220114210104140.png" /></p>
+<p>​
+示意图本身已经较清楚的讲解了整个过程，我再做一遍简略的讲述。比如说，我们现在要训练最右侧这样一个堆叠式自动编码器，他的编码器部分有两层，我们将其分为两阶段来看这个问题。首先按训练第一个自动编码器，将隐藏层1的参数训练好。然后再训练第二个自动编码器，将隐藏层2的参数训练好。注意，在训练第二个自动编码器的时候，用到的输入其实是训练好的第一个自动编码器将输入编码后的结果。以公式的形式表达的话就是：</p>
+<p>​ 我们假设输入为i，第一个自动编码器的编码函数为 <strong>f_encoder1()
+</strong>,解码函数为<strong>f_decoder1()</strong>,第二个自动编码器的编码函数为<strong>f_encoder2()</strong>,解码函数为<strong>f_decoder2()</strong>。</p>
+<p>​ 那么在训练第一个自动编码器的时候，输入为i，重构输出为
+<strong>f_decoder1(f_encoder1(i))</strong>。在训练第二个自动编码器的时候，输入为<strong>f_encoder1(i)</strong>，重构输出为<strong>f_decoder2(
+f_encoder2( f_encoder1(i) ))</strong></p></li>
+</ol>
+<h3 id="其他类型的自动编码器">5、其他类型的自动编码器</h3>
+<p>​ <strong>(1) 卷积自动编码器</strong></p>
+<p>​
+用于为图像构建自动编码器。一般编码器层是由卷积层和池化层组成的常规CNN。会减少输入的空间尺寸，增加深度即特征图的数量。解码器则进行相反的操作。</p>
+<p>​ <strong>(2)循环自动编码器</strong></p>
+<p>​
+用于为序列构建自动编码器，例如时间序列或文本。编码器通常为序列到向量的RNN，能够将输入序列压缩为单个向量。其可以处理任何长度的序列。</p>
+<p>​ <strong>(3)去噪自动编码器</strong></p>
+<p>​
+到目前为止，为了让自动编码器不过于强大，也就是为了让他学习一些数据的浅层特征，我们通过限制编码曾大小让它成为不完整的自动编码器。其实，我们还可以通过向其输入中添加噪声，训练它来恢复无噪声输入，也可以让其学习数据的有用特征。</p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220114210254970.png" /></p>
+<p>​
+可以在编码器的输入中叠加高斯噪声，也可以加一层dropout层。去噪编码器不仅可以用于降维数据可视化或者无监督预训练，也可以用于图像去噪。</p>
+<p>​ <strong>(4)稀疏自动编码器</strong></p>
+<p>​
+使用稀疏性来对编码器进行约束，使其对良好的特征进行提取学习。通过在成本函数中添加适当的函数项，来强迫自动编码器减少编码层中活动神经元的数量。</p>
+<p>​
+另一种方法是在每次训练迭代时测量编码层的实际稀疏度，并在测量稀疏度预目标稀疏度不同时对模型进行惩罚。</p>
+<p>​ <strong>(5)变分自动编码器</strong></p>
+<p>​ 变分自动编码器较为特殊，具体而言有两大特点：</p>
+<p>​
+<strong>特点1</strong>:概率自动编码器：意思是即使在训练好以后，它们的输出部分也会由概率决定。</p>
+<p>​
+<strong>特点2</strong>:生成式自动编码器：指它们可以生成看上去像是从训练集中采样的新实例。</p>
+<p>​
+在先前讲到的自动编码器中，我们往往以一个数值来表示一个特征维度的值，如下
+所示，将人脸图像编码成了一个六维向量，每个维度一个值。</p>
+<p>​ <img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220114210408918.png" /></p>
+<p>​
+在上面的示例中，我们使用单个值来描述输入图像在潜在特征上的表现。但在实际情况中，我们可能更多时候倾向于将每个潜在特征表示为可能值的范围。</p>
+<p>​
+而变分自编码器便是用“取值的概率分布”代替原先的单值来描述对特征的观察的模型，如下图的右边部分所示，经过变分自编码器的编码，每张图片的微笑特征不再是自编码器中的单值而是一个概率分布。</p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220114210429150.png" /></p>
+<p>​
+所以在变分自动编码器中，我们现在将给定输入的每个潜在特征表示为概率分布。当从潜在状态解码时，我们将从每个潜在状态分布中随机采样，生成一个向量作为解码器模型的输入。</p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220114210436379.png" /></p>
+<p>​ 那么如何训练变分自动编码器呢？其成本函数由应当如何设计？</p>
+<p>​
+变分自动编码器学习的是隐变量（特征）Z的概率分布，因此在给定输入数据X的情况下，变分自动编码器的推断网络输出的应该是Z的后验分布p（z|x）。
+但是这个p（z|x）后验分布本身是不好求的。所以有学者就想出了使用另一个可伸缩的分布q（z|x）来近似p（z|x）。通过深度网络来学习q（z|x）的参数，一步步优化q使其与p(z|x)十分相似，就可以用它来对复杂的分布进行近似的推理。</p>
+<p>​
+这个时候就出现了成本函数的设计理念，成本函数由两部分组成，第一部分是通常的重构损失，我们可以使用交叉熵来衡量。第二部分是潜在损失。它就是上述提到的目标分布q和编码的实际分布p之间的KL散度。通过简化后，就可以得到以下公式：</p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220114210448726.png" /></p>
+<p>​ L1是潜在损失，n是编码的维度，u(j)和sigma(j)
+是第j个分量的均值和标准差。向量u和sigma由编码器进行输出。KL散度及如何通过KL散度推导出简化的公式部分本文进行了省略，详细可以看引用（2）。</p>
+<p>​ 最后提一下整个变分自动编码器的网络结构如下：</p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220114210503507.png" /></p>
+<p>​
+编码器产生平均编码u和标准差sigma，然后实际编码是从u和sigma的高斯分布中进行随机采样之后得到的。解码器正常解码采样得到的编码即可。</p>
+<h4 id="一些有趣的应用">一些有趣的应用：</h4>
+<p>​
+变分自动编码器使得语义插值成为了可能，可以在编码级别进行插值，而非在数据级别进行插值。总体而言就是如下图所示的一个过程：</p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220114210518169.png" /></p>
+<p><strong>文中引用与部分图片来源：</strong></p>
+<p>1）《机器学习实战
+基于Scikit-learn、keras、tensorflow》机械工业出版社</p>
+<p>2）
+一文理解变分自编码器（VAE）https://zhuanlan.zhihu.com/p/64485020</p>
+
+    </div>
+
+    
+    
+    
+      
+  <div class="popular-posts-header">相关文章</div>
+  <ul class="popular-posts">
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2021\11\23\3ad8cb19bc7a\" rel="bookmark">机器学习基础系列笔记1——One-Hot编码与Word Embedding</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2021\11\22\6afd3e085246\" rel="bookmark">机器学习基础系列笔记0——常见概念与函数（更新中）</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2022\01\12\8c9b3da724b3\" rel="bookmark">机器学习基础系列笔记6——全卷积网络FCN & U-Net结构</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2022\01\07\3664afb64da5\" rel="bookmark">机器学习基础系列笔记5——1x1卷积 & 部分卷积 & 空洞卷积 & 可变形卷积</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2022\01\05\d37a1913ba03\" rel="bookmark">机器学习基础系列笔记4——Depth-wise卷积 & Point-wise卷积</a></div>
+    </li>
+  </ul>
+
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Machine-Learning/" rel="tag"># Machine Learning</a>
+              <a href="/tags/Basic-Concepts/" rel="tag"># Basic Concepts</a>
+              <a href="/tags/Auto-Encoder/" rel="tag"># Auto Encoder</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2021/11/23/3ad8cb19bc7a/" rel="prev" title="机器学习基础系列笔记1——One-Hot编码与Word Embedding">
+                  <i class="fa fa-chevron-left"></i> 机器学习基础系列笔记1——One-Hot编码与Word Embedding
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2021/11/30/9fbfb5044884/" rel="next" title="GAN系列笔记1——GAN的基本理念与思想">
+                  GAN系列笔记1——GAN的基本理念与思想 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments utterances-container"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Fantast</span>
+</div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+    <span title="站点总字数">725k</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">33:33</span>
+  </span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script><script src="/js/bookmark.js"></script>
+
+  
+<script src="https://cdn.jsdelivr.net/npm/hexo-generator-searchdb@1.4.0/dist/search.js" integrity="sha256-vXZMYLEqsROAXkEw93GGIvaB2ab+QW6w3+1ahD9nXXA=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdn.jsdelivr.net/npm/mathjax@3.2.0/es5/tex-mml-chtml.js","integrity":"sha256-r+3itOMtGGjap0x+10hu6jW/gZCzxHsoKrOd7gyRSGY="}}</script>
+<script src="/js/third-party/math/mathjax.js"></script>
+
+
+<script class="next-config" data-name="utterances" type="application/json">{"enable":true,"repo":"Fantast416/myblog-comment","issue_term":"pathname","theme":"github-light"}</script>
+<script src="/js/third-party/comments/utterances.js"></script>
+
+</body>
+</html>
