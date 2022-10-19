@@ -20,28 +20,28 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
 
 <script class="next-config" data-name="main" type="application/json">{"hostname":"blog.fantast.top","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.9.0","exturl":false,"sidebar":{"position":"left","width":250,"display":"always","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":true,"color":"#222","save":"manual"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"utterances","storage":true,"lazyload":false,"nav":null,"activeClass":"utterances"},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
-<meta name="description" content="Chap7——Mysql 架构相关，包含字符集底层原理，用户与权限管理，逻辑架构，存储引擎等内容">
+<meta name="description" content="Chap7——Mysql 架构相关，包含字符集底层原理，用户与权限管理">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Mysql 架构相关">
-<meta property="og:url" content="https://blog.fantast.top/2022/09/13/5dad16fcb018/index.html">
+<meta property="og:title" content="Mysql 字符集底层原理，用户与权限管理">
+<meta property="og:url" content="https://blog.fantast.top/2022/09/13/50a88c64ec31/index.html">
 <meta property="og:site_name" content="Fantast&#39;s Blog">
-<meta property="og:description" content="Chap7——Mysql 架构相关，包含字符集底层原理，用户与权限管理，逻辑架构，存储引擎等内容">
+<meta property="og:description" content="Chap7——Mysql 架构相关，包含字符集底层原理，用户与权限管理">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2022-09-13T07:09:19.000Z">
-<meta property="article:modified_time" content="2022-10-07T02:52:08.000Z">
+<meta property="article:modified_time" content="2022-10-17T07:23:52.000Z">
 <meta property="article:author" content="Fantast">
 <meta property="article:tag" content="Database">
 <meta name="twitter:card" content="summary">
 
 
-<link rel="canonical" href="https://blog.fantast.top/2022/09/13/5dad16fcb018/">
+<link rel="canonical" href="https://blog.fantast.top/2022/09/13/50a88c64ec31/">
 
 
 
-<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://blog.fantast.top/2022/09/13/5dad16fcb018/","path":"2022/09/13/5dad16fcb018/","title":"Mysql 架构相关"}</script>
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://blog.fantast.top/2022/09/13/50a88c64ec31/","path":"2022/09/13/50a88c64ec31/","title":"Mysql 字符集底层原理，用户与权限管理"}</script>
 
 <script class="next-config" data-name="calendar" type="application/json">""</script>
-<title>Mysql 架构相关 | Fantast's Blog</title>
+<title>Mysql 字符集底层原理，用户与权限管理 | Fantast's Blog</title>
   
 
 
@@ -235,7 +235,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://blog.fantast.top/2022/09/13/5dad16fcb018/">
+    <link itemprop="mainEntityOfPage" href="https://blog.fantast.top/2022/09/13/50a88c64ec31/">
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.webp">
       <meta itemprop="name" content="Fantast">
@@ -247,7 +247,7 @@
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          Mysql 架构相关
+          Mysql 字符集底层原理，用户与权限管理
         </h1>
 
         <div class="post-meta-container">
@@ -266,7 +266,7 @@
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2022-10-07 10:52:08" itemprop="dateModified" datetime="2022-10-07T10:52:08+08:00">2022-10-07</time>
+      <time title="修改时间：2022-10-17 15:23:52" itemprop="dateModified" datetime="2022-10-17T15:23:52+08:00">2022-10-17</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -296,18 +296,18 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">本文字数：</span>
-      <span>3.2k</span>
+      <span>3.9k</span>
     </span>
     <span class="post-meta-item" title="阅读时长">
       <span class="post-meta-item-icon">
         <i class="far fa-clock"></i>
       </span>
       <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>9 分钟</span>
+      <span>11 分钟</span>
     </span>
 </div>
 
-            <div class="post-description">Chap7——Mysql 架构相关，包含字符集底层原理，用户与权限管理，逻辑架构，存储引擎等内容</div>
+            <div class="post-description">Chap7——Mysql 架构相关，包含字符集底层原理，用户与权限管理</div>
             <div class="post-remind">Google Chrome is recommended, otherwise the image size may be wrong</div>
             <div class="post-remind">FireFox is not recommended,Because it does not support the image zoom property</div>
         </div>
@@ -483,6 +483,18 @@ tables_priv表用来对表设置操作权限，columns_priv表用来对表的某
 <p>​
 确认权限时，MySQL<strong>首先检查user表</strong>，如果指定的权限没有在user表中被授予，那么MySQL就会<strong>继续检查db表</strong>，db表是下一安全层级，其中的权限限定于数据库层级，在该层级的SELECT权限允许用户查看指定数据库的所有表中的数据；如果在该层级没有找到限定的权限，则MySQL<strong>继续检查tables_priv表以及columns_priv表</strong>，如果所有权限表都检查完毕，但还是没有找到允许的权限操作，MySQL将返回错误信息，用户请求的操作不能执行，操作失败。</p>
 <h4 id="角色管理">6、角色管理</h4>
+<ul>
+<li><p>创建角色、给角色赋予权限：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">CREATE ROLE &#x27;role_name&#x27;[@&#x27;host_name&#x27;] [,&#x27;role_name&#x27;[@&#x27;host_name&#x27;]]...</span><br><span class="line"># 创建角色之后，默认这个角色是没有任何权限的，我们需要给角色授权。给角色授权的语法结构是</span><br><span class="line">GRANT privileges ON table_name TO &#x27;role_name&#x27;[@&#x27;host_name&#x27;];</span><br><span class="line"># 上述语句中privileges代表权限的名称，多个权限以逗号隔开</span><br><span class="line"># 查看角色权限：</span><br><span class="line">SHOW GRANTS FOR &#x27;manager&#x27;;</span><br><span class="line"># 只要你创建了一个角色，系统就会自动给你一个“ USAGE ”权限，意思是连接登录数据库的权限。</span><br></pre></td></tr></table></figure></li>
+<li><p>回收角色权限、删除角色</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"># 角色授权后，可以对角色的权限进行维护，对权限进行添加或撤销。添加权限使用GRANT语句，与角色授权相同。撤销角色或角色权限使用REVOKE语句。撤销角色</span><br><span class="line">REVOKE privileges ON tablename FROM &#x27;rolename&#x27;;</span><br><span class="line"># 删除角色</span><br><span class="line">DROP ROLE role [,role2]...</span><br></pre></td></tr></table></figure></li>
+<li><p>给用户赋予角色</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"># 角色创建并授权后，要赋给用户并处于激活状态才能发挥作用</span><br><span class="line">GRANT role [,role2,...] TO user [,user2,...];</span><br></pre></td></tr></table></figure></li>
+<li><p>激活角色</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SET DEFAULT ROLE ALL TO user@&#x27;localhost&#x27;;</span><br></pre></td></tr></table></figure></li>
+<li><p>撤销角色</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">REVOKE role FROM user</span><br></pre></td></tr></table></figure></li>
+</ul>
 
     </div>
 
@@ -493,19 +505,19 @@ tables_priv表用来对表设置操作权限，columns_priv表用来对表的某
   <div class="popular-posts-header">相关文章</div>
   <ul class="popular-posts">
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="\2022\09\13\26db2c268982\" rel="bookmark">Mysql 架构相关</a></div>
+      <div class="popular-posts-title"><a href="\2022\10\17\db76227bad93\" rel="bookmark">事务</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2022\10\17\02940cc83ca0\" rel="bookmark">Mysql日志与备份</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2022\10\17\6d0d3039dfe2\" rel="bookmark">Mysql逻辑架构和存储引擎</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2022\10\17\210c29af78f2\" rel="bookmark">Mysql索引及调优原则</a></div>
     </li>
     <li class="popular-posts-item">
       <div class="popular-posts-title"><a href="\2022\09\12\108274e25ef3\" rel="bookmark">Mysql 视图，存储过程与函数</a></div>
-    </li>
-    <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="\2022\09\12\2c85f3f81b49\" rel="bookmark">Mysql 变量与游标.触发器</a></div>
-    </li>
-    <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="\2022\09\10\ee0ee8e192df\" rel="bookmark">Mysql 约束</a></div>
-    </li>
-    <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="\2022\09\07\60ff079d7c8c\" rel="bookmark">Mysql DDL与DCL操作、增删改与数据类型</a></div>
     </li>
   </ul>
 
@@ -524,8 +536,8 @@ tables_priv表用来对表设置操作权限，columns_priv表用来对表的某
                 </a>
             </div>
             <div class="post-nav-item">
-                <a href="/2022/09/13/26db2c268982/" rel="next" title="Mysql 架构相关">
-                  Mysql 架构相关 <i class="fa fa-chevron-right"></i>
+                <a href="/2022/09/19/e947a7cc4335/" rel="next" title="电子信息工程中数学模型与方法——单元1 工业智能">
+                  电子信息工程中数学模型与方法——单元1 工业智能 <i class="fa fa-chevron-right"></i>
                 </a>
             </div>
           </div>
@@ -559,13 +571,13 @@ tables_priv表用来对表设置操作权限，columns_priv表用来对表的某
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-line"></i>
     </span>
-    <span title="站点总字数">725k</span>
+    <span title="站点总字数">727k</span>
   </span>
   <span class="post-meta-item">
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">33:33</span>
+    <span title="站点阅读时长">33:38</span>
   </span>
 </div>
 <div class="busuanzi-count">
