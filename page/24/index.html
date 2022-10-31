@@ -157,18 +157,18 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">161</span>
+          <span class="site-state-item-count">167</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
           <a href="/categories/">
-        <span class="site-state-item-count">40</span>
+        <span class="site-state-item-count">42</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
           <a href="/tags/">
-        <span class="site-state-item-count">97</span>
+        <span class="site-state-item-count">98</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -228,7 +228,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://blog.fantast.top/2022/01/23/4be37de340a1/">
+    <link itemprop="mainEntityOfPage" href="https://blog.fantast.top/2022/01/30/5dc10d37c664/">
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.webp">
       <meta itemprop="name" content="Fantast">
@@ -240,7 +240,7 @@
     </span>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
-          <a href="/2022/01/23/4be37de340a1/" class="post-title-link" itemprop="url">机器学习基础系列笔记14——ResNet详解及为什么能解决深度网络退化问题</a>
+          <a href="/2022/01/30/5dc10d37c664/" class="post-title-link" itemprop="url">java系列笔记3——java核心类</a>
         </h2>
 
         <div class="post-meta-container">
@@ -252,14 +252,14 @@
       </span>
       <span class="post-meta-item-text">发表于</span>
 
-      <time title="创建时间：2022-01-23 20:26:19" itemprop="dateCreated datePublished" datetime="2022-01-23T20:26:19+08:00">2022-01-23</time>
+      <time title="创建时间：2022-01-30 10:13:19" itemprop="dateCreated datePublished" datetime="2022-01-30T10:13:19+08:00">2022-01-30</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2022-08-07 22:46:29" itemprop="dateModified" datetime="2022-08-07T22:46:29+08:00">2022-08-07</time>
+      <time title="修改时间：2022-09-05 12:29:02" itemprop="dateModified" datetime="2022-09-05T12:29:02+08:00">2022-09-05</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -267,11 +267,11 @@
       </span>
       <span class="post-meta-item-text">分类于</span>
         <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/%E2%93%B5-%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" itemprop="url" rel="index"><span itemprop="name">⓵ 深度学习笔记</span></a>
+          <a href="/categories/%E2%93%B8-%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80%E7%B1%BB%E7%AC%94%E8%AE%B0/" itemprop="url" rel="index"><span itemprop="name">⓸ 编程语言类笔记</span></a>
         </span>
           ，
         <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/%E2%93%B5-%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/Basic%E7%B3%BB%E5%88%97%E7%AC%94%E8%AE%B0/" itemprop="url" rel="index"><span itemprop="name">Basic系列笔记</span></a>
+          <a href="/categories/%E2%93%B8-%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80%E7%B1%BB%E7%AC%94%E8%AE%B0/java%E5%85%A5%E9%97%A8%E7%B3%BB%E5%88%97%E7%AC%94%E8%AE%B0/" itemprop="url" rel="index"><span itemprop="name">java入门系列笔记</span></a>
         </span>
     </span>
 
@@ -282,14 +282,14 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">本文字数：</span>
-      <span>2.1k</span>
+      <span>21k</span>
     </span>
     <span class="post-meta-item" title="阅读时长">
       <span class="post-meta-item-icon">
         <i class="far fa-clock"></i>
       </span>
       <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>6 分钟</span>
+      <span>59 分钟</span>
     </span>
 </div>
 
@@ -301,10 +301,10 @@
     
     
     <div class="post-body" itemprop="articleBody">
-          <p>对于卷积神经网络，深度是一个很重要的因素。深度卷积网络自然的整合了低中高不同层次的特征，特征的层次可以靠加深网络的层次来丰富。因此在构建卷积网络时，网络的深度越高，可抽取的特征层次就越丰富越抽象。所以一般我们会倾向于使用更深层次的网络结构，以便取得更高层次的特征。但是更深层的网络结构有的时候并不会带来更好的结果，层数一旦过多以后，就会导致表现明显下降，这就是深度网络的退化问题。</p>
+          <p>本篇笔记为java系列笔记关于java核心类的笔记，包括字符串、编码、StringBuilder、StringJoiner、包装、JavaBean、枚举、记录、BigInteger、BigDecimal、常用工具类等内容。</p>
           <!--noindex-->
             <div class="post-button">
-              <a class="btn" href="/2022/01/23/4be37de340a1/">
+              <a class="btn" href="/2022/01/30/5dc10d37c664/">
                 阅读全文 &raquo;
               </a>
             </div>
@@ -337,7 +337,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://blog.fantast.top/2022/01/21/788645531548/">
+    <link itemprop="mainEntityOfPage" href="https://blog.fantast.top/2022/01/29/3f72f5c3506a/">
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.webp">
       <meta itemprop="name" content="Fantast">
@@ -349,7 +349,7 @@
     </span>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
-          <a href="/2022/01/21/788645531548/" class="post-title-link" itemprop="url">机器学习基础系列笔记13——DropOut详解及为什么能够防止过拟合</a>
+          <a href="/2022/01/29/3f72f5c3506a/" class="post-title-link" itemprop="url">java系列笔记2——java面向对象编程基础</a>
         </h2>
 
         <div class="post-meta-container">
@@ -361,14 +361,14 @@
       </span>
       <span class="post-meta-item-text">发表于</span>
 
-      <time title="创建时间：2022-01-21 23:25:19" itemprop="dateCreated datePublished" datetime="2022-01-21T23:25:19+08:00">2022-01-21</time>
+      <time title="创建时间：2022-01-29 11:34:19" itemprop="dateCreated datePublished" datetime="2022-01-29T11:34:19+08:00">2022-01-29</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2022-08-07 22:46:29" itemprop="dateModified" datetime="2022-08-07T22:46:29+08:00">2022-08-07</time>
+      <time title="修改时间：2022-09-05 12:28:30" itemprop="dateModified" datetime="2022-09-05T12:28:30+08:00">2022-09-05</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -376,11 +376,11 @@
       </span>
       <span class="post-meta-item-text">分类于</span>
         <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/%E2%93%B5-%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" itemprop="url" rel="index"><span itemprop="name">⓵ 深度学习笔记</span></a>
+          <a href="/categories/%E2%93%B8-%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80%E7%B1%BB%E7%AC%94%E8%AE%B0/" itemprop="url" rel="index"><span itemprop="name">⓸ 编程语言类笔记</span></a>
         </span>
           ，
         <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/%E2%93%B5-%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/Basic%E7%B3%BB%E5%88%97%E7%AC%94%E8%AE%B0/" itemprop="url" rel="index"><span itemprop="name">Basic系列笔记</span></a>
+          <a href="/categories/%E2%93%B8-%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80%E7%B1%BB%E7%AC%94%E8%AE%B0/java%E5%85%A5%E9%97%A8%E7%B3%BB%E5%88%97%E7%AC%94%E8%AE%B0/" itemprop="url" rel="index"><span itemprop="name">java入门系列笔记</span></a>
         </span>
     </span>
 
@@ -391,14 +391,14 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">本文字数：</span>
-      <span>1.8k</span>
+      <span>23k</span>
     </span>
     <span class="post-meta-item" title="阅读时长">
       <span class="post-meta-item-icon">
         <i class="far fa-clock"></i>
       </span>
       <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>5 分钟</span>
+      <span>1:04</span>
     </span>
 </div>
 
@@ -410,10 +410,10 @@
     
     
     <div class="post-body" itemprop="articleBody">
-          <p>过拟合是Deep Neural Networks(DNN)网络存在的问题之一。过拟合的特点是模型对训练数据的拟合非常好，但对测试数据的拟合却非常差，具体表现为loss和在训练集上的错误率非常低，而在验证集或测试集上却都要高很多。针对解决过拟合问题设计出来的方法很多，dropout就是其中一种最简单，也是最有效的方法。在训练DNN网络的过程中，对于每一个神经元，以p的概率被随机的drop out，也就是将其值置零。这样，在该轮前传和反传的过程中，该神经元将失去作用，相当于不存在，如下图所示。DropOut整体来说，是在训练过程中以一定的概率的使神经元失活，即输出为0，以提高模型的泛化能力，减少过拟合。</p>
+          <p>本篇笔记为java系列笔记面向对象编程内容，包含java程序类、构造、重载、继承、多态、抽象、接口、静态、包、作用域、内部类等多个需要注意的基础知识点</p>
           <!--noindex-->
             <div class="post-button">
-              <a class="btn" href="/2022/01/21/788645531548/">
+              <a class="btn" href="/2022/01/29/3f72f5c3506a/">
                 阅读全文 &raquo;
               </a>
             </div>
@@ -446,7 +446,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://blog.fantast.top/2022/01/21/22d362e1f563/">
+    <link itemprop="mainEntityOfPage" href="https://blog.fantast.top/2022/01/28/3f464858b7bd/">
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.webp">
       <meta itemprop="name" content="Fantast">
@@ -458,7 +458,7 @@
     </span>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
-          <a href="/2022/01/21/22d362e1f563/" class="post-title-link" itemprop="url">机器学习基础系列笔记12——BatchNorm详解及为什么能防止过拟合</a>
+          <a href="/2022/01/28/3f464858b7bd/" class="post-title-link" itemprop="url">java系列笔记1——java基础</a>
         </h2>
 
         <div class="post-meta-container">
@@ -470,14 +470,14 @@
       </span>
       <span class="post-meta-item-text">发表于</span>
 
-      <time title="创建时间：2022-01-21 22:01:19" itemprop="dateCreated datePublished" datetime="2022-01-21T22:01:19+08:00">2022-01-21</time>
+      <time title="创建时间：2022-01-28 23:34:19" itemprop="dateCreated datePublished" datetime="2022-01-28T23:34:19+08:00">2022-01-28</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2022-08-07 22:46:29" itemprop="dateModified" datetime="2022-08-07T22:46:29+08:00">2022-08-07</time>
+      <time title="修改时间：2022-07-17 20:05:08" itemprop="dateModified" datetime="2022-07-17T20:05:08+08:00">2022-07-17</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -485,11 +485,11 @@
       </span>
       <span class="post-meta-item-text">分类于</span>
         <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/%E2%93%B5-%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" itemprop="url" rel="index"><span itemprop="name">⓵ 深度学习笔记</span></a>
+          <a href="/categories/%E2%93%B8-%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80%E7%B1%BB%E7%AC%94%E8%AE%B0/" itemprop="url" rel="index"><span itemprop="name">⓸ 编程语言类笔记</span></a>
         </span>
           ，
         <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/%E2%93%B5-%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/Basic%E7%B3%BB%E5%88%97%E7%AC%94%E8%AE%B0/" itemprop="url" rel="index"><span itemprop="name">Basic系列笔记</span></a>
+          <a href="/categories/%E2%93%B8-%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80%E7%B1%BB%E7%AC%94%E8%AE%B0/java%E5%85%A5%E9%97%A8%E7%B3%BB%E5%88%97%E7%AC%94%E8%AE%B0/" itemprop="url" rel="index"><span itemprop="name">java入门系列笔记</span></a>
         </span>
     </span>
 
@@ -500,14 +500,14 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">本文字数：</span>
-      <span>2.1k</span>
+      <span>5.9k</span>
     </span>
     <span class="post-meta-item" title="阅读时长">
       <span class="post-meta-item-icon">
         <i class="far fa-clock"></i>
       </span>
       <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>6 分钟</span>
+      <span>16 分钟</span>
     </span>
 </div>
 
@@ -519,10 +519,10 @@
     
     
     <div class="post-body" itemprop="articleBody">
-          <p>BatchNorm是一种能够加速深度神经网络收敛，避免过拟合的方法，那么为什么呢？首先我们需要探讨一下这个问题，为什么深度神经网络随着网络深度加深，训练起来越困难，收敛越来越慢？</p>
+          <p>本篇笔记为java系列笔记基础内容，包含java程序基本结构、数据类型、浮点数、字符、数组、输入输出、引用类型变量、Switch表达式、Yield返回值、For each循环等多个需要注意的基础知识点</p>
           <!--noindex-->
             <div class="post-button">
-              <a class="btn" href="/2022/01/21/22d362e1f563/">
+              <a class="btn" href="/2022/01/28/3f464858b7bd/">
                 阅读全文 &raquo;
               </a>
             </div>
@@ -555,7 +555,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://blog.fantast.top/2022/01/21/ff71970a89e2/">
+    <link itemprop="mainEntityOfPage" href="https://blog.fantast.top/2022/01/27/7d2ace115a28/">
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.webp">
       <meta itemprop="name" content="Fantast">
@@ -567,7 +567,7 @@
     </span>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
-          <a href="/2022/01/21/ff71970a89e2/" class="post-title-link" itemprop="url">机器学习基础系列笔记11——Training Data、Validation Data、Testing Data含义及作用</a>
+          <a href="/2022/01/27/7d2ace115a28/" class="post-title-link" itemprop="url">《UniFormer:Unifying Convolution and Self-attention for Visual Recognition》</a>
         </h2>
 
         <div class="post-meta-container">
@@ -579,14 +579,14 @@
       </span>
       <span class="post-meta-item-text">发表于</span>
 
-      <time title="创建时间：2022-01-21 16:01:19" itemprop="dateCreated datePublished" datetime="2022-01-21T16:01:19+08:00">2022-01-21</time>
+      <time title="创建时间：2022-01-27 18:12:19" itemprop="dateCreated datePublished" datetime="2022-01-27T18:12:19+08:00">2022-01-27</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2022-08-07 22:46:29" itemprop="dateModified" datetime="2022-08-07T22:46:29+08:00">2022-08-07</time>
+      <time title="修改时间：2022-08-07 22:48:40" itemprop="dateModified" datetime="2022-08-07T22:48:40+08:00">2022-08-07</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -594,11 +594,11 @@
       </span>
       <span class="post-meta-item-text">分类于</span>
         <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/%E2%93%B5-%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" itemprop="url" rel="index"><span itemprop="name">⓵ 深度学习笔记</span></a>
+          <a href="/categories/%E2%93%B6-%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB%E7%AC%94%E8%AE%B0/" itemprop="url" rel="index"><span itemprop="name">⓶ 论文阅读笔记</span></a>
         </span>
           ，
         <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/%E2%93%B5-%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/Basic%E7%B3%BB%E5%88%97%E7%AC%94%E8%AE%B0/" itemprop="url" rel="index"><span itemprop="name">Basic系列笔记</span></a>
+          <a href="/categories/%E2%93%B6-%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB%E7%AC%94%E8%AE%B0/CV%E7%9B%B8%E5%85%B3%E8%AE%BA%E6%96%87/" itemprop="url" rel="index"><span itemprop="name">CV相关论文</span></a>
         </span>
     </span>
 
@@ -609,14 +609,14 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">本文字数：</span>
-      <span>1.1k</span>
+      <span>4.4k</span>
     </span>
     <span class="post-meta-item" title="阅读时长">
       <span class="post-meta-item-icon">
         <i class="far fa-clock"></i>
       </span>
       <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>3 分钟</span>
+      <span>12 分钟</span>
     </span>
 </div>
 
@@ -628,10 +628,10 @@
     
     
     <div class="post-body" itemprop="articleBody">
-          <p>我们在进行一个机器学习的任务的时候，往往会将所有数据划分成三块——Training Data、Validation Data、Testing Data,它们各自在训练的过程中都扮演着某种角色</p>
+          <p>提出了UniFormer，将3D卷积和时空自注意力机制结合在一个简洁的transformer结构中。能够同时处理局部冗余和全局依赖，其主要包括三个模块：Dynamic Position Embedding( DPE )\Multi-Head Relation Aggregator ( MHRA )\Feed-Forward Network( FFN )</p>
           <!--noindex-->
             <div class="post-button">
-              <a class="btn" href="/2022/01/21/ff71970a89e2/">
+              <a class="btn" href="/2022/01/27/7d2ace115a28/">
                 阅读全文 &raquo;
               </a>
             </div>
@@ -664,7 +664,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://blog.fantast.top/2022/01/21/d692eb11c4b5/">
+    <link itemprop="mainEntityOfPage" href="https://blog.fantast.top/2022/01/26/8f68bd6cb4f4/">
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.webp">
       <meta itemprop="name" content="Fantast">
@@ -676,7 +676,7 @@
     </span>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
-          <a href="/2022/01/21/d692eb11c4b5/" class="post-title-link" itemprop="url">机器学习基础系列笔记10——L1、L2正则化以及为什么正则化能够防止过拟合</a>
+          <a href="/2022/01/26/8f68bd6cb4f4/" class="post-title-link" itemprop="url">《HandWritting Transformers》(更新中)</a>
         </h2>
 
         <div class="post-meta-container">
@@ -688,14 +688,14 @@
       </span>
       <span class="post-meta-item-text">发表于</span>
 
-      <time title="创建时间：2022-01-21 15:01:19" itemprop="dateCreated datePublished" datetime="2022-01-21T15:01:19+08:00">2022-01-21</time>
+      <time title="创建时间：2022-01-26 18:12:19" itemprop="dateCreated datePublished" datetime="2022-01-26T18:12:19+08:00">2022-01-26</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2022-08-07 22:47:31" itemprop="dateModified" datetime="2022-08-07T22:47:31+08:00">2022-08-07</time>
+      <time title="修改时间：2022-08-07 22:48:40" itemprop="dateModified" datetime="2022-08-07T22:48:40+08:00">2022-08-07</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -703,11 +703,11 @@
       </span>
       <span class="post-meta-item-text">分类于</span>
         <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/%E2%93%B5-%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" itemprop="url" rel="index"><span itemprop="name">⓵ 深度学习笔记</span></a>
+          <a href="/categories/%E2%93%B6-%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB%E7%AC%94%E8%AE%B0/" itemprop="url" rel="index"><span itemprop="name">⓶ 论文阅读笔记</span></a>
         </span>
           ，
         <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/%E2%93%B5-%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/Basic%E7%B3%BB%E5%88%97%E7%AC%94%E8%AE%B0/" itemprop="url" rel="index"><span itemprop="name">Basic系列笔记</span></a>
+          <a href="/categories/%E2%93%B6-%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB%E7%AC%94%E8%AE%B0/CV%E7%9B%B8%E5%85%B3%E8%AE%BA%E6%96%87/" itemprop="url" rel="index"><span itemprop="name">CV相关论文</span></a>
         </span>
     </span>
 
@@ -718,14 +718,14 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">本文字数：</span>
-      <span>1.2k</span>
+      <span>3.5k</span>
     </span>
     <span class="post-meta-item" title="阅读时长">
       <span class="post-meta-item-icon">
         <i class="far fa-clock"></i>
       </span>
       <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>3 分钟</span>
+      <span>10 分钟</span>
     </span>
 </div>
 
@@ -737,10 +737,10 @@
     
     
     <div class="post-body" itemprop="articleBody">
-          <p>在训练数据不够多时，或者overtraining时，常常会导致overfitting（过拟合）。其直观的表现为，随着训练过程的进行，模型复杂度增加，在Training data上的error渐渐减小，但是在验证集上的error却反而渐渐增大——因为训练出来的网络过拟合了训练集，对训练集外的数据却不work。在ML2021课程系列笔记2中，提及了一些防止过拟合的内容，本篇用于详细解释其中正则化的部分：</p>
+          <p>自动的手写文字生成对于一些书写障碍的人十分重要。通常使用的方法是利用GAN来进行离线的手写文字图像生成。</p>
           <!--noindex-->
             <div class="post-button">
-              <a class="btn" href="/2022/01/21/d692eb11c4b5/">
+              <a class="btn" href="/2022/01/26/8f68bd6cb4f4/">
                 阅读全文 &raquo;
               </a>
             </div>
@@ -766,7 +766,7 @@
 
 
   <nav class="pagination">
-    <a class="extend prev" rel="prev" href="/page/23/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/23/">23</a><span class="page-number current">24</span><a class="page-number" href="/page/25/">25</a><span class="space">&hellip;</span><a class="page-number" href="/page/33/">33</a><a class="extend next" rel="next" href="/page/25/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
+    <a class="extend prev" rel="prev" href="/page/23/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/23/">23</a><span class="page-number current">24</span><a class="page-number" href="/page/25/">25</a><span class="space">&hellip;</span><a class="page-number" href="/page/34/">34</a><a class="extend next" rel="next" href="/page/25/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
   </nav>
 
 </div>
@@ -789,13 +789,13 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-line"></i>
     </span>
-    <span title="站点总字数">727k</span>
+    <span title="站点总字数">761k</span>
   </span>
   <span class="post-meta-item">
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">33:38</span>
+    <span title="站点阅读时长">35:13</span>
   </span>
 </div>
 <div class="busuanzi-count">

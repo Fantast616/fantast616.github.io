@@ -1,0 +1,761 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.2.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css" integrity="sha256-mUZM63G8m73Mcidfrv5E+Y61y7a12O5mW4ezU3bxqW4=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"blog.fantast.top","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.9.0","exturl":false,"sidebar":{"position":"left","width":250,"display":"always","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":true,"color":"#222","save":"manual"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"utterances","storage":true,"lazyload":false,"nav":null,"activeClass":"utterances"},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+<meta name="description" content="Chap10——Mysql InnoDB数据存储结构分析">
+<meta property="og:type" content="article">
+<meta property="og:title" content="InnoDB数据存储结构分析">
+<meta property="og:url" content="https://blog.fantast.top/2022/10/17/e8cf764280fd/index.html">
+<meta property="og:site_name" content="Fantast&#39;s Blog">
+<meta property="og:description" content="Chap10——Mysql InnoDB数据存储结构分析">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2022-10-17T07:09:19.000Z">
+<meta property="article:modified_time" content="2022-10-24T01:43:59.000Z">
+<meta property="article:author" content="Fantast">
+<meta property="article:tag" content="Database">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://blog.fantast.top/2022/10/17/e8cf764280fd/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://blog.fantast.top/2022/10/17/e8cf764280fd/","path":"2022/10/17/e8cf764280fd/","title":"InnoDB数据存储结构分析"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>InnoDB数据存储结构分析 | Fantast's Blog</title>
+  
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<link rel="alternate" href="/atom.xml" title="Fantast's Blog" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Fantast's Blog</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li>
+        <li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li>
+        <li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li>
+        <li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li>
+        <li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%80%E6%95%B0%E6%8D%AE%E5%BA%93%E7%9A%84%E5%AD%98%E5%82%A8%E7%BB%93%E6%9E%84%E9%A1%B5"><span class="nav-text">一、数据库的存储结构：页</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%A3%81%E7%9B%98%E4%B8%8E%E5%86%85%E5%AD%98%E4%BA%A4%E4%BA%92%E7%9A%84%E5%9F%BA%E6%9C%AC%E5%8D%95%E4%BD%8D%E9%A1%B5"><span class="nav-text">1、磁盘与内存交互的基本单位——页：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%A1%B5%E7%9A%84%E5%86%85%E9%83%A8%E7%BB%93%E6%9E%84"><span class="nav-text">2、页的内部结构：</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E9%A1%B5%E7%9A%84%E5%AD%98%E5%82%A8%E7%A9%BA%E9%97%B4%E8%A2%AB%E5%88%92%E5%88%86%E4%B8%BA7%E4%B8%AA%E9%83%A8%E5%88%86"><span class="nav-text">1)
+数据页的存储空间被划分为7个部分：</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#file-header-%E5%92%8C-file-trailer-%E6%96%87%E4%BB%B6%E5%A4%B4%E9%83%A8%E5%92%8C%E6%96%87%E4%BB%B6%E5%B0%BE%E9%83%A8"><span class="nav-text">2) File Header
+和 File Trailer 文件头部和文件尾部：</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#free-space-user-records-infimum-supremum"><span class="nav-text">3) Free Space &amp;
+User Records &amp; Infimum Supremum</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#page-directory-page-header-%E9%A1%B5%E7%9B%AE%E5%BD%95%E5%92%8C%E9%A1%B5%E5%A4%B4"><span class="nav-text">4) Page Directory &amp;
+Page Header 页目录和页头</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BB%8E%E6%95%B0%E6%8D%AE%E9%A1%B5%E7%9A%84%E8%A7%92%E5%BA%A6%E7%9C%8Bb%E6%A0%91%E5%A6%82%E4%BD%95%E6%9F%A5%E8%AF%A2"><span class="nav-text">3、从数据页的角度看B+树如何查询：</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%A6%82%E4%BD%95%E6%9F%A5%E8%AF%A2"><span class="nav-text">1）如何查询？</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%99%AE%E9%80%9A%E7%B4%A2%E5%BC%95%E5%92%8C%E5%94%AF%E4%B8%80%E7%B4%A2%E5%BC%95%E5%9C%A8%E6%9F%A5%E8%AF%A2%E4%B8%AD%E7%9A%84%E5%8C%BA%E5%88%AB"><span class="nav-text">2）普通索引和唯一索引在查询中的区别？</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#innodb%E8%A1%8C%E6%A0%BC%E5%BC%8Fcompact%E8%A1%8C%E6%A0%BC%E5%BC%8F"><span class="nav-text">4、InnoDB行格式：COMPACT行格式</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%8F%98%E9%95%BF%E5%AD%97%E6%AE%B5%E9%95%BF%E5%BA%A6%E5%88%97%E8%A1%A8"><span class="nav-text">1）变长字段长度列表</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#null%E5%80%BC%E5%88%97%E8%A1%A8"><span class="nav-text">2）NULL值列表</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E8%AE%B0%E5%BD%95%E5%A4%B4%E4%BF%A1%E6%81%AF%E6%80%BB%E5%85%B1%E5%B0%B15%E4%B8%AA%E5%AD%97%E8%8A%82"><span class="nav-text">3）记录头信息（总共就5个字节）</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E8%AE%B0%E5%BD%95%E7%9A%84%E7%9C%9F%E5%AE%9E%E6%95%B0%E6%8D%AE"><span class="nav-text">4）记录的真实数据</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#dynamic%E5%92%8Ccompressed%E8%A1%8C%E6%A0%BC%E5%BC%8F"><span class="nav-text">5、Dynamic和Compressed行格式</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF%E8%A1%8C%E6%BA%A2%E5%87%BA"><span class="nav-text">1）什么是行溢出？</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#dynamic%E5%92%8Ccompressed%E5%A6%82%E4%BD%95%E5%A4%84%E7%90%86%E8%A1%8C%E6%BA%A2%E5%87%BA"><span class="nav-text">2)
+Dynamic和Compressed如何处理行溢出？</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%8C%BA%E6%AE%B5%E4%B8%8E%E7%A2%8E%E7%89%87%E5%8C%BA%E4%B8%8E%E8%A1%A8%E7%A9%BA%E9%97%B4%E7%BB%93%E6%9E%84"><span class="nav-text">5、区、段与碎片区与表空间结构：</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E8%A6%81%E6%9C%89%E5%8C%BA"><span class="nav-text">1）为什么要有区？</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E8%A6%81%E6%9C%89%E6%AE%B5"><span class="nav-text">2）为什么要有段？</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E8%A6%81%E6%9C%89%E7%A2%8E%E7%89%87%E5%8C%BA"><span class="nav-text">3）为什么要有碎片区？</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E4%B8%BA%E6%9F%90%E4%B8%AA%E6%AE%B5%E5%88%86%E9%85%8D%E5%AD%98%E5%82%A8%E7%A9%BA%E9%97%B4%E7%9A%84%E7%AD%96%E7%95%A5"><span class="nav-text">4）为某个段分配存储空间的策略：</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%8C%BA%E7%9A%84%E5%88%86%E7%B1%BB"><span class="nav-text">5）区的分类</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E8%A1%A8%E7%A9%BA%E9%97%B4"><span class="nav-text">6）表空间：</span></a></li></ol></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Fantast"
+      src="/images/avatar.webp">
+  <p class="site-author-name" itemprop="name">Fantast</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">167</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">42</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">98</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/fantast416" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;fantast416" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:fantast416@gmail.com" title="E-Mail → mailto:fantast416@gmail.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll site-overview-item animated">
+    <div class="links-of-blogroll-title"><i class="fa fa-globe fa-fw"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://www.zhihu.com/people/shuo-shuo-3-41" title="https:&#x2F;&#x2F;www.zhihu.com&#x2F;people&#x2F;shuo-shuo-3-41" rel="noopener" target="_blank">ZhiHu</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="http://www.next.zju.edu.cn/" title="http:&#x2F;&#x2F;www.next.zju.edu.cn&#x2F;" rel="noopener" target="_blank">NextLab</a>
+        </li>
+    </ul>
+  </div>
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://blog.fantast.top/2022/10/17/e8cf764280fd/">
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.webp">
+      <meta itemprop="name" content="Fantast">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Fantast's Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          InnoDB数据存储结构分析
+        </h1>
+
+        <div class="post-meta-container">
+          
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2022-10-17 15:09:19" itemprop="dateCreated datePublished" datetime="2022-10-17T15:09:19+08:00">2022-10-17</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2022-10-24 09:43:59" itemprop="dateModified" datetime="2022-10-24T09:43:59+08:00">2022-10-24</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E2%93%B9-%E5%9F%BA%E7%A1%80%E7%B1%BB%E7%AC%94%E8%AE%B0/" itemprop="url" rel="index"><span itemprop="name">⓹ 基础类笔记</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E2%93%B9-%E5%9F%BA%E7%A1%80%E7%B1%BB%E7%AC%94%E8%AE%B0/%E6%95%B0%E6%8D%AE%E5%BA%93%E7%B2%BE%E7%AE%80%E7%AC%94%E8%AE%B0/" itemprop="url" rel="index"><span itemprop="name">数据库精简笔记</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>7.4k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>21 分钟</span>
+    </span>
+</div>
+
+            <div class="post-description">Chap10——Mysql InnoDB数据存储结构分析</div>
+            <div class="post-remind">Google Chrome is recommended, otherwise the image size may be wrong</div>
+            <div class="post-remind">FireFox is not recommended,Because it does not support the image zoom property</div>
+        </div>
+        
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h3 id="一数据库的存储结构页">一、数据库的存储结构：页</h3>
+<h4
+id="磁盘与内存交互的基本单位页">1、磁盘与内存交互的基本单位——页：</h4>
+<ul>
+<li><p>InnoDB将数据划分为若干个页，页的大小默认为16KB。</p></li>
+<li><p><strong>将页作为磁盘和内存之间交互的基本单位。</strong>即，在数据库中，不论读多少行，都是将这些行所在的页进行加载。即I/O操作的最小单位就是页。</p></li>
+<li><p>连续的页之间，不在物理结构上相连接，期间通过双向链表连接。每个数据页中的记录会按照主键的值从小到大的顺序组成一个单向链表，<strong>每个数据也都会为存储在它里面的记录生成一个页目录，</strong>这样可以在页目录中是用二分法定位到对应的槽，再遍历槽对应分组中的记录找到指定记录就行。</p></li>
+<li><p>页的上层结构：</p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/image-20221023094039939.png" /></p>
+<ul>
+<li>区：一个区会分配64个连续的页</li>
+<li>段：段是数据库中的分配单位。段中不要求区和区之间连续。比如说创建一张表时，会创建一个表段，创建一个索引时，会创建一个索引段。</li>
+<li>表空间：逻辑容器，可以有1个或多个段。表空间从管理上可以划分为：系统表空间、用户表空间等。</li>
+</ul></li>
+</ul>
+<h4 id="页的内部结构">2、页的内部结构：</h4>
+<h5 id="数据页的存储空间被划分为7个部分">1)
+数据页的存储空间被划分为7个部分：</h5>
+<ul>
+<li><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/image-20221023094541084.png" /></li>
+<li><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/image-20221023094558222.png" /></li>
+</ul>
+<h5 id="file-header-和-file-trailer-文件头部和文件尾部">2) File Header
+和 File Trailer 文件头部和文件尾部：</h5>
+<ul>
+<li>File Header 描述各种页的通用信息——页的编号，上一页下一页等
+<ul>
+<li>FIL_PAGE_OFFSET 页的单独页号</li>
+<li>FIL_PAGE_TYPE 页的类型，比如索引页、日志页等等</li>
+<li>FIL_PAGE_PREV（4字节）和FIL_PAGE_NEXT（4字节）本页的上一个和下一个页的页号。这样通过建立一个双向链表把许许多多的页就都串联起来了，保证这些页之间不需要是物理上的连续，而是逻辑上的连续。</li>
+<li>FIL_PAGE_SPACE_OR_CHKSUM（4字节）当前页面的校验和，<strong>文件头部和尾部都有这个校验和</strong>
+<ul>
+<li>作用 :
+InnoDB存储引擎以页为单位把数据加载到内存中处理，<strong>如果该页中的数据在内存中被修改了，那么在修改后的某个时间需要把数据同步到磁盘中。但是在同步了一半的时候断电了，造成了该页传输的不完整。</strong>为了检测一个页是否完整（也就是在同步的时候有没有发生只同步一半的尴尬情况），<strong>这时可以通过文件尾的校验和（checksum
+值）与文件头的校验和做比对，如果两个值不相等则证明页的传输有问题，需要重新进行传输，</strong>否则认为页的传输已经完成。</li>
+<li>具体操作方法：每当一个页面在内存中修改了，在同步之前就要把它的校验和算出来，因为File
+Header在页面的前边，所以校验和会被首先同步到磁盘，当完全写完时，校验和也会被写到页的尾部，如果完全同步成功，则页的首部和尾部的校验和应该是一致的。如果写了一半儿断电了，那么在File
+Header中的校验和就代表着已经修改过的页，而在File
+Trailer中的校验和代表着原先的页，二者不同则意味着同步中间出了错。</li>
+</ul></li>
+<li>FIL_PAGE_LSN 页面被最后修改时对应的日志序列位置（Log Sequence
+Number）</li>
+</ul></li>
+<li>文件尾部：共8字节
+<ul>
+<li>前4个字节代表页的校验和：这个部分是和File Header中的校验和相对应的。
+后4个字节代表页面被最后修改时对应的日志序列位置（LSN）：这个部分也是为了校验页的完整性的，如果首部和尾部的LSN值校验不成功的话，就说明同步过程出现了问题</li>
+</ul></li>
+</ul>
+<h5 id="free-space-user-records-infimum-supremum">3) Free Space &amp;
+User Records &amp; Infimum Supremum</h5>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/mac/截屏2022-10-23%2016.31.02.png" /></p>
+<ul>
+<li><p>每插入一条记录，从Free Space部分申请一个记录大小的空间分给User
+Records空间</p></li>
+<li><p>我们自己存储的记录会按照指定的行格式存储到User
+Records部分</p></li>
+<li><p>记录按照指定的行格式一条一条摆在User
+Records部分，相互之间形成单链表。
+用户记录里的一条条数据如何记录和形成呢？详见InnoDB行格式中的记录头信息。</p></li>
+<li><p>Infimum Supremum 最小最大记录：</p>
+<ul>
+<li><p>对于一条完整的记录来说，比较记录的大小就是比较主键的大小。</p></li>
+<li><p>InnoDB规定的最小记录与最大记录这两条记录的构造十分简单，都是由5字节大小的记录头信息和8字节大小的一个固定的部分组成的</p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/mac/截屏2022-10-23%2016.40.36.png" /></p></li>
+<li><p>这两条记录不是我们自己定义的记录，所以它们并不存放在页的User
+Records部分，他们被单独放在一个称为Infimum +
+Supremum的部分，如图所示：</p></li>
+</ul></li>
+</ul>
+<h5 id="page-directory-page-header-页目录和页头">4) Page Directory &amp;
+Page Header 页目录和页头</h5>
+<ul>
+<li><p>1、为什么需要页目录？</p>
+<ul>
+<li>在页中，记录是以单向链表的形式进行存储的。查找性能差，因此在页结构中专门设计了页目录这个模块，专门给记录做一个目录，通过二分查找法的方式进行检索，提升效率。</li>
+<li>具体做法：将所有的记录分成几个组，这些记录包括最小记录和最大记录，但不包括标记为“已删除”的记录。
+<ul>
+<li>第 1 组，也就是最小记录所在的分组只有 1 个记录；
+最后一组，就是最大记录所在的分组，会有 1-8 条记录； 其余的组记录数量在
+4-8 条之间。</li>
+<li>在每个组中<strong>最后一条记录的头信息中会存储该组一共有多少条记录</strong>，作为
+n_owned 字段。</li>
+<li>页目录用来存储<strong>每组最后一条记录的地址偏移量，这些地址偏移量会按照先后顺序存储起来，</strong>每组的地址偏移量也被称之为槽（slot），每个槽相当于指针指向了不同组的最后一个记录。</li>
+<li><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/mac/截屏2022-10-23%2016.50.25.png" /></li>
+</ul></li>
+</ul></li>
+<li><p>2、页目录结构下如何快速查找记录？</p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/mac/截屏2022-10-23%2016.53.45.png" /></p></li>
+</ul>
+<p>Page Header 页头</p>
+<ul>
+<li><p>为了能得到一个数据页中存储的记录的状态信息，比如本页中已经存储了多少条记录，第一条记录的地址是什么，页目录中存储了多少个槽等等，特意在页中定义了一个叫Page
+Header的部分，这个部分占用固定的56个字节，专门存储各种状态信息。</p></li>
+<li><p>PAGE_DIRECTION 记录插入方向</p></li>
+<li><p>PAGE_N_DIRECTION</p>
+<ul>
+<li>假设连续几次插入新记录的方向都是一致的，InnoDB会把沿着同一个方向插入记录的条数记下来，这个条数就用PAGE_N_DIRECTION这个状态表示。当然，如果最后一条记录的插入方向改变了的话，这个状态的值会被清零重新统计。</li>
+</ul></li>
+</ul>
+<h4
+id="从数据页的角度看b树如何查询">3、从数据页的角度看B+树如何查询：</h4>
+<h5 id="如何查询">1）如何查询？</h5>
+<p>​
+先从B+树的根开始，逐层检索。然后将数据页加载到内存中，页目录中的槽使用二分查找的方式先找到一个粗略的记录分组，然后再在分组中通过链表遍历的方式查找记录。</p>
+<h5
+id="普通索引和唯一索引在查询中的区别">2）普通索引和唯一索引在查询中的区别？</h5>
+<p>​
+唯一索引找到了关键字就可以停止检索。而普通索引找到关键字以后，还需要在内存中多看下X条记录。</p>
+<h4 id="innodb行格式compact行格式">4、InnoDB行格式：COMPACT行格式</h4>
+<p>一条记录的数据可以分为记录的额外信息和真实数据</p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/mac/截屏2022-10-23%2016.34.37.png" /></p>
+<h5 id="变长字段长度列表">1）变长字段长度列表</h5>
+<p>​
+变长字段中存储多少字节的数据不是固定的，所以我们在存储真实数据的时候需要顺便把这些数据占用的字节数也存起来。</p>
+<p>​
+在Compact行格式中，把所有变长字段的真实数据占用的字节长度都存放在记录的开头部位，从而形成一个变长字段长度列表。
+注意：这里面存储的变长长度和字段顺序是反过来的。比如两个varchar字段在表结构的顺序是a(10)，b(15)。那么在变长字段长度列表中存储的长度顺序就是15，10，是反过来的。</p>
+<h5 id="null值列表">2）NULL值列表</h5>
+<p>​
+Compact行格式会把可以为NULL的列统一管理起来，存在一个标记为NULL值列表中。如果表中没有允许存储
+NULL 的列，则 NULL值列表也不存在了。</p>
+<ul>
+<li>为什么定义NULL值列表？
+<ul>
+<li>之所以要存储NULL是因为数据都是需要对齐的，如果没有标注出来NULL值的位置，就有可能在查询数据的时候出现混乱。如果使用一个特定的符号放到相应的数据位表示空置的话，虽然能达到效果，但是这样很浪费空间，所以直接就在行数据得头部开辟出一块空间专门用来记录该行数据哪些是非空数据，哪些是空数据，</li>
+</ul></li>
+<li>格式如下：
+<ul>
+<li>二进制位的值为1时，代表该列的值为NULL。</li>
+<li>二进制位的值为0时，代表该列的值不为NULL。</li>
+</ul></li>
+<li>例如：字段 a、b、c，其中a是主键，在某一行中存储的数依次是
+a=1、b=null、c=2。那么Compact行格式中的NULL值列表中存储：01。第一个0表示c不为null，第二个1表示b是null。这里之所以没有a是因为数据库会自动跳过主键，因为主键肯定是非NULL且唯一的，在NULL值列表的数据中就会自动跳过主键。</li>
+</ul>
+<h5 id="记录头信息总共就5个字节">3）记录头信息（总共就5个字节）</h5>
+<ul>
+<li><p>delete_mask</p>
+<ul>
+<li>这个属性标记着当前记录是否被删除，占用1个二进制位。这些被删除的记录之所以不立即从磁盘上移除，是因为移除它们之后其他的记录在磁盘上需要重新排列，导致性能消耗。所以只是打一个删除标记而已，所有被删除掉的记录都会组成一个所谓的垃圾链表。<br />
+</li>
+</ul></li>
+<li><p>min_rec_mask</p>
+<ul>
+<li>B+树的每层非叶子节点中的最小记录都会添加该标记，min_rec_mask值为1。</li>
+</ul></li>
+<li><p>record_type</p>
+<ul>
+<li>这个属性表示当前记录的类型，一共有4种类型的记录：
+<ul>
+<li>0：表示普通记录<br />
+</li>
+<li>1：表示B+树非叶节点记录</li>
+<li>2：表示最小记录<br />
+</li>
+<li>3：表示最大记录</li>
+</ul></li>
+</ul></li>
+<li><p>heap_no</p>
+<ul>
+<li>这个属性表示当前记录在本页中的位置。比如说2，3，4，5等</li>
+<li><strong>MySQL会自动给每个页里加了两个记录，由于这两个记录并不是我们自己插入的，所以有时候也称为伪记录或者虚拟记录。</strong>这两个伪记录一个代表最小记录，一个代表最大记录。最小记录和最大记录的heap_no值分别是0和1，也就是说它们的位置最靠前。<br />
+</li>
+</ul></li>
+<li><p>n_owned</p>
+<ul>
+<li><strong>页目录</strong>中每个组中最后一条记录的头信息中会存储该组一共有多少条记录，作为
+n_owned 字段。详情见page directory。</li>
+</ul></li>
+<li><p>next_record</p>
+<ul>
+<li>它表示从当前记录的真实数据到下一条记录的真实数据的<strong>地址偏移量。</strong></li>
+<li>比如：第一条记录的next_record值为32，意味着从第一条记录的真实数据的地址处向后找32个字节便是下一条记录的真实数据。注意，下一条记录指得并不是按照我们插入顺序的下一条记录，而是按照主键值由小到大的顺序的下一条记录。</li>
+<li>规定Infimum记录（也就是最小记录）的下一条记录就是本页中主键值最小的用户记录，而本页中主键值最大的用户记录的下一条记录就是
+Supremum记录（也就是最大记录）。</li>
+</ul></li>
+<li><p><strong>不论我们怎么对页中的记录做增删改操作，InnoDB始终会维护一条记录的单链表，链表中的各个节点是按照主键值由小到大的顺序连接起来的。
+</strong></p></li>
+<li><p>主键值为2的记录被删掉了以后，存储空间不会回收，如果我们再次把这条记录插入到表中，会发生什么事呢？——
+直接复用了原来被删除记录的存储空间。</p></li>
+<li><p><strong>说明：当数据页中存在多条被删除掉的记录时，这些记录的next_record属性将会把这些被删除掉的记录组成一个垃圾链表，以备之后重用这部分存储空间。
+</strong></p></li>
+</ul>
+<h5 id="记录的真实数据">4）记录的真实数据</h5>
+<p>​ 除了我们自己定义的列数据以外，还会有三个隐藏列。</p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/image-20221023222958606.png" /></p>
+<p>​
+实际上这几个列的真正名称其实是：DB_ROW_ID、DB_TRX_ID、DB_ROLL_PTR</p>
+<ul>
+<li>一个表没有手动定义主键，则会选取一个Unique键作为主键，如果连Unique键都没有定义的话，则会为表默认添加一个名为row_id的隐藏列作为主键。所以row_id是在没有自定义主键以及Unique键的情况下才会存在的。</li>
+<li>事务ID和回滚指针涉及到事务相关的内容，具体见事务</li>
+</ul>
+<h4 id="dynamic和compressed行格式">5、Dynamic和Compressed行格式</h4>
+<h5 id="什么是行溢出">1）什么是行溢出？</h5>
+<p>​ InnoDB存储引擎可以将一条记录中的某些数据存储在真正的数据页面之外。
+很多DBA喜欢MySQL数据库提供的VARCHAR(M)类型，认为可以存放65535字节。这是真的吗？如果我们使用
+ascii字符集的话，一个字符就代表一个字节，我们看看VARCHAR(65535)是否可用。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">CREATE TABLE varchar_size_demo( c VARCHAR(65535) ) CHARSET=ascii ROW_FORMAT=Compact;</span><br></pre></td></tr></table></figure>
+<p>结果如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ERROR 1118 (42000): Row size too large. The maximum row size for the used table type, not counting BLOBs, is 65535. This includes storage overhead, check the manual. You have to change some columns to TEXT or BLOBs </span><br></pre></td></tr></table></figure>
+<p>​
+报错信息表达的意思是：MySQL对一条记录占用的最大存储空间是有限制的，除BLOB或者TEXT类型的列之外，
+其他所有的列（不包括隐藏列和记录头信息）占用的字节长度加起来不能超过65535个字节。
+这个65535个字节除了列本身的数据之外，还包括一些其他的数据，</p>
+<p>​
+<strong>以Compact行格式为例，比如说我们为了存储一个VARCHAR(M)类型的列，除了真实数据占有空间以外，还需要记录的额外信息。
+如果该VARCHAR类型的列没有NOT
+NULL属性，那最多只能存储65532个字节的数据，因为变长字段的长度占用
+2个字节，NULL值标识需要占用1个字节。</strong></p>
+<ul>
+<li><p>通过上面的案例，我们可以知道一个页的大小一般是16KB，也就是16384字节，而一个VARCHAR(M)类型的列就最多可以存储65533个字节，<strong>这样就可能出现一个页存放不了一条记录，这种现象称为行溢出。</strong></p></li>
+<li><p>在Compact和Reduntant行格式中，对于占用存储空间非常大的列，在记录的真实数据处只会存储该列的一部分数据，把剩余的数据分散存储在几个其他的页中进行分页存储，然后记录的真实数据处用20个字节存储指向这些页的地址（当然这20个字节中还包括这些分散在其他页面中的数据的占用的字节数），从而可以找到剩余数据所在的页。这称为页的扩展，：</p></li>
+</ul>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/image-20221023224141758.png" /></p>
+<h5 id="dynamic和compressed如何处理行溢出">2)
+Dynamic和Compressed如何处理行溢出？</h5>
+<p>​ 在MySQL
+8.0中，默认行格式就是Dynamic。Dynamic、Compressed行格式和Compact行格式挺像，只不过在处理行溢出数据时有分歧：</p>
+<ul>
+<li><p>Compressed和Dynamic两种记录格式对于存放在BLOB中的数据采用了完全的行溢出的方式。</p></li>
+<li><p>如图，在数据页中只存放20个字节的指针（溢出页的地址），实际的数据都存放在Off
+Page（溢出页）中。Compact和Redundant两种格式会在记录的真实数据处存储一部分数据（存放768个前缀字节）。<strong>Compressed行记录格式的另一个功能就是，存储在其中的行数据会以zlib的算法进行压缩，因此对于BLOB、TEXT、VARCHAR这类大长度类型的数据能够进行非常有效的存储。</strong></p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/image-20221023224238085.png" /></p></li>
+</ul>
+<h4 id="区段与碎片区与表空间结构">5、区、段与碎片区与表空间结构：</h4>
+<h5 id="为什么要有区">1）为什么要有区？</h5>
+<p>​
+如果以页为单位来分配存储空间的话，双向链表相邻的两个页之间的物理位置可能离得比较远。当进行范围查询时，我们一般只需要定位到最左侧和最右侧的记录，然后沿着双向链表一直扫描即可。那么如果相邻的两个页之间的物理位置可能离得比较远的话，其实是在做<strong>随机IO</strong>，对于磁盘而言读写速度是很慢的。</p>
+<p>​
+所以，引入区的概念，使得1个区中含物理位置上连续的64个页，这样就会把上述过程变成<strong>顺序IO</strong>，减少了磁盘寻道和半圈旋转时间。</p>
+<p>​
+在表中数据量大的时候，为某个索引分配空间的时候就不再按照页为单位分配了，<strong>而是按照区为单位分配，</strong>甚至在表中的数据特别多的时候，可以一次性分配多个连续的区。虽然可能造成一点点空间的浪费（数据不足以填充满整个区），<strong>但是从性能角度看，可以消除很多的随机I/0</strong>，功大于过！</p>
+<h5 id="为什么要有段">2）为什么要有段？</h5>
+<p>​
+对于范围查询，其实是对B+树叶子节点中的记录进行顺序扫描，而如果不区分叶子节点和非叶子节点，统统把节点代表的页面放到申请到的区中的话，进行范围扫描的效果就大打折扣了。</p>
+<p>​
+所以InnoDB对B+树的叶子节点和非叶子节点进行了区别对待，<strong>也就是说叶子节点有自己独有的区，非叶子节点也有自己独有的区。</strong></p>
+<p>​
+存放叶子节点的区的集合就算是一个段（segment），存放非叶子节点的区的集合也算是一个段。<strong>也就是说一个索引会生成2个段，一个叶子节点段，一个非叶子节点段。</strong></p>
+<p>​
+<strong>段其实不对应表空间中某一个连续的物理区域，而是一个逻辑上的概念，由若干个零散的页面以及一些完整的区组成。</strong></p>
+<h5 id="为什么要有碎片区">3）为什么要有碎片区？</h5>
+<p>​
+默认情况下，一个使用InnoDB存储引擎的表只有一个聚簇索引，一个索引会生成2个段，而段是以区为单位申请存储空间的，一个区默认占用1M（64*16Kb=1024Kb）存储空间，所以默认情况下一个只存了几条记录的小表也需要2M的存储空间么？以后每次添加一个索引都要多申请2M的存储空间么？这对于存储记录比较少的表简直是天大的浪费。</p>
+<p>​
+这个问题的症结在于到现在为止我们介绍的区都是非常纯粹的，<strong>也就是一个区被整个分配给某一个段，或者说区中的所有页面都是为了存储同一个段的数据而存在的，即使段的数据填不满区中所有的页面，那余下的页面也不能挪作他用。</strong></p>
+<p>​
+为了考虑以完整的区为单位分配给某个段对于数据量较小的表太浪费存储空间的这种情况，InnoDB提出了一个<strong>碎片（fragment）区的概念</strong>。在一个碎片区中，并不是所有的页都是为了存储同一个段的数据而存在的，而是<strong>碎片区中的页可以用于不同的目的，比如有些页用于段A，有些页用于段B，有些页甚至哪个段都不属于。</strong></p>
+<p>​ 碎片区直属于表空间，并不属于任何一个段。</p>
+<h5 id="为某个段分配存储空间的策略">4）为某个段分配存储空间的策略：</h5>
+<ul>
+<li>在刚开始向表中插入数据的时候，段是从某个碎片区以单个页面为单位来分配存储空间的。</li>
+<li>当某个段已经占用了32个碎片区页面之后，就会申请以完整的区为单位来分配存储间。</li>
+</ul>
+<p>​
+所以现在段不能仅定义为是某些区的集合，更精确的应该是某些零散的页面以及一些完整的区的集合。</p>
+<h5 id="区的分类">5）区的分类</h5>
+<ul>
+<li><p>碎片区</p>
+<ul>
+<li><p>空闲的区</p></li>
+<li><p>有剩余空间的碎片区</p></li>
+<li><p>没有剩余空间的碎片区</p></li>
+</ul></li>
+<li><p>附属于某个段的区</p></li>
+</ul>
+<h5 id="表空间">6）表空间：</h5>
+<p>​
+表空间可以看做是InnoDB存储引擎逻辑结构的最高层，所有的数据都存放在表空间中。表空间是一个逻辑容器，表空间存储的对象是段，在一个表空间中可以有一个或多个段，但是一个段只能属于一个表空间。</p>
+<ul>
+<li>独立表空间：
+<ul>
+<li>每张表都有一个独立的表空间，即数据和索引信息都会保存在自己的表空间中。空间可以回收</li>
+</ul></li>
+<li>系统表空间：
+<ul>
+<li>整个MySQL进程只有一个系统表空间，在系统表空间中会额外记录一些有关整个系统信息的页面，这部分是独立表空间中没有的。</li>
+<li>InnoDB数据字典：（内部系统表）
+<ul>
+<li>每当我们向一个表中插入一条记录的时候，MySOL校验过程如下
+<ul>
+<li>先要校验一下插入语句对应的表存不存在，插入的列和表中的列是否符合，</li>
+<li>如果语法没有问题的话，还需要知道该表的聚簇索引和所有二级索引对应的根页面是哪个表空间的哪个页面，然后把记录插入对应索引的B+树中。</li>
+<li>所以说，MySQL除了保存着我们插入的用户数据之外，还需要保存许多额外的信息（元数据）</li>
+</ul></li>
+<li>注意：用户是不能直接访问InnoDB的这些内部系统表，除非你直接去解析系统表空间对应文件系统上的文件。</li>
+</ul></li>
+</ul></li>
+</ul>
+
+    </div>
+
+    
+    
+    
+      
+  <div class="popular-posts-header">相关文章</div>
+  <ul class="popular-posts">
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2022\10\28\a30af89db2dc\" rel="bookmark">Mysql数据库调优工具</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2022\10\27\5b0755a55834\" rel="bookmark"></a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2022\10\17\a0984953b2e8\" rel="bookmark">事务</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2022\10\17\f545bfc8e29a\" rel="bookmark">Mysql日志与备份</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2022\10\17\6d0d3039dfe2\" rel="bookmark">Mysql逻辑架构和存储引擎</a></div>
+    </li>
+  </ul>
+
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Database/" rel="tag"># Database</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2022/10/17/10b6c2c40683/" rel="prev" title="数据库索引优化和查询优化">
+                  <i class="fa fa-chevron-left"></i> 数据库索引优化和查询优化
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2022/10/17/bb6cac39113d/" rel="next" title="">
+                   <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments utterances-container"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Fantast</span>
+</div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+    <span title="站点总字数">761k</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">35:13</span>
+  </span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script><script src="/js/bookmark.js"></script>
+
+  
+<script src="https://cdn.jsdelivr.net/npm/hexo-generator-searchdb@1.4.0/dist/search.js" integrity="sha256-vXZMYLEqsROAXkEw93GGIvaB2ab+QW6w3+1ahD9nXXA=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdn.jsdelivr.net/npm/mathjax@3.2.0/es5/tex-mml-chtml.js","integrity":"sha256-r+3itOMtGGjap0x+10hu6jW/gZCzxHsoKrOd7gyRSGY="}}</script>
+<script src="/js/third-party/math/mathjax.js"></script>
+
+
+<script class="next-config" data-name="utterances" type="application/json">{"enable":true,"repo":"Fantast416/myblog-comment","issue_term":"pathname","theme":"github-light"}</script>
+<script src="/js/third-party/comments/utterances.js"></script>
+
+</body>
+</html>

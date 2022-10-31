@@ -1,0 +1,599 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.2.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css" integrity="sha256-mUZM63G8m73Mcidfrv5E+Y61y7a12O5mW4ezU3bxqW4=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"blog.fantast.top","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.9.0","exturl":false,"sidebar":{"position":"left","width":250,"display":"always","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":true,"color":"#222","save":"manual"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"utterances","storage":true,"lazyload":false,"nav":null,"activeClass":"utterances"},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+<meta name="description" content="Chap11——Mysql 索引及调优原则">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Fantast&#39;s Blog">
+<meta property="og:url" content="https://blog.fantast.top/2022/10/27/5b0755a55834/index.html">
+<meta property="og:site_name" content="Fantast&#39;s Blog">
+<meta property="og:description" content="Chap11——Mysql 索引及调优原则">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2022-10-27T13:51:19.000Z">
+<meta property="article:modified_time" content="2022-10-28T08:39:45.000Z">
+<meta property="article:author" content="Fantast">
+<meta property="article:tag" content="Database">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://blog.fantast.top/2022/10/27/5b0755a55834/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://blog.fantast.top/2022/10/27/5b0755a55834/","path":"2022/10/27/5b0755a55834/","title":""}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title> | Fantast's Blog</title>
+  
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<link rel="alternate" href="/atom.xml" title="Fantast's Blog" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Fantast's Blog</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li>
+        <li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li>
+        <li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li>
+        <li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li>
+        <li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%80%E7%B4%A2%E5%BC%95%E7%9A%84%E5%88%9B%E5%BB%BA%E4%B8%8E%E5%88%A0%E9%99%A4"><span class="nav-text">一、索引的创建与删除</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%88%9B%E5%BB%BA%E5%88%A0%E9%99%A4%E7%B4%A2%E5%BC%95"><span class="nav-text">1、创建删除索引：</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%88%9B%E5%BB%BA%E8%A1%A8%E6%97%B6%E6%96%B0%E5%A2%9E"><span class="nav-text">1）创建表时新增</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%88%9B%E5%BB%BA%E8%A1%A8%E5%90%8E%E6%96%B0%E5%A2%9E"><span class="nav-text">2）创建表后新增</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%88%A0%E9%99%A4%E7%B4%A2%E5%BC%95"><span class="nav-text">3）删除索引：</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BA%8Cmysql8.0%E7%B4%A2%E5%BC%95%E6%96%B0%E7%89%B9%E6%80%A7"><span class="nav-text">二、Mysql8.0索引新特性：</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%99%8D%E5%BA%8F%E7%B4%A2%E5%BC%95"><span class="nav-text">1、降序索引：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%9A%90%E8%97%8F%E7%B4%A2%E5%BC%95"><span class="nav-text">2、隐藏索引：</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%89%E7%B4%A2%E5%BC%95%E7%9A%84%E8%AE%BE%E8%AE%A1%E5%8E%9F%E5%88%99"><span class="nav-text">三、索引的设计原则</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%93%AA%E4%BA%9B%E6%83%85%E5%86%B5%E9%80%82%E5%90%88%E5%88%9B%E5%BB%BA%E7%B4%A2%E5%BC%95"><span class="nav-text">1、哪些情况适合创建索引？</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%AD%97%E6%AE%B5%E7%9A%84%E6%95%B0%E5%80%BC%E6%9C%89%E5%94%AF%E4%B8%80%E6%80%A7%E7%9A%84%E9%99%90%E5%88%B6%E4%BD%86%E6%98%AF%E6%B2%A1%E6%9C%89%E5%8A%A0%E5%94%AF%E4%B8%80%E6%80%A7%E7%BA%A6%E6%9D%9F%E7%9A%84%E5%AD%97%E6%AE%B5"><span class="nav-text">1）字段的数值有唯一性的限制，但是没有加唯一性约束的字段</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E9%A2%91%E7%B9%81%E4%BD%9C%E4%B8%BAwhere%E6%9F%A5%E8%AF%A2%E6%9D%A1%E4%BB%B6%E7%9A%84%E5%AD%97%E6%AE%B5"><span class="nav-text">2）频繁作为WHERE查询条件的字段</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E7%BB%8F%E5%B8%B8group-by%E5%92%8Corder-by%E7%9A%84%E5%88%97"><span class="nav-text">3）经常GROUP BY和ORDER BY的列</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#updatedelete-%E7%9A%84-where-%E6%9D%A1%E4%BB%B6%E5%88%97"><span class="nav-text">4）UPDATE、DELETE 的 WHERE
+条件列</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#distinct-%E6%93%8D%E4%BD%9C%E7%9A%84%E5%AD%97%E6%AE%B5%E9%9C%80%E8%A6%81%E5%88%9B%E5%BB%BA%E7%B4%A2%E5%BC%95"><span class="nav-text">5）DISTINCT
+操作的字段需要创建索引</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%A4%9A%E8%A1%A8join%E8%BF%9E%E6%8E%A5%E6%93%8D%E4%BD%9C%E6%97%B6%E5%88%9B%E5%BB%BA%E7%B4%A2%E5%BC%95%E7%9A%84%E6%B3%A8%E6%84%8F%E4%BA%8B%E9%A1%B9"><span class="nav-text">6）多表JOIN连接操作时，创建索引的注意事项:</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8%E5%88%97%E7%9A%84%E7%B1%BB%E5%9E%8B%E5%B0%8F%E7%9A%84%E5%88%9B%E5%BB%BA%E7%B4%A2%E5%BC%95"><span class="nav-text">7）使用列的类型小的创建索引</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%88%9B%E5%BB%BA%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%88%97%E7%9A%84%E7%B4%A2%E5%BC%95%E6%97%B6%E6%B3%A8%E6%84%8F%E4%BA%8B%E9%A1%B9"><span class="nav-text">8）创建字符串列的索引时注意事项：</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%8C%BA%E5%88%86%E5%BA%A6%E9%AB%98%E7%9A%84%E5%88%97%E9%80%82%E5%90%88%E4%BD%9C%E4%B8%BA%E7%B4%A2%E5%BC%95"><span class="nav-text">9）区分度高的列适合作为索引：</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8%E6%9C%80%E9%A2%91%E7%B9%81%E7%9A%84%E5%88%97%E6%94%BE%E5%88%B0%E8%81%94%E5%90%88%E7%B4%A2%E5%BC%95%E7%9A%84%E5%B7%A6%E4%BE%A7"><span class="nav-text">10）使用最频繁的列放到联合索引的左侧</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%9C%A8%E5%A4%9A%E4%B8%AA%E5%AD%97%E6%AE%B5%E9%83%BD%E8%A6%81%E5%88%9B%E5%BB%BA%E7%B4%A2%E5%BC%95%E6%97%B6%E8%81%94%E5%90%88%E7%B4%A2%E5%BC%95%E4%BC%98%E4%BA%8E%E5%8D%95%E5%80%BC%E7%B4%A2%E5%BC%95"><span class="nav-text">11）在多个字段都要创建索引时，联合索引优于单值索引</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%B4%A2%E5%BC%95%E6%95%B0%E7%9B%AE%E7%9A%84%E9%99%90%E5%88%B6"><span class="nav-text">2、索引数目的限制：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%93%AA%E4%BA%9B%E6%83%85%E5%86%B5%E4%B8%8D%E9%80%82%E5%90%88%E5%88%9B%E5%BB%BA%E7%B4%A2%E5%BC%95"><span class="nav-text">3、哪些情况不适合创建索引？</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%9C%A8where%E4%B8%AD%E4%BD%BF%E7%94%A8%E4%B8%8D%E5%88%B0%E7%9A%84%E5%AD%97%E6%AE%B5%E4%B8%8D%E8%A6%81%E8%AE%BE%E7%BD%AE%E7%B4%A2%E5%BC%95"><span class="nav-text">1）在where中使用不到的字段，不要设置索引</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E9%87%8F%E5%B0%8F%E7%9A%84%E8%A1%A8%E6%9C%80%E5%A5%BD%E4%B8%8D%E8%A6%81%E4%BD%BF%E7%94%A8%E7%B4%A2%E5%BC%95"><span class="nav-text">2）数据量小的表最好不要使用索引</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%9C%89%E5%A4%A7%E9%87%8F%E9%87%8D%E5%A4%8D%E6%95%B0%E6%8D%AE%E7%9A%84%E5%88%97%E4%B8%8A%E4%B8%8D%E8%A6%81%E5%BB%BA%E7%AB%8B%E7%B4%A2%E5%BC%9510"><span class="nav-text">3）有大量重复数据的列上不要建立索引（10%）</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E9%81%BF%E5%85%8D%E5%AF%B9%E7%BB%8F%E5%B8%B8%E6%9B%B4%E6%96%B0%E7%9A%84%E8%A1%A8%E5%88%9B%E5%BB%BA%E8%BF%87%E5%A4%9A%E7%9A%84%E7%B4%A2%E5%BC%95"><span class="nav-text">4）避免对经常更新的表创建过多的索引</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E4%B8%8D%E5%BB%BA%E8%AE%AE%E7%94%A8%E6%97%A0%E5%BA%8F%E7%9A%84%E5%80%BC%E4%BD%9C%E4%B8%BA%E7%B4%A2%E5%BC%95"><span class="nav-text">5）不建议用无序的值作为索引</span></a></li></ol></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Fantast"
+      src="/images/avatar.webp">
+  <p class="site-author-name" itemprop="name">Fantast</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">167</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">42</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">98</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/fantast416" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;fantast416" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:fantast416@gmail.com" title="E-Mail → mailto:fantast416@gmail.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll site-overview-item animated">
+    <div class="links-of-blogroll-title"><i class="fa fa-globe fa-fw"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://www.zhihu.com/people/shuo-shuo-3-41" title="https:&#x2F;&#x2F;www.zhihu.com&#x2F;people&#x2F;shuo-shuo-3-41" rel="noopener" target="_blank">ZhiHu</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="http://www.next.zju.edu.cn/" title="http:&#x2F;&#x2F;www.next.zju.edu.cn&#x2F;" rel="noopener" target="_blank">NextLab</a>
+        </li>
+    </ul>
+  </div>
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://blog.fantast.top/2022/10/27/5b0755a55834/">
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.webp">
+      <meta itemprop="name" content="Fantast">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Fantast's Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          
+        </h1>
+
+        <div class="post-meta-container">
+          
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2022-10-27 21:51:19" itemprop="dateCreated datePublished" datetime="2022-10-27T21:51:19+08:00">2022-10-27</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2022-10-28 16:39:45" itemprop="dateModified" datetime="2022-10-28T16:39:45+08:00">2022-10-28</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E2%93%B9-%E5%9F%BA%E7%A1%80%E7%B1%BB%E7%AC%94%E8%AE%B0/" itemprop="url" rel="index"><span itemprop="name">⓹ 基础类笔记</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E2%93%B9-%E5%9F%BA%E7%A1%80%E7%B1%BB%E7%AC%94%E8%AE%B0/%E6%95%B0%E6%8D%AE%E5%BA%93%E7%B2%BE%E7%AE%80%E7%AC%94%E8%AE%B0/" itemprop="url" rel="index"><span itemprop="name">数据库精简笔记</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>3.8k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>10 分钟</span>
+    </span>
+</div>
+
+            <div class="post-description">Chap11——Mysql 索引及调优原则</div>
+            <div class="post-remind">Google Chrome is recommended, otherwise the image size may be wrong</div>
+            <div class="post-remind">FireFox is not recommended,Because it does not support the image zoom property</div>
+        </div>
+        
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h3 id="一索引的创建与删除">一、索引的创建与删除</h3>
+<ul>
+<li>分类之<strong>全文索引</strong>：搜索引擎使用的一种关键技术。它能够利用【分词技术】等多种算法智能分析出文本文字中关键词的频率和重要性，然后按照一定的算法规则智能地筛选出我们想要的搜索结果。<strong>全文索引非常适合大型数据集，对于小的数据集，它的用处比较小。</strong>
+<ul>
+<li>使用参数FULLTEXT可以设置索引为全文索引。</li>
+<li>在定义索引的列上支持值的全文查找，允许在这些索引列中插入重复值和空值。查询数据量较大的字符串类型的字段时，使用全文索引可以提高查询速度。例如，表student的字段information是TEXT类型，该字段包含了很多文字信息。在字段information上建立全文索引后，可以提高查询字段information的速度。</li>
+</ul></li>
+</ul>
+<h4 id="创建删除索引">1、创建删除索引：</h4>
+<h5 id="创建表时新增">1）创建表时新增</h5>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">CREATE TABLE table_name [col_name data_type]</span><br><span class="line">[UNIQUE | FULLTEXT | SPATIAL] [INDEX | KEY] [index_name] (col_name [length]) [ASC | DESC]</span><br></pre></td></tr></table></figure>
+<ul>
+<li><p>UNIQUE 、FULLTEXT 和SPATIAL
+为可选参数，分别表示唯一索引、全文索引和空间索引；</p></li>
+<li><p>INDEX 与KEY 为同义词，两者的作用相同，用来指定创建索引；</p></li>
+<li><p>index_name
+指定索引的名称，为可选参数，如果不指定，那么MySQL默认col_name为索引名；</p></li>
+<li><p>col_name
+为需要创建索引的字段列，该列必须从数据表中定义的多个列中选择；</p></li>
+<li><p>length
+为可选参数，表示索引的长度，只有字符串类型的字段才能指定索引长度；</p></li>
+<li><p>ASC 或DESC 指定升序或者降序的索引值存</p></li>
+<li><p>多列索引：</p></li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">INDEX multi_idx(id,name,age)</span><br></pre></td></tr></table></figure>
+<ul>
+<li>全文索引：</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">CREATE TABLE `papers` (</span><br><span class="line">`id` int(10) unsigned NOT NULL AUTO_INCREMENT,</span><br><span class="line">`title` varchar(200) DEFAULT NULL,</span><br><span class="line">`content` text,</span><br><span class="line">PRIMARY KEY (`id`),</span><br><span class="line">FULLTEXT KEY `title` (`title`,`content`)</span><br><span class="line">) ENGINE=MyISAM DEFAULT CHARSET=utf8;</span><br></pre></td></tr></table></figure>
+<p>全文检索如何查询？</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">SELECT * FROM papers WHERE content LIKE ‘%查询字符串%’; # 普通查询</span><br><span class="line">SELECT * FROM papers WHERE MATCH(title,content) AGAINST (‘查询字符串’); # 全文检索，非常快</span><br></pre></td></tr></table></figure>
+<h5 id="创建表后新增">2）创建表后新增</h5>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">CREATE [UNIQUE | FULLTEXT | SPATIAL] INDEX index_name</span><br><span class="line">ON table_name (col_name[length],...) [ASC | DESC]</span><br></pre></td></tr></table></figure>
+<h5 id="删除索引">3）删除索引：</h5>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">DROP INDEX index_name ON table_name;</span><br></pre></td></tr></table></figure>
+<h3 id="二mysql8.0索引新特性">二、Mysql8.0索引新特性：</h3>
+<h4 id="降序索引">1、降序索引：</h4>
+<p>​ 即DESC关键字被支持，其在某种场景下意义重大，如下：</p>
+<p>先创建索引如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">CREATE TABLE ts1(a int,b int,index idx_a_b(a ASC,b desc));</span><br></pre></td></tr></table></figure>
+<p>​ 在执行如下语句时，执行计划中扫描数为799，而且提示使用了Using
+filesort，这是MySQL中一种速度比较慢的外部排序，能避免是最好的。多数情况下，管理员可以通过优化索引来尽量避免出现Using
+filesort，从而提高数据库执行速度。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">EXPLAIN SELECT * FROM ts1 ORDER BY a,b DESC LIMIT 5;</span><br></pre></td></tr></table></figure>
+<p>​ 但是在执行如下语句时，就会快很多且不会使用Using filesort：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">EXPLAIN SELECT * FROM ts1 ORDER BY a ASC,b DESC LIMIT 5;</span><br></pre></td></tr></table></figure>
+<h4 id="隐藏索引">2、隐藏索引：</h4>
+<p>​
+只需要将待删除的索引设置为隐藏索引，使查询优化器不再使用这个索引（即使使用force
+index（强制使用索引），优化器也不会使用该索引），确认将索引设置为隐藏索引后系统不受任何响应，就可以彻底删除索引。</p>
+<p>​ 这种通过先将索引设置为隐藏索引，再删除索引的方式就是软删除。</p>
+<p>​
+同时，如果你想验证某个索引删除之后的查询性能影响，就可以暂时先隐藏该索引。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">CREATE INDEX indexname</span><br><span class="line">ON tablename(propname[(length)]) INVISIBLE;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ALTER TABLE tablename ALTER INDEX index_name INVISIBLE; #切换成隐藏索引</span><br><span class="line">ALTER TABLE tablename ALTER INDEX index_name VISIBLE; #切换成非隐藏索引</span><br></pre></td></tr></table></figure>
+<h3 id="三索引的设计原则">三、索引的设计原则</h3>
+<h4 id="哪些情况适合创建索引">1、哪些情况适合创建索引？</h4>
+<h5
+id="字段的数值有唯一性的限制但是没有加唯一性约束的字段">1）字段的数值有唯一性的限制，但是没有加唯一性约束的字段</h5>
+<h5 id="频繁作为where查询条件的字段">2）频繁作为WHERE查询条件的字段</h5>
+<h5 id="经常group-by和order-by的列">3）经常GROUP BY和ORDER BY的列</h5>
+<p>​
+需要对分组或者排序的字段进行索引。如果待排序的列有多个，那么可以在这些列上建立联合索引。既有GROUP
+BY 又有 ORDER BY，可以考虑建立联合索引，但联合索引要先写GROUP BY 再写
+ORDER BY。</p>
+<h5 id="updatedelete-的-where-条件列">4）UPDATE、DELETE 的 WHERE
+条件列</h5>
+<p>​
+如果进行更新的时候，更新的字段是非索引字段，提升的效率会更明显，这是因为非索引字段更新不需要对索引进行维护。</p>
+<h5 id="distinct-操作的字段需要创建索引">5）DISTINCT
+操作的字段需要创建索引</h5>
+<p>​
+有时候我们需要对某个字段进行去重，使用DISTINCT，那么对这个字段创建索引，也会提升查询效率。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SELECT DISTINCT(student_id) FROM `student_info`;</span><br></pre></td></tr></table></figure>
+<h5
+id="多表join连接操作时创建索引的注意事项">6）多表JOIN连接操作时，创建索引的注意事项:</h5>
+<ul>
+<li>连接的表数量不要超过3张</li>
+<li>对WHERE条件创建索引</li>
+<li><strong>对用于连接的字段创建索引</strong>，并且该字段在多张表中的类型必须一致。</li>
+</ul>
+<h5 id="使用列的类型小的创建索引">7）使用列的类型小的创建索引</h5>
+<ul>
+<li><p>类型大小指该类型表示的数据范围的大小。</p></li>
+<li><p>如果要对某个列建立索引，尽量让这个列使用较小的数据类型。原因：</p>
+<ul>
+<li>数据类型越小，在查询时进行的比较操作越快</li>
+<li>数据类型越小，索引占用的存储空间就越少，在一个数据页内就可以放下更多的记录，从而减少磁盘I/0带来的性能损耗，也就意味着可以把更多的数据页缓存在内存中，从而加快读写效率。</li>
+</ul></li>
+</ul>
+<h5
+id="创建字符串列的索引时注意事项">8）创建字符串列的索引时注意事项：</h5>
+<p>​
+假设我们的字符串很长，那存储一个字符串就需要占用很大的存储空间。在我们需要为这个字符串列建立索引时，那就意味着在对应的B+树中有这么两个问题：</p>
+<ul>
+<li>B+树索引中的记录需要把该列的完整字符串存储起来，更费时。而且字符串越长，在索引中占用的存储空间越大。</li>
+<li>如果B+树索引中索引列存储的字符串很长，那在做字符串比较时会占用更多的时间。</li>
+</ul>
+<p>​
+<strong>通过截取字段的前面一部分内容建立索引，这个就叫前缀索引。</strong></p>
+<p>​
+这样在查找记录时虽然不能精确的定位到记录的位置，但是能定位到相应前缀所在的位置，然后<strong>根据前缀相同的记录的主键值回表查询完整的字符串值。</strong>既节约空间，又减少了字符串的比较时间，还大体能解决排序的问题。</p>
+<ul>
+<li><p><strong>关键问题</strong>：截取多少比较合适？</p></li>
+<li><p>先看一下字段在全部数据中的选择度</p>
+<ul>
+<li>```mysql select count(distinct address) / count(<em>) from shop;
+count(distinct left(列名, 索引长度))/count(</em>) <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">- ```mysql</span><br><span class="line">  select count(distinct left(address,10)) / count(*) as sub10, -- 截取前10个字符的选择度</span><br><span class="line">  count(distinct left(address,15)) / count(*) as sub11, -- 截取前15个字符的选择度</span><br><span class="line">  count(distinct left(address,20)) / count(*) as sub12, -- 截取前20个字符的选择度</span><br><span class="line">  count(distinct left(address,25)) / count(*) as sub13 -- 截取前25个字符的选择度</span><br></pre></td></tr></table></figure></li>
+</ul></li>
+</ul>
+<h5 id="区分度高的列适合作为索引">9）区分度高的列适合作为索引：</h5>
+<p>​
+列的基数指的是某一列中不重复数据的个数，比方说某个列包含值2，5，8，2，5，8，2，5，8，虽然有9条记录，但该列的基数却是3。</p>
+<p>​ 可以使用公式</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">select count(distinct a)/count(*) from t1 </span><br></pre></td></tr></table></figure>
+<p>​ 计算区分度，越接近1越好，一般超过33%就算是比较高效的索引了。</p>
+<h5
+id="使用最频繁的列放到联合索引的左侧">10）使用最频繁的列放到联合索引的左侧</h5>
+<h5
+id="在多个字段都要创建索引时联合索引优于单值索引">11）在多个字段都要创建索引时，联合索引优于单值索引</h5>
+<h4 id="索引数目的限制">2、索引数目的限制：</h4>
+<ul>
+<li><p>单张表不超过6个索引</p></li>
+<li><p>索引占用磁盘空间、会影响insert，update的效率。同时，因为优化器在执行查询前，如果索引太多，会导致其生成执行计划的时间降低。</p></li>
+</ul>
+<h4 id="哪些情况不适合创建索引">3、哪些情况不适合创建索引？</h4>
+<h5
+id="在where中使用不到的字段不要设置索引">1）在where中使用不到的字段，不要设置索引</h5>
+<h5
+id="数据量小的表最好不要使用索引">2）数据量小的表最好不要使用索引</h5>
+<h5
+id="有大量重复数据的列上不要建立索引10">3）有大量重复数据的列上不要建立索引（10%）</h5>
+<p>​ 要在 100 万行数据中查找其中的 50
+万行（比如性别为男的数据），一旦创建了索引，你需要先访问 50
+万次索引，然后再访问 50
+万次数据表，这样加起来的开销比不使用索引可能还要大.</p>
+<h5
+id="避免对经常更新的表创建过多的索引">4）避免对经常更新的表创建过多的索引</h5>
+<h5 id="不建议用无序的值作为索引">5）不建议用无序的值作为索引</h5>
+<p>​
+例如身份证、UUID(在索引比较时需要转为ASCII，并且插入时可能造成页分裂)、MD5、HASH、无序长字符串等。</p>
+
+    </div>
+
+    
+    
+    
+      
+  <div class="popular-posts-header">相关文章</div>
+  <ul class="popular-posts">
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2022\10\28\a30af89db2dc\" rel="bookmark">Mysql数据库调优工具</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2022\10\17\a0984953b2e8\" rel="bookmark">事务</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2022\10\17\f545bfc8e29a\" rel="bookmark">Mysql日志与备份</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2022\10\17\6d0d3039dfe2\" rel="bookmark">Mysql逻辑架构和存储引擎</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2022\10\17\bb6cac39113d\" rel="bookmark"></a></div>
+    </li>
+  </ul>
+
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Database/" rel="tag"># Database</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2022/10/17/a0984953b2e8/" rel="prev" title="事务">
+                  <i class="fa fa-chevron-left"></i> 事务
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2022/10/28/a30af89db2dc/" rel="next" title="Mysql数据库调优工具">
+                  Mysql数据库调优工具 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments utterances-container"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Fantast</span>
+</div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+    <span title="站点总字数">761k</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">35:13</span>
+  </span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script><script src="/js/bookmark.js"></script>
+
+  
+<script src="https://cdn.jsdelivr.net/npm/hexo-generator-searchdb@1.4.0/dist/search.js" integrity="sha256-vXZMYLEqsROAXkEw93GGIvaB2ab+QW6w3+1ahD9nXXA=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdn.jsdelivr.net/npm/mathjax@3.2.0/es5/tex-mml-chtml.js","integrity":"sha256-r+3itOMtGGjap0x+10hu6jW/gZCzxHsoKrOd7gyRSGY="}}</script>
+<script src="/js/third-party/math/mathjax.js"></script>
+
+
+<script class="next-config" data-name="utterances" type="application/json">{"enable":true,"repo":"Fantast416/myblog-comment","issue_term":"pathname","theme":"github-light"}</script>
+<script src="/js/third-party/comments/utterances.js"></script>
+
+</body>
+</html>

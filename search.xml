@@ -47,8 +47,511 @@
       </tags>
   </entry>
   <entry>
+    <title>Mysql数据库调优工具</title>
+    <url>/2022/10/28/a30af89db2dc/</url>
+    <content><![CDATA[<h3 id="一数据库优化步骤及优化工具">一、数据库优化步骤及优化工具</h3>
+<p><img src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20221028165505532.png" style="zoom:67%;" /></p>
+<p><img src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20221028165600066.png" style="zoom:67%;" /></p>
+<h4 id="统计sql的查询成本">1、统计SQL的查询成本：</h4>
+<p>​ 这个Value代表的是进行了多少个页的查询</p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20221028170212104.png" /></p>
+<p>​
+使用场景：它对于比较开销是非常有用的，特别是我们有好几种查询方式可选的时候。SQL查询是一个动态的过程，从页加载的角度来看，我们可以得到以下两点结论：</p>
+<ul>
+<li>位置决定效率。如果页就在数据库缓冲池中，那么效率是最高的，否则还需要从内存或者磁盘中进行读取，当然针对单个页的读取来说，如果页存在于内存中，会比在磁盘中读取效率高很多。</li>
+<li>批量决定效率。如果我们从磁盘中对单一页进行随机读，那么效率是很低的（差不多10ms），而采用顺序读取的方式，批量对页进行读取，平均一页的读取效率就会提升很多，甚至要快于单个页面在内存中的随机读取。</li>
+<li>考虑数据存放的位置，如果是经常使用的数据就要尽量放到缓冲池中，其次我们可以充分利用磁盘的吞吐能力，一次性批量读取数据，这样单个页的读取效率也就得到了提升。</li>
+</ul>
+<h4 id="开启慢查询日志">2、开启慢查询日志：</h4>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">set global slow_query_log=&#x27;ON&#x27;;</span><br></pre></td></tr></table></figure>
+<p>​
+MySQL的慢查询日志，用来记录在MySQL中响应时间超过阈值的语句，具体指运行时间超过long_query_time值的SQL，会被记录到慢查询日志中，默认值为10s。</p>
+<p>​ 如果不是调优需要的话，一般不会开启该参数。</p>
+<p>​ 设置时间阈值：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">mysql&gt; set global long_query_time = 1;</span><br><span class="line">mysql&gt; show global variables like &#x27;%long_query_time%&#x27;;</span><br><span class="line">mysql&gt; set long_query_time=1;</span><br><span class="line">mysql&gt; show variables like &#x27;%long_query_time%&#x27;;</span><br></pre></td></tr></table></figure>
+<p>​ 查看慢查询记录条数：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">SHOW GLOBAL STATUS LIKE &#x27;%Slow_queries%&#x27;;</span><br></pre></td></tr></table></figure>
+<p>​ 慢查询日志分析工具：mysqldumpslow</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">#得到返回记录集最多的10个SQL</span><br><span class="line">mysqldumpslow -s r -t 10 /var/lib/mysql/atguigu-slow.log</span><br><span class="line">#得到访问次数最多的10个SQL</span><br><span class="line">mysqldumpslow -s c -t 10 /var/lib/mysql/atguigu-slow.log</span><br><span class="line">#得到按照时间排序的前10条里面含有左连接的查询语句</span><br><span class="line">mysqldumpslow -s t -t 10 -g &quot;left join&quot; /var/lib/mysql/atguigu-slow.log</span><br><span class="line">#另外建议在使用这些命令时结合 | 和more 使用 ，否则有可能出现爆屏情况</span><br><span class="line">mysqldumpslow -s r -t 10 /var/lib/mysql/atguigu-slow.log | more</span><br></pre></td></tr></table></figure>
+<p>​ 查看SQL执行成本：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">mysql &gt; set profiling = &#x27;ON&#x27;;</span><br><span class="line">mysql &gt; show profiles;</span><br><span class="line">mysql &gt; show profile;</span><br><span class="line">mysql&gt; show profile cpu,block io for query 2;</span><br></pre></td></tr></table></figure>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/mac/image-20221029131535493.png" /></p>
+<p><img src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/mac/截屏2022-10-29 13.17.28.png" style="zoom:67%;" /></p>
+<h4 id="分析查询语句explain">3、分析查询语句EXPLAIN：</h4>
+<p>​
+<strong>定位了查询慢的SQL之后，我们就可以使用EXPLAIN或DESCRIBE工具做针对性的分析查询语句。</strong></p>
+<ul>
+<li><p>能显示哪些信息？</p>
+<ul>
+<li><p>表的读取顺序，数据读取操作的操作类型、哪些索引可以使用，哪些索引实际被使用、表之间的引用、每张表有多少行被优化器查询。</p></li>
+<li><p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/mac/截屏2022-10-29%2013.32.18.png" /></p></li>
+<li><table>
+<colgroup>
+<col style="width: 19%" />
+<col style="width: 80%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>id</th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>select_type</td>
+<td>SELECT关键字对应的那个查询的类型</td>
+</tr>
+<tr class="even">
+<td>table</td>
+<td>表名</td>
+</tr>
+<tr class="odd">
+<td>Partitions</td>
+<td>匹配的分区信息</td>
+</tr>
+<tr class="even">
+<td>type</td>
+<td>针对单表的访问方法</td>
+</tr>
+<tr class="odd">
+<td>Possible_keys</td>
+<td>可能用到的索引</td>
+</tr>
+<tr class="even">
+<td>key</td>
+<td>实际上使用的索引</td>
+</tr>
+<tr class="odd">
+<td>key_len</td>
+<td>实际使用到的索引长度</td>
+</tr>
+<tr class="even">
+<td>ref</td>
+<td>当使用索引列等值查询时，与索引列进行等值匹配的对象信息</td>
+</tr>
+<tr class="odd">
+<td>rows</td>
+<td>预估的需要读取的记录条数</td>
+</tr>
+<tr class="even">
+<td>filtered</td>
+<td>某个表经过搜索条件过滤后剩余记录条数的百分比</td>
+</tr>
+<tr class="odd">
+<td>Extra</td>
+<td>一些额外的信息</td>
+</tr>
+</tbody>
+</table></li>
+</ul></li>
+</ul>
+<h5 id="id-和-table关键词">1）id 和 table关键词</h5>
+<ul>
+<li>Case1:</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">EXPLAIN SELECT * FROM s1 INNER JOIN s2</span><br><span class="line">ON s1.key1 = s2.key1</span><br><span class="line">WHERE s1.common_field = &#x27;a&#x27;;</span><br></pre></td></tr></table></figure>
+<ul>
+<li><p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/mac/截屏2022-10-29%2013.57.41.png" /></p>
+<ul>
+<li><p>每一条查询记录，都对应一张单表。比如说上述inner
+join，用到两个单表，所以会显示有两条记录</p></li>
+<li><p>但是在一个大的查询中，一个SELECT关键词对应着一个id</p></li>
+</ul></li>
+<li><p>Case2:</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">EXPLAIN SELECT * FROM s1 WHERE key1 IN (SELECT key1 FROM s2) OR key3 = &#x27;a&#x27;;</span><br></pre></td></tr></table></figure></li>
+<li><p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/mac/截屏2022-10-29%2014.03.11.png" /></p>
+<ul>
+<li>有两个SELECT语句，所以对应两个id</li>
+</ul></li>
+<li><p>Case3:</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">EXPLAIN SELECT * FROM s1 WHERE key1 IN (SELECT key2 FROM s2 WHERE common_field = &#x27;a&#x27;);</span><br></pre></td></tr></table></figure>
+<ul>
+<li><p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/mac/截屏2022-10-29%2014.07.15.png" /></p></li>
+<li><p>虽然有两个SELECT语句，为啥同一个ID呢？因为查询优化器可能对涉及子查询的查询语句进行重写，转换为多表查询的形式。</p></li>
+</ul></li>
+<li><p>Case4:</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">EXPLAIN SELECT * FROM s1 UNION SELECT * FROM s2;</span><br></pre></td></tr></table></figure>
+<ul>
+<li><p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/mac/截屏2022-10-29%2014.09.41.png" /></p></li>
+<li><p>UNION操作因为需要中间表进行去重操作，所以涉及到第三个记录。</p></li>
+</ul></li>
+<li><p>Case5:</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">EXPLAIN SELECT * FROM s1 UNION SELECT * FROM s2;</span><br></pre></td></tr></table></figure></li>
+<li><p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/mac/截屏2022-10-29%2014.10.39.png" /></p></li>
+<li><p>因为UNION ALL不用去重，所以不会有第三条记录</p></li>
+<li><p><strong>总结相关内容：</strong></p>
+<ul>
+<li>id如果相同，可以认为是一组，从上往下顺序执行</li>
+<li>在所有组中，id值越大，优先级越高，越先执行</li>
+<li>关注点：id号每个号码，表示一趟独立的查询,
+一个sql的查询趟数越少越好</li>
+</ul></li>
+</ul>
+<h5 id="select_type">2）select_type</h5>
+<p>​
+SELECT关键字对应的那个查询的类型，确认了小查询在大的查询中扮演了怎样的一个角色。</p>
+<ul>
+<li><p>查询语句中不包含UNION和子查询的都是SIMPLE</p></li>
+<li><p>连接查询都是SIMPLE</p></li>
+<li><p>Case1: 相关子查询 DEPENDENT SUBQUERY</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">EXPLAIN SELECT * FROM s1 WHERE key1 IN (SELECT key1 FROM s2 WHERE s1.key2 =</span><br><span class="line">s2.key2) OR key3 = &#x27;a&#x27;;</span><br></pre></td></tr></table></figure>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/mac/截屏2022-10-29%2014.18.01.png" /></p></li>
+<li><p>Case2: 查询优化器优化了的情况</p></li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">EXPLAIN SELECT * FROM s1 WHERE key1 IN </span><br><span class="line">	(</span><br><span class="line">    SELECT key1 FROM s2 WHERE key1 = &#x27;a&#x27; </span><br><span class="line">   	UNION </span><br><span class="line">   	SELECT key1 FROM s1 WHERE key1 = &#x27;b&#x27;</span><br><span class="line">  );</span><br></pre></td></tr></table></figure>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/mac/截屏2022-10-29%2014.23.09.png" /></p>
+<h5
+id="type对某张表的查询类型查询方法">3）type：对某张表的查询类型，查询方法</h5>
+<ul>
+<li>所有访问类型，越靠前是我们最希望看到的（效果越好）：system ， const
+， eq_ref ， ref ， fulltext ， ref_or_null ，index_merge ，
+unique_subquery ， index_subquery ， range ， index ， ALL</li>
+<li>system</li>
+</ul>
+<p>示例：表结构：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">CREATE TABLE s1 (</span><br><span class="line">    id INT AUTO_INCREMENT,</span><br><span class="line">    key1 VARCHAR(100),</span><br><span class="line">    key2 INT,</span><br><span class="line">    key3 VARCHAR(100),</span><br><span class="line">    key_part1 VARCHAR(100),</span><br><span class="line">    key_part2 VARCHAR(100),</span><br><span class="line">    key_part3 VARCHAR(100),</span><br><span class="line">    common_field VARCHAR(100),</span><br><span class="line">    PRIMARY KEY (id),</span><br><span class="line">    INDEX idx_key1 (key1),</span><br><span class="line">    UNIQUE INDEX idx_key2 (key2),</span><br><span class="line">    INDEX idx_key3 (key3),	</span><br><span class="line">    INDEX idx_key_part(key_part1, key_part2, key_part3)</span><br><span class="line">) ENGINE=INNODB CHARSET=utf8;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>const：根据主键或唯一二级索引与常数进行匹配</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">EXPLAIN SELECT * FROM s1 WHERE id = 10005;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>eq_ref：连接查询时，被驱动表根据主键或唯一二级索引与常数进行匹配</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">EXPLAIN SELECT * FROM s1 INNER JOIN s2 ON s1.id = s2.id;</span><br></pre></td></tr></table></figure>
+<p>​
+从执行计划的结果中可以看出，MySQL打算将s2作为驱动表，s1作为被驱动表，重点关注s1的访问方法是eq_ref
+，表明在访问s1表的时候可以通过主键的等值匹配来进行访问</p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/mac/截屏2022-10-29%2014.29.09.png" /></p>
+<ul>
+<li>ref：普通二级索引与常数进行匹配</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">EXPLAIN SELECT * FROM s1 WHERE key1 = &#x27;a&#x27;;</span><br></pre></td></tr></table></figure>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/mac/截屏2022-10-29%2014.33.58.png" /></p>
+<ul>
+<li>ref_or_null 普通二级索引与常数进行匹配，且索引值可能为null</li>
+<li>index_merge MySQL 打算使用索引合并的方式来执行对 s1 表的查询。</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">EXPLAIN SELECT * FROM s1 WHERE key1 = &#x27;a&#x27; OR key3 = &#x27;a&#x27;;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>unique_subquery</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">EXPLAIN SELECT * FROM s1 WHERE key2 IN (SELECT id FROM s2 where s1.key1 = s2.key1) OR key3 = &#x27;a&#x27;;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>index_subquery</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">EXPLAIN SELECT * FROM s1 WHERE common_field IN (SELECT key3 FROM s2 where s1.key1 = s2.key1) OR key3 = &#x27;a&#x27;;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>range
+使用索引获取某些范围区间的记录，那么就可能使用到range访问方法</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">EXPLAIN SELECT * FROM s1 WHERE key1 &gt; &#x27;a&#x27; AND key1 &lt; &#x27;b&#x27;;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>index
+当我们可以使用素引覆盖（不用回表就可以查到数据），但需要扫描全部的索引记录时，该表的访问方法就是index
+【因为此处，联合索引的字段最优先的是key_part1,key_part2然后才是key_part3】</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">EXPLAIN SELECT key_part2 FROM s1 WHERE key_part3=&#x27;a&#x27;；</span><br></pre></td></tr></table></figure>
+<p>​ 即如果语句如下，则type就是ref而非index</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">EXPLAIN SELECT key_part2 FROM s1 WHERE key_part1=&#x27;a&#x27; and key_part3 = &#x27;b&#x27;;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>all</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">EXPLAIN SELECT * FROM s1;</span><br></pre></td></tr></table></figure>
+<p>​ <strong>SQL</strong> <strong>性能优化的目标：至少要达到</strong>
+<strong>range</strong> <strong>级别，要求是</strong>
+<strong>ref</strong> <strong>级别，最好是</strong>
+<strong>consts</strong>级别。</p>
+<h5 id="possible_keys-和-key">4）possible_keys 和 key</h5>
+<p>​
+在EXPLAIN语句输出的执行计划中，possible_keys列表示在某个查询语句中，对某个表执行单表查询时可能用到的索引有哪些。一般查询涉及到的字段上若存在索引，则该索引将被列出，但不一定被查询使用。key列表示实际用到的索引有哪些，如果为NULL，则没有使用索引。</p>
+<h5 id="key_len">5）key_len</h5>
+<p>​
+实际使用到的索引长度（字节数），帮你检查是否充分的利用上了索引，值越大越好，主要针对于联合索引。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">EXPLAIN SELECT * FROM s1 WHERE id = 10005;</span><br></pre></td></tr></table></figure>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/image-20221029221248821.png" /></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">EXPLAIN SELECT * FROM s1 WHERE key2 = 10126;</span><br></pre></td></tr></table></figure>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/image-20221029221254958.png" /></p>
+<p>4+1 =5, 因为key2字段不是非空的，所以记录NULL需要一个字节。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">EXPLAIN SELECT * FROM s1 WHERE key_part1 = &#x27;a&#x27;;</span><br></pre></td></tr></table></figure>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/image-20221029221407032.png" /></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">EXPLAIN SELECT * FROM s1 WHERE key_part1 = &#x27;a&#x27; AND key_part2 = &#x27;b&#x27;;</span><br></pre></td></tr></table></figure>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/image-20221029221412049.png" /></p>
+<p><strong>key_len</strong>如何计算:</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"># varchar(10)变长字段且允许NULL = 10 * ( character set：</span><br><span class="line"># utf8=3,gbk=2,latin1=1)+1(NULL)+2(变长字段)</span><br><span class="line"></span><br><span class="line"># varchar(10)变长字段且不允许NULL = 10 * ( character set：utf8=3,gbk=2,latin1=1)+2(变长字段)</span><br><span class="line"></span><br><span class="line"># char(10)固定字段且允许NULL = 10 * ( character set：utf8=3,gbk=2,latin1=1)+1(NULL)</span><br><span class="line"></span><br><span class="line"># char(10)固定字段且不允许NULL = 10 * ( character set：utf8=3,gbk=2,latin1=1)</span><br></pre></td></tr></table></figure>
+<h5 id="ref">6）ref</h5>
+<p>​ 当使用索引列等值查询的时候，与索引列进行等值匹配的对象信息。</p>
+<h5 id="rows">7）rows</h5>
+<p>​ 预估的需要读取的记录条数</p>
+<h5 id="filtered">8）filtered</h5>
+<p>​
+某个表经过搜索条件过滤后，剩余记录条数的百分比。对于单表查询没有什么大的意义。</p>
+<ul>
+<li>Case1:代表，单表查询时，经过key1 &gt; 'z' 和 common_filed='a'
+条件筛选后，还剩下的记录是10%</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">EXPLAIN SELECT * FROM s1 WHERE key1 &gt; &#x27;z&#x27; AND common_field = &#x27;a&#x27;;</span><br></pre></td></tr></table></figure>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/image-20221030202016814.png" /></p>
+<ul>
+<li>Case2:连表查询时，s1驱动表，s2被驱动表,此时filtered的值决定了被驱动表s2需要执行的次数，即rows*filtered。</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">EXPLAIN SELECT * FROM s1 INNER JOIN s2 ON s1.key1 = s2.key1 WHERE s1.common_field = &#x27;a&#x27;;</span><br></pre></td></tr></table></figure>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/image-20221030202138448.png" /></p>
+<h5 id="extra">9） Extra</h5>
+<p>​ 更准确的理解MySQL到底将如何执行给定的查询语句</p>
+<h5 id="小结">10）小结：</h5>
+<ul>
+<li>EXPLAIN不考虑各种Cache</li>
+<li>EXPLAIN不能显示MySQL在执行查询时所作的优化工作</li>
+<li>EXPLAIN不会告诉你关于触发器、存储过程的信息或用户自定义函数对查询的影响情况</li>
+<li>部分统计信息是估算的，并非精确值</li>
+</ul>
+<h4 id="explain语句的输出格式">4、EXPLAIN语句的输出格式</h4>
+<h5 id="传统格式表格形式">1）传统格式，表格形式</h5>
+<p>​ 即上述内容</p>
+<h5 id="json格式会显示成本">2）JSON格式，会显示成本</h5>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">EXPLAIN FORMAT=JSON SELECT ....</span><br></pre></td></tr></table></figure>
+<figure class="highlight json"><table><tr><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;query_block&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;select_id&quot;</span><span class="punctuation">:</span> <span class="number">1</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;cost_info&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">      <span class="attr">&quot;query_cost&quot;</span><span class="punctuation">:</span> <span class="string">&quot;4445.50&quot;</span></span><br><span class="line">    <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;nested_loop&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span></span><br><span class="line">      <span class="punctuation">&#123;</span></span><br><span class="line">        <span class="attr">&quot;table&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">          <span class="attr">&quot;table_name&quot;</span><span class="punctuation">:</span> <span class="string">&quot;s1&quot;</span><span class="punctuation">,</span></span><br><span class="line">          <span class="attr">&quot;access_type&quot;</span><span class="punctuation">:</span> <span class="string">&quot;ALL&quot;</span><span class="punctuation">,</span></span><br><span class="line">          <span class="attr">&quot;possible_keys&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span></span><br><span class="line">            <span class="string">&quot;idx_key1&quot;</span></span><br><span class="line">          <span class="punctuation">]</span><span class="punctuation">,</span></span><br><span class="line">          <span class="attr">&quot;rows_examined_per_scan&quot;</span><span class="punctuation">:</span> <span class="number">9825</span><span class="punctuation">,</span></span><br><span class="line">          <span class="attr">&quot;rows_produced_per_join&quot;</span><span class="punctuation">:</span> <span class="number">9825</span><span class="punctuation">,</span></span><br><span class="line">          <span class="attr">&quot;filtered&quot;</span><span class="punctuation">:</span> <span class="string">&quot;100.00&quot;</span><span class="punctuation">,</span></span><br><span class="line">          <span class="attr">&quot;cost_info&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">            <span class="attr">&quot;read_cost&quot;</span><span class="punctuation">:</span> <span class="string">&quot;24.25&quot;</span><span class="punctuation">,</span></span><br><span class="line">            <span class="attr">&quot;eval_cost&quot;</span><span class="punctuation">:</span> <span class="string">&quot;982.50&quot;</span><span class="punctuation">,</span></span><br><span class="line">            <span class="attr">&quot;prefix_cost&quot;</span><span class="punctuation">:</span> <span class="string">&quot;1006.75&quot;</span><span class="punctuation">,</span></span><br><span class="line">            <span class="attr">&quot;data_read_per_join&quot;</span><span class="punctuation">:</span> <span class="string">&quot;17M&quot;</span></span><br><span class="line">          <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">          <span class="attr">&quot;used_columns&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span></span><br><span class="line">            <span class="string">&quot;id&quot;</span><span class="punctuation">,</span></span><br><span class="line">            <span class="string">&quot;key1&quot;</span><span class="punctuation">,</span></span><br><span class="line">            <span class="string">&quot;key2&quot;</span><span class="punctuation">,</span></span><br><span class="line">            <span class="string">&quot;key3&quot;</span><span class="punctuation">,</span></span><br><span class="line">            <span class="string">&quot;key_part1&quot;</span><span class="punctuation">,</span></span><br><span class="line">            <span class="string">&quot;key_part2&quot;</span><span class="punctuation">,</span></span><br><span class="line">            <span class="string">&quot;key_part3&quot;</span><span class="punctuation">,</span></span><br><span class="line">            <span class="string">&quot;common_field&quot;</span></span><br><span class="line">          <span class="punctuation">]</span><span class="punctuation">,</span></span><br><span class="line">          <span class="attr">&quot;attached_condition&quot;</span><span class="punctuation">:</span> <span class="string">&quot;(`experiment`.`s1`.`key1` is not null)&quot;</span></span><br><span class="line">        <span class="punctuation">&#125;</span></span><br><span class="line">      <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="punctuation">&#123;</span></span><br><span class="line">        <span class="attr">&quot;table&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">          <span class="attr">&quot;table_name&quot;</span><span class="punctuation">:</span> <span class="string">&quot;s2&quot;</span><span class="punctuation">,</span></span><br><span class="line">          <span class="attr">&quot;access_type&quot;</span><span class="punctuation">:</span> <span class="string">&quot;eq_ref&quot;</span><span class="punctuation">,</span></span><br><span class="line">          <span class="attr">&quot;possible_keys&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span></span><br><span class="line">            <span class="string">&quot;idx_key2&quot;</span></span><br><span class="line">          <span class="punctuation">]</span><span class="punctuation">,</span></span><br><span class="line">          <span class="attr">&quot;key&quot;</span><span class="punctuation">:</span> <span class="string">&quot;idx_key2&quot;</span><span class="punctuation">,</span></span><br><span class="line">          <span class="attr">&quot;used_key_parts&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span></span><br><span class="line">            <span class="string">&quot;key2&quot;</span></span><br><span class="line">          <span class="punctuation">]</span><span class="punctuation">,</span></span><br><span class="line">          <span class="attr">&quot;key_length&quot;</span><span class="punctuation">:</span> <span class="string">&quot;5&quot;</span><span class="punctuation">,</span></span><br><span class="line">          <span class="attr">&quot;ref&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span></span><br><span class="line">            <span class="string">&quot;experiment.s1.key1&quot;</span></span><br><span class="line">          <span class="punctuation">]</span><span class="punctuation">,</span></span><br><span class="line">          <span class="attr">&quot;rows_examined_per_scan&quot;</span><span class="punctuation">:</span> <span class="number">1</span><span class="punctuation">,</span></span><br><span class="line">          <span class="attr">&quot;rows_produced_per_join&quot;</span><span class="punctuation">:</span> <span class="number">9825</span><span class="punctuation">,</span></span><br><span class="line">          <span class="attr">&quot;filtered&quot;</span><span class="punctuation">:</span> <span class="string">&quot;100.00&quot;</span><span class="punctuation">,</span></span><br><span class="line">          <span class="attr">&quot;index_condition&quot;</span><span class="punctuation">:</span> <span class="string">&quot;(cast(`experiment`.`s1`.`key1` as double) = cast(`experiment`.`s2`.`key2` as double))&quot;</span><span class="punctuation">,</span></span><br><span class="line">          <span class="attr">&quot;cost_info&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">            <span class="attr">&quot;read_cost&quot;</span><span class="punctuation">:</span> <span class="string">&quot;2456.25&quot;</span><span class="punctuation">,</span></span><br><span class="line">            <span class="attr">&quot;eval_cost&quot;</span><span class="punctuation">:</span> <span class="string">&quot;982.50&quot;</span><span class="punctuation">,</span></span><br><span class="line">            <span class="attr">&quot;prefix_cost&quot;</span><span class="punctuation">:</span> <span class="string">&quot;4445.50&quot;</span><span class="punctuation">,</span></span><br><span class="line">            <span class="attr">&quot;data_read_per_join&quot;</span><span class="punctuation">:</span> <span class="string">&quot;17M&quot;</span></span><br><span class="line">          <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">          <span class="attr">&quot;used_columns&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span></span><br><span class="line">            <span class="string">&quot;id&quot;</span><span class="punctuation">,</span></span><br><span class="line">            <span class="string">&quot;key1&quot;</span><span class="punctuation">,</span></span><br><span class="line">            <span class="string">&quot;key2&quot;</span><span class="punctuation">,</span></span><br><span class="line">            <span class="string">&quot;key3&quot;</span><span class="punctuation">,</span></span><br><span class="line">            <span class="string">&quot;key_part1&quot;</span><span class="punctuation">,</span></span><br><span class="line">            <span class="string">&quot;key_part2&quot;</span><span class="punctuation">,</span></span><br><span class="line">            <span class="string">&quot;key_part3&quot;</span><span class="punctuation">,</span></span><br><span class="line">            <span class="string">&quot;common_field&quot;</span></span><br><span class="line">          <span class="punctuation">]</span></span><br><span class="line">        <span class="punctuation">&#125;</span></span><br><span class="line">      <span class="punctuation">&#125;</span></span><br><span class="line">    <span class="punctuation">]</span></span><br><span class="line">  <span class="punctuation">&#125;</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<ul>
+<li><p>由于 s2 表是被驱动表，所以可能被读取多次，这里的 read_cost 和
+eval_cost 是访问多次 s2 表后累</p>
+<p>加起来的值，大家主要关注里边儿的 prefix_cost
+的值代表的是整个连接查询预计的成本，也就是单</p>
+<p>次查询 s1 表和多次查询 s2 表后的成本的和.</p></li>
+<li><p>read_cost</p>
+<ul>
+<li>IO 成本</li>
+<li>检测 rows × (1 - filter) 条记录的 CPU 成本</li>
+</ul></li>
+<li><p>eval_cost</p>
+<ul>
+<li>检测rows × filter 条记录的成本</li>
+</ul></li>
+<li><p>prefix_cost</p>
+<ul>
+<li>单独查询s1表的成本</li>
+</ul></li>
+<li><p>data_read_per_join</p>
+<ul>
+<li>在此次查询中需要读取的数据量</li>
+</ul></li>
+</ul>
+<h5 id="tree形式">3）TREE形式</h5>
+<h5 id="可视化形式">4）可视化形式</h5>
+<h4
+id="分析优化器执行计划trace工具">5、分析优化器执行计划：trace工具</h4>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">SET optimizer_trace=&quot;enabled=on&quot;,end_markers_in_json=on;</span><br><span class="line">SET optimizer_trace_max_mem_size=1000000;</span><br></pre></td></tr></table></figure>
+<p>开启以后可以分析常见的许多SQL语句,通过如下语句进行查询</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">select * from information_schema.optimizer_trace\G</span><br></pre></td></tr></table></figure>
+<h4 id="mysql监控分析视图-sys-schema">6、MySQL监控分析视图-sys
+schema</h4>
+<p>​
+关于MySQL的性能监控和问题诊断，我们一般都从performance_schema中去获取想要的数据，在MySQL5.7.7版本中新增sys
+schema，它将prformance_schema和information_schema中的数据以更容易理解的方式总结归纳为”视图”，其目的就是为了降低查询performance_schema的复杂度，让DBA能够快速的定位问题。</p>
+<p>​
+下面看看这些库中都有哪些监控表和视图，掌握了这些，在我们开发和运维的过程中就起到了事半功倍的效果。</p>
+<ul>
+<li>索引相关</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">#1. 查询冗余索引</span><br><span class="line">select * from sys.schema_redundant_indexes;</span><br><span class="line">#2. 查询未使用过的索引</span><br><span class="line">select * from sys.schema_unused_indexes;</span><br><span class="line">#3. 查询索引的使用情况</span><br><span class="line">select index_name,rows_selected,rows_inserted,rows_updated,rows_deleted</span><br><span class="line">from sys.schema_index_statistics where table_schema=&#x27;dbname&#x27; ;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>表相关</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"># 1. 查询表的访问量</span><br><span class="line">select table_schema,table_name,sum(io_read_requests+io_write_requests) as io from</span><br><span class="line">sys.schema_table_statistics group by table_schema,table_name order by io desc;</span><br><span class="line"># 2. 查询占用bufferpool较多的表</span><br><span class="line">select object_schema,object_name,allocated,data</span><br><span class="line">from sys.innodb_buffer_stats_by_table order by allocated limit 10;</span><br><span class="line"># 3. 查看表的全表扫描情况</span><br><span class="line">select * from sys.statements_with_full_table_scans where db=&#x27;dbname&#x27;;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>语句相关</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">#1. 监控SQL执行的频率</span><br><span class="line">select db,exec_count,query from sys.statement_analysis</span><br><span class="line">order by exec_count desc;</span><br><span class="line">#2. 监控使用了排序的SQL</span><br><span class="line">select db,exec_count,first_seen,last_seen,query</span><br><span class="line">from sys.statements_with_sorting limit 1;</span><br><span class="line">#3. 监控使用了临时表或者磁盘临时表的SQL</span><br><span class="line">select db,exec_count,tmp_tables,tmp_disk_tables,query</span><br><span class="line">from sys.statement_analysis where tmp_tables&gt;0 or tmp_disk_tables &gt;0</span><br><span class="line">order by (tmp_tables+tmp_disk_tables) desc;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>IO相关</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">#1. 查看消耗磁盘IO的文件</span><br><span class="line">select file,avg_read,avg_write,avg_read+avg_write as avg_io</span><br><span class="line">from sys.io_global_by_file_by_bytes order by avg_read limit 10;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>Innodb相关</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">#1. 行锁阻塞情况</span><br><span class="line">select * from sys.innodb_lock_waits;</span><br></pre></td></tr></table></figure>
+]]></content>
+      <categories>
+        <category>⓹ 基础类笔记</category>
+        <category>数据库精简笔记</category>
+      </categories>
+      <tags>
+        <tag>Database</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title></title>
+    <url>/2022/10/27/5b0755a55834/</url>
+    <content><![CDATA[<h3 id="一索引的创建与删除">一、索引的创建与删除</h3>
+<ul>
+<li>分类之<strong>全文索引</strong>：搜索引擎使用的一种关键技术。它能够利用【分词技术】等多种算法智能分析出文本文字中关键词的频率和重要性，然后按照一定的算法规则智能地筛选出我们想要的搜索结果。<strong>全文索引非常适合大型数据集，对于小的数据集，它的用处比较小。</strong>
+<ul>
+<li>使用参数FULLTEXT可以设置索引为全文索引。</li>
+<li>在定义索引的列上支持值的全文查找，允许在这些索引列中插入重复值和空值。查询数据量较大的字符串类型的字段时，使用全文索引可以提高查询速度。例如，表student的字段information是TEXT类型，该字段包含了很多文字信息。在字段information上建立全文索引后，可以提高查询字段information的速度。</li>
+</ul></li>
+</ul>
+<h4 id="创建删除索引">1、创建删除索引：</h4>
+<h5 id="创建表时新增">1）创建表时新增</h5>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">CREATE TABLE table_name [col_name data_type]</span><br><span class="line">[UNIQUE | FULLTEXT | SPATIAL] [INDEX | KEY] [index_name] (col_name [length]) [ASC | DESC]</span><br></pre></td></tr></table></figure>
+<ul>
+<li><p>UNIQUE 、FULLTEXT 和SPATIAL
+为可选参数，分别表示唯一索引、全文索引和空间索引；</p></li>
+<li><p>INDEX 与KEY 为同义词，两者的作用相同，用来指定创建索引；</p></li>
+<li><p>index_name
+指定索引的名称，为可选参数，如果不指定，那么MySQL默认col_name为索引名；</p></li>
+<li><p>col_name
+为需要创建索引的字段列，该列必须从数据表中定义的多个列中选择；</p></li>
+<li><p>length
+为可选参数，表示索引的长度，只有字符串类型的字段才能指定索引长度；</p></li>
+<li><p>ASC 或DESC 指定升序或者降序的索引值存</p></li>
+<li><p>多列索引：</p></li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">INDEX multi_idx(id,name,age)</span><br></pre></td></tr></table></figure>
+<ul>
+<li>全文索引：</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">CREATE TABLE `papers` (</span><br><span class="line">`id` int(10) unsigned NOT NULL AUTO_INCREMENT,</span><br><span class="line">`title` varchar(200) DEFAULT NULL,</span><br><span class="line">`content` text,</span><br><span class="line">PRIMARY KEY (`id`),</span><br><span class="line">FULLTEXT KEY `title` (`title`,`content`)</span><br><span class="line">) ENGINE=MyISAM DEFAULT CHARSET=utf8;</span><br></pre></td></tr></table></figure>
+<p>全文检索如何查询？</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">SELECT * FROM papers WHERE content LIKE ‘%查询字符串%’; # 普通查询</span><br><span class="line">SELECT * FROM papers WHERE MATCH(title,content) AGAINST (‘查询字符串’); # 全文检索，非常快</span><br></pre></td></tr></table></figure>
+<h5 id="创建表后新增">2）创建表后新增</h5>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">CREATE [UNIQUE | FULLTEXT | SPATIAL] INDEX index_name</span><br><span class="line">ON table_name (col_name[length],...) [ASC | DESC]</span><br></pre></td></tr></table></figure>
+<h5 id="删除索引">3）删除索引：</h5>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">DROP INDEX index_name ON table_name;</span><br></pre></td></tr></table></figure>
+<h3 id="二mysql8.0索引新特性">二、Mysql8.0索引新特性：</h3>
+<h4 id="降序索引">1、降序索引：</h4>
+<p>​ 即DESC关键字被支持，其在某种场景下意义重大，如下：</p>
+<p>先创建索引如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">CREATE TABLE ts1(a int,b int,index idx_a_b(a ASC,b desc));</span><br></pre></td></tr></table></figure>
+<p>​ 在执行如下语句时，执行计划中扫描数为799，而且提示使用了Using
+filesort，这是MySQL中一种速度比较慢的外部排序，能避免是最好的。多数情况下，管理员可以通过优化索引来尽量避免出现Using
+filesort，从而提高数据库执行速度。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">EXPLAIN SELECT * FROM ts1 ORDER BY a,b DESC LIMIT 5;</span><br></pre></td></tr></table></figure>
+<p>​ 但是在执行如下语句时，就会快很多且不会使用Using filesort：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">EXPLAIN SELECT * FROM ts1 ORDER BY a ASC,b DESC LIMIT 5;</span><br></pre></td></tr></table></figure>
+<h4 id="隐藏索引">2、隐藏索引：</h4>
+<p>​
+只需要将待删除的索引设置为隐藏索引，使查询优化器不再使用这个索引（即使使用force
+index（强制使用索引），优化器也不会使用该索引），确认将索引设置为隐藏索引后系统不受任何响应，就可以彻底删除索引。</p>
+<p>​ 这种通过先将索引设置为隐藏索引，再删除索引的方式就是软删除。</p>
+<p>​
+同时，如果你想验证某个索引删除之后的查询性能影响，就可以暂时先隐藏该索引。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">CREATE INDEX indexname</span><br><span class="line">ON tablename(propname[(length)]) INVISIBLE;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">ALTER TABLE tablename ALTER INDEX index_name INVISIBLE; #切换成隐藏索引</span><br><span class="line">ALTER TABLE tablename ALTER INDEX index_name VISIBLE; #切换成非隐藏索引</span><br></pre></td></tr></table></figure>
+<h3 id="三索引的设计原则">三、索引的设计原则</h3>
+<h4 id="哪些情况适合创建索引">1、哪些情况适合创建索引？</h4>
+<h5
+id="字段的数值有唯一性的限制但是没有加唯一性约束的字段">1）字段的数值有唯一性的限制，但是没有加唯一性约束的字段</h5>
+<h5 id="频繁作为where查询条件的字段">2）频繁作为WHERE查询条件的字段</h5>
+<h5 id="经常group-by和order-by的列">3）经常GROUP BY和ORDER BY的列</h5>
+<p>​
+需要对分组或者排序的字段进行索引。如果待排序的列有多个，那么可以在这些列上建立联合索引。既有GROUP
+BY 又有 ORDER BY，可以考虑建立联合索引，但联合索引要先写GROUP BY 再写
+ORDER BY。</p>
+<h5 id="updatedelete-的-where-条件列">4）UPDATE、DELETE 的 WHERE
+条件列</h5>
+<p>​
+如果进行更新的时候，更新的字段是非索引字段，提升的效率会更明显，这是因为非索引字段更新不需要对索引进行维护。</p>
+<h5 id="distinct-操作的字段需要创建索引">5）DISTINCT
+操作的字段需要创建索引</h5>
+<p>​
+有时候我们需要对某个字段进行去重，使用DISTINCT，那么对这个字段创建索引，也会提升查询效率。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">SELECT DISTINCT(student_id) FROM `student_info`;</span><br></pre></td></tr></table></figure>
+<h5
+id="多表join连接操作时创建索引的注意事项">6）多表JOIN连接操作时，创建索引的注意事项:</h5>
+<ul>
+<li>连接的表数量不要超过3张</li>
+<li>对WHERE条件创建索引</li>
+<li><strong>对用于连接的字段创建索引</strong>，并且该字段在多张表中的类型必须一致。</li>
+</ul>
+<h5 id="使用列的类型小的创建索引">7）使用列的类型小的创建索引</h5>
+<ul>
+<li><p>类型大小指该类型表示的数据范围的大小。</p></li>
+<li><p>如果要对某个列建立索引，尽量让这个列使用较小的数据类型。原因：</p>
+<ul>
+<li>数据类型越小，在查询时进行的比较操作越快</li>
+<li>数据类型越小，索引占用的存储空间就越少，在一个数据页内就可以放下更多的记录，从而减少磁盘I/0带来的性能损耗，也就意味着可以把更多的数据页缓存在内存中，从而加快读写效率。</li>
+</ul></li>
+</ul>
+<h5
+id="创建字符串列的索引时注意事项">8）创建字符串列的索引时注意事项：</h5>
+<p>​
+假设我们的字符串很长，那存储一个字符串就需要占用很大的存储空间。在我们需要为这个字符串列建立索引时，那就意味着在对应的B+树中有这么两个问题：</p>
+<ul>
+<li>B+树索引中的记录需要把该列的完整字符串存储起来，更费时。而且字符串越长，在索引中占用的存储空间越大。</li>
+<li>如果B+树索引中索引列存储的字符串很长，那在做字符串比较时会占用更多的时间。</li>
+</ul>
+<p>​
+<strong>通过截取字段的前面一部分内容建立索引，这个就叫前缀索引。</strong></p>
+<p>​
+这样在查找记录时虽然不能精确的定位到记录的位置，但是能定位到相应前缀所在的位置，然后<strong>根据前缀相同的记录的主键值回表查询完整的字符串值。</strong>既节约空间，又减少了字符串的比较时间，还大体能解决排序的问题。</p>
+<ul>
+<li><p><strong>关键问题</strong>：截取多少比较合适？</p></li>
+<li><p>先看一下字段在全部数据中的选择度</p>
+<ul>
+<li>```mysql select count(distinct address) / count(<em>) from shop;
+count(distinct left(列名, 索引长度))/count(</em>) <figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"></span><br><span class="line">- ```mysql</span><br><span class="line">  select count(distinct left(address,10)) / count(*) as sub10, -- 截取前10个字符的选择度</span><br><span class="line">  count(distinct left(address,15)) / count(*) as sub11, -- 截取前15个字符的选择度</span><br><span class="line">  count(distinct left(address,20)) / count(*) as sub12, -- 截取前20个字符的选择度</span><br><span class="line">  count(distinct left(address,25)) / count(*) as sub13 -- 截取前25个字符的选择度</span><br></pre></td></tr></table></figure></li>
+</ul></li>
+</ul>
+<h5 id="区分度高的列适合作为索引">9）区分度高的列适合作为索引：</h5>
+<p>​
+列的基数指的是某一列中不重复数据的个数，比方说某个列包含值2，5，8，2，5，8，2，5，8，虽然有9条记录，但该列的基数却是3。</p>
+<p>​ 可以使用公式</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">select count(distinct a)/count(*) from t1 </span><br></pre></td></tr></table></figure>
+<p>​ 计算区分度，越接近1越好，一般超过33%就算是比较高效的索引了。</p>
+<h5
+id="使用最频繁的列放到联合索引的左侧">10）使用最频繁的列放到联合索引的左侧</h5>
+<h5
+id="在多个字段都要创建索引时联合索引优于单值索引">11）在多个字段都要创建索引时，联合索引优于单值索引</h5>
+<h4 id="索引数目的限制">2、索引数目的限制：</h4>
+<ul>
+<li><p>单张表不超过6个索引</p></li>
+<li><p>索引占用磁盘空间、会影响insert，update的效率。同时，因为优化器在执行查询前，如果索引太多，会导致其生成执行计划的时间降低。</p></li>
+</ul>
+<h4 id="哪些情况不适合创建索引">3、哪些情况不适合创建索引？</h4>
+<h5
+id="在where中使用不到的字段不要设置索引">1）在where中使用不到的字段，不要设置索引</h5>
+<h5
+id="数据量小的表最好不要使用索引">2）数据量小的表最好不要使用索引</h5>
+<h5
+id="有大量重复数据的列上不要建立索引10">3）有大量重复数据的列上不要建立索引（10%）</h5>
+<p>​ 要在 100 万行数据中查找其中的 50
+万行（比如性别为男的数据），一旦创建了索引，你需要先访问 50
+万次索引，然后再访问 50
+万次数据表，这样加起来的开销比不使用索引可能还要大.</p>
+<h5
+id="避免对经常更新的表创建过多的索引">4）避免对经常更新的表创建过多的索引</h5>
+<h5 id="不建议用无序的值作为索引">5）不建议用无序的值作为索引</h5>
+<p>​
+例如身份证、UUID(在索引比较时需要转为ASCII，并且插入时可能造成页分裂)、MD5、HASH、无序长字符串等。</p>
+]]></content>
+      <categories>
+        <category>⓹ 基础类笔记</category>
+        <category>数据库精简笔记</category>
+      </categories>
+      <tags>
+        <tag>Database</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>事务</title>
-    <url>/2022/10/17/db76227bad93/</url>
+    <url>/2022/10/17/a0984953b2e8/</url>
     <content><![CDATA[<h3 id="一">一、</h3>
 ]]></content>
       <categories>
@@ -61,7 +564,7 @@
   </entry>
   <entry>
     <title>Mysql日志与备份</title>
-    <url>/2022/10/17/02940cc83ca0/</url>
+    <url>/2022/10/17/f545bfc8e29a/</url>
     <content><![CDATA[<h3 id="一">一、</h3>
 ]]></content>
       <categories>
@@ -270,8 +773,8 @@ id="csv引擎可以快速便捷和外界进行数据交换">4、CSV引擎：可�
       </tags>
   </entry>
   <entry>
-    <title>Mysql索引及调优原则</title>
-    <url>/2022/10/17/210c29af78f2/</url>
+    <title></title>
+    <url>/2022/10/17/bb6cac39113d/</url>
     <content><![CDATA[<h3 id="一为什么使用索引优缺点">一、为什么使用索引&amp;优缺点：</h3>
 <p>​
 避免全表扫描，首先查看查询条件是否命中某条索引，符合则通过索引查找相关数据。</p>
@@ -291,6 +794,880 @@ id="csv引擎可以快速便捷和外界进行数据交换">4、CSV引擎：可�
 <li>索引需要占据磁盘空间。</li>
 <li>索引提高查询速度的同时，会降低更新表的速度。</li>
 </ul>
+<h3 id="二没有索引时的查找">二、没有索引时的查找：</h3>
+<h4 id="case1-在单页中的查找">Case1: 在单页中的查找</h4>
+<p>​ 如果数据较少，则所有记录都可以被存放到一个页里面</p>
+<ul>
+<li>以主键为搜索条件：可以以O（logN)复杂度查询到</li>
+<li>以其他键为搜索条件：只能遍历.从最小记录开始以此遍历单链表中的每条记录。</li>
+</ul>
+<h4 id="case2在多页中的查找">Case2：在多页中的查找</h4>
+<p>​ 如果记录非常多，需要很多数据页来存储这些记录，主要步骤分为：</p>
+<ul>
+<li>定位到记录所在的页</li>
+<li>从所在的页内查找相应的记录</li>
+</ul>
+<p>​
+在没有索引的情况下，由于不能快速定位到记录所在的页，只能从第一个页沿着双向链表一直往下找。在每个页中进行匹配。因为要遍历所有的数据页(以及加载)，所以非常耗时.</p>
+<h3 id="三索引的设计">三、索引的设计:</h3>
+<p>首先，简化假设某一条记录在磁盘上的记录形式如下：</p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/image-20221021092747727.png" /></p>
+<p>那</p>
+<p>1么，将一些记录放到页中的示意图就是如下所示：一个数据页的默认大小为16KB，其中会存有一定数量的记录。</p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/image-20221021105655165.png" /></p>
+<p>​
+我们现在的问题就是：想要快速的定位到需要查找的记录在哪些数据页中。我们可以采用B+树的形式进行架构，如下图所示：最底层的数据页存放的是普通的记录，record_type=0，页与页直接以双向链表的形式链接。再上层的数据页中存储的是普通记录的目录项记录，它们的record_type=1，再往上走就是层级更高的目录项，至此构成一颗B+树。需要值得注意的是，相邻的页之间页编号不一定连续，是通过指针指向链接的。</p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/image-20221021105859291.png" /></p>
+<p>​
+我们可以利用B+树定位到某条记录在哪个数据页的形式，可以大大节省内存和硬盘的IO次数，定位到具体的数据页以后，在每个页面内也有页目录，可以通过二分法来实现快速的定位记录。</p>
+<h3 id="四常见索引的概念">四、常见索引的概念:</h3>
+<h4 id="聚簇索引">1、聚簇索引：</h4>
+<p>​
+是一种数据存储方式，所有的用户记录都存储在了叶子节点，即<strong>数据即索引</strong>，<strong>索引即数据</strong>。</p>
+<h5 id="特点">特点：</h5>
+<ul>
+<li>使用记录本身的 主键值的大小 进行记录和页的排序
+<ul>
+<li>页内的记录——按照主键的大小顺序排成单向链表。</li>
+<li>各个存放用户记录的页——根据主键大小顺序排成一个双向链表</li>
+<li>存放目录项记录的页——分为不同的层次，同一层次中的页之间按逐渐大小顺序排成双向链表</li>
+</ul></li>
+<li>B+树的叶子节点存储的是完整的用户记录</li>
+<li>这种索引不需要我们在mysql中显式创建，InnoDB会自动创建聚簇索引。</li>
+</ul>
+<h5 id="优点-1">优点：</h5>
+<ul>
+<li>访问速度更快，对于主键的排序查找和范围查找非常快</li>
+<li>查询显示一定范围数据的时候，由于数据都紧密相连，数据库不用从多个数据块中提取数据，节省了大量的io操作。</li>
+</ul>
+<h5 id="缺点-1">缺点：</h5>
+<ul>
+<li>插入速度严重依赖于插入顺序</li>
+<li>更新主键代价很高，所以一般定义主键不可更新</li>
+<li>二级索引访问需要两次查找</li>
+</ul>
+<h5 id="限制">限制：</h5>
+<ul>
+<li>仅有InnoDB数据引擎支持，MyISAM不支持聚簇索引</li>
+<li>每个Mysql的表只能有一个聚簇索引，一般情况下是表的主键</li>
+</ul>
+<h4
+id="二级索引辅助索引非聚簇索引">2、二级索引（辅助索引、非聚簇索引）</h4>
+<p>​
+如果想以非主键进行查找怎么办呢？多建几颗B+树即可。使用该列的大小作为数据页、页中记录的排序规则。对于这些B+树中，其叶子节点中并不存储完整的用户记录，而是仅存储<strong>该列
++ 主键的值</strong></p>
+<h5 id="特点-1">特点：</h5>
+<ul>
+<li>使用记录本身的 该列（建B+树索引的列）值的大小 进行记录和页的排序
+<ul>
+<li>页内的记录——按照该列的大小顺序排成单向链表。</li>
+<li>各个存放用户记录的页——根据该列大小顺序排成一个双向链表</li>
+<li>存放目录项记录的页——分为不同的层次，同一层次中的页之间按逐渐大小顺序排成双向链表</li>
+</ul></li>
+<li>B+树的叶子节点存储的是 <strong>该列的值 + 主键的值</strong></li>
+<li>这种索引需要我们在mysql中显式创建。</li>
+<li><strong>在以该列为条件搜索的时候，需要进行回表操作</strong>，就是说先查找到记录的主键的值，再利用主键的值去聚簇索引中查找整条记录的值。</li>
+</ul>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/image-20221021212458365.png" /></p>
+<h4 id="联合索引">3、联合索引：</h4>
+<p>​
+同时以多个列的大小作为排序规则，也就是同时为多个列建立索引，比方说我们想让B+树按照
+c2和c3列 的大小进行排序，这个包含两层含义：</p>
+<ul>
+<li><p>先把各个记录和页按照c2列进行排序。</p></li>
+<li><p>在记录的c2列相同的情况下，采用c3列进行排序</p></li>
+<li><p>以c2和c3列的大小为排序规则建立的B+树称为 联合索引
+，<strong>本质上也是一个二级索引。</strong>它的意思与分别为c2和c3列分别建立索引的表述是不同的，主要表现为：</p>
+<ul>
+<li>建立 联合索引 只会建立如上图一样的1棵B+树。</li>
+</ul></li>
+</ul>
+<h4 id="innodb的b树索引的注意事项">4、InnoDB的B+树索引的注意事项：</h4>
+<ul>
+<li><strong>根页面位置不变</strong>，实际上B+树的形成过程如下：
+<ul>
+<li>每当为某个表创建一个B+树索引的时候，<strong>都会为这个索引创建一个根节点页面。</strong></li>
+<li>最开始表中没有数据的时候，每个B+树索引对应的根节点中既没有用户记录，也没有目录项记录。</li>
+</ul></li>
+<li>非叶节点中目录项记录的唯一性：即如果建立的非聚簇索引的那一列值不唯一怎么办？容易导致非叶节点的目录项不唯一。
+<ul>
+<li>为了让新插入记录能找到自己在哪个页里，<strong>我们需要保证在B+树的同一层内节点的目录项记录除页号这个字段以外是唯一的。</strong>所以对于二级索引的内节点的目录项记录的内容实际上是由三个部分构成的：
+<ul>
+<li>索引列的值</li>
+<li>主键值</li>
+<li>页号</li>
+</ul></li>
+</ul></li>
+</ul>
+<figure>
+<img
+src="C:\Users\Fantast\AppData\Roaming\Typora\typora-user-images\image-20221021223514710.png"
+alt="蓝色即为主键值，橙色为建立索引列的值" />
+<figcaption
+aria-hidden="true">蓝色即为主键值，橙色为建立索引列的值</figcaption>
+</figure>
+<ul>
+<li>一个页面最少存储2条记录（其实就是B+树本身的限制）</li>
+</ul>
+<h4 id="myisam中的索引方案">5、MyISAM中的索引方案：</h4>
+<p>​
+在MyISAM中，其使用的B+树索引的，叶子结点存储的是数据记录的地址，而不是数据本身。</p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/mac/image-20221022120251019.png" /></p>
+<h4 id="innodb和myisam引擎的区别">6、InnoDB和MyISAM引擎的区别</h4>
+<p><strong>MyISAM的索引方式都是“非聚簇”的，与InnoDB包含1个聚簇索引是不同的。</strong></p>
+<ul>
+<li><p>①
+在InnoDB存储引擎中，我们只需要根据主键值对聚簇索引进行一次查找就能找到对应的记录，而在MyISAM
+中却需要进行一次回表操作，意味着MyISAM中建立的索引相当于全部都是二级索引。</p></li>
+<li><p>②
+InnoDB的数据文件本身就是索引文件，而MyISAM索引文件和数据文件是分离的，索引文件仅保存数据记录的地址。</p></li>
+<li><p>③
+InnoDB的非聚簇索引data域存储相应记录主键的值，而MyISAM索引记录的是地址。</p></li>
+<li><p>④
+MyISAM的回表操作是十分快速的，因为是拿着地址偏移量直接到文件中取数据的，反观InnoDB是通过获取主键之后再去聚簇索引里找记录，虽然说也不慢，但还是比不上直接用地址去访问。</p></li>
+<li><p>⑤ InnoDB要求表必须有主键（
+MyISAM可以没有）。如果没有显式指定，则MySQL系统会自动选择一个可以非空且唯一标识数据记录的列作为主键。如果不存在这种列，则MySQL自动为InnoDB表生成一个隐含字段作为主键，这个字段长度为6个字节，类型为长整型。</p></li>
+</ul>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/mac/截屏2022-10-22%2012.06.40.png" /></p>
+<h4 id="索引的数据结构选取">7、索引的数据结构选取</h4>
+<p>​
+为了减少索引在内存中的占用，其都是存储在磁盘上的。当我们使用索引查询的时候，不可能把索引全都一次性加载到内存中，所以要尽可能的设计索引的数据结构，使得<strong>磁盘IO次数较少</strong></p>
+<ul>
+<li>Hash索引从速度上来讲比树型索引要快很多，那么为什么索引还是设计成树的样子呢？
+<ul>
+<li>因为Hash索引仅能支持 等于、不等于 操作，无法支持范围查询</li>
+<li>数据的存储没有顺序，如果需要ORDER BY的情况下，还要重新排序</li>
+<li>如果重复值多，Hash冲突多的话，效率也会下降</li>
+<li>不能支持联合索引</li>
+<li>InnoDB不支持Hash索引</li>
+</ul></li>
+</ul>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/mac/image-20221022121840709.png" /></p>
+<ul>
+<li>InnoDB本身不支持Hash索引，但提供自适应Hash索引：
+<ul>
+<li>如果某个数据经常被访问，且满足一定条件，该数据页的地址就会放入Hash表中。下次查询的时候，直接通过自适应Hash就可以访问到这个数据页。</li>
+</ul></li>
+</ul>
+<p><img src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/mac/image-20221022122100058.png" style="zoom: 33%;" /></p>
+<h4 id="b树和b树的选取">8、B树和B+树的选取：</h4>
+<ul>
+<li><p>B树：多路平衡查找树：</p>
+<ul>
+<li>（叶子结点和非叶子结点都会存储数据，搜索有可能终止于非叶子结点）</li>
+</ul>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/mac/image-20221022122415040.png" /></p></li>
+<li><p>B+树：</p>
+<p>B+树更适合文件索引，两者区别如下：</p>
+<ul>
+<li>有 k 个孩子的节点就有 k 个关键字。也就是孩子数量 = 关键字数，而 B
+树中，孩子数量 = 关键字数+1。</li>
+<li>非叶子节点的关键字也会同时存在在子节点中，并且是在子节点中所有关键字的最大（或最小）。</li>
+<li>非叶子节点仅用于索引，不保存数据记录，跟记录有关的信息都放在叶子节点中。而
+B 树中， 非叶子节点既保存索引，也保存数据记录。</li>
+<li>所有关键字都在叶子节点出现，叶子节点构成一个有序链表，而且叶子节点本身按照关键字的大小从小到大顺序链接</li>
+</ul></li>
+<li><p>B+树相比于B树的区别和好处？</p>
+<ul>
+<li>查找效率更稳定（数据都在叶子节点），且更高（更矮胖）</li>
+<li>范围查找中，效率也更高。因为数据都在叶子节点中，可以通过指针链接查找。</li>
+</ul></li>
+</ul>
+<h4 id="r树">9、R树</h4>
+<p>​
+其仅支持geometry数据类型。比如查找20km以内所有的餐厅，岂能解决高维空间的搜索问题。其实质上就是一颗用来存储高维数据的平衡树。</p>
+]]></content>
+      <categories>
+        <category>⓹ 基础类笔记</category>
+        <category>数据库精简笔记</category>
+      </categories>
+      <tags>
+        <tag>Database</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>InnoDB数据存储结构分析</title>
+    <url>/2022/10/17/e8cf764280fd/</url>
+    <content><![CDATA[<h3 id="一数据库的存储结构页">一、数据库的存储结构：页</h3>
+<h4
+id="磁盘与内存交互的基本单位页">1、磁盘与内存交互的基本单位——页：</h4>
+<ul>
+<li><p>InnoDB将数据划分为若干个页，页的大小默认为16KB。</p></li>
+<li><p><strong>将页作为磁盘和内存之间交互的基本单位。</strong>即，在数据库中，不论读多少行，都是将这些行所在的页进行加载。即I/O操作的最小单位就是页。</p></li>
+<li><p>连续的页之间，不在物理结构上相连接，期间通过双向链表连接。每个数据页中的记录会按照主键的值从小到大的顺序组成一个单向链表，<strong>每个数据也都会为存储在它里面的记录生成一个页目录，</strong>这样可以在页目录中是用二分法定位到对应的槽，再遍历槽对应分组中的记录找到指定记录就行。</p></li>
+<li><p>页的上层结构：</p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/image-20221023094039939.png" /></p>
+<ul>
+<li>区：一个区会分配64个连续的页</li>
+<li>段：段是数据库中的分配单位。段中不要求区和区之间连续。比如说创建一张表时，会创建一个表段，创建一个索引时，会创建一个索引段。</li>
+<li>表空间：逻辑容器，可以有1个或多个段。表空间从管理上可以划分为：系统表空间、用户表空间等。</li>
+</ul></li>
+</ul>
+<h4 id="页的内部结构">2、页的内部结构：</h4>
+<h5 id="数据页的存储空间被划分为7个部分">1)
+数据页的存储空间被划分为7个部分：</h5>
+<ul>
+<li><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/image-20221023094541084.png" /></li>
+<li><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/image-20221023094558222.png" /></li>
+</ul>
+<h5 id="file-header-和-file-trailer-文件头部和文件尾部">2) File Header
+和 File Trailer 文件头部和文件尾部：</h5>
+<ul>
+<li>File Header 描述各种页的通用信息——页的编号，上一页下一页等
+<ul>
+<li>FIL_PAGE_OFFSET 页的单独页号</li>
+<li>FIL_PAGE_TYPE 页的类型，比如索引页、日志页等等</li>
+<li>FIL_PAGE_PREV（4字节）和FIL_PAGE_NEXT（4字节）本页的上一个和下一个页的页号。这样通过建立一个双向链表把许许多多的页就都串联起来了，保证这些页之间不需要是物理上的连续，而是逻辑上的连续。</li>
+<li>FIL_PAGE_SPACE_OR_CHKSUM（4字节）当前页面的校验和，<strong>文件头部和尾部都有这个校验和</strong>
+<ul>
+<li>作用 :
+InnoDB存储引擎以页为单位把数据加载到内存中处理，<strong>如果该页中的数据在内存中被修改了，那么在修改后的某个时间需要把数据同步到磁盘中。但是在同步了一半的时候断电了，造成了该页传输的不完整。</strong>为了检测一个页是否完整（也就是在同步的时候有没有发生只同步一半的尴尬情况），<strong>这时可以通过文件尾的校验和（checksum
+值）与文件头的校验和做比对，如果两个值不相等则证明页的传输有问题，需要重新进行传输，</strong>否则认为页的传输已经完成。</li>
+<li>具体操作方法：每当一个页面在内存中修改了，在同步之前就要把它的校验和算出来，因为File
+Header在页面的前边，所以校验和会被首先同步到磁盘，当完全写完时，校验和也会被写到页的尾部，如果完全同步成功，则页的首部和尾部的校验和应该是一致的。如果写了一半儿断电了，那么在File
+Header中的校验和就代表着已经修改过的页，而在File
+Trailer中的校验和代表着原先的页，二者不同则意味着同步中间出了错。</li>
+</ul></li>
+<li>FIL_PAGE_LSN 页面被最后修改时对应的日志序列位置（Log Sequence
+Number）</li>
+</ul></li>
+<li>文件尾部：共8字节
+<ul>
+<li>前4个字节代表页的校验和：这个部分是和File Header中的校验和相对应的。
+后4个字节代表页面被最后修改时对应的日志序列位置（LSN）：这个部分也是为了校验页的完整性的，如果首部和尾部的LSN值校验不成功的话，就说明同步过程出现了问题</li>
+</ul></li>
+</ul>
+<h5 id="free-space-user-records-infimum-supremum">3) Free Space &amp;
+User Records &amp; Infimum Supremum</h5>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/mac/截屏2022-10-23%2016.31.02.png" /></p>
+<ul>
+<li><p>每插入一条记录，从Free Space部分申请一个记录大小的空间分给User
+Records空间</p></li>
+<li><p>我们自己存储的记录会按照指定的行格式存储到User
+Records部分</p></li>
+<li><p>记录按照指定的行格式一条一条摆在User
+Records部分，相互之间形成单链表。
+用户记录里的一条条数据如何记录和形成呢？详见InnoDB行格式中的记录头信息。</p></li>
+<li><p>Infimum Supremum 最小最大记录：</p>
+<ul>
+<li><p>对于一条完整的记录来说，比较记录的大小就是比较主键的大小。</p></li>
+<li><p>InnoDB规定的最小记录与最大记录这两条记录的构造十分简单，都是由5字节大小的记录头信息和8字节大小的一个固定的部分组成的</p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/mac/截屏2022-10-23%2016.40.36.png" /></p></li>
+<li><p>这两条记录不是我们自己定义的记录，所以它们并不存放在页的User
+Records部分，他们被单独放在一个称为Infimum +
+Supremum的部分，如图所示：</p></li>
+</ul></li>
+</ul>
+<h5 id="page-directory-page-header-页目录和页头">4) Page Directory &amp;
+Page Header 页目录和页头</h5>
+<ul>
+<li><p>1、为什么需要页目录？</p>
+<ul>
+<li>在页中，记录是以单向链表的形式进行存储的。查找性能差，因此在页结构中专门设计了页目录这个模块，专门给记录做一个目录，通过二分查找法的方式进行检索，提升效率。</li>
+<li>具体做法：将所有的记录分成几个组，这些记录包括最小记录和最大记录，但不包括标记为“已删除”的记录。
+<ul>
+<li>第 1 组，也就是最小记录所在的分组只有 1 个记录；
+最后一组，就是最大记录所在的分组，会有 1-8 条记录； 其余的组记录数量在
+4-8 条之间。</li>
+<li>在每个组中<strong>最后一条记录的头信息中会存储该组一共有多少条记录</strong>，作为
+n_owned 字段。</li>
+<li>页目录用来存储<strong>每组最后一条记录的地址偏移量，这些地址偏移量会按照先后顺序存储起来，</strong>每组的地址偏移量也被称之为槽（slot），每个槽相当于指针指向了不同组的最后一个记录。</li>
+<li><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/mac/截屏2022-10-23%2016.50.25.png" /></li>
+</ul></li>
+</ul></li>
+<li><p>2、页目录结构下如何快速查找记录？</p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/mac/截屏2022-10-23%2016.53.45.png" /></p></li>
+</ul>
+<p>Page Header 页头</p>
+<ul>
+<li><p>为了能得到一个数据页中存储的记录的状态信息，比如本页中已经存储了多少条记录，第一条记录的地址是什么，页目录中存储了多少个槽等等，特意在页中定义了一个叫Page
+Header的部分，这个部分占用固定的56个字节，专门存储各种状态信息。</p></li>
+<li><p>PAGE_DIRECTION 记录插入方向</p></li>
+<li><p>PAGE_N_DIRECTION</p>
+<ul>
+<li>假设连续几次插入新记录的方向都是一致的，InnoDB会把沿着同一个方向插入记录的条数记下来，这个条数就用PAGE_N_DIRECTION这个状态表示。当然，如果最后一条记录的插入方向改变了的话，这个状态的值会被清零重新统计。</li>
+</ul></li>
+</ul>
+<h4
+id="从数据页的角度看b树如何查询">3、从数据页的角度看B+树如何查询：</h4>
+<h5 id="如何查询">1）如何查询？</h5>
+<p>​
+先从B+树的根开始，逐层检索。然后将数据页加载到内存中，页目录中的槽使用二分查找的方式先找到一个粗略的记录分组，然后再在分组中通过链表遍历的方式查找记录。</p>
+<h5
+id="普通索引和唯一索引在查询中的区别">2）普通索引和唯一索引在查询中的区别？</h5>
+<p>​
+唯一索引找到了关键字就可以停止检索。而普通索引找到关键字以后，还需要在内存中多看下X条记录。</p>
+<h4 id="innodb行格式compact行格式">4、InnoDB行格式：COMPACT行格式</h4>
+<p>一条记录的数据可以分为记录的额外信息和真实数据</p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/mac/截屏2022-10-23%2016.34.37.png" /></p>
+<h5 id="变长字段长度列表">1）变长字段长度列表</h5>
+<p>​
+变长字段中存储多少字节的数据不是固定的，所以我们在存储真实数据的时候需要顺便把这些数据占用的字节数也存起来。</p>
+<p>​
+在Compact行格式中，把所有变长字段的真实数据占用的字节长度都存放在记录的开头部位，从而形成一个变长字段长度列表。
+注意：这里面存储的变长长度和字段顺序是反过来的。比如两个varchar字段在表结构的顺序是a(10)，b(15)。那么在变长字段长度列表中存储的长度顺序就是15，10，是反过来的。</p>
+<h5 id="null值列表">2）NULL值列表</h5>
+<p>​
+Compact行格式会把可以为NULL的列统一管理起来，存在一个标记为NULL值列表中。如果表中没有允许存储
+NULL 的列，则 NULL值列表也不存在了。</p>
+<ul>
+<li>为什么定义NULL值列表？
+<ul>
+<li>之所以要存储NULL是因为数据都是需要对齐的，如果没有标注出来NULL值的位置，就有可能在查询数据的时候出现混乱。如果使用一个特定的符号放到相应的数据位表示空置的话，虽然能达到效果，但是这样很浪费空间，所以直接就在行数据得头部开辟出一块空间专门用来记录该行数据哪些是非空数据，哪些是空数据，</li>
+</ul></li>
+<li>格式如下：
+<ul>
+<li>二进制位的值为1时，代表该列的值为NULL。</li>
+<li>二进制位的值为0时，代表该列的值不为NULL。</li>
+</ul></li>
+<li>例如：字段 a、b、c，其中a是主键，在某一行中存储的数依次是
+a=1、b=null、c=2。那么Compact行格式中的NULL值列表中存储：01。第一个0表示c不为null，第二个1表示b是null。这里之所以没有a是因为数据库会自动跳过主键，因为主键肯定是非NULL且唯一的，在NULL值列表的数据中就会自动跳过主键。</li>
+</ul>
+<h5 id="记录头信息总共就5个字节">3）记录头信息（总共就5个字节）</h5>
+<ul>
+<li><p>delete_mask</p>
+<ul>
+<li>这个属性标记着当前记录是否被删除，占用1个二进制位。这些被删除的记录之所以不立即从磁盘上移除，是因为移除它们之后其他的记录在磁盘上需要重新排列，导致性能消耗。所以只是打一个删除标记而已，所有被删除掉的记录都会组成一个所谓的垃圾链表。<br />
+</li>
+</ul></li>
+<li><p>min_rec_mask</p>
+<ul>
+<li>B+树的每层非叶子节点中的最小记录都会添加该标记，min_rec_mask值为1。</li>
+</ul></li>
+<li><p>record_type</p>
+<ul>
+<li>这个属性表示当前记录的类型，一共有4种类型的记录：
+<ul>
+<li>0：表示普通记录<br />
+</li>
+<li>1：表示B+树非叶节点记录</li>
+<li>2：表示最小记录<br />
+</li>
+<li>3：表示最大记录</li>
+</ul></li>
+</ul></li>
+<li><p>heap_no</p>
+<ul>
+<li>这个属性表示当前记录在本页中的位置。比如说2，3，4，5等</li>
+<li><strong>MySQL会自动给每个页里加了两个记录，由于这两个记录并不是我们自己插入的，所以有时候也称为伪记录或者虚拟记录。</strong>这两个伪记录一个代表最小记录，一个代表最大记录。最小记录和最大记录的heap_no值分别是0和1，也就是说它们的位置最靠前。<br />
+</li>
+</ul></li>
+<li><p>n_owned</p>
+<ul>
+<li><strong>页目录</strong>中每个组中最后一条记录的头信息中会存储该组一共有多少条记录，作为
+n_owned 字段。详情见page directory。</li>
+</ul></li>
+<li><p>next_record</p>
+<ul>
+<li>它表示从当前记录的真实数据到下一条记录的真实数据的<strong>地址偏移量。</strong></li>
+<li>比如：第一条记录的next_record值为32，意味着从第一条记录的真实数据的地址处向后找32个字节便是下一条记录的真实数据。注意，下一条记录指得并不是按照我们插入顺序的下一条记录，而是按照主键值由小到大的顺序的下一条记录。</li>
+<li>规定Infimum记录（也就是最小记录）的下一条记录就是本页中主键值最小的用户记录，而本页中主键值最大的用户记录的下一条记录就是
+Supremum记录（也就是最大记录）。</li>
+</ul></li>
+<li><p><strong>不论我们怎么对页中的记录做增删改操作，InnoDB始终会维护一条记录的单链表，链表中的各个节点是按照主键值由小到大的顺序连接起来的。
+</strong></p></li>
+<li><p>主键值为2的记录被删掉了以后，存储空间不会回收，如果我们再次把这条记录插入到表中，会发生什么事呢？——
+直接复用了原来被删除记录的存储空间。</p></li>
+<li><p><strong>说明：当数据页中存在多条被删除掉的记录时，这些记录的next_record属性将会把这些被删除掉的记录组成一个垃圾链表，以备之后重用这部分存储空间。
+</strong></p></li>
+</ul>
+<h5 id="记录的真实数据">4）记录的真实数据</h5>
+<p>​ 除了我们自己定义的列数据以外，还会有三个隐藏列。</p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/image-20221023222958606.png" /></p>
+<p>​
+实际上这几个列的真正名称其实是：DB_ROW_ID、DB_TRX_ID、DB_ROLL_PTR</p>
+<ul>
+<li>一个表没有手动定义主键，则会选取一个Unique键作为主键，如果连Unique键都没有定义的话，则会为表默认添加一个名为row_id的隐藏列作为主键。所以row_id是在没有自定义主键以及Unique键的情况下才会存在的。</li>
+<li>事务ID和回滚指针涉及到事务相关的内容，具体见事务</li>
+</ul>
+<h4 id="dynamic和compressed行格式">5、Dynamic和Compressed行格式</h4>
+<h5 id="什么是行溢出">1）什么是行溢出？</h5>
+<p>​ InnoDB存储引擎可以将一条记录中的某些数据存储在真正的数据页面之外。
+很多DBA喜欢MySQL数据库提供的VARCHAR(M)类型，认为可以存放65535字节。这是真的吗？如果我们使用
+ascii字符集的话，一个字符就代表一个字节，我们看看VARCHAR(65535)是否可用。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">CREATE TABLE varchar_size_demo( c VARCHAR(65535) ) CHARSET=ascii ROW_FORMAT=Compact;</span><br></pre></td></tr></table></figure>
+<p>结果如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">ERROR 1118 (42000): Row size too large. The maximum row size for the used table type, not counting BLOBs, is 65535. This includes storage overhead, check the manual. You have to change some columns to TEXT or BLOBs </span><br></pre></td></tr></table></figure>
+<p>​
+报错信息表达的意思是：MySQL对一条记录占用的最大存储空间是有限制的，除BLOB或者TEXT类型的列之外，
+其他所有的列（不包括隐藏列和记录头信息）占用的字节长度加起来不能超过65535个字节。
+这个65535个字节除了列本身的数据之外，还包括一些其他的数据，</p>
+<p>​
+<strong>以Compact行格式为例，比如说我们为了存储一个VARCHAR(M)类型的列，除了真实数据占有空间以外，还需要记录的额外信息。
+如果该VARCHAR类型的列没有NOT
+NULL属性，那最多只能存储65532个字节的数据，因为变长字段的长度占用
+2个字节，NULL值标识需要占用1个字节。</strong></p>
+<ul>
+<li><p>通过上面的案例，我们可以知道一个页的大小一般是16KB，也就是16384字节，而一个VARCHAR(M)类型的列就最多可以存储65533个字节，<strong>这样就可能出现一个页存放不了一条记录，这种现象称为行溢出。</strong></p></li>
+<li><p>在Compact和Reduntant行格式中，对于占用存储空间非常大的列，在记录的真实数据处只会存储该列的一部分数据，把剩余的数据分散存储在几个其他的页中进行分页存储，然后记录的真实数据处用20个字节存储指向这些页的地址（当然这20个字节中还包括这些分散在其他页面中的数据的占用的字节数），从而可以找到剩余数据所在的页。这称为页的扩展，：</p></li>
+</ul>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/image-20221023224141758.png" /></p>
+<h5 id="dynamic和compressed如何处理行溢出">2)
+Dynamic和Compressed如何处理行溢出？</h5>
+<p>​ 在MySQL
+8.0中，默认行格式就是Dynamic。Dynamic、Compressed行格式和Compact行格式挺像，只不过在处理行溢出数据时有分歧：</p>
+<ul>
+<li><p>Compressed和Dynamic两种记录格式对于存放在BLOB中的数据采用了完全的行溢出的方式。</p></li>
+<li><p>如图，在数据页中只存放20个字节的指针（溢出页的地址），实际的数据都存放在Off
+Page（溢出页）中。Compact和Redundant两种格式会在记录的真实数据处存储一部分数据（存放768个前缀字节）。<strong>Compressed行记录格式的另一个功能就是，存储在其中的行数据会以zlib的算法进行压缩，因此对于BLOB、TEXT、VARCHAR这类大长度类型的数据能够进行非常有效的存储。</strong></p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/image-20221023224238085.png" /></p></li>
+</ul>
+<h4 id="区段与碎片区与表空间结构">5、区、段与碎片区与表空间结构：</h4>
+<h5 id="为什么要有区">1）为什么要有区？</h5>
+<p>​
+如果以页为单位来分配存储空间的话，双向链表相邻的两个页之间的物理位置可能离得比较远。当进行范围查询时，我们一般只需要定位到最左侧和最右侧的记录，然后沿着双向链表一直扫描即可。那么如果相邻的两个页之间的物理位置可能离得比较远的话，其实是在做<strong>随机IO</strong>，对于磁盘而言读写速度是很慢的。</p>
+<p>​
+所以，引入区的概念，使得1个区中含物理位置上连续的64个页，这样就会把上述过程变成<strong>顺序IO</strong>，减少了磁盘寻道和半圈旋转时间。</p>
+<p>​
+在表中数据量大的时候，为某个索引分配空间的时候就不再按照页为单位分配了，<strong>而是按照区为单位分配，</strong>甚至在表中的数据特别多的时候，可以一次性分配多个连续的区。虽然可能造成一点点空间的浪费（数据不足以填充满整个区），<strong>但是从性能角度看，可以消除很多的随机I/0</strong>，功大于过！</p>
+<h5 id="为什么要有段">2）为什么要有段？</h5>
+<p>​
+对于范围查询，其实是对B+树叶子节点中的记录进行顺序扫描，而如果不区分叶子节点和非叶子节点，统统把节点代表的页面放到申请到的区中的话，进行范围扫描的效果就大打折扣了。</p>
+<p>​
+所以InnoDB对B+树的叶子节点和非叶子节点进行了区别对待，<strong>也就是说叶子节点有自己独有的区，非叶子节点也有自己独有的区。</strong></p>
+<p>​
+存放叶子节点的区的集合就算是一个段（segment），存放非叶子节点的区的集合也算是一个段。<strong>也就是说一个索引会生成2个段，一个叶子节点段，一个非叶子节点段。</strong></p>
+<p>​
+<strong>段其实不对应表空间中某一个连续的物理区域，而是一个逻辑上的概念，由若干个零散的页面以及一些完整的区组成。</strong></p>
+<h5 id="为什么要有碎片区">3）为什么要有碎片区？</h5>
+<p>​
+默认情况下，一个使用InnoDB存储引擎的表只有一个聚簇索引，一个索引会生成2个段，而段是以区为单位申请存储空间的，一个区默认占用1M（64*16Kb=1024Kb）存储空间，所以默认情况下一个只存了几条记录的小表也需要2M的存储空间么？以后每次添加一个索引都要多申请2M的存储空间么？这对于存储记录比较少的表简直是天大的浪费。</p>
+<p>​
+这个问题的症结在于到现在为止我们介绍的区都是非常纯粹的，<strong>也就是一个区被整个分配给某一个段，或者说区中的所有页面都是为了存储同一个段的数据而存在的，即使段的数据填不满区中所有的页面，那余下的页面也不能挪作他用。</strong></p>
+<p>​
+为了考虑以完整的区为单位分配给某个段对于数据量较小的表太浪费存储空间的这种情况，InnoDB提出了一个<strong>碎片（fragment）区的概念</strong>。在一个碎片区中，并不是所有的页都是为了存储同一个段的数据而存在的，而是<strong>碎片区中的页可以用于不同的目的，比如有些页用于段A，有些页用于段B，有些页甚至哪个段都不属于。</strong></p>
+<p>​ 碎片区直属于表空间，并不属于任何一个段。</p>
+<h5 id="为某个段分配存储空间的策略">4）为某个段分配存储空间的策略：</h5>
+<ul>
+<li>在刚开始向表中插入数据的时候，段是从某个碎片区以单个页面为单位来分配存储空间的。</li>
+<li>当某个段已经占用了32个碎片区页面之后，就会申请以完整的区为单位来分配存储间。</li>
+</ul>
+<p>​
+所以现在段不能仅定义为是某些区的集合，更精确的应该是某些零散的页面以及一些完整的区的集合。</p>
+<h5 id="区的分类">5）区的分类</h5>
+<ul>
+<li><p>碎片区</p>
+<ul>
+<li><p>空闲的区</p></li>
+<li><p>有剩余空间的碎片区</p></li>
+<li><p>没有剩余空间的碎片区</p></li>
+</ul></li>
+<li><p>附属于某个段的区</p></li>
+</ul>
+<h5 id="表空间">6）表空间：</h5>
+<p>​
+表空间可以看做是InnoDB存储引擎逻辑结构的最高层，所有的数据都存放在表空间中。表空间是一个逻辑容器，表空间存储的对象是段，在一个表空间中可以有一个或多个段，但是一个段只能属于一个表空间。</p>
+<ul>
+<li>独立表空间：
+<ul>
+<li>每张表都有一个独立的表空间，即数据和索引信息都会保存在自己的表空间中。空间可以回收</li>
+</ul></li>
+<li>系统表空间：
+<ul>
+<li>整个MySQL进程只有一个系统表空间，在系统表空间中会额外记录一些有关整个系统信息的页面，这部分是独立表空间中没有的。</li>
+<li>InnoDB数据字典：（内部系统表）
+<ul>
+<li>每当我们向一个表中插入一条记录的时候，MySOL校验过程如下
+<ul>
+<li>先要校验一下插入语句对应的表存不存在，插入的列和表中的列是否符合，</li>
+<li>如果语法没有问题的话，还需要知道该表的聚簇索引和所有二级索引对应的根页面是哪个表空间的哪个页面，然后把记录插入对应索引的B+树中。</li>
+<li>所以说，MySQL除了保存着我们插入的用户数据之外，还需要保存许多额外的信息（元数据）</li>
+</ul></li>
+<li>注意：用户是不能直接访问InnoDB的这些内部系统表，除非你直接去解析系统表空间对应文件系统上的文件。</li>
+</ul></li>
+</ul></li>
+</ul>
+]]></content>
+      <categories>
+        <category>⓹ 基础类笔记</category>
+        <category>数据库精简笔记</category>
+      </categories>
+      <tags>
+        <tag>Database</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>数据库索引优化和查询优化</title>
+    <url>/2022/10/17/10b6c2c40683/</url>
+    <content><![CDATA[<p>SQL查询优化的技术有很多，大方向上可以分为：</p>
+<ul>
+<li>物理查询优化（索引、表连接方式）</li>
+<li>逻辑查询优化（换一种效率更高的执行方法）</li>
+</ul>
+<p>具体可以从以下四个方面进行数据库调优：</p>
+<ul>
+<li>索引失效、没有充分利用到索引——索引建立</li>
+<li>关联查询太多JOIN（设计缺陷或不得已的需求）—- SQL优化</li>
+<li>服务器调优及各个参数设置（缓冲、线程数等）——调整my.cnf</li>
+<li>数据过多——分库分表I</li>
+</ul>
+<h3 id="一索引优化与查询优化">一、索引优化与查询优化</h3>
+<h4 id="索引失效案例情况">1、索引失效案例情况：</h4>
+<p>​
+从理论上而言，使用或者不使用索引都是由<strong>优化器</strong>来决定，其是基于cost开销（CostBaseOptimizer），它不是基于规则（Rule-Basedoptimizer），也不是基于语义。怎么样开销小就怎么来。另外，SQL语句是否使用索引，跟数据库版本、数据量、数据选择度都有关系。</p>
+<h5 id="最佳左前缀匹配法则">1）最佳左前缀匹配法则</h5>
+<p>​
+MySQL可以为多个字段创建索引，一个索引可以包括16个字段。<strong>对于多列索引，过滤条件要使用索引必须按照索引建立时的顺序，依次满足，一旦跳过某个字段！索引后面的字段都无法被使用。</strong>如果查询条件中没有使用这些字段中第1个字段时，多列（或联合）索引不会被使用。</p>
+<p>​ 索引文件具有 B-Tree
+的最左前缀匹配特性，如果左边的值未确定，那么无法使用此索引。</p>
+<h5 id="主键插入顺序">2）主键插入顺序</h5>
+<p>​ 如果插入的主键忽大忽小，就容易导致某个数据页满了以后，数据还会往其中
+插入，这个时候就需要把当前页面分裂成两个页面，把本页中的一些记录移动到新创建的这个页中。<strong>页面分裂和记录移位意味着什么？意味着：
+性能损耗！</strong>所以如果我们想尽量避免这样无谓的性能损耗，最好让插入的记录的主键值依次递增，这样就不会发生这样的性能损耗了。</p>
+<p>​ <strong>建议：让主键具有AUTO_INCREMENT
+，让存储引擎自己为表生成主键，而不是我们手动插入。</strong></p>
+<h5
+id="计算函数类型转换自动或手动导致索引失效">3）计算、函数、类型转换(自动或手动)导致索引失效</h5>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"># 使用到索引</span><br><span class="line">EXPLAIN SELECT SQL_NO_CACHE * FROM student WHERE student.name LIKE &#x27;abc%&#x27;;</span><br><span class="line"># 未使用到索引</span><br><span class="line">EXPLAIN SELECT SQL_NO_CACHE * FROM student WHERE LEFT(student.name,3) = &#x27;abc&#x27;;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>从运行结果上，上述两个SQL语句没有差别。但是从运行效率上而言，下面这条语句因为使用了函数，所以并不会使用到name上的索引进行查询，也就是查询类型会是ALL，效率非常低。</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"># 未使用到索引</span><br><span class="line">EXPLAIN SELECT SQL_NO_CACHE * FROM student WHERE name=123;</span><br><span class="line"># 使用到索引</span><br><span class="line">EXPLAIN SELECT SQL_NO_CACHE * FROM student WHERE name=&#x27;123&#x27;;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>上述，是由于name=123发生类型转换，最终导致索引失效。</li>
+</ul>
+<h5 id="范围条件右边的列索引失效">4）范围条件右边的列索引失效</h5>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">CREATE INDEX idx_age_name_classid on student(age,classid,name)</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"># 会使用上述联合索引，但是没有用到Name这个字段上建立的索引</span><br><span class="line">EXPLAIN SELECT SQL_NO_CACHE * FROM student</span><br><span class="line">WHERE student.age=30 AND student.classId&gt;20 AND student.name = &#x27;abc&#x27; ;</span><br></pre></td></tr></table></figure>
+<p>​
+想要起作用，得写成如下格式：建联合索引时，把确定查询的放到前面，范围查询的放到后面.</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">CREATE INDEX idx_age_name_classid on student(age,name,classid)</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"># 使用到索引</span><br><span class="line">EXPLAIN SELECT SQL_NO_CACHE * FROM student WHERE student.age=30 AND student.name =</span><br><span class="line">&#x27;abc&#x27; AND student.classId&gt;20 ;</span><br></pre></td></tr></table></figure>
+<p>​
+结论：应用开发中范围查询，例如：金额查询，日期查询往往都是范围查询。应将查询条件放置where语句最后。（即创建的联合索引中，务必把范围涉及到的字段写在最后）</p>
+<h5 id="不等于导致索引失效">5）不等于导致索引失效</h5>
+<h5 id="is-null可以使用索引is-not-null无法使用索引">6）is
+null可以使用索引，is not null无法使用索引</h5>
+<h5 id="like以通配符开头索引失效">7）like以通配符%开头索引失效</h5>
+<p>【强制】页面搜索严禁左模糊或者全模糊，如果需要请走搜索引擎来解决。</p>
+<h5 id="or-前后存在非索引的列索引失效">8）OR
+前后存在非索引的列，索引失效</h5>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"># 未使用到索引</span><br><span class="line">EXPLAIN SELECT SQL_NO_CACHE * FROM student WHERE age = 10 OR classid = 100;</span><br><span class="line"># 使用到索引</span><br><span class="line">EXPLAIN SELECT SQL_NO_CACHE * FROM student WHERE age = 10 OR name = &#x27;Abel&#x27;;</span><br></pre></td></tr></table></figure>
+<h5
+id="数据库和表的字符集统一使用utf8mb4">9）数据库和表的字符集统一使用utf8mb4</h5>
+<p>​
+统一使用utf8mb4兼容性更好，统一字符集可以避免由于字符集转换产生的乱码。不同的字符集进行比较前需要进行转换会造成索引失效。</p>
+<h5 id="总结建议">10）总结建议：</h5>
+<ul>
+<li>单列索引，尽量选择针对当前query过滤性更好的索引</li>
+<li>在选择组合索引的时候，当前query中过滤性最好的字段在索引字段顺序中，位置越靠前越好。</li>
+<li>在选择组合索引的时候，尽量选择能够包含当前query中的where子句中更多字段的索引。</li>
+<li>在选择组合索引的时候，如果某个字段可能出现范围查询时，尽量把这个字段放在索引次序的最后面。</li>
+</ul>
+<h4 id="关联查询的优化情况">2、关联查询的优化情况：</h4>
+<h5 id="left-join-左外连接左边驱动表右边被驱动表">1）Left Join
+左外连接（左边驱动表，右边被驱动表）</h5>
+<p>​ Left
+Join的条件（即On上的内容）用于确定如何从右表搜索行，而左边的表一定都有，所以右边是我们的关键点,一定需要建立索引。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">EXPLAIN SELECT SQL_NO_CACHE * FROM `type` LEFT JOIN book ON type.card = book.card;</span><br><span class="line"></span><br><span class="line"># 在被驱动表book上添加索引，可以避免对book表的全表扫描。</span><br><span class="line">ALTER TABLE book ADD INDEX Y (card);</span><br><span class="line"></span><br><span class="line">EXPLAIN SELECT SQL_NO_CACHE * FROM `type` LEFT JOIN book ON type.card = book.card;</span><br></pre></td></tr></table></figure>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20221031110652164.png" /></p>
+<h5 id="inner-join-内连接">2）INNER JOIN 内连接：</h5>
+<p>​ 在INNER JOIN中，驱动表是由MySQL自动选择的。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"># 由于驱动表是查询优化器决定的，所以如果book上建了索引，type没建，那么book会被选为被驱动表，反之type会被选为被驱动表。如果两列都建了索引，那么还是由查询优化器自动根据Cost选择。（一般都是选择小表作为驱动表，即小表驱动大表）</span><br><span class="line"></span><br><span class="line">EXPLAIN SELECT SQL_NO_CACHE * FROM type INNER JOIN book ON type.card=book.card;</span><br></pre></td></tr></table></figure>
+<h5 id="join语句的原理">3）JOIN语句的原理</h5>
+<ul>
+<li>驱动表和非驱动表：
+<ul>
+<li>内连接：优化器自动决定</li>
+<li>外连接：优化器也会帮助决定驱动表</li>
+</ul></li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">EXPLAIN SELECT * FROM t1 STRAIGHT_JOIN t2 ON (t1.a=t2.a);</span><br></pre></td></tr></table></figure>
+<ul>
+<li>Simple Nested-Loop Join 简单嵌套
+<ul>
+<li>假设A表有A条记录，B表有B条记录，A作为驱动表，B被驱动表</li>
+<li>最终查询开销：外表扫描1次，内表扫描A次，读取记录数：A + B *
+A，JOIN比较次数 B * A</li>
+<li>所以使用小表驱动大表</li>
+</ul></li>
+</ul>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20221031112529836.png" /></p>
+<ul>
+<li><p>Index Nested0Loop Join 索引嵌套循环连接</p>
+<p>为了减少内层表数据的匹配次数，所以被驱动表上需要有索引。</p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20221031112116837.png" /></p>
+<ul>
+<li><p>假设A表有A条记录，B表有B条记录，A作为驱动表，B被驱动表</p></li>
+<li><p>在这条语句里，被驱动表t2的字段a上有索引，join过程用上了这个索引，因此这个语句的执行流程是这样的：</p>
+<ul>
+<li>从表t1中读入一行数据 R；</li>
+<li>从数据行R中，取出a字段到表t2里去查找；</li>
+<li>取出表t2中满足条件的行，跟R组成一行，作为结果集的一部分；</li>
+<li>重复执行步骤1到3，直到表t1的末尾循环结束。</li>
+</ul>
+<p>在这个流程里：</p>
+<ul>
+<li>对驱动表t1做了全表扫描，这个过程需要扫描100行；</li>
+<li>而对于每一行R，根据a字段去表t2查找，走的是树搜索过程。由于我们构造的数据都是一一对应的，因此每次的搜索过程都只扫描一行，也是总共扫描100行；</li>
+<li>所以，整个执行流程，总扫描行数是200</li>
+</ul></li>
+<li></li>
+</ul></li>
+<li><p>Block Nested Loop Join (针对Simple的优化方法)</p>
+<p>​
+如果存在索引，那么会使用index的方式进行join，如果join的列没有索引，被驱动表要扫描的次数太多了。每次访问被驱动表，其表中的记录都会被加载到内存中，然后再从驱动表中取一条与其匹配，匹配结束后清除内存，然后再从驱动表中加载一条记录，然后把被驱动表的记录在加载到内存匹配，这样周而复始，大大增加了I0的次数。</p>
+<p>​ 为了减少被驱动表的IO次数，就出现了Block Nested-Loop
+Join的方式。<strong>不再是逐条获取驱动表的数据，而是一块一块的获取，引入了join
+buffer缓冲区，将驱动表join相关的部分数据列（大小受join
+buffer的限制）缓存到join
+buffer中，然后全表扫描被驱动表，被驱动表的每一条记录一次性和join
+buffer中的所有驱动表记录进行匹配（内存中操作），将简单嵌套循环中的多次比较合并成一次</strong>，降低了被驱动
+表的访问频率。</p></li>
+</ul>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20221031115027527.png" /></p>
+<ul>
+<li>最终查询开销：
+<ul>
+<li>外表扫描1次</li>
+<li>内表扫描A * used_column_size / join_buffer_size + 1次</li>
+<li>读取记录数：A + B * (A * used_column_size / join_buffer_size)</li>
+<li>JOIN比较次数 B * A</li>
+</ul></li>
+</ul>
+<h5 id="join语句结论">4）JOIN语句结论：</h5>
+<ul>
+<li>使用join语句，性能比强行拆成多个单表执行SQL语句的性能要好（能够直接多表关联的尽量直接关联，不用子查询）</li>
+<li>如果使用join语句的话，需要让小表做驱动表。(在决定哪个表做驱动表的时候，<strong>应该是两个表按照各自的条件过滤，过滤完成之后，计算参与join的各个字段的总数据量，数据量小的那个表，</strong>就是“小表”，应该作为驱动表。</li>
+<li>为被驱动表匹配的条件增加索引</li>
+<li>增大Join Buffer
+Size的大小（单次缓存的数据越多，内层包的扫表次数越少）</li>
+<li>减少驱动表不必要的字段查询，字段越少，join buffer缓存的数据越多</li>
+</ul>
+<h5 id="hash-join">5）Hash Join</h5>
+<p>​ Hash
+Join是做大数据集连接时的常用方式，优化器使用两个表中较小（相对较小）的表利用Join
+Key在内存中建立散列表，然后扫描较大的表并探测散列表，找出与Hash表匹配的行。</p>
+<p>​
+<strong>这种方式适用于较小的表完全可以放于内存中的情况，这样总成本就是访问两个表的成本之和。</strong></p>
+<p>​
+在表很大的情况下并不能完全放入内存，这时优化器会将它分割成若干不同的分区，不能放入内存的部分就把该分区写入磁盘的临时段，此时要求有较大的临时段从而尽量提高I/O的性能。</p>
+<p>​
+它能够很好的工作于没有索引的大表和并行查询的环境中，并提供最好的性能。Hash
+Join只能应用于等值连接，这是由Hash的特点决定的。</p>
+<h4 id="子查询优化">3、子查询优化</h4>
+<p>​ 子查询能够实现较复杂的语句，但是其执行效率较低，原因如下：</p>
+<ul>
+<li>执行子查询时，MySQL需要为内层查询语句的查询结果建立一个临时表，然后外层查询语句从临时表中查询记录。查询完毕后，再撤销这些临时表。这样会消耗过多的CPU和IO资源，产生大量的慢查询。</li>
+<li>子查询的结果集存储的临时表，不论是内存临时表还是磁盘临时表都不会存在索引，所以查询性能会受到一定的影响。</li>
+<li>对于返回结果集比较大的子查询，其对查询性能的影响也就越大。</li>
+</ul>
+<p>​
+故而，对于能够拆解的子查询，尽可能用多个步骤的关联查询来代替子查询。</p>
+<h4 id="排序优化">4、排序优化</h4>
+<p>​ 在MySQL中，支持两种排序方式，分别是FileSort和Index排序。</p>
+<ul>
+<li>Index排序：索引可以保证数据的有序性，效率高。</li>
+<li>FileSort：一般在内存中进行排序，占用CPU较多。如果结果较大则会产生临时文件IO到磁盘进行排序，效率低。</li>
+</ul>
+<p>​ 优化建议：</p>
+<ul>
+<li>SQL 中，可以在 WHERE 子句和 ORDER BY 子句中使用索引：目的是在 WHERE
+子句中避免全表扫描，在 ORDER BY 子句避免使用FileSort
+排序。<strong>当然，某些情况下全表扫描，或者 FileSort
+排序不一定比索引慢。</strong>但总的来说，我们还是要避免，以提高查询效率。</li>
+<li>尽量使用 Index 完成 ORDER BY 排序。如果 WHERE 和 ORDER BY
+是相同的列就使用单索引列；<strong>如果不同就使用联合索引</strong>。</li>
+<li>无法使用 Index 时，需要对 FileSort 方式进行调优</li>
+</ul>
+<p>可以应用索引进行排序的情况：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">INDEX a_b_c(a,b,c)</span><br><span class="line"></span><br><span class="line"># 如果WHERE使用索引的最左前缀定义为常量，则order by 能使用索引</span><br><span class="line">- WHERE a = const ORDER BY b,c</span><br><span class="line">- WHERE a = const AND b = const ORDER BY c</span><br><span class="line">- WHERE a = const ORDER BY b,c</span><br><span class="line">- WHERE a = const AND b &gt; const ORDER BY b,c</span><br></pre></td></tr></table></figure>
+<p>不可以应用索引进行排序的情况：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">- ORDER BY a ASC,b DESC,c DESC /* 排序不一致 */</span><br><span class="line">- WHERE g = const ORDER BY b,c /*丢失a索引*/</span><br><span class="line">- WHERE a = const ORDER BY c /*丢失b索引*/</span><br><span class="line">- WHERE a = const ORDER BY a,d /*d不是索引的一部分*/</span><br><span class="line">- WHERE a in (...) ORDER BY b,c /*对于排序来说，多个相等条件也是范围查询*/</span><br></pre></td></tr></table></figure>
+<p>​
+需要注意：有些可以应用索引进行排序的情况，查询优化器不一定会去使用。这会取决于具体的查询字段、数据量等等。</p>
+<ul>
+<li>当【范围条件】和【group by 或者 order
+by】的字段出现二选一时，优先观察条件字段的过滤数量，如果过滤的数据足够多，而需要排序的数据并不多时，优先把索引放在范围字段上。反之，亦然。</li>
+</ul>
+<h5 id="filesort算法">1）FileSort算法：</h5>
+<ul>
+<li>双路排序
+<ul>
+<li>是两次扫描磁盘，最终得到数据。</li>
+<li>第一次仅读取行指针和order by列，对他们进行排序。</li>
+<li>第二次扫描已经排序好的列表，按照列表中的值重新从列表中读取对应的数据输出，从磁盘取排序字段，在buffer进行排序，再从磁盘取其他字段</li>
+</ul></li>
+<li>单路排序（更消耗buffer）
+<ul>
+<li>直接从磁盘读取查询需要的所有列，按照order
+by列在buffer对它们进行排序，然后扫描排序后的列表进行输出，
+它的效率更快一些，避免了第二次读取数据。并且把随机IO变成了顺序IO，但是它会使用更多的空间，
+因为它把每一行都保存在内存中了。</li>
+<li>如果buffer容量不够，反而可能会导致大量的IO操作。
+<ul>
+<li>尝试提高 sort_buffer_size</li>
+<li>尝试提高 max_length_for_sort_data</li>
+<li>Order by 时select * 是一个大忌。最好只Query需要的字段</li>
+</ul></li>
+</ul></li>
+</ul>
+<h4 id="group-by-优化">5、GROUP BY 优化：</h4>
+<ul>
+<li>group by 使用索引的原则几乎跟order by一致 ，group by
+即使没有过滤条件用到索引，也可以直接使用索引。</li>
+<li>group by 先排序再分组，遵照索引建的最佳左前缀法则</li>
+<li>当无法使用索引列，增大max_length_for_sort_data 和sort_buffer_size
+参数的设置</li>
+<li>where效率高于having，能写在where限定的条件就不要写在having中。减少使用order
+by，和业务沟通能不排序就不排序，或将排序放到程序端去做。</li>
+<li>Order by、group
+by、distinct这些语句较为耗费CPU，数据库的CPU资源是极其宝贵的。</li>
+<li>包含了order by、group
+by、distinct这些查询的语句，where条件过滤出来的结果集请保持在1000行以内，否则SQL会很慢。</li>
+</ul>
+<h4 id="优化分页查询">6、优化分页查询：</h4>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">EXPLAIN SELECT * FROM student LIMIT 200000,10;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>优化1：在索引上完成排序分页操作，最后根据主键关联回原表查询所需要的其他列内容。</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">EXPLAIN SELECT * FROM student t,(SELECT id FROM student ORDER BY id LIMIT 2000000,10) a</span><br><span class="line">WHERE t.id = a.id;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>优化2：该方案适用于主键自增的表，可以把Limit
+查询转换成某个位置的查询。</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">EXPLAIN SELECT * FROM student WHERE id &gt; 2000000 LIMIT 10;</span><br></pre></td></tr></table></figure>
+<h4 id="覆盖索引">7、覆盖索引：</h4>
+<p>​ 一个索引包含了满足查询结果的数据就叫做覆盖索引。简单说就是，
+索引列+主键 包含 SELECT 到 FROM 之间查询的列。</p>
+<p>举例：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"># 不使用索引，因为如果要使用还需要回表，成本更高</span><br><span class="line">EXPLAIN SELECT * FROM student WHERE NAME LIKE &#x27;%abc&#x27;</span><br><span class="line"></span><br><span class="line"># 使用索引，因为索引中有id,age,NAME，所以不需要回表</span><br><span class="line">EXPLAIN SELECT id,age,NAME FROM student WHERE NAME LIKE &#x27;%abc&#x27;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>好处：
+<ul>
+<li>避免Innodb表进行索引的二次查询（回表）</li>
+<li>可以把随机IO变成顺序IO加快查询效率，因为覆盖索引是按照键值的顺序存储的，对于IO密集型的范围查找来说，对比随机从磁盘读取每一行的数据IO要少的多。</li>
+</ul></li>
+<li>弊端：
+<ul>
+<li>索引字段的维护总是有代价的。因此，在建立冗余索引来支持覆盖索引时就需要权衡考虑。</li>
+</ul></li>
+</ul>
+<h4 id="索引条件下推">8、索引条件下推：</h4>
+<p>​ Index Condition Pushdown(ICP)是MySQL
+5.6中新特性，是一种在存储引擎层使用索引过滤数据的一种优化方式。ICP可以减少存储引擎访问基表的次数以及MySQL服务器访问存储引擎的次数。</p>
+<ul>
+<li>示例： 表上有联合索引(key1,key2)
+<ul>
+<li>不使用ICP的查询过程：先使用联合索引(key1,key2)过滤key1&gt;'z'条件，然后回表，回表后的数据加载到数据页中，再去找满足第二第三个条件的数据</li>
+<li>使用ICP的查询过程：先使用联合索引(key1,key2)过滤key1&gt;'z'条件，然后不急着回表。因为联合索引中有key2这个字段，所以可以先进行索引条件下推，也就是先筛选key2这个条件，然后由于key3不在索引内，所以只能先去回表，再筛选第三个数据了。</li>
+</ul></li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">EXPLAIN SELECT * FROM s1 where key1 &gt; &#x27;z&#x27; AND key2 LIKE &#x27;%s&#x27; AND key3 LIKE &#x27;%ss&#x27;</span><br></pre></td></tr></table></figure>
+<h5 id="icp的开启和关闭">1）ICP的开启和关闭：</h5>
+<p>默认情况下启用索引下推，可以通过设置系统变量optimizer_switch =
+index_contidition_pushdown = on来开启。</p>
+<h5 id="使用条件">2）使用条件：</h5>
+<ul>
+<li>只能用于二级索引(secondary index)</li>
+<li>explain显示的执行计划中type值（join 类型）为range 、 ref 、 eq_ref
+或者ref_or_null 。</li>
+<li>并非全部where条件都可以用ICP筛选，如果where条件的字段不在索引列中，还是要读取整表的记录到server端做where过滤。</li>
+<li>ICP可以用于MyISAM和InnnoDB存储引擎</li>
+<li>MySQL 5.6版本的不支持分区表的ICP功能，5.7版本的开始支持。</li>
+<li>当SQL使用覆盖索引时，不支持ICP优化方法。</li>
+</ul>
+<h4 id="其他查询优化策略">9、其他查询优化策略：</h4>
+<h5 id="exists-和-in">1）EXISTS 和 IN</h5>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">SELECT * FROM A WHERE CC IN(SELECT CC FROM B) </span><br><span class="line"></span><br><span class="line">SELECT * FROM A WHERE EXISTS(SELECT CC FROM B WHERE B.cc=A.cc)</span><br></pre></td></tr></table></figure>
+<p>当A小于B时，用EXISTS，因为A是驱动表，执行顺序是</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">for i in A:</span><br><span class="line">	for j in B:</span><br><span class="line">		if j.cc == i.cc then</span><br></pre></td></tr></table></figure>
+<p>当B小于A时，用IN，因为实现逻辑正好与上相反。</p>
+<h5 id="count-和-count具体字段">2）COUNT(*) 和 COUNT(具体字段)</h5>
+<ul>
+<li>COUNT(*) 和 COUNT(1) 两者执行效率类似。</li>
+<li>如果是MyISAM存储引擎，统计表的行数为O(1)复杂度，因为有元数据存储，一致性由表级锁维护。</li>
+<li>如果是InnoDB，其支持事务行锁等机制，无法维护元数据，所以需要扫描全表，是O(n)复杂度，进行循环+计数方式统计。</li>
+<li>InnoDB中，如果采用COUNT(具体字段)，尽可能使用二级索引，因为主键采用的是聚簇索引，包含的信息较多。对于COUNT(*)
+和 COUNT(1)
+而言，只是统计行数，系统回自动采用占用空间更小的二级索引来统计。</li>
+</ul>
+<h5 id="关于select">3）关于SELECT *</h5>
+<ul>
+<li>不建议使用，耗费资源和时间</li>
+<li>无法使用覆盖索引</li>
+</ul>
+<h5 id="limit1">4）LIMIT1</h5>
+<ul>
+<li>针对的是会扫描全表的SQL语句，如果你可以确定结果集只有一条，那么加上LIMIT1的时候，当找到一条结果的时候就不会继续扫描了，这样会加快查询速度。</li>
+</ul>
+<h5 id="多使用commit">5）多使用COMMIT</h5>
+<ul>
+<li>只要有可能，在程序中尽量多使用
+COMMIT，这样程序的性能得到提高，需求也会因为 COMMIT
+所释放的资源而减少。</li>
+<li>COMMIT 所释放的资源：
+<ul>
+<li>回滚段上用于恢复数据的信息</li>
+<li>被程序语句获得的锁</li>
+<li>redo / undo log buffer 中的空间</li>
+<li>管理上述 3 种资源中的内部花费</li>
+</ul></li>
+</ul>
+<h3 id="二主键应当如何设计">二、主键应当如何设计？</h3>
+<p>​
+自增ID做主键，简单易懂，几乎所有数据库都支持自增类型，只是实现上各自有所不同而已。自增ID除了简单，其他都是缺点。</p>
+<ol type="1">
+<li>可靠性不高 存在自增ID回溯的问题，这个问题直到最新版本的MySQL
+8.0才修复。</li>
+<li>安全性不高
+对外暴露的接口可以非常容易猜测对应的信息。比如：/User/1/这样的接口。</li>
+<li>性能差 自增ID的性能较差，需要在数据库服务器端生成。</li>
+<li>交互多 业务还需要额外执行一次类似last_insert_id()
+的函数才能知道刚才插入的自增值，这需要多一次的网络交互。在海量并发的系统中，多1条SQL，就多一次性能上的开销。</li>
+<li>局部唯一性
+最重要的一点，自增ID是局部唯一，只在当前数据库实例中唯一，而不是全局唯一，在任意服务器间都是唯一的。对于目前分布式系统来说，这简直就是噩梦</li>
+</ol>
+<h4 id="使用业务字段做主键">1、使用业务字段做主键？</h4>
+<p>​ 不可取！建议尽量不要用跟业务有关的字段做主键。</p>
+<h4 id="推荐的主键设计">2、推荐的主键设计：</h4>
+<ul>
+<li>非核心业务：对应表的主键自增ID，如告警、日志、监控等信息。</li>
+<li>核心业务：主键设计至少应该是全局唯一且是单调递增。全局唯一保证在各系统之间都是唯一的，单调递增是希望插入时不影响数据库性能</li>
+</ul>
+<p><strong>UUID</strong>：</p>
+<p>​ UUID = 时间+UUID版本（16字节）- 时钟序列（4字节） -
+MAC地址（12字节）</p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20221031152235559.png" /></p>
+<p>​
+在UUID中时间部分占用60位，存储的类似TIMESTAMP的时间戳，但表示的是从1582-10-15
+00：00：00.00到现在的100ns的计数。可以看到UUID存储的时间精度比TIMESTAMPE更高</p>
+<ul>
+<li>为什么UUID是随机无序的呢？
+<ul>
+<li>因为UUID的设计中，<strong>将时间低位放在最前面，而这部分的数据是一直在变化的，并且是无序。</strong></li>
+</ul></li>
+</ul>
+<p><strong>改造UUID，使其适配主键的要求</strong>：</p>
+<p>​
+若将时间高低位互换，则时间就是单调递增的了，也就变得单调递增了。MySQL
+8.0可以更换时间低位和时间高位的存储方式，这样UUID就是有序的UUID了。</p>
+<p>​
+另外在真实的业务系统中，主键还可以加入业务和系统属性，如用户的尾号，机房的信息等。</p>
 ]]></content>
       <categories>
         <category>⓹ 基础类笔记</category>
@@ -2132,10 +3509,10 @@ src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-202209051137400
       </tags>
   </entry>
   <entry>
-    <title>Java开发经验——0823日志1</title>
-    <url>/2022/08/15/ebbd271e8df3/</url>
+    <title>Java开发经验——0815日志1</title>
+    <url>/2022/08/15/bb402ab73028/</url>
     <content><![CDATA[<div class="hbe hbe-container" id="hexo-blog-encrypt" data-wpm="Oh, this is an invalid password. Check and try again, please." data-whm="OOPS, these decrypted content may changed, but you can still have a look.">
-  <script id="hbeData" type="hbeData" data-hmacdigest="7bff88e0012b18d8d7d0270af5c6c0fe7b6a1bc7f11bd1a7e92faf07212330a7">5b75cfd994443fd8ef220370f00a3fa4461ecbc081186bae611d070e9fac23e9bc70aee727e83acc5bb7a91a891e516e4a7b3fd9cf39579ef096d21236333396f794cc835ab3097bfe35b4dda2385dd584508e057a30d7bd06ec04e2dc73c3f8741b5b7dcee0a1f3f9360ff2a0478348e84408b422a74ae1ebbe1e485c4ee94a138d82b3a03cca25d37b022cc57a256448a271bcd406eee952fa793fc4adb35c08aacffa6f8e5d5cc8d24ff852792129bfe885e0d7571801eda5c0b47272d7d8ab0040619816e92492992688e9ac6eb9d76d9d79289134f74441c8418384a7d25782a07e65f33f29b7f808a5fe498f44ad90f1f44347298e83b2397e634e01ec7584df70b79831bd9194f968e34dc0808f303675c9f345d47c6fc7efa752356cdd6f54ae0c9b3ab34d456302d54140c0bf1cdf6f407761262135cfc21706c5ab18d3a0b036a6b3a5c2368a07c1aaa77dc2f28175a783cb7939565efad831c619303b3bd0890a79e95a3478c502d3da62609a3fe137013b832d36616f780effe126cf07d8311919e28fd941e7d35d1af90faf67e78c9234fe80b85296b8498c02bdc9ea6a2ef507f0c3320bd6e382b42e39f7fdb6169d557bf0085443e9ca26c3f422631a258e6154f5c3f5ef4eaae9912be7235917368017516bedb052299f1d5bfd82433462771cdd533407252baf3085ba5f3bf7d582d45757552e911824002deeb436402f16b79f1226c7127348134c450b6d11470ebff8ca358da7e05059565f3c023fbc1f2c584742ad8d921b7e1a54d081d8c26f6a56e70120a79058ff1710cbb4afb58a684c38c109ce21a71628f99242043c8de76703cc715314eb06</script>
+  <script id="hbeData" type="hbeData" data-hmacdigest="1d61c0fc9529643c45934df25f1801317a5a9ec15f14590d9a4e5a71a20a39cd">5b75cfd994443fd8ef220370f00a3fa4461ecbc081186bae611d070e9fac23e9bc70aee727e83acc5bb7a91a891e516e3ed3f53ca3563506c209cec7f7dd47cf43d7f8ad90a64f771f2c739c94cc8635d2692fd7a86e1afabd60f14467bb6285dd9e4985732f2300fef62c7f85acda2d8014669dc425265465c14a8300636aff0ba4fa04a6095d3cadf517a55e8f51e38db73692bd140f1cc7f31b2d0bc19da8c1dd8a14b5cdc5d1e82f7b88e1025db02739a66c7ddc9ed3f40a4b60f3cea054940df4527fc090191c611597601f26dc9f070070b296626315afe89dbb6c682f6ff8439f43dd46d4bd7bfc0489b3c60f6f9940d72965ba74687751d978a3e4ad8bb332486e98d449ef121e6ef93f1c9f3c4c181958863dfc33587f8d0532f026eb797c3f38c400d667187e7d75e598da336a177ff7ab5956c8a690c743a19cec437c9a7c36b993fb460b129f1e605559bc32bc64ee995b0f5a33eeb1741c82a71ce0e4be7fb99fa6d017e86af11a322d5318e1bdcd86c649e9a4aa52f7cefa377f139797d78470cf275fba9751ff4e5d8b51f88084aefabc50bb0c5c877cf841d2899bc11935d14ed4b4a7618a87b3f9459a57800ebe5725760821930ee2e4bfc42467ba96e164965bd93e264f0e8eef715cd59fc65348f48e98c1f075f0b2073b43db94ea80bdcb44cdd0db24edd6bab5c91618292f0d69e70a75cfec38dc653f1a742aadc54ae7c9757ce0c09409dd7068fa8d9d664996eda7c76711fdf73023fa6576c00284367ac83c6335812f919ea091dba2856d27296e86e3a8fafcca69138f59103bdc711bae1e5d82a1a9d2ee8fdd760d31f7b9b85028b44f28766c3289c6be836a86690e4f9a4eda49791a043037ce46e3b6d72a666ac59635cd7dc3ffbe61aa9caf46f6b459eb56e851f667d53b3353b748a1f484cc95504a63e8b9880a1e10bc5390889d1ce07c0c55808cd360bccfb60c97325eb8559f62c365485b0d9707e35ea8dbd387eaf70a258cd2d55f4b2439821921e81eeffc0077e8a760bafc921cd29bca02d0db79896f3a459f9b1b61b767ccb84cdc315bc7706af0a0d9762a17208c382d6048d54c828c40f3a0b5015c9154aca60bcf8fe776d8cddc87cd4eb0bfe42e2191dc00d5e6e887d11ed873071c046797004d767611a4a32f3948be4bb0414759e9fdcdda1e33da668279b1ff5c1e4bf03478e5cfa1b1c83d0da7a0b45195fc063f6958e29c48afd02e85c165433da66112822589345ef7aa2cf37b1d1de830821262f4bc0daa002da156ba87ef20c825f5a3a212d8fa2a884d08af7ddd678f022a2613c59546cf7d3644b1e0c9cb890a3ec14ace7d9452bda6019a9625e348c6c7cb3deaad044682f29e2ef7d61fa84402f7115d4b7b088ba52afd3314d72891262011fce124d4cec399413efd5d51c7eea8099a88cfa40b1951a32a66607cb422dc0af05c88c74149b14be30574112cdeb834a1a76918ed1c23f1bc39b80324b0458c0cf515f6f3f207443bdc2bd6840b2984ddef36e71a441b6a03a0894f6fd9682cadd0c42f290d4727363aa1529b2aeba36f993bebf34b167a23b9c55ccaa81b0fdb07610ffe25e8d4c58ae96de382622d0d7353fd5e803d0ebd632a245057f5e192ff4522cb8877c8bc1ef933390d35d212f2eb</script>
   <div class="hbe hbe-content">
     <div class="hbe hbe-input hbe-input-default">
       <input class="hbe hbe-input-field hbe-input-field-default" type="password" id="hbePass">
@@ -2151,10 +3528,10 @@ src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-202209051137400
       </categories>
   </entry>
   <entry>
-    <title>Java开发经验——0815日志1</title>
-    <url>/2022/08/15/bb402ab73028/</url>
+    <title>Java开发经验——0823日志1</title>
+    <url>/2022/08/15/ebbd271e8df3/</url>
     <content><![CDATA[<div class="hbe hbe-container" id="hexo-blog-encrypt" data-wpm="Oh, this is an invalid password. Check and try again, please." data-whm="OOPS, these decrypted content may changed, but you can still have a look.">
-  <script id="hbeData" type="hbeData" data-hmacdigest="1d61c0fc9529643c45934df25f1801317a5a9ec15f14590d9a4e5a71a20a39cd">5b75cfd994443fd8ef220370f00a3fa4461ecbc081186bae611d070e9fac23e9bc70aee727e83acc5bb7a91a891e516e3ed3f53ca3563506c209cec7f7dd47cf43d7f8ad90a64f771f2c739c94cc8635d2692fd7a86e1afabd60f14467bb6285dd9e4985732f2300fef62c7f85acda2d8014669dc425265465c14a8300636aff0ba4fa04a6095d3cadf517a55e8f51e38db73692bd140f1cc7f31b2d0bc19da8c1dd8a14b5cdc5d1e82f7b88e1025db02739a66c7ddc9ed3f40a4b60f3cea054940df4527fc090191c611597601f26dc9f070070b296626315afe89dbb6c682f6ff8439f43dd46d4bd7bfc0489b3c60f6f9940d72965ba74687751d978a3e4ad8bb332486e98d449ef121e6ef93f1c9f3c4c181958863dfc33587f8d0532f026eb797c3f38c400d667187e7d75e598da336a177ff7ab5956c8a690c743a19cec437c9a7c36b993fb460b129f1e605559bc32bc64ee995b0f5a33eeb1741c82a71ce0e4be7fb99fa6d017e86af11a322d5318e1bdcd86c649e9a4aa52f7cefa377f139797d78470cf275fba9751ff4e5d8b51f88084aefabc50bb0c5c877cf841d2899bc11935d14ed4b4a7618a87b3f9459a57800ebe5725760821930ee2e4bfc42467ba96e164965bd93e264f0e8eef715cd59fc65348f48e98c1f075f0b2073b43db94ea80bdcb44cdd0db24edd6bab5c91618292f0d69e70a75cfec38dc653f1a742aadc54ae7c9757ce0c09409dd7068fa8d9d664996eda7c76711fdf73023fa6576c00284367ac83c6335812f919ea091dba2856d27296e86e3a8fafcca69138f59103bdc711bae1e5d82a1a9d2ee8fdd760d31f7b9b85028b44f28766c3289c6be836a86690e4f9a4eda49791a043037ce46e3b6d72a666ac59635cd7dc3ffbe61aa9caf46f6b459eb56e851f667d53b3353b748a1f484cc95504a63e8b9880a1e10bc5390889d1ce07c0c55808cd360bccfb60c97325eb8559f62c365485b0d9707e35ea8dbd387eaf70a258cd2d55f4b2439821921e81eeffc0077e8a760bafc921cd29bca02d0db79896f3a459f9b1b61b767ccb84cdc315bc7706af0a0d9762a17208c382d6048d54c828c40f3a0b5015c9154aca60bcf8fe776d8cddc87cd4eb0bfe42e2191dc00d5e6e887d11ed873071c046797004d767611a4a32f3948be4bb0414759e9fdcdda1e33da668279b1ff5c1e4bf03478e5cfa1b1c83d0da7a0b45195fc063f6958e29c48afd02e85c165433da66112822589345ef7aa2cf37b1d1de830821262f4bc0daa002da156ba87ef20c825f5a3a212d8fa2a884d08af7ddd678f022a2613c59546cf7d3644b1e0c9cb890a3ec14ace7d9452bda6019a9625e348c6c7cb3deaad044682f29e2ef7d61fa84402f7115d4b7b088ba52afd3314d72891262011fce124d4cec399413efd5d51c7eea8099a88cfa40b1951a32a66607cb422dc0af05c88c74149b14be30574112cdeb834a1a76918ed1c23f1bc39b80324b0458c0cf515f6f3f207443bdc2bd6840b2984ddef36e71a441b6a03a0894f6fd9682cadd0c42f290d4727363aa1529b2aeba36f993bebf34b167a23b9c55ccaa81b0fdb07610ffe25e8d4c58ae96de382622d0d7353fd5e803d0ebd632a245057f5e192ff4522cb8877c8bc1ef933390d35d212f2eb</script>
+  <script id="hbeData" type="hbeData" data-hmacdigest="7bff88e0012b18d8d7d0270af5c6c0fe7b6a1bc7f11bd1a7e92faf07212330a7">5b75cfd994443fd8ef220370f00a3fa4461ecbc081186bae611d070e9fac23e9bc70aee727e83acc5bb7a91a891e516e4a7b3fd9cf39579ef096d21236333396f794cc835ab3097bfe35b4dda2385dd584508e057a30d7bd06ec04e2dc73c3f8741b5b7dcee0a1f3f9360ff2a0478348e84408b422a74ae1ebbe1e485c4ee94a138d82b3a03cca25d37b022cc57a256448a271bcd406eee952fa793fc4adb35c08aacffa6f8e5d5cc8d24ff852792129bfe885e0d7571801eda5c0b47272d7d8ab0040619816e92492992688e9ac6eb9d76d9d79289134f74441c8418384a7d25782a07e65f33f29b7f808a5fe498f44ad90f1f44347298e83b2397e634e01ec7584df70b79831bd9194f968e34dc0808f303675c9f345d47c6fc7efa752356cdd6f54ae0c9b3ab34d456302d54140c0bf1cdf6f407761262135cfc21706c5ab18d3a0b036a6b3a5c2368a07c1aaa77dc2f28175a783cb7939565efad831c619303b3bd0890a79e95a3478c502d3da62609a3fe137013b832d36616f780effe126cf07d8311919e28fd941e7d35d1af90faf67e78c9234fe80b85296b8498c02bdc9ea6a2ef507f0c3320bd6e382b42e39f7fdb6169d557bf0085443e9ca26c3f422631a258e6154f5c3f5ef4eaae9912be7235917368017516bedb052299f1d5bfd82433462771cdd533407252baf3085ba5f3bf7d582d45757552e911824002deeb436402f16b79f1226c7127348134c450b6d11470ebff8ca358da7e05059565f3c023fbc1f2c584742ad8d921b7e1a54d081d8c26f6a56e70120a79058ff1710cbb4afb58a684c38c109ce21a71628f99242043c8de76703cc715314eb06</script>
   <div class="hbe hbe-content">
     <div class="hbe hbe-input hbe-input-default">
       <input class="hbe hbe-input-field hbe-input-field-default" type="password" id="hbePass">
@@ -5603,6 +6980,47 @@ src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-202204301146216
       </tags>
   </entry>
   <entry>
+    <title>云原生快速入门系列Chap1——云平台+容器化</title>
+    <url>/2022/04/27/a1c507dae6b0/</url>
+    <content><![CDATA[<h4 id="公有云和私有云">1、公有云和私有云：</h4>
+<ul>
+<li><p>公有云：</p>
+<ul>
+<li>公有云资源（例如服务器和存储空间）由第三方云服务提供商拥有和运营，这些资源通过
+Internet 提供</li>
+<li><strong>成本更低</strong>：无需购买硬件或软件，仅对使用的服务付费。</li>
+<li><strong>无需维护</strong>：维护由服务提供商提供。</li>
+<li><strong>近乎无限制的缩放性</strong>：提供按需资源，可满足业务需求。</li>
+<li><strong>高可靠性</strong>：具备众多服务器，确保免受故障影响。</li>
+<li>可用性： N个9 全年的故障时间： 365<em>24</em>3600*(1-99.9999%)</li>
+</ul></li>
+<li><p>私有云：</p>
+<ul>
+<li><p>私有云由专供一个企业或组织使用的云计算资源构成。在私有云中，<strong>服务和基础结构始终在私有网络上进行维护，硬件和软件专供组织使用。</strong>私有云的使用对象通常为政府机构、金融机构以及其他具备业务关键性运营且希望对环境拥有更大控制权的中型到大型组织。</p></li>
+<li><p><strong>灵活性更强</strong>：组织可自定义云环境以满足特定业务需求。</p></li>
+<li><p><strong>控制力更强</strong>：资源不与其他组织共享，因此能获得更高的控制力以及<strong>更高的隐私级别。</strong></p></li>
+<li><p><strong>可伸缩性更强</strong>：与本地基础结构相比，私有云通常具有更强的可伸缩性。</p></li>
+</ul></li>
+<li><p>没有一种云计算类型适用于所有人。多种不同的云计算模型、类型和服务已得到发展，可以满足组织快速变化的技术需求。</p></li>
+</ul>
+<h4 id="私有网络vpc">2、私有网络VPC</h4>
+<p>​ 集群内服务器之间互相访问，一般都是用私有IP进行访问，速度更快.</p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20221031170245325.png" /></p>
+<p>​
+在实际的服务器集群中,可以自己先新建一个专有网络(其实就是可以在内部创建局域网,然后再通过交换机创建子网等),划分相应的网段.比如说192.168.o.0/16.</p>
+<p>​ 不同VPC之间的主机不能直接通信,VPC提供了一个隔离域.</p>
+<h4 id="docker容器化">3、Docker容器化</h4>
+]]></content>
+      <categories>
+        <category>⑧ 工程类笔记</category>
+        <category>云原生入门</category>
+      </categories>
+      <tags>
+        <tag>Cloud Native</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>《Not All Tokens Are Equal Human-centric Visual Analysis via Token Clustering Transformer》</title>
     <url>/2022/04/24/22e32ee5ba59/</url>
     <content><![CDATA[<h4
@@ -6084,8 +7502,8 @@ self-attention中的值，而不是像SE层那样将其应用于模块的输出�
         <category>CV相关论文</category>
       </categories>
       <tags>
-        <tag>Transformer</tag>
         <tag>CVPR2022</tag>
+        <tag>Transformer</tag>
       </tags>
   </entry>
   <entry>
@@ -6872,8 +8290,8 @@ class="math inline">\(\lambda_{id2}\)</span> = { 10 , 7 , 50 , 1 }</p>
         <category>CV相关论文</category>
       </categories>
       <tags>
-        <tag>CNN</tag>
         <tag>Style Transfer</tag>
+        <tag>CNN</tag>
         <tag>Transformer</tag>
       </tags>
   </entry>
@@ -8550,60 +9968,6 @@ NK\)</span>的矩阵，包含横着排列的N个对角阵。整个雅可比矩�
       </tags>
   </entry>
   <entry>
-    <title>BFS系列——开密码锁</title>
-    <url>/2022/02/22/2c663a313e31/</url>
-    <content><![CDATA[<h4 id="剑指-offer-ii-109.-开密码锁"><a
-href="https://leetcode-cn.com/problems/zlDJc7/">剑指 Offer II 109.
-开密码锁</a></h4>
-<p>​ 一个密码锁由 4 个环形拨轮组成，每个拨轮都有 10 个数字： '0', '1',
-'2', '3', '4', '5', '6', '7', '8', '9' 。每个拨轮可以自由旋转：例如把
-'9' 变为 '0'，'0' 变为 '9' 。每次旋转都只能旋转一个拨轮的一位数字。</p>
-<p>​ 锁的初始数字为 '0000' ，一个代表四个拨轮的数字的字符串。</p>
-<p>​ 列表 deadends
-包含了一组死亡数字，一旦拨轮的数字和列表里的任何一个元素相同，这个锁将会被永久锁定，无法再被旋转。</p>
-<p>​ 字符串 target
-代表可以解锁的数字，请给出解锁需要的最小旋转次数，如果无论如何不能解锁，返回
--1 。</p>
-<ul>
-<li>示例 1:</li>
-</ul>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">输入：deadends = [&quot;0201&quot;,&quot;0101&quot;,&quot;0102&quot;,&quot;1212&quot;,&quot;2002&quot;], target = &quot;0202&quot;</span><br><span class="line">输出：6</span><br><span class="line">解释： 可能的移动序列为 &quot;0000&quot; -&gt; &quot;1000&quot; -&gt; &quot;1100&quot; -&gt; &quot;1200&quot; -&gt; &quot;1201&quot; -&gt; &quot;1202&quot; -&gt; &quot;0202&quot;。</span><br><span class="line">注意 &quot;0000&quot; -&gt; &quot;0001&quot; -&gt; &quot;0002&quot; -&gt; &quot;0102&quot; -&gt; &quot;0202&quot; 这样的序列是不能解锁的，因为当拨动到 &quot;0102&quot; 时这个锁就会被锁定。</span><br></pre></td></tr></table></figure>
-<h5 id="解题思路1单向bfs"><strong>解题思路1：单向BFS</strong>：</h5>
-<p>​
-本题可以采用BFS搜索进行求解，但是由于每一个数字，其对应的领居有高达8个，再不断的扩展的过程中，搜索的空间会非常大，就会导致比较大的复杂度。在本题的BFS过程中，需要注意的是，还有死亡数字列表，一种方案是我们可以使用哈希表存储死亡数字，在每次遍历获取邻居的时候，判断是否为死亡数字，如果为死亡数字，那么就不将其考虑在内。这样子需要多出一定的空间和时间来进行处理。</p>
-<p>​
-其实，我们可以不需要额外的空间来进行处理。因为在BFS的过程中，我们会记录哪些节点被访问过，就不要重复入队，故而，只需要提前将所有的死亡数字，都设定为已经被访问过，那么就不会被考虑在内。</p>
-<h5 id="解题代码1"><strong>解题代码1</strong>：</h5>
-<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="type">int</span> <span class="title">openLock</span><span class="params">(vector&lt;string&gt;&amp; deadends, string target)</span> </span>&#123;</span><br><span class="line">        <span class="comment">//构建hash表，方便进行查询</span></span><br><span class="line">        unordered_map&lt;string,<span class="type">int</span>&gt; dead;</span><br><span class="line">        unordered_map&lt;string,<span class="type">int</span>&gt; res;</span><br><span class="line">        <span class="keyword">for</span>(<span class="type">int</span> i=<span class="number">0</span>;i&lt;deadends.<span class="built_in">size</span>();i++) dead[deadends[i]] = <span class="number">1</span>;</span><br><span class="line">        <span class="keyword">if</span>(dead.<span class="built_in">find</span>(<span class="string">&quot;0000&quot;</span>) != dead.<span class="built_in">end</span>()) <span class="keyword">return</span> <span class="number">-1</span>; </span><br><span class="line">        <span class="comment">//开启广度优先搜索</span></span><br><span class="line">        queue&lt;string&gt; q;</span><br><span class="line">        q.<span class="built_in">push</span>(<span class="string">&quot;0000&quot;</span>);</span><br><span class="line">        res[<span class="string">&quot;0000&quot;</span>] = <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">while</span>(!q.<span class="built_in">empty</span>())&#123;</span><br><span class="line">            string curr = q.<span class="built_in">front</span>();</span><br><span class="line">            q.<span class="built_in">pop</span>();</span><br><span class="line">            <span class="comment">//将curr的16个领居全部进入队列，并更新结果表，(如果存在dead点，则不进入队列)</span></span><br><span class="line">            vector&lt;string&gt; neighbor = <span class="built_in">getNeighbor</span>(curr);</span><br><span class="line">            <span class="keyword">for</span>(<span class="type">int</span> i=<span class="number">0</span>;i&lt;neighbor.<span class="built_in">size</span>();i++)&#123;</span><br><span class="line">                <span class="keyword">if</span>(dead.<span class="built_in">find</span>(neighbor[i]) != dead.<span class="built_in">end</span>()) <span class="keyword">continue</span>;</span><br><span class="line">                <span class="keyword">if</span>(res.<span class="built_in">find</span>(neighbor[i]) == res.<span class="built_in">end</span>())&#123;</span><br><span class="line">                    q.<span class="built_in">push</span>(neighbor[i]);</span><br><span class="line">                    res[neighbor[i]] = res[curr] + <span class="number">1</span>;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span>(res.<span class="built_in">find</span>(target) == res.<span class="built_in">end</span>()) <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">        <span class="keyword">return</span> res[target];</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function">vector&lt;string&gt; <span class="title">getNeighbor</span><span class="params">(string str)</span></span>&#123;</span><br><span class="line">        vector&lt;string&gt; res;</span><br><span class="line">        <span class="keyword">for</span>(<span class="type">int</span> i=<span class="number">0</span>;i&lt;<span class="number">4</span>;i++)&#123;</span><br><span class="line">            string tmp = str;</span><br><span class="line">            <span class="keyword">if</span>(tmp[i] == <span class="string">&#x27;0&#x27;</span>)&#123;</span><br><span class="line">                tmp[i] = <span class="string">&#x27;9&#x27;</span>;</span><br><span class="line">                res.<span class="built_in">push_back</span>(tmp);</span><br><span class="line">                tmp[i] = <span class="string">&#x27;1&#x27;</span>;</span><br><span class="line">                res.<span class="built_in">push_back</span>(tmp);</span><br><span class="line">            &#125;<span class="keyword">else</span> <span class="keyword">if</span>(tmp[i] == <span class="string">&#x27;9&#x27;</span>)&#123;</span><br><span class="line">                tmp[i] = <span class="string">&#x27;8&#x27;</span>;</span><br><span class="line">                res.<span class="built_in">push_back</span>(tmp);</span><br><span class="line">                tmp[i] = <span class="string">&#x27;0&#x27;</span>;</span><br><span class="line">                res.<span class="built_in">push_back</span>(tmp);</span><br><span class="line">            &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">                tmp[i] = tmp[i] + <span class="number">1</span>;</span><br><span class="line">                res.<span class="built_in">push_back</span>(tmp);</span><br><span class="line">                tmp[i] = tmp[i] - <span class="number">2</span>;</span><br><span class="line">                res.<span class="built_in">push_back</span>(tmp);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> res;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
-<p><img
-src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/mac/截屏2022-02-22%20下午2.31.38.png" /></p>
-<p>​ 此方法花费的执行用时和内存消耗都是下下选。</p>
-<h5 id="解题思路2双向bfs"><strong>解题思路2：双向BFS</strong>：</h5>
-<p>​
-双向bfs适用于知道起点和终点的状态下使用，从起点和终点两个方向开始进行搜索，可以非常大的提高单个bfs的搜索效率</p>
-<p>​
-同样，实现也是通过队列的方式，可以设置两个队列，一个队列保存从起点开始搜索的状态，另一个队列用来保存从终点开始搜索的状态，如果某一个状态下出现相交的情况，那么就出现了答案，用一张图来进行说明如下所示：</p>
-<p><img src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/mac/jevyd2TPC7FX6GA.png" alt="jevyd2TPC7FX6GA" style="zoom: 33%;" /></p>
-<p>​
-具体如何实现判断相遇，见如下的代码：我们构建vis，代表某个字符串的位置是否被访问过。这个在单向的BFS中，我们不需要设置，因为我们可以通过res这个Hash表有没有某个元素来进行判断，实际上此处的vis起到的也并不是判断有没有被访问过的作用（后面代码还是通过res中有没有某个元素来判断的），此处的vis最大的作用是记录某个节点是被正向搜索访问过，还是被反向搜索访问过，如果被正向访问过设置为1，被反向搜索访问过设置为2。</p>
-<p>​
-同时，在每一遍while中，我们扩展<strong>较小的搜索队列</strong>，并利用flag记录扩展的是前向还是反向。如果在遍历某一轮的领居的过程中，发现：curr点和领居点的vst相加=3，意味着两者一个是正向搜索序列，一个是逆向搜索序列，相遇了，所以此时我们可以返回结果，不用继续下去了。</p>
-<h5 id="解题代码2">解题代码2：</h5>
-<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="type">int</span> <span class="title">openLock</span><span class="params">(vector&lt;string&gt;&amp; deadends, string target)</span> </span>&#123;</span><br><span class="line">        <span class="comment">//构建hash表，方便进行查询结果</span></span><br><span class="line">        unordered_map&lt;string,<span class="type">int</span>&gt; res;</span><br><span class="line">        <span class="comment">//构建vis，代表某个字符串的位置是否被访问过 被正向访问过为1，被反向搜索访问过为2</span></span><br><span class="line">        unordered_map&lt;string,<span class="type">int</span>&gt; vis;</span><br><span class="line">        <span class="keyword">for</span>(<span class="type">int</span> i=<span class="number">0</span>;i&lt;deadends.<span class="built_in">size</span>();i++)&#123;</span><br><span class="line">            res[deadends[i]] = <span class="number">-1</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span>(res.<span class="built_in">find</span>(<span class="string">&quot;0000&quot;</span>) != res.<span class="built_in">end</span>()) <span class="keyword">return</span> <span class="number">-1</span>; </span><br><span class="line">        <span class="keyword">if</span>(target == <span class="string">&quot;0000&quot;</span>) <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">        <span class="comment">//开启广度优先搜索</span></span><br><span class="line">        queue&lt;string&gt; q1;  <span class="comment">//前向搜索序列</span></span><br><span class="line">        queue&lt;string&gt; q2;  <span class="comment">//反向搜索序列</span></span><br><span class="line">        q1.<span class="built_in">push</span>(<span class="string">&quot;0000&quot;</span>);   <span class="comment">//前向搜索初始化</span></span><br><span class="line">        q2.<span class="built_in">push</span>(target);   <span class="comment">//反向搜索初始化</span></span><br><span class="line">        res[<span class="string">&quot;0000&quot;</span>] = <span class="number">0</span>;   <span class="comment">//前向搜索初始化</span></span><br><span class="line">        res[target] = <span class="number">0</span>;   <span class="comment">//反向搜索初始化</span></span><br><span class="line">        vis[<span class="string">&quot;0000&quot;</span>] = <span class="number">1</span>;	 <span class="comment">//前向搜索初始化</span></span><br><span class="line">        vis[target] = <span class="number">2</span>;	 <span class="comment">//反向搜索初始化</span></span><br><span class="line">        <span class="keyword">while</span>(!q1.<span class="built_in">empty</span>() &amp;&amp; !q2.<span class="built_in">empty</span>())&#123;</span><br><span class="line">            <span class="comment">//在每一遍while中，我们扩展 较小的搜索队列,利用flag记录扩展的是前向还是反向</span></span><br><span class="line">            string curr;</span><br><span class="line">            <span class="type">bool</span> flag;</span><br><span class="line">            <span class="keyword">if</span>(q1.<span class="built_in">size</span>() &lt; q2.<span class="built_in">size</span>())&#123;</span><br><span class="line">                flag = <span class="literal">true</span>;</span><br><span class="line">                curr = q1.<span class="built_in">front</span>();</span><br><span class="line">                q1.<span class="built_in">pop</span>();</span><br><span class="line">            &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">                flag = <span class="literal">false</span>;</span><br><span class="line">                curr = q2.<span class="built_in">front</span>();</span><br><span class="line">                q2.<span class="built_in">pop</span>();</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="comment">//将curr的16个领居全部进入队列，并更新结果表，(如果存在dead点，则不进入队列)</span></span><br><span class="line">            vector&lt;string&gt; neighbor = <span class="built_in">getNeighbor</span>(curr);</span><br><span class="line">            <span class="keyword">for</span>(<span class="type">int</span> i=<span class="number">0</span>;i&lt;neighbor.<span class="built_in">size</span>();i++)&#123;</span><br><span class="line">                <span class="keyword">if</span>(res.<span class="built_in">find</span>(neighbor[i]) == res.<span class="built_in">end</span>())&#123; <span class="comment">//如果这个领居点从来没被访问过 </span></span><br><span class="line">                    <span class="keyword">if</span>(flag) q1.<span class="built_in">push</span>(neighbor[i]);</span><br><span class="line">                    <span class="keyword">else</span> q2.<span class="built_in">push</span>(neighbor[i]);</span><br><span class="line">                    res[neighbor[i]] = res[curr] + <span class="number">1</span>;</span><br><span class="line">                    vis[neighbor[i]] = vis[curr];  <span class="comment">//继承当前访问的队列编号，1为正向，2为反向</span></span><br><span class="line">                &#125;<span class="keyword">else</span>&#123;  <span class="comment">//如果这个领居点被访问过：</span></span><br><span class="line">                    <span class="keyword">if</span>(vis[neighbor[i]] + vis[curr] == <span class="number">3</span>)&#123;</span><br><span class="line">                        <span class="comment">//如果curr点和领居点的vst相加=3，意味着两者一个是正向搜索序列，一个是逆向搜索序列，相遇了，所以此时我们可以返回结果，不用继续下去了</span></span><br><span class="line">                        <span class="keyword">return</span> res[curr] + res[neighbor[i]] + <span class="number">1</span>;</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function">vector&lt;string&gt; <span class="title">getNeighbor</span><span class="params">(string str)</span></span>&#123;</span><br><span class="line">        vector&lt;string&gt; res;</span><br><span class="line">        <span class="keyword">for</span>(<span class="type">int</span> i=<span class="number">0</span>;i&lt;<span class="number">4</span>;i++)&#123;</span><br><span class="line">            string tmp = str;</span><br><span class="line">            <span class="keyword">if</span>(tmp[i] == <span class="string">&#x27;0&#x27;</span>)&#123;</span><br><span class="line">                tmp[i] = <span class="string">&#x27;9&#x27;</span>;</span><br><span class="line">                res.<span class="built_in">push_back</span>(tmp);</span><br><span class="line">                tmp[i] = <span class="string">&#x27;1&#x27;</span>;</span><br><span class="line">                res.<span class="built_in">push_back</span>(tmp);</span><br><span class="line">            &#125;<span class="keyword">else</span> <span class="keyword">if</span>(tmp[i] == <span class="string">&#x27;9&#x27;</span>)&#123;</span><br><span class="line">                tmp[i] = <span class="string">&#x27;8&#x27;</span>;</span><br><span class="line">                res.<span class="built_in">push_back</span>(tmp);</span><br><span class="line">                tmp[i] = <span class="string">&#x27;0&#x27;</span>;</span><br><span class="line">                res.<span class="built_in">push_back</span>(tmp);</span><br><span class="line">            &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">                tmp[i] = tmp[i] + <span class="number">1</span>;</span><br><span class="line">                res.<span class="built_in">push_back</span>(tmp);</span><br><span class="line">                tmp[i] = tmp[i] - <span class="number">2</span>;</span><br><span class="line">                res.<span class="built_in">push_back</span>(tmp);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> res;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
-<p><img
-src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/mac/截屏2022-02-22%20下午2.30.39.png" /></p>
-<p>可以看到，使用双向BFS比先前的单向BFS节省了非常多的时间与空间复杂度。</p>
-]]></content>
-      <categories>
-        <category>⓷ 算法类笔记</category>
-        <category>DFS与BFS系列</category>
-      </categories>
-      <tags>
-        <tag>leetcode</tag>
-        <tag>BFS</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>DFS系列——最长递增路径</title>
     <url>/2022/02/22/cd538be761a4/</url>
     <content><![CDATA[<h4 id="剑指-offer-ii-112.-最长递增路径"><a
@@ -8677,44 +10041,57 @@ href="https://blog.fantast.top/2022/02/21/80b7b127a404/">图系列——矩阵�
       </tags>
   </entry>
   <entry>
-    <title>图系列——多余的边（DSU应用）</title>
-    <url>/2022/02/21/0f9e9b187c29/</url>
-    <content><![CDATA[<h4 id="剑指-offer-ii-118.-多余的边"><a
-href="https://leetcode-cn.com/problems/7LpjUW/">剑指 Offer II 118.
-多余的边</a></h4>
-<p>​ 树可以看成是一个连通且 无环 的 无向 图。</p>
-<p>​ 给定往一棵 n 个节点 (节点值 1～n)
-的树中添加一条边后的图。添加的边的两个顶点包含在 1 到 n
-中间，且这条附加的边不属于树中已存在的边。图的信息记录于长度为 n
-的二维数组 edges ，edges[i] = [ai, bi] 表示图中在 ai 和 bi
-之间存在一条边。</p>
-<p>​ 请找出一条可以删去的边，删除后可使得剩余部分是一个有着 n
-个节点的树。如果有多个答案，则返回数组 edges 中最后出现的边。</p>
-<p><strong>示例 1：</strong></p>
-<p><img src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/mac/1626676174-hOEVUL-image.png" style="zoom: 50%;" /></p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">输入: edges = [[1,2],[1,3],[2,3]]</span><br><span class="line">输出: [2,3]</span><br></pre></td></tr></table></figure>
-<h5 id="解题思路"><strong>解题思路</strong>：</h5>
-<p>​
-一开始，我的思路是找到一种方法，能够判断一个图有无环。毫无疑问，我们可以使用拓扑排序去进行这个思路，但是这样子的话，对于每删掉一条边就要进行一次拓扑排序来判断，时间复杂度无疑是比较高的。</p>
-<p>​
-这个时候，查看官方解答，原来这类题目还可以使用<strong>并查集</strong>来做：</p>
-<p>​
-初始时，每个节点都属于不同的连通分量。遍历每一条边，判断这条边连接的两个顶点是否属于相同的连通分量。</p>
+    <title>BFS系列——开密码锁</title>
+    <url>/2022/02/22/2c663a313e31/</url>
+    <content><![CDATA[<h4 id="剑指-offer-ii-109.-开密码锁"><a
+href="https://leetcode-cn.com/problems/zlDJc7/">剑指 Offer II 109.
+开密码锁</a></h4>
+<p>​ 一个密码锁由 4 个环形拨轮组成，每个拨轮都有 10 个数字： '0', '1',
+'2', '3', '4', '5', '6', '7', '8', '9' 。每个拨轮可以自由旋转：例如把
+'9' 变为 '0'，'0' 变为 '9' 。每次旋转都只能旋转一个拨轮的一位数字。</p>
+<p>​ 锁的初始数字为 '0000' ，一个代表四个拨轮的数字的字符串。</p>
+<p>​ 列表 deadends
+包含了一组死亡数字，一旦拨轮的数字和列表里的任何一个元素相同，这个锁将会被永久锁定，无法再被旋转。</p>
+<p>​ 字符串 target
+代表可以解锁的数字，请给出解锁需要的最小旋转次数，如果无论如何不能解锁，返回
+-1 。</p>
 <ul>
-<li>如果两个顶点属于不同的连通分量，则说明在遍历到当前的边之前，这两个顶点之间不连通，因此当前的边不会导致环出现，合并这两个顶点的连通分量。</li>
-<li>如果两个顶点属于相同的连通分量，则说明在遍历到当前的边之前，这两个顶点之间已经连通，因此当前的边导致环出现，为多余的边，将当前的边作为答案返回。</li>
+<li>示例 1:</li>
 </ul>
-<h5 id="解题代码"><strong>解题代码</strong>：</h5>
-<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function">vector&lt;<span class="type">int</span>&gt; <span class="title">findRedundantConnection</span><span class="params">(vector&lt;vector&lt;<span class="type">int</span>&gt;&gt;&amp; edges)</span> </span>&#123;</span><br><span class="line">        <span class="function">vector&lt;<span class="type">int</span>&gt; <span class="title">root</span><span class="params">(<span class="number">1001</span>,<span class="number">-1</span>)</span></span>;</span><br><span class="line">        <span class="type">int</span> i;</span><br><span class="line">        <span class="keyword">for</span>(i =<span class="number">0</span>;i&lt;edges.<span class="built_in">size</span>();i++)&#123;</span><br><span class="line">            <span class="type">bool</span> res = <span class="built_in">unionTwo</span>(edges[i][<span class="number">0</span>],edges[i][<span class="number">1</span>],root);</span><br><span class="line">            <span class="keyword">if</span>(!res) <span class="keyword">break</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> edges[i]; </span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="type">int</span> <span class="title">getRoot</span><span class="params">(<span class="type">int</span> index,vector&lt;<span class="type">int</span>&gt; &amp;root)</span></span>&#123;</span><br><span class="line">        <span class="keyword">while</span>(root[index] != <span class="number">-1</span>)&#123;</span><br><span class="line">            index = root[index];</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> index;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="type">bool</span> <span class="title">unionTwo</span><span class="params">(<span class="type">int</span> index1,<span class="type">int</span> index2,vector&lt;<span class="type">int</span>&gt; &amp;root)</span></span>&#123;</span><br><span class="line">        <span class="type">int</span> root1 = <span class="built_in">getRoot</span>(index1,root);</span><br><span class="line">        <span class="type">int</span> root2 = <span class="built_in">getRoot</span>(index2,root);</span><br><span class="line">        <span class="keyword">if</span>(root1 != root2)&#123;</span><br><span class="line">            root[root1] = root2;</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">        &#125;<span class="keyword">else</span> <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">    &#125;  </span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">输入：deadends = [&quot;0201&quot;,&quot;0101&quot;,&quot;0102&quot;,&quot;1212&quot;,&quot;2002&quot;], target = &quot;0202&quot;</span><br><span class="line">输出：6</span><br><span class="line">解释： 可能的移动序列为 &quot;0000&quot; -&gt; &quot;1000&quot; -&gt; &quot;1100&quot; -&gt; &quot;1200&quot; -&gt; &quot;1201&quot; -&gt; &quot;1202&quot; -&gt; &quot;0202&quot;。</span><br><span class="line">注意 &quot;0000&quot; -&gt; &quot;0001&quot; -&gt; &quot;0002&quot; -&gt; &quot;0102&quot; -&gt; &quot;0202&quot; 这样的序列是不能解锁的，因为当拨动到 &quot;0102&quot; 时这个锁就会被锁定。</span><br></pre></td></tr></table></figure>
+<h5 id="解题思路1单向bfs"><strong>解题思路1：单向BFS</strong>：</h5>
+<p>​
+本题可以采用BFS搜索进行求解，但是由于每一个数字，其对应的领居有高达8个，再不断的扩展的过程中，搜索的空间会非常大，就会导致比较大的复杂度。在本题的BFS过程中，需要注意的是，还有死亡数字列表，一种方案是我们可以使用哈希表存储死亡数字，在每次遍历获取邻居的时候，判断是否为死亡数字，如果为死亡数字，那么就不将其考虑在内。这样子需要多出一定的空间和时间来进行处理。</p>
+<p>​
+其实，我们可以不需要额外的空间来进行处理。因为在BFS的过程中，我们会记录哪些节点被访问过，就不要重复入队，故而，只需要提前将所有的死亡数字，都设定为已经被访问过，那么就不会被考虑在内。</p>
+<h5 id="解题代码1"><strong>解题代码1</strong>：</h5>
+<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="type">int</span> <span class="title">openLock</span><span class="params">(vector&lt;string&gt;&amp; deadends, string target)</span> </span>&#123;</span><br><span class="line">        <span class="comment">//构建hash表，方便进行查询</span></span><br><span class="line">        unordered_map&lt;string,<span class="type">int</span>&gt; dead;</span><br><span class="line">        unordered_map&lt;string,<span class="type">int</span>&gt; res;</span><br><span class="line">        <span class="keyword">for</span>(<span class="type">int</span> i=<span class="number">0</span>;i&lt;deadends.<span class="built_in">size</span>();i++) dead[deadends[i]] = <span class="number">1</span>;</span><br><span class="line">        <span class="keyword">if</span>(dead.<span class="built_in">find</span>(<span class="string">&quot;0000&quot;</span>) != dead.<span class="built_in">end</span>()) <span class="keyword">return</span> <span class="number">-1</span>; </span><br><span class="line">        <span class="comment">//开启广度优先搜索</span></span><br><span class="line">        queue&lt;string&gt; q;</span><br><span class="line">        q.<span class="built_in">push</span>(<span class="string">&quot;0000&quot;</span>);</span><br><span class="line">        res[<span class="string">&quot;0000&quot;</span>] = <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">while</span>(!q.<span class="built_in">empty</span>())&#123;</span><br><span class="line">            string curr = q.<span class="built_in">front</span>();</span><br><span class="line">            q.<span class="built_in">pop</span>();</span><br><span class="line">            <span class="comment">//将curr的16个领居全部进入队列，并更新结果表，(如果存在dead点，则不进入队列)</span></span><br><span class="line">            vector&lt;string&gt; neighbor = <span class="built_in">getNeighbor</span>(curr);</span><br><span class="line">            <span class="keyword">for</span>(<span class="type">int</span> i=<span class="number">0</span>;i&lt;neighbor.<span class="built_in">size</span>();i++)&#123;</span><br><span class="line">                <span class="keyword">if</span>(dead.<span class="built_in">find</span>(neighbor[i]) != dead.<span class="built_in">end</span>()) <span class="keyword">continue</span>;</span><br><span class="line">                <span class="keyword">if</span>(res.<span class="built_in">find</span>(neighbor[i]) == res.<span class="built_in">end</span>())&#123;</span><br><span class="line">                    q.<span class="built_in">push</span>(neighbor[i]);</span><br><span class="line">                    res[neighbor[i]] = res[curr] + <span class="number">1</span>;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span>(res.<span class="built_in">find</span>(target) == res.<span class="built_in">end</span>()) <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">        <span class="keyword">return</span> res[target];</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function">vector&lt;string&gt; <span class="title">getNeighbor</span><span class="params">(string str)</span></span>&#123;</span><br><span class="line">        vector&lt;string&gt; res;</span><br><span class="line">        <span class="keyword">for</span>(<span class="type">int</span> i=<span class="number">0</span>;i&lt;<span class="number">4</span>;i++)&#123;</span><br><span class="line">            string tmp = str;</span><br><span class="line">            <span class="keyword">if</span>(tmp[i] == <span class="string">&#x27;0&#x27;</span>)&#123;</span><br><span class="line">                tmp[i] = <span class="string">&#x27;9&#x27;</span>;</span><br><span class="line">                res.<span class="built_in">push_back</span>(tmp);</span><br><span class="line">                tmp[i] = <span class="string">&#x27;1&#x27;</span>;</span><br><span class="line">                res.<span class="built_in">push_back</span>(tmp);</span><br><span class="line">            &#125;<span class="keyword">else</span> <span class="keyword">if</span>(tmp[i] == <span class="string">&#x27;9&#x27;</span>)&#123;</span><br><span class="line">                tmp[i] = <span class="string">&#x27;8&#x27;</span>;</span><br><span class="line">                res.<span class="built_in">push_back</span>(tmp);</span><br><span class="line">                tmp[i] = <span class="string">&#x27;0&#x27;</span>;</span><br><span class="line">                res.<span class="built_in">push_back</span>(tmp);</span><br><span class="line">            &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">                tmp[i] = tmp[i] + <span class="number">1</span>;</span><br><span class="line">                res.<span class="built_in">push_back</span>(tmp);</span><br><span class="line">                tmp[i] = tmp[i] - <span class="number">2</span>;</span><br><span class="line">                res.<span class="built_in">push_back</span>(tmp);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> res;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/mac/截屏2022-02-22%20下午2.31.38.png" /></p>
+<p>​ 此方法花费的执行用时和内存消耗都是下下选。</p>
+<h5 id="解题思路2双向bfs"><strong>解题思路2：双向BFS</strong>：</h5>
+<p>​
+双向bfs适用于知道起点和终点的状态下使用，从起点和终点两个方向开始进行搜索，可以非常大的提高单个bfs的搜索效率</p>
+<p>​
+同样，实现也是通过队列的方式，可以设置两个队列，一个队列保存从起点开始搜索的状态，另一个队列用来保存从终点开始搜索的状态，如果某一个状态下出现相交的情况，那么就出现了答案，用一张图来进行说明如下所示：</p>
+<p><img src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/mac/jevyd2TPC7FX6GA.png" alt="jevyd2TPC7FX6GA" style="zoom: 33%;" /></p>
+<p>​
+具体如何实现判断相遇，见如下的代码：我们构建vis，代表某个字符串的位置是否被访问过。这个在单向的BFS中，我们不需要设置，因为我们可以通过res这个Hash表有没有某个元素来进行判断，实际上此处的vis起到的也并不是判断有没有被访问过的作用（后面代码还是通过res中有没有某个元素来判断的），此处的vis最大的作用是记录某个节点是被正向搜索访问过，还是被反向搜索访问过，如果被正向访问过设置为1，被反向搜索访问过设置为2。</p>
+<p>​
+同时，在每一遍while中，我们扩展<strong>较小的搜索队列</strong>，并利用flag记录扩展的是前向还是反向。如果在遍历某一轮的领居的过程中，发现：curr点和领居点的vst相加=3，意味着两者一个是正向搜索序列，一个是逆向搜索序列，相遇了，所以此时我们可以返回结果，不用继续下去了。</p>
+<h5 id="解题代码2">解题代码2：</h5>
+<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="type">int</span> <span class="title">openLock</span><span class="params">(vector&lt;string&gt;&amp; deadends, string target)</span> </span>&#123;</span><br><span class="line">        <span class="comment">//构建hash表，方便进行查询结果</span></span><br><span class="line">        unordered_map&lt;string,<span class="type">int</span>&gt; res;</span><br><span class="line">        <span class="comment">//构建vis，代表某个字符串的位置是否被访问过 被正向访问过为1，被反向搜索访问过为2</span></span><br><span class="line">        unordered_map&lt;string,<span class="type">int</span>&gt; vis;</span><br><span class="line">        <span class="keyword">for</span>(<span class="type">int</span> i=<span class="number">0</span>;i&lt;deadends.<span class="built_in">size</span>();i++)&#123;</span><br><span class="line">            res[deadends[i]] = <span class="number">-1</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span>(res.<span class="built_in">find</span>(<span class="string">&quot;0000&quot;</span>) != res.<span class="built_in">end</span>()) <span class="keyword">return</span> <span class="number">-1</span>; </span><br><span class="line">        <span class="keyword">if</span>(target == <span class="string">&quot;0000&quot;</span>) <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">        <span class="comment">//开启广度优先搜索</span></span><br><span class="line">        queue&lt;string&gt; q1;  <span class="comment">//前向搜索序列</span></span><br><span class="line">        queue&lt;string&gt; q2;  <span class="comment">//反向搜索序列</span></span><br><span class="line">        q1.<span class="built_in">push</span>(<span class="string">&quot;0000&quot;</span>);   <span class="comment">//前向搜索初始化</span></span><br><span class="line">        q2.<span class="built_in">push</span>(target);   <span class="comment">//反向搜索初始化</span></span><br><span class="line">        res[<span class="string">&quot;0000&quot;</span>] = <span class="number">0</span>;   <span class="comment">//前向搜索初始化</span></span><br><span class="line">        res[target] = <span class="number">0</span>;   <span class="comment">//反向搜索初始化</span></span><br><span class="line">        vis[<span class="string">&quot;0000&quot;</span>] = <span class="number">1</span>;	 <span class="comment">//前向搜索初始化</span></span><br><span class="line">        vis[target] = <span class="number">2</span>;	 <span class="comment">//反向搜索初始化</span></span><br><span class="line">        <span class="keyword">while</span>(!q1.<span class="built_in">empty</span>() &amp;&amp; !q2.<span class="built_in">empty</span>())&#123;</span><br><span class="line">            <span class="comment">//在每一遍while中，我们扩展 较小的搜索队列,利用flag记录扩展的是前向还是反向</span></span><br><span class="line">            string curr;</span><br><span class="line">            <span class="type">bool</span> flag;</span><br><span class="line">            <span class="keyword">if</span>(q1.<span class="built_in">size</span>() &lt; q2.<span class="built_in">size</span>())&#123;</span><br><span class="line">                flag = <span class="literal">true</span>;</span><br><span class="line">                curr = q1.<span class="built_in">front</span>();</span><br><span class="line">                q1.<span class="built_in">pop</span>();</span><br><span class="line">            &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">                flag = <span class="literal">false</span>;</span><br><span class="line">                curr = q2.<span class="built_in">front</span>();</span><br><span class="line">                q2.<span class="built_in">pop</span>();</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="comment">//将curr的16个领居全部进入队列，并更新结果表，(如果存在dead点，则不进入队列)</span></span><br><span class="line">            vector&lt;string&gt; neighbor = <span class="built_in">getNeighbor</span>(curr);</span><br><span class="line">            <span class="keyword">for</span>(<span class="type">int</span> i=<span class="number">0</span>;i&lt;neighbor.<span class="built_in">size</span>();i++)&#123;</span><br><span class="line">                <span class="keyword">if</span>(res.<span class="built_in">find</span>(neighbor[i]) == res.<span class="built_in">end</span>())&#123; <span class="comment">//如果这个领居点从来没被访问过 </span></span><br><span class="line">                    <span class="keyword">if</span>(flag) q1.<span class="built_in">push</span>(neighbor[i]);</span><br><span class="line">                    <span class="keyword">else</span> q2.<span class="built_in">push</span>(neighbor[i]);</span><br><span class="line">                    res[neighbor[i]] = res[curr] + <span class="number">1</span>;</span><br><span class="line">                    vis[neighbor[i]] = vis[curr];  <span class="comment">//继承当前访问的队列编号，1为正向，2为反向</span></span><br><span class="line">                &#125;<span class="keyword">else</span>&#123;  <span class="comment">//如果这个领居点被访问过：</span></span><br><span class="line">                    <span class="keyword">if</span>(vis[neighbor[i]] + vis[curr] == <span class="number">3</span>)&#123;</span><br><span class="line">                        <span class="comment">//如果curr点和领居点的vst相加=3，意味着两者一个是正向搜索序列，一个是逆向搜索序列，相遇了，所以此时我们可以返回结果，不用继续下去了</span></span><br><span class="line">                        <span class="keyword">return</span> res[curr] + res[neighbor[i]] + <span class="number">1</span>;</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function">vector&lt;string&gt; <span class="title">getNeighbor</span><span class="params">(string str)</span></span>&#123;</span><br><span class="line">        vector&lt;string&gt; res;</span><br><span class="line">        <span class="keyword">for</span>(<span class="type">int</span> i=<span class="number">0</span>;i&lt;<span class="number">4</span>;i++)&#123;</span><br><span class="line">            string tmp = str;</span><br><span class="line">            <span class="keyword">if</span>(tmp[i] == <span class="string">&#x27;0&#x27;</span>)&#123;</span><br><span class="line">                tmp[i] = <span class="string">&#x27;9&#x27;</span>;</span><br><span class="line">                res.<span class="built_in">push_back</span>(tmp);</span><br><span class="line">                tmp[i] = <span class="string">&#x27;1&#x27;</span>;</span><br><span class="line">                res.<span class="built_in">push_back</span>(tmp);</span><br><span class="line">            &#125;<span class="keyword">else</span> <span class="keyword">if</span>(tmp[i] == <span class="string">&#x27;9&#x27;</span>)&#123;</span><br><span class="line">                tmp[i] = <span class="string">&#x27;8&#x27;</span>;</span><br><span class="line">                res.<span class="built_in">push_back</span>(tmp);</span><br><span class="line">                tmp[i] = <span class="string">&#x27;0&#x27;</span>;</span><br><span class="line">                res.<span class="built_in">push_back</span>(tmp);</span><br><span class="line">            &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">                tmp[i] = tmp[i] + <span class="number">1</span>;</span><br><span class="line">                res.<span class="built_in">push_back</span>(tmp);</span><br><span class="line">                tmp[i] = tmp[i] - <span class="number">2</span>;</span><br><span class="line">                res.<span class="built_in">push_back</span>(tmp);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> res;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/mac/截屏2022-02-22%20下午2.30.39.png" /></p>
+<p>可以看到，使用双向BFS比先前的单向BFS节省了非常多的时间与空间复杂度。</p>
 ]]></content>
       <categories>
         <category>⓷ 算法类笔记</category>
-        <category>图系列</category>
+        <category>DFS与BFS系列</category>
       </categories>
       <tags>
         <tag>leetcode</tag>
-        <tag>graph</tag>
-        <tag>DSU</tag>
+        <tag>BFS</tag>
       </tags>
   </entry>
   <entry>
@@ -8777,6 +10154,47 @@ class="math inline">\(f(i,j)\)</span>中，再第二轮遍历的时候，只要�
         <tag>BFS</tag>
         <tag>dynamic programming</tag>
         <tag>graph</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>图系列——多余的边（DSU应用）</title>
+    <url>/2022/02/21/0f9e9b187c29/</url>
+    <content><![CDATA[<h4 id="剑指-offer-ii-118.-多余的边"><a
+href="https://leetcode-cn.com/problems/7LpjUW/">剑指 Offer II 118.
+多余的边</a></h4>
+<p>​ 树可以看成是一个连通且 无环 的 无向 图。</p>
+<p>​ 给定往一棵 n 个节点 (节点值 1～n)
+的树中添加一条边后的图。添加的边的两个顶点包含在 1 到 n
+中间，且这条附加的边不属于树中已存在的边。图的信息记录于长度为 n
+的二维数组 edges ，edges[i] = [ai, bi] 表示图中在 ai 和 bi
+之间存在一条边。</p>
+<p>​ 请找出一条可以删去的边，删除后可使得剩余部分是一个有着 n
+个节点的树。如果有多个答案，则返回数组 edges 中最后出现的边。</p>
+<p><strong>示例 1：</strong></p>
+<p><img src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/mac/1626676174-hOEVUL-image.png" style="zoom: 50%;" /></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">输入: edges = [[1,2],[1,3],[2,3]]</span><br><span class="line">输出: [2,3]</span><br></pre></td></tr></table></figure>
+<h5 id="解题思路"><strong>解题思路</strong>：</h5>
+<p>​
+一开始，我的思路是找到一种方法，能够判断一个图有无环。毫无疑问，我们可以使用拓扑排序去进行这个思路，但是这样子的话，对于每删掉一条边就要进行一次拓扑排序来判断，时间复杂度无疑是比较高的。</p>
+<p>​
+这个时候，查看官方解答，原来这类题目还可以使用<strong>并查集</strong>来做：</p>
+<p>​
+初始时，每个节点都属于不同的连通分量。遍历每一条边，判断这条边连接的两个顶点是否属于相同的连通分量。</p>
+<ul>
+<li>如果两个顶点属于不同的连通分量，则说明在遍历到当前的边之前，这两个顶点之间不连通，因此当前的边不会导致环出现，合并这两个顶点的连通分量。</li>
+<li>如果两个顶点属于相同的连通分量，则说明在遍历到当前的边之前，这两个顶点之间已经连通，因此当前的边导致环出现，为多余的边，将当前的边作为答案返回。</li>
+</ul>
+<h5 id="解题代码"><strong>解题代码</strong>：</h5>
+<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function">vector&lt;<span class="type">int</span>&gt; <span class="title">findRedundantConnection</span><span class="params">(vector&lt;vector&lt;<span class="type">int</span>&gt;&gt;&amp; edges)</span> </span>&#123;</span><br><span class="line">        <span class="function">vector&lt;<span class="type">int</span>&gt; <span class="title">root</span><span class="params">(<span class="number">1001</span>,<span class="number">-1</span>)</span></span>;</span><br><span class="line">        <span class="type">int</span> i;</span><br><span class="line">        <span class="keyword">for</span>(i =<span class="number">0</span>;i&lt;edges.<span class="built_in">size</span>();i++)&#123;</span><br><span class="line">            <span class="type">bool</span> res = <span class="built_in">unionTwo</span>(edges[i][<span class="number">0</span>],edges[i][<span class="number">1</span>],root);</span><br><span class="line">            <span class="keyword">if</span>(!res) <span class="keyword">break</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> edges[i]; </span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="type">int</span> <span class="title">getRoot</span><span class="params">(<span class="type">int</span> index,vector&lt;<span class="type">int</span>&gt; &amp;root)</span></span>&#123;</span><br><span class="line">        <span class="keyword">while</span>(root[index] != <span class="number">-1</span>)&#123;</span><br><span class="line">            index = root[index];</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> index;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="type">bool</span> <span class="title">unionTwo</span><span class="params">(<span class="type">int</span> index1,<span class="type">int</span> index2,vector&lt;<span class="type">int</span>&gt; &amp;root)</span></span>&#123;</span><br><span class="line">        <span class="type">int</span> root1 = <span class="built_in">getRoot</span>(index1,root);</span><br><span class="line">        <span class="type">int</span> root2 = <span class="built_in">getRoot</span>(index2,root);</span><br><span class="line">        <span class="keyword">if</span>(root1 != root2)&#123;</span><br><span class="line">            root[root1] = root2;</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">        &#125;<span class="keyword">else</span> <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">    &#125;  </span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+]]></content>
+      <categories>
+        <category>⓷ 算法类笔记</category>
+        <category>图系列</category>
+      </categories>
+      <tags>
+        <tag>leetcode</tag>
+        <tag>graph</tag>
+        <tag>DSU</tag>
       </tags>
   </entry>
   <entry>
@@ -9505,7 +10923,7 @@ class="math inline">\(f(x)\)</span>也就是真实值和预测值的差值大于
   </entry>
   <entry>
     <title>博文复习日志1</title>
-    <url>/2022/02/11/6f5929549220/</url>
+    <url>/2022/02/11/de2db590f015/</url>
     <content><![CDATA[<div class="hbe hbe-container" id="hexo-blog-encrypt" data-wpm="Oh, this is an invalid password. Check and try again, please." data-whm="OOPS, these decrypted content may changed, but you can still have a look.">
   <script id="hbeData" type="hbeData" data-hmacdigest="510eea55a138ddcfaa7527f655548aaa2fe2db09ca94499a108f39697717d0e2">0b64cd3abe5b0a0a039a37d86c66d75eaeb9cde5c6dadc3c6d4d424e956e68e5859de93c067c256c245d75df485065102f6e2903c24acc225d3947c06b46eb863dd4b5852f98aab38803012f003c6c5ce6fff79afb10e1792ca7214d925987e0c717d406814885b789fb91e2e91f62e79489c1eb338c6615f677769d830ccf190fb9bbb686abd703322115c45664a457c7196ebc5128f0dbc61fa90adc2470af75105015c70e866cf9e65b8431b286f91724aada9a9fd5965d62719e3af60032aa7a2f77ed452eac7ab39f33c601c5d6de7df46cb4de25570ccbf95f141c0967a7b34c72683919d199358e5f05f83fc8af0d4a187180a67e0dfe958e0af9d66d33ab8d086e02df177e615e8042752039b5aa8ebbbf03fd595157a16f93e9d8aa7f0b856ccb5a1ec0ac5a77b1362d12bdc9c4ff39d2127ba4fa1a34736ed266b04fafccd0a982584b7e617ef2c7abee5c2cc4fbc96fa0391fe18bb0613a55fbdf669e91b681e570f01a34cd9e83067c84610cd0b34a48d675bcea762f0ae2ffdc3f3c513c6c7b618e16d08072651ad57ab1f24229ef211069fb21f88763d652ad1c34e048bc1f0ebc1ec29fb005a9ff0b02c6514c5903c63507ab30dc113c45c52d85ab6eb261bd57f2409a2b268dde3bd908f5195e3dbae14f58c038feffa9573febbff48309bb68ca7ef9866514f3bed93ee17a8eb8541fd909e71c9ed14c7aff0002dce95e6e3e1c35cc9944e3f52f289db4d9edfad48c297672d13a67000ac344cc7e43dbab585aa36eb271d0f2676f323a77210618bbbcbbe77036b202ad3557a478b20bf1d957c11bf1f4755a670d328e354cf9a7b8d1f7be8bd2af133e7818646806fa1b26642b878905ab6006b5d9fed921becfdcf7fcb711e0e9e01718cc6968a1ed0a24ad7f1e86fdbd3772cb0136199ae59835fea1bed728e7cb936edebd10b4e5de66928aaf6d24769ee34fb0f636c6a01cd5abfdddf11e9787c3ea134ce3c2f7ea34e481864c730aebe7cdf8c2c038a8a6b7dbdf9d7a274cb6caabd213fa36facc846b81a4373eca73b54d52adea63fbab125d2ebfc4ed828a7209dd043f764c9fe9d8303d85aca6a8980113479cb9199a87b029e2ed40da4a3bf3de90bfa1aa3c8f8302b71d9724793627f062846c54cce0de7388f11c3c14f8409cb15170d03d7a926b3bbec814d6271b4311dd68d5dc672ce65b660a299fb7f585540a3cc25ae8d3f38b813b41b7be646ff6d5c8cc3fc83530a636d1f1777069213f38668c754c4519a739c146b979221042759ce9e2d49738007fb30c0b835235d81f300001f0dfcd032974170d531d242371217636480fcc486c1fab1b415046c0823ff1d13f75dea0b25d121549fe5c852522d8deaf1a215523c79867303c9585c3bcb4316ba2d273b3b82cc07ed305f2c0ffdd6f9b21ad4e1fb537eb4256b0ad0b2fe5becb1430f8ac70a4c989205eba642055b9ad2722300eb1d66574140ecfe0158f0a659638a2bac74f1b58a0fec425ed37923567a1d8debeef1b7a8b0396bfd1249b0d8382c6bae1cc1623f30ef62b1bacc5f6a7852a8997fa35e460e1cd99bd2929c858767c47a1ad9fabd0e84195caea1cfa378e7446b8cac82dc2194bc803aebb59c149f0a390f11b5c7038d9899e8d988e1cebf9ea708c4d70a941d07bd7079db953245cab2d77e73fc61f561659c49be685be08c3f345dc642169b4057cd09b8371d4113017e7e7a24bbcd7a10f9a3f30ab73d1fdf38eb3a6ee7b421e57ced7d390e62f09c79a5e31df52bae6dc6d11d9bf9d2ce85ba980acd276df21adeb0b278494f2f4fb14d02a126fe2ea8e9881939d022817a5a11e52e7d7f7e7ac4d31bee1458b9bd0f5e30803fbf094951af3a9ed088d92606512f845800ada2e863ef0eef8289a4d274431aff1c5bb72efd3813da6b7a1b6f7945ad86b2ad0359bad468a33b743c620d0a3a1714ba5abaec0527e6186ca1928d86831ef3c1115894fe3a4cc3b465f18fc101e24da8bced645a36ab666e50e6dcf8419e7eb17007966a07081ec298f5a7f33031a07f0bf3a8b86c62896af6a4f8b7d44352f7c934ff948d48be2ceb36a8effb5145673e9f79c91bfe6c7034bbe8b123d8763a83307a9b0e3eb84db5ab7de79fd4ac8dd3d97035408dcf0b53b9c8ab429582600c17cd4cb1ac25bffcfd54200c54b0546dac30031640fd18b61541fab8b2a3d2dce9201b529753ab3a3c19f05780b173b332dd0d095e58590f87e31841e32cfa7c5c3c2b7a372c99a2273d9b249fa004d08835a5856e1d96d68952b88d7caa4bfb0490b9a9c803c40102ace5b9f962acb9e800e353ff558476666bf2134ca3377a9fb41f6f51663b6e24c2e87cb8c7b32f688f60120e29bffb497ccbebdf92613427d50fe4eaced4f16340c63fb8274607d07bd242d7ff76062020145f6eb5021a6ec77719945a8b5f5f79e2e9a02d8296ed824a5d8b61a9ebdfdbe70a984bab86da09a6c1e062657b062f93d4d01fd64a96bdba437d7cc9508f3fdcdf5492ea243c61286a94aebe4a29c6f50e33c31def76e68705a614c1c5fd41954ae56a2b1538ab2513140e8d7dc7d1ec68f315c8ae3d7c1430c232b90c0485a398328ce8bc18c008fea0d1997a2ffeeeb472172d96e31d4bc50544e8f70d49dcb14239b18a0ce8187653f25ab568794df9d071352ad02f5efccc8dc835b6c680812f29566f3a7aca77bbb099bb75ae9bc79eb8a5112c7451e84f1cb4f7d1778e17fa8428d27eed9aa609c38f8eb8ee74fb2361a1ce207b1520074ebbaa74a29f5dbbff9aa9b982480f09cf722d4a417aad58257ca58863ec8ec6408dd8648e4bab954050bba11ec88c14b72810b3506acc6ee2e40fe787f8e2811625ec33de6e8d358493730a3cad081232a89c1287f23fa3a057970cb729dc3f481490bf055e5c5a7217863ecfb6124ef2fc4c29900fee3339fb2db6220020cf41702d030d72b51830c714117f1fb113908c3797cad2a31bb8689fa23e35abe41165206b4e680c246eb0ce133e1ee296018ef45dee04d9619ef335705d32dd73434bfc914a2b3973902cafd1ba2b7072b9ccaa8ad5dedc2d415003724fcd1ef9e0908c9b6c5a14c08af1b2cc4da694ea47ccc1cc1551e52f57d2a6a25a5bbebd7513c9158e05a1cc814a2f5baac9da21901a5e02ce643594bf2c0bd17c6057e81aff12070e8683dada0b33153587511077d0c99bcc7c805c993da667e133247a752cf1f69686b502a4e0029247bf9f6671bc88a65b846cb505e11b9d7d9fbb26bba3e9864a2e66ce9df357da60789e99e44f2bfdb4d19912c4f1e622bd072e8ece534a2eb12e98905e7674ff3b9cf286d9aac52fdef6438ee316d97dc36c80b59520903d7674a9db47a25c3ef958d10d6045bcdad0223021f1f43564411bcba78d6917376189fe1b04f853e9a09c9a27db34f01316c6aa399db0e83879ba9b3736200247690ee42ed29c62e719059348ee21cab2c88ecc5a1637dc1a13a146ad5ce4eb45c97c5a2f47099d7bc87d59c32f7bba580f7024c3620844a79bf4fc0a71433d5f78a5796cc1644f6aa18173f00574d99599ab23821230e656c800976d2b6b2bfb5f2fdd2b7d03099904bf014a7dc52c25a9b66ca7372aed5334888994c73e066c03eb0b474f8cf1cb7c600699a0d3066bfe796acb42a66637d3cbd3d3ed279872bf573e3d4607e4c6abd0cb2679fba8f38b307d734742c53e962131770637534ac3995cb61cc48d729c89f14009ed2f417e823cbffa2fc56110c7444200335535b93fb87378c1c066dbabb362faddf42469a3de3fe4c758b0ddca98c4b5f6861084178b02165981415148dfb5188cd2a7660075343ddb0fbda94e9799e67eb81e73c4228792766626158f70a0d3d3f1a99cc58aacea149f915a587882fbd4581d600b7a1161da017a0d43e104315582c2b5fa933582974dfb152a988d4fe5e8977bca460bc7d2606d54a15cca0ad4e8a6b0506806d31d530d2beb9aa99736cfe40e0617ae4fad7a819d39b35dc8336fc9e1b062dd9d1151b52662f3679f3f75fdc00338ee9a67530a00476d097a144eafddc6d3d65298e3ccedf0cb7d810c224b035719d50f6ec52be5efeca3904ab35f95d93c7f98c63eee85e97a0467e7167ff9bbf9902f43e41ba789fcc226e48fa1edf2c76f4afd47ff178ddc52691d3b5124c3cc2adb2f158e1e3e12931fe97cb94eac39fcd99684e042bf5f4842c67029e961be42100c9d0d588dab0cfabb1967a55792204b4e32cd5cb3b8607061e0a30f4d1d97c2fe200ad3488dc069f92a8e36c874fe2d75e52ae5470c537cf6c689f39c1c68f16b853b14f817559a2cfd009eda941896b0dc763b7432f866e40cd92719e62127790c4701d5220cb5e9ca76ce00c935923e0aa96a25930d40fff980a9aad6f412df6348e11fc021c3e13705d7b400a80279263a85cea7d872e700bfcae563c0dae8ed03cfd89116d053716279a48d5989a9cf2684f8c47e3d8012a2e915448d3278acd5404f45d7aea96c6c7c7913c4123ba2392ed493d174ca3e9ac1c2c25221967f4e08920e26ed9385ae3ad52c38b521bf5f8c5d56c89facc98096448242034a16a15e78e131ea1fd65f80f685d96b42daf8771d089efd0e5cdb3bba887728812d09e8f5938f93278a1d3a930857e1d34f6ac92efa30cdbf4346958c33d7c2db9ec2bf449f1591d9b17d2fe4f898dad4c22057bf1660e253e6640ba1ded3ff3d3f8c73891a9c24ede191fcd77f0d69488661d6fe48dd4a2ec1306a61a7e0deac9140e293569308971882c7564234a9cfb4f20bf76a49ee2c216b146a36fc502136901e9bbab73f8ac76612d4a446967ebfbd89dd3bd08afbcb662096cc02c7b938069d1f4ecf30da93e3696645fbe895032e6f47f7f42cfd790e6eb4d0c18ef6ef8617a7ff0917b7851e0325b0cc15acb5f884332e15593679478bbab283ddafa64cdddf5c025cf548319f6b81f1f045993a5c85f17728482fad39f233981ebcfce0b7d779924179787640afdc669b5a91ccfc5b0153dfdabbe5d34e947a4a081f58e52a91c2d5dcbc686b2a8cfcc8970c6ce66f67f42446e75bc7c296190e2fd7b038588da20d9713b011ef24294bd4cbc2cccb5f852a570709c3622b8536bd28998058aec29f351d623b6f2ade8b01c915cd2caccb21711ed89e76c5c56d63a2191567c6a136fb63d9825c37f47fee8ea4d3f071fb23f1b8357ce4b78f52f635aa77e475001da56d03de8f76d53c4f02ac804522fcc606b6d07585a483feb379172e75806205b2c3e4b8bc5c4d026a0258adec1bb1b49e2bce71e25199d854f78acf2a50b963179be149508b95fb98f2e72ffa567e96f6ca31a11c0d242a038249b3e6e17d64d200540b92db22bd94daa61c9a545560d24f831a861bcfac0608af37b663f014979a4410d5b8a2291e18db418d7d600a30e077117a2620a78950fd970923117cd676ca85f5281035f0c2484b4b7693dcd5c45447b3a87ba6889a69d6babf81a6ec5985dce5773492f18cf50d5c65847fd4315393d932ca3751a53870c9e5cbc0a9b05c7464a1130ea6701f056a22ebd79b5b2e6e51409ba767eaccb368a3908318c2be547468d0d0dba068362c9a16d1210c294139854204948637637ebc475775ace6a8beb2771d5c763aab6efaf6a6aaaa6d50e299681b0b72bf7278c054a1f1e05f409845ad445fe6712c52e81abf15f1acc0c3dd768b936f9b15776d824d64a03f259d49bdf8fc2806cc9d2e311a2a66dd7331620f77f6a92c95132b4ff0ba1d190270ac2b282bf97870a545f0fd1afd42016241b72dd2fe91de01ff8b7b627a32d57df858168bcbd51099ad3b03a72bf82d6f8c54f0387105f6c50c1fdd430b185fcee5f9f78a43d46f2f529523a94885955a490aba8700c6403bf6026976ee87bc351cb2e3029f6ee5849f6c3e6f2bececba8629ec503c6dae4d717ceffd5a54f099d38ea818719026570cb62edd0ae0c040af7852401ca74b04b6b84dc3ad3c66dd94216845840957fb6af2d16596b02017929c0ae609752e29039081c44c0395e68fbde8b661288a643dd20b52b57ca5a35352fd5c69d56bdefef8cd26db5224f7023f68ec7261564f1aaf41d264e7743b993b40fb15ae21cf764f0afe7235facc1f45b1a81d2ebf6c2d556f41394b93b3abc0ea633a02dbdcbaf99d884f5ec8bcc5095fb98f0fffaece2bf462f4e66a5414085fe86dac5a11f745a911443b2539595a338e9584295b2243d6c2228170c753bd5c207c5f0a217cec293393c3ac623dda61532e37cbdd6d30169bf9e5d62e9253ecb5fcc26422ecb0fbfe1a520e6f3e1bda0139ae59656be95a2add3fb795989eb68f4ad6957b7348e003b3da4359cc09f3ed5e871c34da8d89049d07d44381b4f91567ea4f13016513b01f77e1cf45c0bb50c9b5796dbb1c6bef7d161870c06ee5978abf9236cb7afe6cdd24443269314db877b7a33822fb9f28e97db47e3d39eafc923726cb0eae3ea2c05b4aac7cf81d75eb98e51d571e3c02ce778f731bac5070dff5adf5cd0acd92bbe5495a717e05cd7a8587d08342a8a43b8dfecf051d89ee357ad1bc5de21d0b317b1e16252d620c698a993f36a294f72cf27543208d0cfd505fb67dcca69b01aa9f0549ee8799108330230c8b7b6509e14460ecd0be180dcfba5923b3f1bf86b0e963efac6b97eb7c3207e830f2e29d31ed63f410a13b75ef6db5e497219dfadc7479c07f76792074d9fd5c9f04a0098ffaebd565e751c553ef11c069e64788ec35843c105f51488cc9bd295488988f803e4da77f50b52dab4007f995f3c072ac8561a798d771db01b18c3108ca3709bbde9a8f0f0e38617e24f7892ae7f7e0ca60c00a2fdbb40c037e859ae15fcdbe6d8abe3fb8a1d04106209e268c423c4e21320b81a08495399a6ea89a88cdd55fd1d13d1b9df14896d2349e1cfce610d88820e9d00bcfbdf5f814832e9bff21cbfa8761f6c334e5488184dddf9c495ae7aa2abd22b22fdf44114992b3e57a6b1ebaccbd3c4a455fadeaf23b603b0428a6aee9aebb24f36995c9fe6f7b584f061122254aadabc139ad21a385421c748d57f3d0b2ff9d1b482fe42b7fc373c135f1da2ca8abc8b8e474cf5dcc52278a67bd119463b546eeb85d53bf318e50067111be34bd12101c82c6081c9ff529bfdf34a82ad12113a18b98f97eb21717779875cec7a17e61c2f59ba7a70fbbe2fe6d1b6b84bca0cc6a78caaf365f90df71186a7721a988e1b24346c5963c3cf006b5e379494046300cece890a87e4182834ce8521d859fcb65b9aaa572958730bc31720b5b20fa30a10c2cddc88f0c89a410b72a69d8a9282bbc0ab5ce5bedd75a6a1a780a02b1f299f496e83cb40811e0641b0eb2392cd014a4bae063b7294d1a849908caf1c37af3f09c29ea1506abfb340ea1b6f36a0cd3795bbe81b9b3bb361bd146b15612eeec1d086053894ef48662c13dd6e70da8bb5c811bc06ca92224e68745f7c10d329bfce33c1e968ff6a266d5091f07d21458691399b5068fb8e75106f48e373d66b401d777f1290d73c64cd39e99373a808d7c0844adbbfcd9fcbb684d2f0382992fdf9e2cf358fd0bd0d5891333aae35a8736cfd3fa60f2d27cc40ffb2ce4e0c90353aebc7f47cfa614ee3a6e99fe7e3becb7c7f205d49d9fdf811ef160f3965f5915c16ebb884de6d1f4d0f989da62612569e3617df2deaa5cb2bf4239a40adbcf78d33899f728f1dd27f5f2490625fee178236a60ba37ba7416c9e26b2af133f59911f45acf2ce979bbd4bac2d10126f5aa0a0b27ed18899664b0061760dff5806eb08abb3632126cd0b7a3e41eae9d28fe413ce227da923851eb34c4f3092a5f56d12a777b8e06cf8323a0233032314ccd75c3f27a701c0d548b75b52c2827c3bdc25ea03be44073370a81df9c545664719df8b8628ead9134403290b84b4a7eb30baf0af7934783325bbcd6ffeb0fe93ad93f36ee9bc3a7046b09c3bf0be7d33b700fa9daca63dcaf6a4f4c5d40a294efc2c8c6c89206f82ec023614e7ea41a7e2754933cade8679ab072f520ce6d174e18f40e62d8a622bd288206debcb0a59191e5296705739c478c01841cf6fe7ae03e6380b78c46e8e63254d230ddac885ab5115b7794bff2f04814ded973f15d087e137bcab7951cf86b6af8e1d4cf40fb01089f195f8da31bd0123d9fd20db8d19718481b292d125d90c6dedeb92d1f0c1cbb300e624024fd5bfd9b572492e37ab365412c4b489789ccc588a60704326408241c87c389bbfaeefe4718bdd7429e28295789a8eda580b5b04e9335a8c8d96fc41b48bdb0fdf2ba9f744cf8c321aaab68db506572c4b12bb23f17cdd5a0112cd2620db356d6b4b8e8c5875e6c1492354a5d958b474ee663f649b218a6be1f7c657c680467e28ac6e24942d3b883a1a72f68799df0eda486c5fc7dc4a9aa7cde4697041fd6b9e2b2223b82af3a6d056dc62d016f43d1c5e17afd0a43fcd79388e43b60dc692b5573ef8711b3ffc1f41ce019ae75debe10a43a827c2bf6848aeba454b2e76be9ee25c1b8800f9f22f15c9cb428eb0d997fd52895098d13b73060dbb19e80b08899b85db50b75f447bbae5b705ecd56c7181cd0a72a2eb</script>
   <div class="hbe hbe-content">
@@ -9519,7 +10937,7 @@ class="math inline">\(f(x)\)</span>也就是真实值和预测值的差值大于
 </div>
 <script data-pjax src="/lib/hbe.js"></script><link href="/css/hbe.style.css" rel="stylesheet" type="text/css">]]></content>
       <categories>
-        <category>⓼ 博文复习日志</category>
+        <category>⑩① 博文复习日志</category>
       </categories>
       <tags>
         <tag>Review</tag>
@@ -10560,6 +11978,41 @@ class="sourceCode java"><code class="sourceCode java"><span id="cb2-1"><a href="
       <tags>
         <tag>leetcode</tag>
         <tag>array</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>字符串系列——字符串压缩问题</title>
+    <url>/2022/02/04/91f6bb166e62/</url>
+    <content><![CDATA[<h4 id="字符串压缩问题">字符串压缩问题：</h4>
+<p>​
+如果在字符串中出现了连续重复子串（重复次数&gt;=2），用“数字+左括号+子串+右括号”方式进行压缩，要求每一次压缩都优先压缩当前（
+子串长度 * 重复次数
+）最长的子串，且优先<strong>按重复次数最大</strong>压缩，如果<strong>最长子串长度一样，优先压缩位置在前的子串</strong>，如果压缩后的字符串如果还能压缩，则继续压缩；</p>
+<ul>
+<li><p>输入要求：第一行为字符串s，只包含大小写字符，1&lt;s.length&lt;3000</p></li>
+<li><p>输出要求：输出压缩后的字符串</p></li>
+<li><p>时间限制：C/C++
+1000ms，结合输入长度，即要求算法复杂度在O(n^2)</p></li>
+<li><p>样例1</p>
+<ul>
+<li>``` input: aaBcaBcaBcc output: a3(aBc)c <figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"></span><br><span class="line">- 样例2：</span><br><span class="line"></span><br><span class="line">  - ```</span><br><span class="line">    input:  aaaaaa</span><br><span class="line">    output: 6(a)</span><br></pre></td></tr></table></figure></li>
+</ul></li>
+<li><p>样例3：</p>
+<ul>
+<li><pre><code>  input:  aAABBccAABBcc
+  output: a2(2(A)2(B)2(c))</code></pre></li>
+</ul></li>
+</ul>
+<h5 id="解题思路">解题思路：</h5>
+<p>​</p>
+]]></content>
+      <categories>
+        <category>⓷ 算法类笔记</category>
+        <category>字符串系列</category>
+      </categories>
+      <tags>
+        <tag>leetcode</tag>
+        <tag>string</tag>
       </tags>
   </entry>
   <entry>
@@ -18766,8 +20219,8 @@ src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/bvbcf123.png" /></p>
       </categories>
       <tags>
         <tag>Transformer</tag>
-        <tag>Computer Vision</tag>
         <tag>Swin Transformer</tag>
+        <tag>Computer Vision</tag>
       </tags>
   </entry>
   <entry>

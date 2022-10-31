@@ -1,0 +1,667 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.2.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css" integrity="sha256-mUZM63G8m73Mcidfrv5E+Y61y7a12O5mW4ezU3bxqW4=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"blog.fantast.top","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.9.0","exturl":false,"sidebar":{"position":"left","width":250,"display":"always","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":true,"color":"#222","save":"manual"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"utterances","storage":true,"lazyload":false,"nav":null,"activeClass":"utterances"},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+<meta name="description" content="Chap9——Mysql 索引及调优原则">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Fantast&#39;s Blog">
+<meta property="og:url" content="https://blog.fantast.top/2022/10/17/bb6cac39113d/index.html">
+<meta property="og:site_name" content="Fantast&#39;s Blog">
+<meta property="og:description" content="Chap9——Mysql 索引及调优原则">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://mypic416.oss-cn-hangzhou.aliyuncs.com/mac/image-20221022122100058.png">
+<meta property="article:published_time" content="2022-10-17T07:09:19.000Z">
+<meta property="article:modified_time" content="2022-10-27T13:50:45.259Z">
+<meta property="article:author" content="Fantast">
+<meta property="article:tag" content="Database">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://mypic416.oss-cn-hangzhou.aliyuncs.com/mac/image-20221022122100058.png">
+
+
+<link rel="canonical" href="https://blog.fantast.top/2022/10/17/bb6cac39113d/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://blog.fantast.top/2022/10/17/bb6cac39113d/","path":"2022/10/17/bb6cac39113d/","title":""}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title> | Fantast's Blog</title>
+  
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<link rel="alternate" href="/atom.xml" title="Fantast's Blog" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Fantast's Blog</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li>
+        <li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li>
+        <li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li>
+        <li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li>
+        <li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%80%E4%B8%BA%E4%BB%80%E4%B9%88%E4%BD%BF%E7%94%A8%E7%B4%A2%E5%BC%95%E4%BC%98%E7%BC%BA%E7%82%B9"><span class="nav-text">一、为什么使用索引&amp;优缺点：</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BC%98%E7%82%B9"><span class="nav-text">优点：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%BC%BA%E7%82%B9"><span class="nav-text">缺点：</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BA%8C%E6%B2%A1%E6%9C%89%E7%B4%A2%E5%BC%95%E6%97%B6%E7%9A%84%E6%9F%A5%E6%89%BE"><span class="nav-text">二、没有索引时的查找：</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#case1-%E5%9C%A8%E5%8D%95%E9%A1%B5%E4%B8%AD%E7%9A%84%E6%9F%A5%E6%89%BE"><span class="nav-text">Case1: 在单页中的查找</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#case2%E5%9C%A8%E5%A4%9A%E9%A1%B5%E4%B8%AD%E7%9A%84%E6%9F%A5%E6%89%BE"><span class="nav-text">Case2：在多页中的查找</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%89%E7%B4%A2%E5%BC%95%E7%9A%84%E8%AE%BE%E8%AE%A1"><span class="nav-text">三、索引的设计:</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9B%9B%E5%B8%B8%E8%A7%81%E7%B4%A2%E5%BC%95%E7%9A%84%E6%A6%82%E5%BF%B5"><span class="nav-text">四、常见索引的概念:</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%81%9A%E7%B0%87%E7%B4%A2%E5%BC%95"><span class="nav-text">1、聚簇索引：</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E7%89%B9%E7%82%B9"><span class="nav-text">特点：</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E4%BC%98%E7%82%B9-1"><span class="nav-text">优点：</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E7%BC%BA%E7%82%B9-1"><span class="nav-text">缺点：</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E9%99%90%E5%88%B6"><span class="nav-text">限制：</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BA%8C%E7%BA%A7%E7%B4%A2%E5%BC%95%E8%BE%85%E5%8A%A9%E7%B4%A2%E5%BC%95%E9%9D%9E%E8%81%9A%E7%B0%87%E7%B4%A2%E5%BC%95"><span class="nav-text">2、二级索引（辅助索引、非聚簇索引）</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E7%89%B9%E7%82%B9-1"><span class="nav-text">特点：</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%81%94%E5%90%88%E7%B4%A2%E5%BC%95"><span class="nav-text">3、联合索引：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#innodb%E7%9A%84b%E6%A0%91%E7%B4%A2%E5%BC%95%E7%9A%84%E6%B3%A8%E6%84%8F%E4%BA%8B%E9%A1%B9"><span class="nav-text">4、InnoDB的B+树索引的注意事项：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#myisam%E4%B8%AD%E7%9A%84%E7%B4%A2%E5%BC%95%E6%96%B9%E6%A1%88"><span class="nav-text">5、MyISAM中的索引方案：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#innodb%E5%92%8Cmyisam%E5%BC%95%E6%93%8E%E7%9A%84%E5%8C%BA%E5%88%AB"><span class="nav-text">6、InnoDB和MyISAM引擎的区别</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%B4%A2%E5%BC%95%E7%9A%84%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E9%80%89%E5%8F%96"><span class="nav-text">7、索引的数据结构选取</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#b%E6%A0%91%E5%92%8Cb%E6%A0%91%E7%9A%84%E9%80%89%E5%8F%96"><span class="nav-text">8、B树和B+树的选取：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#r%E6%A0%91"><span class="nav-text">9、R树</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Fantast"
+      src="/images/avatar.webp">
+  <p class="site-author-name" itemprop="name">Fantast</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">167</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">42</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">98</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/fantast416" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;fantast416" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:fantast416@gmail.com" title="E-Mail → mailto:fantast416@gmail.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll site-overview-item animated">
+    <div class="links-of-blogroll-title"><i class="fa fa-globe fa-fw"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://www.zhihu.com/people/shuo-shuo-3-41" title="https:&#x2F;&#x2F;www.zhihu.com&#x2F;people&#x2F;shuo-shuo-3-41" rel="noopener" target="_blank">ZhiHu</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="http://www.next.zju.edu.cn/" title="http:&#x2F;&#x2F;www.next.zju.edu.cn&#x2F;" rel="noopener" target="_blank">NextLab</a>
+        </li>
+    </ul>
+  </div>
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://blog.fantast.top/2022/10/17/bb6cac39113d/">
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.webp">
+      <meta itemprop="name" content="Fantast">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Fantast's Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          
+        </h1>
+
+        <div class="post-meta-container">
+          
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2022-10-17 15:09:19" itemprop="dateCreated datePublished" datetime="2022-10-17T15:09:19+08:00">2022-10-17</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2022-10-27 21:50:45" itemprop="dateModified" datetime="2022-10-27T21:50:45+08:00">2022-10-27</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E2%93%B9-%E5%9F%BA%E7%A1%80%E7%B1%BB%E7%AC%94%E8%AE%B0/" itemprop="url" rel="index"><span itemprop="name">⓹ 基础类笔记</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E2%93%B9-%E5%9F%BA%E7%A1%80%E7%B1%BB%E7%AC%94%E8%AE%B0/%E6%95%B0%E6%8D%AE%E5%BA%93%E7%B2%BE%E7%AE%80%E7%AC%94%E8%AE%B0/" itemprop="url" rel="index"><span itemprop="name">数据库精简笔记</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>3.5k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>10 分钟</span>
+    </span>
+</div>
+
+            <div class="post-description">Chap9——Mysql 索引及调优原则</div>
+            <div class="post-remind">Google Chrome is recommended, otherwise the image size may be wrong</div>
+            <div class="post-remind">FireFox is not recommended,Because it does not support the image zoom property</div>
+        </div>
+        
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h3 id="一为什么使用索引优缺点">一、为什么使用索引&amp;优缺点：</h3>
+<p>​
+避免全表扫描，首先查看查询条件是否命中某条索引，符合则通过索引查找相关数据。</p>
+<p>​
+如上图所示，数据库没有索引的情况下，数据分布在硬盘不同的位置上面，<strong>读取数据时，摆臂需要前后摆动查找数据，这样操作非常消耗时间。</strong></p>
+<p>​
+索引是一种数据结构，每个节点缓存的是一个Key-Value结构，Key是列的值，Value是该Key所在行对应的指针（文件位置）。</p>
+<h4 id="优点">优点：</h4>
+<ul>
+<li>降低数据库的IO成本，提高数据检索的效率</li>
+<li>加速表和表之间的连接。对于有依赖关系的子表和父表联合查询时，提高速度</li>
+<li>显著减少查询中分组和排序的时间，降低CPU消耗</li>
+</ul>
+<h4 id="缺点">缺点：</h4>
+<ul>
+<li>创建和维护需要耗费时间</li>
+<li>索引需要占据磁盘空间。</li>
+<li>索引提高查询速度的同时，会降低更新表的速度。</li>
+</ul>
+<h3 id="二没有索引时的查找">二、没有索引时的查找：</h3>
+<h4 id="case1-在单页中的查找">Case1: 在单页中的查找</h4>
+<p>​ 如果数据较少，则所有记录都可以被存放到一个页里面</p>
+<ul>
+<li>以主键为搜索条件：可以以O（logN)复杂度查询到</li>
+<li>以其他键为搜索条件：只能遍历.从最小记录开始以此遍历单链表中的每条记录。</li>
+</ul>
+<h4 id="case2在多页中的查找">Case2：在多页中的查找</h4>
+<p>​ 如果记录非常多，需要很多数据页来存储这些记录，主要步骤分为：</p>
+<ul>
+<li>定位到记录所在的页</li>
+<li>从所在的页内查找相应的记录</li>
+</ul>
+<p>​
+在没有索引的情况下，由于不能快速定位到记录所在的页，只能从第一个页沿着双向链表一直往下找。在每个页中进行匹配。因为要遍历所有的数据页(以及加载)，所以非常耗时.</p>
+<h3 id="三索引的设计">三、索引的设计:</h3>
+<p>首先，简化假设某一条记录在磁盘上的记录形式如下：</p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/image-20221021092747727.png" /></p>
+<p>那</p>
+<p>1么，将一些记录放到页中的示意图就是如下所示：一个数据页的默认大小为16KB，其中会存有一定数量的记录。</p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/image-20221021105655165.png" /></p>
+<p>​
+我们现在的问题就是：想要快速的定位到需要查找的记录在哪些数据页中。我们可以采用B+树的形式进行架构，如下图所示：最底层的数据页存放的是普通的记录，record_type=0，页与页直接以双向链表的形式链接。再上层的数据页中存储的是普通记录的目录项记录，它们的record_type=1，再往上走就是层级更高的目录项，至此构成一颗B+树。需要值得注意的是，相邻的页之间页编号不一定连续，是通过指针指向链接的。</p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/image-20221021105859291.png" /></p>
+<p>​
+我们可以利用B+树定位到某条记录在哪个数据页的形式，可以大大节省内存和硬盘的IO次数，定位到具体的数据页以后，在每个页面内也有页目录，可以通过二分法来实现快速的定位记录。</p>
+<h3 id="四常见索引的概念">四、常见索引的概念:</h3>
+<h4 id="聚簇索引">1、聚簇索引：</h4>
+<p>​
+是一种数据存储方式，所有的用户记录都存储在了叶子节点，即<strong>数据即索引</strong>，<strong>索引即数据</strong>。</p>
+<h5 id="特点">特点：</h5>
+<ul>
+<li>使用记录本身的 主键值的大小 进行记录和页的排序
+<ul>
+<li>页内的记录——按照主键的大小顺序排成单向链表。</li>
+<li>各个存放用户记录的页——根据主键大小顺序排成一个双向链表</li>
+<li>存放目录项记录的页——分为不同的层次，同一层次中的页之间按逐渐大小顺序排成双向链表</li>
+</ul></li>
+<li>B+树的叶子节点存储的是完整的用户记录</li>
+<li>这种索引不需要我们在mysql中显式创建，InnoDB会自动创建聚簇索引。</li>
+</ul>
+<h5 id="优点-1">优点：</h5>
+<ul>
+<li>访问速度更快，对于主键的排序查找和范围查找非常快</li>
+<li>查询显示一定范围数据的时候，由于数据都紧密相连，数据库不用从多个数据块中提取数据，节省了大量的io操作。</li>
+</ul>
+<h5 id="缺点-1">缺点：</h5>
+<ul>
+<li>插入速度严重依赖于插入顺序</li>
+<li>更新主键代价很高，所以一般定义主键不可更新</li>
+<li>二级索引访问需要两次查找</li>
+</ul>
+<h5 id="限制">限制：</h5>
+<ul>
+<li>仅有InnoDB数据引擎支持，MyISAM不支持聚簇索引</li>
+<li>每个Mysql的表只能有一个聚簇索引，一般情况下是表的主键</li>
+</ul>
+<h4
+id="二级索引辅助索引非聚簇索引">2、二级索引（辅助索引、非聚簇索引）</h4>
+<p>​
+如果想以非主键进行查找怎么办呢？多建几颗B+树即可。使用该列的大小作为数据页、页中记录的排序规则。对于这些B+树中，其叶子节点中并不存储完整的用户记录，而是仅存储<strong>该列
++ 主键的值</strong></p>
+<h5 id="特点-1">特点：</h5>
+<ul>
+<li>使用记录本身的 该列（建B+树索引的列）值的大小 进行记录和页的排序
+<ul>
+<li>页内的记录——按照该列的大小顺序排成单向链表。</li>
+<li>各个存放用户记录的页——根据该列大小顺序排成一个双向链表</li>
+<li>存放目录项记录的页——分为不同的层次，同一层次中的页之间按逐渐大小顺序排成双向链表</li>
+</ul></li>
+<li>B+树的叶子节点存储的是 <strong>该列的值 + 主键的值</strong></li>
+<li>这种索引需要我们在mysql中显式创建。</li>
+<li><strong>在以该列为条件搜索的时候，需要进行回表操作</strong>，就是说先查找到记录的主键的值，再利用主键的值去聚簇索引中查找整条记录的值。</li>
+</ul>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/image-20221021212458365.png" /></p>
+<h4 id="联合索引">3、联合索引：</h4>
+<p>​
+同时以多个列的大小作为排序规则，也就是同时为多个列建立索引，比方说我们想让B+树按照
+c2和c3列 的大小进行排序，这个包含两层含义：</p>
+<ul>
+<li><p>先把各个记录和页按照c2列进行排序。</p></li>
+<li><p>在记录的c2列相同的情况下，采用c3列进行排序</p></li>
+<li><p>以c2和c3列的大小为排序规则建立的B+树称为 联合索引
+，<strong>本质上也是一个二级索引。</strong>它的意思与分别为c2和c3列分别建立索引的表述是不同的，主要表现为：</p>
+<ul>
+<li>建立 联合索引 只会建立如上图一样的1棵B+树。</li>
+</ul></li>
+</ul>
+<h4 id="innodb的b树索引的注意事项">4、InnoDB的B+树索引的注意事项：</h4>
+<ul>
+<li><strong>根页面位置不变</strong>，实际上B+树的形成过程如下：
+<ul>
+<li>每当为某个表创建一个B+树索引的时候，<strong>都会为这个索引创建一个根节点页面。</strong></li>
+<li>最开始表中没有数据的时候，每个B+树索引对应的根节点中既没有用户记录，也没有目录项记录。</li>
+</ul></li>
+<li>非叶节点中目录项记录的唯一性：即如果建立的非聚簇索引的那一列值不唯一怎么办？容易导致非叶节点的目录项不唯一。
+<ul>
+<li>为了让新插入记录能找到自己在哪个页里，<strong>我们需要保证在B+树的同一层内节点的目录项记录除页号这个字段以外是唯一的。</strong>所以对于二级索引的内节点的目录项记录的内容实际上是由三个部分构成的：
+<ul>
+<li>索引列的值</li>
+<li>主键值</li>
+<li>页号</li>
+</ul></li>
+</ul></li>
+</ul>
+<figure>
+<img
+src="C:\Users\Fantast\AppData\Roaming\Typora\typora-user-images\image-20221021223514710.png"
+alt="蓝色即为主键值，橙色为建立索引列的值" />
+<figcaption
+aria-hidden="true">蓝色即为主键值，橙色为建立索引列的值</figcaption>
+</figure>
+<ul>
+<li>一个页面最少存储2条记录（其实就是B+树本身的限制）</li>
+</ul>
+<h4 id="myisam中的索引方案">5、MyISAM中的索引方案：</h4>
+<p>​
+在MyISAM中，其使用的B+树索引的，叶子结点存储的是数据记录的地址，而不是数据本身。</p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/mac/image-20221022120251019.png" /></p>
+<h4 id="innodb和myisam引擎的区别">6、InnoDB和MyISAM引擎的区别</h4>
+<p><strong>MyISAM的索引方式都是“非聚簇”的，与InnoDB包含1个聚簇索引是不同的。</strong></p>
+<ul>
+<li><p>①
+在InnoDB存储引擎中，我们只需要根据主键值对聚簇索引进行一次查找就能找到对应的记录，而在MyISAM
+中却需要进行一次回表操作，意味着MyISAM中建立的索引相当于全部都是二级索引。</p></li>
+<li><p>②
+InnoDB的数据文件本身就是索引文件，而MyISAM索引文件和数据文件是分离的，索引文件仅保存数据记录的地址。</p></li>
+<li><p>③
+InnoDB的非聚簇索引data域存储相应记录主键的值，而MyISAM索引记录的是地址。</p></li>
+<li><p>④
+MyISAM的回表操作是十分快速的，因为是拿着地址偏移量直接到文件中取数据的，反观InnoDB是通过获取主键之后再去聚簇索引里找记录，虽然说也不慢，但还是比不上直接用地址去访问。</p></li>
+<li><p>⑤ InnoDB要求表必须有主键（
+MyISAM可以没有）。如果没有显式指定，则MySQL系统会自动选择一个可以非空且唯一标识数据记录的列作为主键。如果不存在这种列，则MySQL自动为InnoDB表生成一个隐含字段作为主键，这个字段长度为6个字节，类型为长整型。</p></li>
+</ul>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/mac/截屏2022-10-22%2012.06.40.png" /></p>
+<h4 id="索引的数据结构选取">7、索引的数据结构选取</h4>
+<p>​
+为了减少索引在内存中的占用，其都是存储在磁盘上的。当我们使用索引查询的时候，不可能把索引全都一次性加载到内存中，所以要尽可能的设计索引的数据结构，使得<strong>磁盘IO次数较少</strong></p>
+<ul>
+<li>Hash索引从速度上来讲比树型索引要快很多，那么为什么索引还是设计成树的样子呢？
+<ul>
+<li>因为Hash索引仅能支持 等于、不等于 操作，无法支持范围查询</li>
+<li>数据的存储没有顺序，如果需要ORDER BY的情况下，还要重新排序</li>
+<li>如果重复值多，Hash冲突多的话，效率也会下降</li>
+<li>不能支持联合索引</li>
+<li>InnoDB不支持Hash索引</li>
+</ul></li>
+</ul>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/mac/image-20221022121840709.png" /></p>
+<ul>
+<li>InnoDB本身不支持Hash索引，但提供自适应Hash索引：
+<ul>
+<li>如果某个数据经常被访问，且满足一定条件，该数据页的地址就会放入Hash表中。下次查询的时候，直接通过自适应Hash就可以访问到这个数据页。</li>
+</ul></li>
+</ul>
+<p><img src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/mac/image-20221022122100058.png" style="zoom: 33%;" /></p>
+<h4 id="b树和b树的选取">8、B树和B+树的选取：</h4>
+<ul>
+<li><p>B树：多路平衡查找树：</p>
+<ul>
+<li>（叶子结点和非叶子结点都会存储数据，搜索有可能终止于非叶子结点）</li>
+</ul>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/mac/image-20221022122415040.png" /></p></li>
+<li><p>B+树：</p>
+<p>B+树更适合文件索引，两者区别如下：</p>
+<ul>
+<li>有 k 个孩子的节点就有 k 个关键字。也就是孩子数量 = 关键字数，而 B
+树中，孩子数量 = 关键字数+1。</li>
+<li>非叶子节点的关键字也会同时存在在子节点中，并且是在子节点中所有关键字的最大（或最小）。</li>
+<li>非叶子节点仅用于索引，不保存数据记录，跟记录有关的信息都放在叶子节点中。而
+B 树中， 非叶子节点既保存索引，也保存数据记录。</li>
+<li>所有关键字都在叶子节点出现，叶子节点构成一个有序链表，而且叶子节点本身按照关键字的大小从小到大顺序链接</li>
+</ul></li>
+<li><p>B+树相比于B树的区别和好处？</p>
+<ul>
+<li>查找效率更稳定（数据都在叶子节点），且更高（更矮胖）</li>
+<li>范围查找中，效率也更高。因为数据都在叶子节点中，可以通过指针链接查找。</li>
+</ul></li>
+</ul>
+<h4 id="r树">9、R树</h4>
+<p>​
+其仅支持geometry数据类型。比如查找20km以内所有的餐厅，岂能解决高维空间的搜索问题。其实质上就是一颗用来存储高维数据的平衡树。</p>
+
+    </div>
+
+    
+    
+    
+      
+  <div class="popular-posts-header">相关文章</div>
+  <ul class="popular-posts">
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2022\10\28\a30af89db2dc\" rel="bookmark">Mysql数据库调优工具</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2022\10\27\5b0755a55834\" rel="bookmark"></a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2022\10\17\a0984953b2e8\" rel="bookmark">事务</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2022\10\17\f545bfc8e29a\" rel="bookmark">Mysql日志与备份</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2022\10\17\6d0d3039dfe2\" rel="bookmark">Mysql逻辑架构和存储引擎</a></div>
+    </li>
+  </ul>
+
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Database/" rel="tag"># Database</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2022/10/17/e8cf764280fd/" rel="prev" title="InnoDB数据存储结构分析">
+                  <i class="fa fa-chevron-left"></i> InnoDB数据存储结构分析
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2022/10/17/6d0d3039dfe2/" rel="next" title="Mysql逻辑架构和存储引擎">
+                  Mysql逻辑架构和存储引擎 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments utterances-container"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Fantast</span>
+</div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+    <span title="站点总字数">761k</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">35:13</span>
+  </span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script><script src="/js/bookmark.js"></script>
+
+  
+<script src="https://cdn.jsdelivr.net/npm/hexo-generator-searchdb@1.4.0/dist/search.js" integrity="sha256-vXZMYLEqsROAXkEw93GGIvaB2ab+QW6w3+1ahD9nXXA=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdn.jsdelivr.net/npm/mathjax@3.2.0/es5/tex-mml-chtml.js","integrity":"sha256-r+3itOMtGGjap0x+10hu6jW/gZCzxHsoKrOd7gyRSGY="}}</script>
+<script src="/js/third-party/math/mathjax.js"></script>
+
+
+<script class="next-config" data-name="utterances" type="application/json">{"enable":true,"repo":"Fantast416/myblog-comment","issue_term":"pathname","theme":"github-light"}</script>
+<script src="/js/third-party/comments/utterances.js"></script>
+
+</body>
+</html>
