@@ -1,0 +1,761 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.2.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css" integrity="sha256-mUZM63G8m73Mcidfrv5E+Y61y7a12O5mW4ezU3bxqW4=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"blog.fantast.top","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.9.0","exturl":false,"sidebar":{"position":"left","width":250,"display":"always","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":true,"color":"#222","save":"manual"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"utterances","storage":true,"lazyload":false,"nav":null,"activeClass":"utterances"},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+<meta name="description" content="本篇笔记为java精简系列笔记集合，包含一些比较重要的知识点。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="java精简系列笔记6——集合">
+<meta property="og:url" content="https://blog.fantast.top/2022/08/02/66adf86c9b3f/index.html">
+<meta property="og:site_name" content="Fantast&#39;s Blog">
+<meta property="og:description" content="本篇笔记为java精简系列笔记集合，包含一些比较重要的知识点。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/QQ图片20220803104614.jpg">
+<meta property="article:published_time" content="2022-08-02T09:34:19.000Z">
+<meta property="article:modified_time" content="2022-11-03T03:01:46.679Z">
+<meta property="article:author" content="Fantast">
+<meta property="article:tag" content="java">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/QQ图片20220803104614.jpg">
+
+
+<link rel="canonical" href="https://blog.fantast.top/2022/08/02/66adf86c9b3f/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://blog.fantast.top/2022/08/02/66adf86c9b3f/","path":"2022/08/02/66adf86c9b3f/","title":"java精简系列笔记6——集合"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>java精简系列笔记6——集合 | Fantast's Blog</title>
+  
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<link rel="alternate" href="/atom.xml" title="Fantast's Blog" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Fantast's Blog</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li>
+        <li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li>
+        <li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li>
+        <li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li>
+        <li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%80%E9%9B%86%E5%90%88%E7%AE%80%E4%BB%8B"><span class="nav-text">一、集合简介</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%AE%BE%E8%AE%A1%E7%89%B9%E7%82%B9"><span class="nav-text">1、设计特点：</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%9C%A8java%E7%9A%84%E9%9B%86%E5%90%88%E6%A1%86%E6%9E%B6%E4%B8%AD%E9%87%87%E7%94%A8%E4%BA%86%E9%9B%86%E5%90%88%E6%8E%A5%E5%8F%A3%E5%92%8C%E5%AE%9E%E7%8E%B0%E5%88%86%E7%A6%BB%E7%9A%84%E5%BD%A2%E5%BC%8F"><span class="nav-text">1）在java的集合框架中，采用了集合接口和实现分离的形式</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%94%AF%E6%8C%81%E6%B3%9B%E5%9E%8B"><span class="nav-text">2）支持泛型</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%A6%82%E4%BD%95%E8%AE%BF%E9%97%AE%E9%9B%86%E5%90%88"><span class="nav-text">2、如何访问集合：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%9B%86%E5%90%88%E7%9A%84%E5%9F%BA%E6%9C%AC%E6%8E%A5%E5%8F%A3collection"><span class="nav-text">3、集合的基本接口：Collection</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#java%E9%9B%86%E5%90%88%E7%B1%BB%E7%9A%84%E6%8E%A5%E5%8F%A3%E7%A4%BA%E6%84%8F%E5%9B%BE"><span class="nav-text">4、Java集合类的接口示意图：</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BA%8Clist"><span class="nav-text">二、List:</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#list%E6%8E%A5%E5%8F%A3"><span class="nav-text">1、List接口</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E7%89%B9%E7%82%B9"><span class="nav-text">1）特点：</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%85%B6%E4%BB%96%E6%93%8D%E4%BD%9C"><span class="nav-text">2）其他操作：</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%93%BE%E8%A1%A8-linkedlist"><span class="nav-text">2、链表 LinkedList:</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%95%B0%E7%BB%84%E5%88%97%E8%A1%A8-arraylist"><span class="nav-text">3、数组列表 ArrayList:</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%89map"><span class="nav-text">三、Map：</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#mapkv%E6%8E%A5%E5%8F%A3"><span class="nav-text">1、Map&lt;K,V&gt;接口</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%B3%A8%E6%84%8F"><span class="nav-text">2、注意：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%81%8D%E5%8E%86map"><span class="nav-text">3、遍历Map：</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9B%9Bequals%E6%96%B9%E6%B3%95%E5%92%8Chashcode"><span class="nav-text">四、equals方法和HashCode</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#equals%E6%96%B9%E6%B3%95%E9%9C%80%E8%A6%81%E6%BB%A1%E8%B6%B3%E7%9A%84%E6%9D%A1%E4%BB%B6-rstc"><span class="nav-text">1、Equals方法需要满足的条件：
+RSTC</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#equals%E7%BC%96%E5%86%99%E7%9A%84%E6%96%B9%E6%B3%95"><span class="nav-text">2、Equals编写的方法</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#hashcode%E6%96%B9%E6%B3%95%E7%9A%84%E7%BC%96%E5%86%99%E8%A7%84%E8%8C%83"><span class="nav-text">3、HashCode方法的编写规范：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#hashcode%E7%BC%96%E5%86%99%E7%9A%84%E6%96%B9%E6%B3%95"><span class="nav-text">4、HashCode编写的方法：</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BA%94map%E5%85%B7%E4%BD%93%E7%B1%BB%E7%9A%84%E4%BD%BF%E7%94%A8"><span class="nav-text">五、Map具体类的使用</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#enummap"><span class="nav-text">1、EnumMap</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#sortedmaptreemap"><span class="nav-text">2、SortedMap——TreeMap</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%AD%E4%BD%BF%E7%94%A8properties%E7%B1%BB"><span class="nav-text">六、使用Properties类：</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%AF%BB%E5%8F%96%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6"><span class="nav-text">1、读取配置文件</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%86%99%E5%85%A5%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6"><span class="nav-text">2、写入配置文件</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%83set"><span class="nav-text">七、Set：</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%95%A3%E5%88%97%E9%9B%86-hashset"><span class="nav-text">1、散列集 HashSet:</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%A0%91%E9%9B%86-treeset"><span class="nav-text">2、树集 TreeSet:</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%ABqueue"><span class="nav-text">八、Queue：</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%8F%8C%E7%AB%AF%E9%98%9F%E5%88%97deque"><span class="nav-text">1、双端队列Deque:</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BC%98%E5%85%88%E9%98%9F%E5%88%97-priorityqueue%E5%B8%A6%E4%BC%98%E5%85%88%E7%BA%A7%E7%9A%84%E9%98%9F%E5%88%97"><span class="nav-text">2、优先队列
+PriorityQueue【带优先级的队列】</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B9%9Dstack"><span class="nav-text">九、Stack</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8D%81iterator-%E9%81%8D%E5%8E%86%E9%9B%86%E5%90%88"><span class="nav-text">十、Iterator 遍历集合：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8D%81%E4%B8%80%E6%98%A0%E5%B0%84%E4%B8%8E%E8%A7%86%E5%9B%BE"><span class="nav-text">十一、映射与视图:</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%98%A0%E5%B0%84"><span class="nav-text">1、映射</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%A7%86%E5%9B%BE%E4%B8%8E%E5%8C%85%E8%A3%85%E5%99%A8"><span class="nav-text">2、视图与包装器：</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8D%81%E4%BA%8Ccollections%E5%B7%A5%E5%85%B7%E7%B1%BB"><span class="nav-text">十二、Collections工具类</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%8E%92%E5%BA%8F%E4%B8%8E%E6%B7%B7%E6%8E%92"><span class="nav-text">1、排序与混排：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BA%8C%E5%88%86%E6%9F%A5%E6%89%BE"><span class="nav-text">2、二分查找：</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Fantast"
+      src="/images/avatar.webp">
+  <p class="site-author-name" itemprop="name">Fantast</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">167</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">42</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">98</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/fantast416" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;fantast416" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:fantast416@gmail.com" title="E-Mail → mailto:fantast416@gmail.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll site-overview-item animated">
+    <div class="links-of-blogroll-title"><i class="fa fa-globe fa-fw"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://www.zhihu.com/people/shuo-shuo-3-41" title="https:&#x2F;&#x2F;www.zhihu.com&#x2F;people&#x2F;shuo-shuo-3-41" rel="noopener" target="_blank">ZhiHu</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="http://www.next.zju.edu.cn/" title="http:&#x2F;&#x2F;www.next.zju.edu.cn&#x2F;" rel="noopener" target="_blank">NextLab</a>
+        </li>
+    </ul>
+  </div>
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://blog.fantast.top/2022/08/02/66adf86c9b3f/">
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.webp">
+      <meta itemprop="name" content="Fantast">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Fantast's Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          java精简系列笔记6——集合
+        </h1>
+
+        <div class="post-meta-container">
+          
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2022-08-02 17:34:19" itemprop="dateCreated datePublished" datetime="2022-08-02T17:34:19+08:00">2022-08-02</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2022-11-03 11:01:46" itemprop="dateModified" datetime="2022-11-03T11:01:46+08:00">2022-11-03</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E2%93%B8-%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80%E7%B1%BB%E7%AC%94%E8%AE%B0/" itemprop="url" rel="index"><span itemprop="name">⓸ 编程语言类笔记</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E2%93%B8-%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80%E7%B1%BB%E7%AC%94%E8%AE%B0/java%E7%B2%BE%E7%AE%80%E7%B3%BB%E5%88%97%E7%AC%94%E8%AE%B0/" itemprop="url" rel="index"><span itemprop="name">java精简系列笔记</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>9.4k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>26 分钟</span>
+    </span>
+</div>
+
+            <div class="post-description">本篇笔记为java精简系列笔记集合，包含一些比较重要的知识点。</div>
+            <div class="post-remind">Google Chrome is recommended, otherwise the image size may be wrong</div>
+            <div class="post-remind">FireFox is not recommended,Because it does not support the image zoom property</div>
+        </div>
+        
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p><strong>知识来源：《Java核心技术卷I》第9章节</strong></p>
+<h3 id="一集合简介">一、集合简介</h3>
+<h4 id="设计特点">1、设计特点：</h4>
+<h5
+id="在java的集合框架中采用了集合接口和实现分离的形式">1）在java的集合框架中，采用了集合接口和实现分离的形式</h5>
+<p>以队列为例子：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">interface</span> <span class="title class_">Queue</span>&lt;E&gt;&#123;</span><br><span class="line">	<span class="keyword">void</span> <span class="title function_">add</span><span class="params">(E element)</span>;</span><br><span class="line">	E <span class="title function_">remove</span><span class="params">()</span>;</span><br><span class="line">	<span class="type">int</span> <span class="title function_">size</span><span class="params">()</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>上述接口并不关心队列是如何实现的，每一个实现都可以用一个实现了Queue接口的类表示。这样子当想要更换队列的实现方式的时候，维护就变得十分方便。</li>
+</ul>
+<h5 id="支持泛型">2）支持泛型</h5>
+<p>我们可以限制在一个集合中只能放入同一种数据类型的元素。</p>
+<h4 id="如何访问集合">2、如何访问集合：</h4>
+<p>​
+通过统一的方式—迭代器Iterator，它最明显的好处在于无需知道集合内部元素是按什么方式存储的。</p>
+<ul>
+<li>Iterator接口如下：</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">interface</span> <span class="title class_">Iterator</span>&lt;E&gt;&#123;</span><br><span class="line">	E <span class="title function_">next</span><span class="params">()</span>;</span><br><span class="line">	<span class="type">boolean</span> <span class="title function_">hasNext</span><span class="params">()</span>;</span><br><span class="line">	<span class="keyword">void</span> <span class="title function_">remove</span><span class="params">()</span>;</span><br><span class="line">	<span class="keyword">default</span> <span class="keyword">void</span> <span class="title function_">forEachRemaining</span><span class="params">(Consumer&lt;? <span class="built_in">super</span> E&gt; action)</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>对于标准类库中的任何集合都可以使用for each循环</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span>(String element : c)&#123;</span><br><span class="line">	<span class="comment">//do something with element</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li><p>注意：Iterator接口的next方法和remove方法之间存在依赖性。</p>
+<ul>
+<li><p>remove方法将会删除上次调用next方法时返回的元素</p></li>
+<li><p>在调用remove方法前，必须调用next方法</p></li>
+</ul></li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">it.next();</span><br><span class="line">it.remove();</span><br></pre></td></tr></table></figure>
+<h4 id="集合的基本接口collection">3、集合的基本接口：Collection</h4>
+<p>Java类库中，<strong>集合类的基本接口是Collection接口，它是除<code>Map</code>外所有其他集合类的根接口</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">interface</span> <span class="title class_">Collection</span>&lt;E&gt;&#123;</span><br><span class="line">	<span class="type">boolean</span> <span class="title function_">add</span><span class="params">(E element)</span>;</span><br><span class="line">	Iterator&lt;E&gt; <span class="title function_">iterator</span><span class="params">()</span>;   </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>主要提供了以下三种类型的集合：
+<ul>
+<li><code>List</code>：一种有序列表的集合</li>
+<li><code>Set</code>：一种保证没有重复元素的集合</li>
+<li><code>Map</code>：一种通过键值（key-value）查找的映射表集合</li>
+</ul></li>
+</ul>
+<h4 id="java集合类的接口示意图">4、Java集合类的接口示意图：</h4>
+<ul>
+<li><p><img src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/QQ图片20220803104614.jpg" style="zoom: 33%;" /></p></li>
+<li><p>java集合具体的类：</p>
+<ul>
+<li><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/63EB72806CBE9A7185533D84D249B482.jpg" /></li>
+</ul></li>
+</ul>
+<h3 id="二list">二、List:</h3>
+<h4 id="list接口">1、List<E>接口</h4>
+<ul>
+<li>在末尾添加一个元素：<code>boolean add(E e)</code></li>
+<li>在指定索引添加一个元素：<code>boolean add(int index, E e)</code></li>
+<li>删除指定索引的元素：<code>E remove(int index)</code></li>
+<li>删除某个元素：<code>boolean remove(Object e)</code></li>
+<li>获取指定索引的元素：<code>E get(int index)</code></li>
+<li>获取链表大小（包含元素的个数）：<code>int size()</code></li>
+<li>是否包含某个指定元素：<code>boolean contains(Object o)</code></li>
+<li>返回某个元素的索引,如果不存在返回-1：<code>int indexOf(Object o)</code></li>
+</ul>
+<h5 id="特点">1）特点：</h5>
+<ul>
+<li>允许添加null</li>
+<li>允许添加重复元素</li>
+</ul>
+<h5 id="其他操作">2）其他操作：</h5>
+<ul>
+<li>使用List.of(1,2,3)根据给定元素快速创建List</li>
+<li>如何转换List至Array</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">List&lt;String&gt; list = List.of(<span class="string">&quot;apple&quot;</span>, <span class="string">&quot;pear&quot;</span>, <span class="string">&quot;banana&quot;</span>);</span><br><span class="line">String[] array = list.toArray(<span class="keyword">new</span> <span class="title class_">String</span>[list.size()]);</span><br></pre></td></tr></table></figure>
+<h4 id="链表-linkedlist">2、链表 LinkedList:</h4>
+<p>​ Java中，所有链表的实现都是双向的，即Doubly LinkedList.</p>
+<p>​
+我们可以用迭代器来修改或遍历这个集合，如果两个迭代器同时对某个集合操作，则会造成混乱。所以链表迭代器设计为可以检测到这种修改，会抛出一个ConcurrentModificationException异常。</p>
+<p>​
+<strong>遵循规则</strong>：可以为一个集合关联多个迭代器，但都是只能读取集合。或者可以关联一个能够同时读写的迭代器。</p>
+<h4 id="数组列表-arraylist">3、数组列表 ArrayList:</h4>
+<p>​
+访问集合中的元素可以通过迭代器，或get和set随机访问。get不适用于链表，但很适用于数组。所以实现了ArrayList类，其实现了List接口。封装了一个可以动态再分配的对象数组。</p>
+<h3 id="三map">三、Map：</h3>
+<h4 id="mapkv接口">1、Map&lt;K,V&gt;接口</h4>
+<ul>
+<li>获得一个元素的值：<code>V get(K key)</code></li>
+<li>删除一个键值对：<code>V remove(K key)</code></li>
+<li>添加一个键值对：<code>V put(K key, V value)</code></li>
+<li>是否包含某个键：<code>boolean containsKey(K key)</code></li>
+<li>获得键集(详见映射)：<code>Set&lt;K&gt; keySet()</code></li>
+<li>获得值集(详见映射)：<code>Collection&lt;V&gt; values()</code></li>
+<li>获得键值对集合(详见映射)：<code>Set&lt;Map.Entry&lt;K,V&gt;&gt; entrySet()</code></li>
+</ul>
+<h4 id="注意">2、注意：</h4>
+<p>​ 使用<code>Map</code>时，任何依赖顺序的逻辑都是不可靠的。</p>
+<h4 id="遍历map">3、遍历Map：</h4>
+<p>​
+对<code>Map</code>来说，要遍历<code>key</code>可以使用<code>for each</code>循环遍历<code>Map</code>实例的<code>keySet()</code>方法返回的<code>Set</code>集合，它包含不重复的<code>key</code>的集合：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> (String key : map.keySet()) &#123;</span><br><span class="line">    <span class="type">Integer</span> <span class="variable">value</span> <span class="operator">=</span> map.get(key);</span><br><span class="line">    System.out.println(key + <span class="string">&quot; = &quot;</span> + value);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="四equals方法和hashcode">四、equals方法和HashCode</h3>
+<p>​
+要正确使用<code>List</code>的<code>contains()</code>、<code>indexOf()</code>这些方法，放入的实例必须正确覆写<code>equals()</code>方法，否则，放进去的实例，查找不到。同时，在<code>Map</code>的内部，对<code>key</code>做比较也是通过<code>equals()</code>实现的，这一点和<code>List</code>查找元素需要正确覆写<code>equals()</code>是一样的，即正确使用<code>Map</code>必须保证：作为<code>key</code>的对象必须正确覆写<code>equals()</code>方法。</p>
+<p>​
+<code>List</code>内部并不是通过<code>==</code>判断两个元素是否相等，而是使用<code>equals()</code>方法判断两个元素是否相等。因此，要正确使用<code>List</code>的<code>contains()</code>、<code>indexOf()</code>这些方法，放入的实例必须正确覆写<code>equals()</code>方法。</p>
+<h4 id="equals方法需要满足的条件-rstc">1、Equals方法需要满足的条件：
+RSTC</h4>
+<ul>
+<li>自反性（Reflexive）：对于非<code>null</code>的<code>x</code>来说，<code>x.equals(x)</code>必须返回<code>true</code>；</li>
+<li>对称性（Symmetric）：对于非<code>null</code>的<code>x</code>和<code>y</code>来说，如果<code>x.equals(y)</code>为<code>true</code>，则<code>y.equals(x)</code>也必须为<code>true</code>；</li>
+<li>传递性（Transitive）：对于非<code>null</code>的<code>x</code>、<code>y</code>和<code>z</code>来说，如果<code>x.equals(y)</code>为<code>true</code>，<code>y.equals(z)</code>也为<code>true</code>，那么<code>x.equals(z)</code>也必须为<code>true</code>；</li>
+<li>一致性（Consistent）：对于非<code>null</code>的<code>x</code>和<code>y</code>来说，只要<code>x</code>和<code>y</code>状态不变，则<code>x.equals(y)</code>总是一致地返回<code>true</code>或者<code>false</code>；</li>
+<li>对<code>null</code>的比较：即<code>x.equals(null)</code>永远返回<code>false</code>。</li>
+</ul>
+<h4 id="equals编写的方法">2、Equals编写的方法</h4>
+<p>因此，我们总结一下<code>equals()</code>方法的正确编写方法：</p>
+<ol type="1">
+<li>先确定实例“相等”的逻辑，即哪些字段相等，就认为实例相等；</li>
+<li>用<code>instanceof</code>判断传入的待比较的<code>Object</code>是不是当前类型，如果是，继续比较，否则，返回<code>false</code>；</li>
+<li>对引用类型用<code>Objects.equals()</code>比较，对基本类型直接用<code>==</code>比较。</li>
+</ol>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="type">boolean</span> <span class="title function_">equals</span><span class="params">(Object o)</span> &#123;</span><br><span class="line">    <span class="keyword">if</span> (o <span class="keyword">instanceof</span> Person) &#123;</span><br><span class="line">        <span class="type">Person</span> <span class="variable">p</span> <span class="operator">=</span> (Person) o;</span><br><span class="line">        <span class="keyword">return</span> Objects.equals(<span class="built_in">this</span>.name, p.name) &amp;&amp; <span class="built_in">this</span>.age == p.age;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="hashcode方法的编写规范">3、HashCode方法的编写规范：</h4>
+<p>​
+通过<code>key</code>计算索引的方式就是调用<code>key</code>对象的<code>hashCode()</code>方法，它返回一个<code>int</code>整数。<code>HashMap</code>正是通过这个方法直接定位<code>key</code>对应的<code>value</code>的索引，继而直接返回<code>value</code>。</p>
+<p>因此，正确使用<code>Map</code>必须保证：</p>
+<ol type="1">
+<li>作为<code>key</code>的对象必须正确覆写<code>equals()</code>方法，相等的两个<code>key</code>实例调用<code>equals()</code>必须返回<code>true</code>；</li>
+<li>作为<code>key</code>的对象还必须正确覆写<code>hashCode()</code>方法，且<code>hashCode()</code>方法要严格遵循以下规范：</li>
+</ol>
+<ul>
+<li>如果两个对象相等，则两个对象的<code>hashCode()</code>必须相等；</li>
+<li>如果两个对象不相等，则两个对象的<code>hashCode()</code>尽量不要相等。</li>
+</ul>
+<p>（第二条如果尽量满足，则可以保证查询效率，因为不同的对象，如果返回相同的<code>hashCode()</code>，会造成<code>Map</code>内部存储冲突，使存取的效率下降）</p>
+<h4 id="hashcode编写的方法">4、HashCode编写的方法：</h4>
+<p>​
+<code>equals()</code>用到的用于比较的每一个字段，都必须在<code>hashCode()</code>中用于计算；<code>equals()</code>中没有使用到的字段，绝不可放在<code>hashCode()</code>中计算。</p>
+<p>​
+实现<code>hashCode()</code>方法可以通过<code>Objects.hashCode()</code>辅助方法实现。</p>
+<h3 id="五map具体类的使用">五、Map具体类的使用</h3>
+<h4 id="enummap">1、EnumMap</h4>
+<p>​
+如果作为key的对象是<code>enum</code>类型，那么，还可以使用Java集合库提供的一种<code>EnumMap</code>，它在内部以一个非常紧凑的数组存储value，并且根据<code>enum</code>类型的key直接定位到内部数组的索引，并不需要计算<code>hashCode()</code>.</p>
+<h4 id="sortedmaptreemap">2、SortedMap——TreeMap</h4>
+<p>​
+还有一种<code>Map</code>，它在内部会对Key进行排序，这种<code>Map</code>就是<code>SortedMap</code>。注意到<code>SortedMap</code>是接口，它的实现类是<code>TreeMap</code>。<strong><code>SortedMap</code>
+保证遍历时以Key的顺序来进行排序。</strong></p>
+<p>​
+使用<code>TreeMap</code>时，放入的Key必须实现<code>Comparable</code>接口。<code>Comparator</code>接口要求实现一个比较方法，<strong>它负责比较传入的两个元素<code>a</code>和<code>b</code>，如果<code>a&lt;b</code>，则返回负数，通常是<code>-1</code>，如果<code>a==b</code>，则返回<code>0</code>，如果<code>a&gt;b</code>，则返回正数，通常是<code>1</code>。<code>TreeMap</code>内部根据比较结果对Key进行排序。</strong></p>
+<p>​ 也可以通过直接定义Comparator的方式：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">Map&lt;Student, Integer&gt; map = <span class="keyword">new</span> <span class="title class_">TreeMap</span>&lt;&gt;(<span class="keyword">new</span> <span class="title class_">Comparator</span>&lt;Student&gt;() &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="type">int</span> <span class="title function_">compare</span><span class="params">(Student p1, Student p2)</span> &#123;</span><br><span class="line">        <span class="keyword">if</span> (p1.score == p2.score) &#123;</span><br><span class="line">        	<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">    	&#125;</span><br><span class="line">    	<span class="keyword">return</span> p1.score &gt; p2.score ? -<span class="number">1</span> : <span class="number">1</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+<h3 id="六使用properties类">六、使用Properties类：</h3>
+<h4 id="读取配置文件">1、读取配置文件</h4>
+<p>​
+Java默认配置文件以<code>.properties</code>为扩展名，每行以<code>key=value</code>表示，以<code>#</code>课开头的是注释。以下是一个典型的配置文件：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"># setting.properties</span><br><span class="line"></span><br><span class="line">last_open_file=/data/hello.txt</span><br><span class="line">auto_save_interval=60</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">String</span> <span class="variable">f</span> <span class="operator">=</span> <span class="string">&quot;setting.properties&quot;</span>;</span><br><span class="line"><span class="type">Properties</span> <span class="variable">props</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Properties</span>();</span><br><span class="line">props.load(<span class="keyword">new</span> <span class="title class_">java</span>.io.FileInputStream(f));</span><br><span class="line"></span><br><span class="line"><span class="type">String</span> <span class="variable">filepath</span> <span class="operator">=</span> props.getProperty(<span class="string">&quot;last_open_file&quot;</span>);</span><br><span class="line"><span class="type">String</span> <span class="variable">interval</span> <span class="operator">=</span> props.getProperty(<span class="string">&quot;auto_save_interval&quot;</span>, <span class="string">&quot;120&quot;</span>);</span><br></pre></td></tr></table></figure>
+<h4 id="写入配置文件">2、写入配置文件</h4>
+<p>​
+如果通过<code>setProperty()</code>修改了<code>Properties</code>实例，可以把配置写入文件，以便下次启动时获得最新配置。写入配置文件使用<code>store()</code>方法：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">Properties</span> <span class="variable">props</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Properties</span>();</span><br><span class="line">props.setProperty(<span class="string">&quot;url&quot;</span>, <span class="string">&quot;http://www.liaoxuefeng.com&quot;</span>);</span><br><span class="line">props.setProperty(<span class="string">&quot;language&quot;</span>, <span class="string">&quot;Java&quot;</span>);</span><br><span class="line">props.store(<span class="keyword">new</span> <span class="title class_">FileOutputStream</span>(<span class="string">&quot;C:\\conf\\setting.properties&quot;</span>), <span class="string">&quot;这是写入的properties注释&quot;</span>);</span><br></pre></td></tr></table></figure>
+<h3 id="七set">七、Set：</h3>
+<ul>
+<li>将元素添加进<code>Set&lt;E&gt;</code>：<code>boolean add(E e)</code></li>
+<li>将元素从<code>Set&lt;E&gt;</code>删除：<code>boolean remove(Object e)</code></li>
+<li>判断是否包含元素：<code>boolean contains(Object e)</code></li>
+</ul>
+<p>​
+放入<code>Set</code>的元素需要正确实现<code>equals()</code>和<code>hashCode()</code>方法，<code>Set</code>接口并不保证有序，而<code>SortedSet</code>接口则保证元素是有序的：</p>
+<ul>
+<li><code>HashSet</code>是无序的，因为它实现了<code>Set</code>接口，并没有实现<code>SortedSet</code>接口；</li>
+<li><code>TreeSet</code>是有序的，因为它实现了<code>SortedSet</code>接口。</li>
+</ul>
+<h4 id="散列集-hashset">1、散列集 HashSet:</h4>
+<p>​
+能够快速查找元素的数据结构。在Java中，散列表用链表数组实现，每个列表被称为桶。通常我们将桶数设置为预计元素个数的75%~150%。装填因子可以确定何时对散列表进行再散列，一般为0.75。</p>
+<p>​
+在散列表中插入某元素，需要先计算该元素的hash值，找到对应的桶，再将其与桶内的元素比较是否有重复即可，无需和散列表中所有元素比较.</p>
+<h4 id="树集-treeset">2、树集 TreeSet:</h4>
+<p>​
+有序集合,<strong>由红黑树实现.值将自动的按照排序前后的顺序实现.要使用树集</strong>,必须能够比较元素,所以这些元素必须实现Comparable接口,或者构造集合的时候提供一个Comparator.</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">var parts = new TreeSet&lt;Item&gt;();   //会按照Item的默认排序</span><br><span class="line">parts.add(new Item(&quot;a&quot;,1));</span><br><span class="line">parts.add(new Item(&quot;b&quot;,2));</span><br><span class="line">parts.add(new Item(&quot;c&quot;,3));</span><br><span class="line"></span><br><span class="line">var sortByDescription = new TreeSet&lt;Item&gt;   (Comparator.comparing(Item::getDescription));  //提供一个Comparator,通过Item的描述排序</span><br><span class="line"> </span><br><span class="line">sortByDescription.addAll(parts);</span><br></pre></td></tr></table></figure>
+<h3 id="八queue">八、Queue：</h3>
+<ul>
+<li><code>int size()</code>：获取队列长度；</li>
+<li><code>boolean add(E)</code>/<code>boolean offer(E)</code>：添加元素到队尾；</li>
+<li><code>E remove()</code>/<code>E poll()</code>：获取队首元素并从队列中删除；</li>
+<li><code>E element()</code>/<code>E peek()</code>：获取队首元素但并不从队列中删除。</li>
+</ul>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/image-20221103102520030.png" /></p>
+<h4 id="双端队列deque">1、双端队列Deque:</h4>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/image-20221103103318611.png" /></p>
+<p>​ ArrayDeque和LinkedList都可以实现双端队列</p>
+<h4 id="优先队列-priorityqueue带优先级的队列">2、优先队列
+PriorityQueue【带优先级的队列】</h4>
+<p>​ 使用堆来搭建.典型用法是任务调度.</p>
+<p>​
+放入<code>PriorityQueue</code>的元素，必须实现<code>Comparable</code>接口，<code>PriorityQueue</code>会根据元素的排序顺序决定出队的优先级。</p>
+<ul>
+<li>总是调用<code>xxxFirst()</code>/<code>xxxLast()</code>以便与<code>Queue</code>的方法区分开；</li>
+<li>避免把<code>null</code>添加到队列。</li>
+</ul>
+<h3 id="九stack">九、Stack</h3>
+<ul>
+<li>把元素压栈：<code>push(E)</code>；</li>
+<li>把栈顶的元素“弹出”：<code>pop()</code>；</li>
+<li>取栈顶元素但不弹出：<code>peek()</code>。</li>
+</ul>
+<p>在Java中，我们用<code>Deque</code>可以实现<code>Stack</code>的功能：</p>
+<ul>
+<li>把元素压栈：<code>push(E)</code>/<code>addFirst(E)</code>；</li>
+<li>把栈顶的元素“弹出”：<code>pop()</code>/<code>removeFirst()</code>；</li>
+<li>取栈顶元素但不弹出：<code>peek()</code>/<code>peekFirst()</code>。</li>
+</ul>
+<h3 id="十iterator-遍历集合">十、Iterator 遍历集合：</h3>
+<p>​
+Java的集合类都可以使用<code>for each</code>循环，<code>List</code>、<code>Set</code>和<code>Queue</code>会迭代每个元素，<code>Map</code>会迭代每个key。调用方总是以统一的方式遍历各种集合类型，而不必关心它们内部的存储结构。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">List&lt;String&gt; list = List.of(<span class="string">&quot;Apple&quot;</span>, <span class="string">&quot;Orange&quot;</span>, <span class="string">&quot;Pear&quot;</span>);</span><br><span class="line"><span class="keyword">for</span> (String s : list) &#123;</span><br><span class="line">    System.out.println(s);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>如果我们自己编写了一个集合类，想要使用<code>for each</code>循环，只需满足以下条件：</p>
+<ul>
+<li>集合类实现<code>Iterable</code>接口，该接口要求返回一个<code>Iterator</code>对象；</li>
+<li>用<code>Iterator</code>对象迭代集合内部数据。</li>
+</ul>
+<p>这里的关键在于，集合类通过调用<code>iterator()</code>方法，返回一个<code>Iterator</code>对象，这个对象必须自己知道如何遍历该集合。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> java.util.*;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Main</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;</span><br><span class="line">        ReverseList&lt;String&gt; rlist = <span class="keyword">new</span> <span class="title class_">ReverseList</span>&lt;&gt;();</span><br><span class="line">        rlist.add(<span class="string">&quot;Apple&quot;</span>);</span><br><span class="line">        rlist.add(<span class="string">&quot;Orange&quot;</span>);</span><br><span class="line">        rlist.add(<span class="string">&quot;Pear&quot;</span>);</span><br><span class="line">        <span class="keyword">for</span> (String s : rlist) &#123;</span><br><span class="line">            System.out.println(s);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">ReverseList</span>&lt;T&gt; <span class="keyword">implements</span> <span class="title class_">Iterable</span>&lt;T&gt; &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> List&lt;T&gt; list = <span class="keyword">new</span> <span class="title class_">ArrayList</span>&lt;&gt;();</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">add</span><span class="params">(T t)</span> &#123;</span><br><span class="line">        list.add(t);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> Iterator&lt;T&gt; <span class="title function_">iterator</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> <span class="title class_">ReverseIterator</span>(list.size());</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">class</span> <span class="title class_">ReverseIterator</span> <span class="keyword">implements</span> <span class="title class_">Iterator</span>&lt;T&gt; &#123;</span><br><span class="line">        <span class="type">int</span> index;</span><br><span class="line"></span><br><span class="line">        ReverseIterator(<span class="type">int</span> index) &#123;</span><br><span class="line">            <span class="built_in">this</span>.index = index;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="keyword">public</span> <span class="type">boolean</span> <span class="title function_">hasNext</span><span class="params">()</span> &#123;</span><br><span class="line">            <span class="keyword">return</span> index &gt; <span class="number">0</span>;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="keyword">public</span> T <span class="title function_">next</span><span class="params">()</span> &#123;</span><br><span class="line">            index--;</span><br><span class="line">            <span class="keyword">return</span> ReverseList.<span class="built_in">this</span>.list.get(index);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="十一映射与视图">十一、映射与视图:</h3>
+<h4 id="映射">1、映射</h4>
+<ul>
+<li><p>HashMap和TreeMap都实现了Map接口.
+散列或比较函数都只应用于Key,而Value值不进行比较.</p></li>
+<li><p>如何迭代处理映射的键和值?</p></li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">scores.forEach((k,v)-&gt;System.out.println(&quot;k&quot;+k+&quot;v&quot;+v));</span><br></pre></td></tr></table></figure>
+<ul>
+<li><p>更新映射条目:</p>
+<ul>
+<li>当条目不存在时，counts.get(word)会返回一个NullPointerException异常，我们可以使用getOrDefault方法来补救。counts.getOrDefault(word,0)</li>
+</ul></li>
+<li><p>映射的视图：</p>
+<ul>
+<li><p>对于一个映射集合而言，可以得到3种不同的映射的视图</p>
+<ul>
+<li>键集</li>
+<li>值集</li>
+<li>键值对集合</li>
+</ul></li>
+</ul></li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">map.keySet()</span><br><span class="line">map.values()</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span>(Map.Entry&lt;String,Employee&gt; entry : staff.entrySet() )&#123;</span><br><span class="line">	<span class="type">String</span> <span class="variable">k</span> <span class="operator">=</span> entry.getKey()</span><br><span class="line">	<span class="type">Employee</span> <span class="variable">v</span> <span class="operator">=</span> entry.getValue()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>在键集视图上调用remove方法，会移除键和关联的值。不能向键集视图中添加元素</p>
+<ul>
+<li><p>弱散列映射</p>
+<ul>
+<li>如果对某个键的最后一个引用已经消失了，那么不会有任何途径引用这个值的对象了。在WeakHashMap中会将其自动回收。</li>
+</ul></li>
+<li><p>链接散列集和映射</p>
+<ul>
+<li>LinkedHashSet和LinkedHashMap会记录插入元素项的顺序。即在表中插入元素项时，就会并入到双向链表中，以保持插入顺序。</li>
+<li>其也可以使用访问顺序而不是插入顺序来访问，具体见P401</li>
+</ul></li>
+<li><p>枚举集和映射</p>
+<ul>
+<li>EnumSet是枚举类型元素集的高效实现。其内部用位序列实现，对应的值在其中，则相应的位被置1.</li>
+</ul></li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">enum</span> <span class="title class_">Weekday</span> &#123; MONDAY,TUESDAY,WEDNESDAY &#125;</span><br><span class="line">EnumSet&lt;Weekday&gt; always = EnumSet.allOf(Weekday.class)</span><br></pre></td></tr></table></figure>
+<h4 id="视图与包装器">2、视图与包装器：</h4>
+<p>​
+例如上述的keySet()方法，会返回一个实现了Set接口的类对象，有这个类的方法操纵原映射。这种集合就叫做视图。</p>
+<ul>
+<li><p>应用1：小集合：</p></li>
+<li><p>应用2：子范围</p></li>
+<li><p>应用3：不可修改视图</p></li>
+<li><p>应用4：同步视图</p></li>
+<li><p>应用5：检查型视图：</p></li>
+</ul>
+<h3 id="十二collections工具类">十二、Collections工具类</h3>
+<h4 id="排序与混排">1、排序与混排：</h4>
+<ul>
+<li>Collections类中的sort方法可以对实现了List接口的集合进行排序</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">var</span> <span class="variable">staff</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">LinkedList</span>&lt;String&gt;();</span><br><span class="line"></span><br><span class="line">Collections.sort(staff);  <span class="comment">//使用稳定的排序算法进行排序（如归并，所谓稳定，指的是不会改边值相同的元素的前后位置。）</span></span><br><span class="line"></span><br><span class="line">staff.sort(Comparator.comparingDouble(Employee::getSalary));</span><br><span class="line"></span><br><span class="line">staff.sort(Comparator.reverseOrder())</span><br><span class="line"></span><br><span class="line">staff.sort(Comparator.comparingDouble(Employee::getSalary).reversed())</span><br></pre></td></tr></table></figure>
+<ul>
+<li>Collections类中的shuffle方法可以随机打乱。</li>
+</ul>
+<h4 id="二分查找">2、二分查找：</h4>
+<ul>
+<li><p>Collections.binarySearch()
+从有序列表中搜索一个键，如果元素类型实现了RandomAccess接口，则是二分查找，否则会采用线性查找。
+对一个链表应用这个方法，将自动退化为线性查找。</p></li>
+<li><p>简单算法：</p>
+<ul>
+<li>见P416页。</li>
+</ul></li>
+<li><p>集合与数组的转换：</p></li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">String[] values = ...</span><br><span class="line"><span class="type">var</span> <span class="variable">staff</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">HashSet</span>&lt;&gt;(List.of(values));</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Object[] values = staff.toArray();</span><br><span class="line"><span class="comment">//toArray返回的是Object对象数组，且不能改变里面的类型，所以应当使用如下方法：</span></span><br><span class="line">String[] values = staff.toArray(<span class="keyword">new</span> <span class="title class_">String</span>[staff.size()]);</span><br></pre></td></tr></table></figure>
+
+    </div>
+
+    
+    
+    
+      
+  <div class="popular-posts-header">相关文章</div>
+  <ul class="popular-posts">
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2022\02\02\e8aa8ccaa4fe\" rel="bookmark">java系列笔记10——java单元测试JUnit</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2022\01\28\3f464858b7bd\" rel="bookmark">java系列笔记1——java基础</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2022\01\31\0f79bd25febd\" rel="bookmark">java系列笔记6——java注解</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2022\02\01\998c77b4c7e4\" rel="bookmark">java系列笔记7——java泛型（更新中）</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2022\02\01\671534cf591b\" rel="bookmark">java系列笔记9——java 日期与时间（更新中）</a></div>
+    </li>
+  </ul>
+
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/java/" rel="tag"># java</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2022/08/02/22cd7f0d9b01/" rel="prev" title="java精简系列笔记5——异常、断言和日志">
+                  <i class="fa fa-chevron-left"></i> java精简系列笔记5——异常、断言和日志
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2022/08/05/b77a426aa9cd/" rel="next" title="java精简系列笔记7——并发">
+                  java精简系列笔记7——并发 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments utterances-container"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Fantast</span>
+</div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+    <span title="站点总字数">769k</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">35:35</span>
+  </span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script><script src="/js/bookmark.js"></script>
+
+  
+<script src="https://cdn.jsdelivr.net/npm/hexo-generator-searchdb@1.4.0/dist/search.js" integrity="sha256-vXZMYLEqsROAXkEw93GGIvaB2ab+QW6w3+1ahD9nXXA=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdn.jsdelivr.net/npm/mathjax@3.2.0/es5/tex-mml-chtml.js","integrity":"sha256-r+3itOMtGGjap0x+10hu6jW/gZCzxHsoKrOd7gyRSGY="}}</script>
+<script src="/js/third-party/math/mathjax.js"></script>
+
+
+<script class="next-config" data-name="utterances" type="application/json">{"enable":true,"repo":"Fantast416/myblog-comment","issue_term":"pathname","theme":"github-light"}</script>
+<script src="/js/third-party/comments/utterances.js"></script>
+
+</body>
+</html>

@@ -27,11 +27,15 @@
 <meta property="og:site_name" content="Fantast&#39;s Blog">
 <meta property="og:description" content="云原生快速入门系列笔记，云平台+容器化">
 <meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20221101161243475.png">
+<meta property="og:image" content="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20221101161359831.png">
+<meta property="og:image" content="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20221101161524606.png">
 <meta property="article:published_time" content="2022-04-27T09:43:19.000Z">
-<meta property="article:modified_time" content="2022-10-31T14:20:53.143Z">
+<meta property="article:modified_time" content="2022-11-01T08:54:51.000Z">
 <meta property="article:author" content="Fantast">
 <meta property="article:tag" content="Cloud Native">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20221101161243475.png">
 
 
 <link rel="canonical" href="https://blog.fantast.top/2022/04/27/a1c507dae6b0/">
@@ -148,7 +152,7 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
-            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%85%AC%E6%9C%89%E4%BA%91%E5%92%8C%E7%A7%81%E6%9C%89%E4%BA%91"><span class="nav-text">1、公有云和私有云：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%A7%81%E6%9C%89%E7%BD%91%E7%BB%9Cvpc"><span class="nav-text">2、私有网络VPC</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#docker%E5%AE%B9%E5%99%A8%E5%8C%96"><span class="nav-text">3、Docker容器化</span></a></li></ol></div>
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%85%AC%E6%9C%89%E4%BA%91%E5%92%8C%E7%A7%81%E6%9C%89%E4%BA%91"><span class="nav-text">1、公有云和私有云：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%A7%81%E6%9C%89%E7%BD%91%E7%BB%9Cvpc"><span class="nav-text">2、私有网络VPC</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#docker%E5%AE%B9%E5%99%A8%E5%8C%96%E6%A6%82%E5%BF%B5"><span class="nav-text">3、Docker容器化概念</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#docker%E5%AE%B9%E5%99%A8%E5%8C%96%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4"><span class="nav-text">4、Docker容器化常用命令</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E9%95%9C%E5%83%8F%E7%9B%B8%E5%85%B3"><span class="nav-text">1）镜像相关</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%AE%B9%E5%99%A8%E5%90%AF%E5%8A%A8%E5%81%9C%E6%AD%A2%E7%9B%B8%E5%85%B3"><span class="nav-text">2）容器启动停止相关：</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E4%BF%AE%E6%94%B9%E5%AE%B9%E5%99%A8%E5%86%85%E5%AE%B9"><span class="nav-text">3）修改容器内容：</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%8F%90%E4%BA%A4%E6%94%B9%E5%8F%98"><span class="nav-text">4）提交改变：</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%85%B6%E4%BB%96%E5%91%BD%E4%BB%A4"><span class="nav-text">5）其他命令：</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%BC%96%E5%86%99%E8%87%AA%E5%B7%B1%E7%9A%84%E5%BA%94%E7%94%A8%E5%B9%B6%E9%83%A8%E7%BD%B2"><span class="nav-text">5、编写自己的应用并部署：</span></a></li></ol></div>
         </div>
         <!--/noindex-->
 
@@ -266,7 +270,7 @@
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2022-10-31 22:20:53" itemprop="dateModified" datetime="2022-10-31T22:20:53+08:00">2022-10-31</time>
+      <time title="修改时间：2022-11-01 16:54:51" itemprop="dateModified" datetime="2022-11-01T16:54:51+08:00">2022-11-01</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -296,14 +300,14 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">本文字数：</span>
-      <span>623</span>
+      <span>2.5k</span>
     </span>
     <span class="post-meta-item" title="阅读时长">
       <span class="post-meta-item-icon">
         <i class="far fa-clock"></i>
       </span>
       <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>2 分钟</span>
+      <span>7 分钟</span>
     </span>
 </div>
 
@@ -346,7 +350,54 @@ src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-202210311702453
 <p>​
 在实际的服务器集群中,可以自己先新建一个专有网络(其实就是可以在内部创建局域网,然后再通过交换机创建子网等),划分相应的网段.比如说192.168.o.0/16.</p>
 <p>​ 不同VPC之间的主机不能直接通信,VPC提供了一个隔离域.</p>
-<h4 id="docker容器化">3、Docker容器化</h4>
+<h4 id="docker容器化概念">3、Docker容器化概念</h4>
+<ul>
+<li>统一标准，应用构建、分享和运行。</li>
+<li>资源隔离：cpu内存资源隔离与限制，访问设备隔离与限制，网络隔离与限制等</li>
+<li>虚拟化技术：
+<ul>
+<li>在Docker容器化技术还没有出现的时候，人们使用的是虚拟化技术。基于虚拟机的部署方式，基础镜像非常大，创建使用稍微复杂，启动速度较慢，移植与分享不方便，虽然其隔离性非常的好。</li>
+<li><img src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20221101161243475.png" style="zoom:67%;" /></li>
+</ul></li>
+<li>基于虚拟化的Docker容器化技术：
+<ul>
+<li>基础镜像MB级别，创建简单，启动速度快，移植与分享方便</li>
+<li><img src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20221101161359831.png" style="zoom:67%;" /></li>
+<li>架构如图所示：Registry镜像仓库，Containers容器，Images镜像</li>
+<li><img src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20221101161524606.png" style="zoom:67%;" /></li>
+</ul></li>
+</ul>
+<h4 id="docker容器化常用命令">4、Docker容器化常用命令</h4>
+<h5 id="镜像相关">1）镜像相关</h5>
+<p>​ Docker Hub常用的镜像网站</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">docker pull nginx  <span class="comment">#下载最新版</span></span><br><span class="line">docker pull nginx:1.20.1 <span class="comment">#下载指定版本</span></span><br><span class="line"></span><br><span class="line"><span class="comment">## 下载来的镜像都在本地</span></span><br><span class="line">docker images  <span class="comment">#查看所有镜像</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 移除镜像</span></span><br><span class="line">docker rmi 镜像名:版本号 / 镜像<span class="built_in">id</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<h5 id="容器启动停止相关">2）容器启动停止相关：</h5>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">docker run [OPTIONS] IMAGE [COMMAND] [ARG...]</span><br><span class="line"></span><br><span class="line"><span class="comment"># -d：后台运行</span></span><br><span class="line"><span class="comment"># --restart=always   该容器开机自启，应用开机自启</span></span><br><span class="line"><span class="comment"># -p 外部端口:内部端口  端口映射 </span></span><br><span class="line">docker run --name=mynginx -d --restart=always -p 88:80 nginx</span><br><span class="line"></span><br><span class="line"><span class="comment"># 查看正在运行的容器</span></span><br><span class="line">docker ps</span><br><span class="line"><span class="comment"># 查看所有容器</span></span><br><span class="line">docker ps -a</span><br><span class="line"></span><br><span class="line"><span class="comment"># 删除停止的容器</span></span><br><span class="line">docker <span class="built_in">rm</span>  容器<span class="built_in">id</span>/名字</span><br><span class="line">docker <span class="built_in">rm</span> -f mynginx   <span class="comment"># 强制删除正在运行中的容器</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#停止容器</span></span><br><span class="line">docker stop 容器<span class="built_in">id</span>/名字</span><br><span class="line"><span class="comment">#再次启动</span></span><br><span class="line">docker start 容器<span class="built_in">id</span>/名字</span><br></pre></td></tr></table></figure>
+<h5 id="修改容器内容">3）修改容器内容：</h5>
+<ul>
+<li>法1：进入容器内部，然后修改</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 进入容器内部的系统，修改容器内容</span></span><br><span class="line">docker <span class="built_in">exec</span> -it 容器<span class="built_in">id</span> /bin/bash</span><br></pre></td></tr></table></figure>
+<ul>
+<li>法2：挂载数据到外部修改：(请注意：挂载在外部的数据是没法提交改变的)</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">docker run --name=mynginx </span><br><span class="line">-d  --restart=always </span><br><span class="line">-p  88:80 </span><br><span class="line">-v /data/html:/usr/share/nginx/html:ro  <span class="comment"># 外部数据地址:内部数据地址 :ro代表只读模式，容器内不能修改</span></span><br><span class="line">nginx</span><br></pre></td></tr></table></figure>
+<h5 id="提交改变">4）提交改变：</h5>
+<ul>
+<li>将自己修改好的自定义镜像提交,这样会在本地产生一个新的镜像</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">docker commit [OPTIONS] CONTAINER [REPOSITORY[:TAG]]</span><br><span class="line"></span><br><span class="line"><span class="comment"># -a author -m message</span></span><br><span class="line">docker commit -a <span class="string">&quot;fantast&quot;</span> -m <span class="string">&quot;首页变化&quot;</span> 341d81f7504f slksnginx:v1.0</span><br></pre></td></tr></table></figure>
+<ul>
+<li>将镜像文件打包存储，然后传输给另一台主机：</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 打包镜像至压缩包</span></span><br><span class="line">docker save -o abc.tar fantastnginx:v1.0</span><br><span class="line"><span class="comment"># 远程传输</span></span><br><span class="line">scp abc.tar root@128.12.33.12:/root/</span><br><span class="line"><span class="comment"># 加载docker镜像压缩包</span></span><br><span class="line">docker load abc.tar</span><br></pre></td></tr></table></figure>
+<ul>
+<li>推送至远程仓库docker hub</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 把旧镜像的名字，改成仓库要求的新版名字</span></span><br><span class="line">docker tag fantastnginx:v1.0 fantast616/fantastnginx:v1.0</span><br><span class="line"></span><br><span class="line"><span class="comment"># 登录到docker hub</span></span><br><span class="line">docker login       </span><br><span class="line"></span><br><span class="line">docker <span class="built_in">logout</span>（推送完成镜像后退出）</span><br><span class="line"></span><br><span class="line"><span class="comment"># 推送</span></span><br><span class="line">docker push fantast616/fantastnginx:v1.0</span><br><span class="line"></span><br><span class="line"><span class="comment"># 别的机器下载</span></span><br><span class="line">docker pull fantast616/fantastnginx:v1.0</span><br></pre></td></tr></table></figure>
+<h5 id="其他命令">5）其他命令：</h5>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># docker 运行日志</span></span><br><span class="line">docker logs 容器名/id</span><br><span class="line"><span class="comment"># docker 进入内部BASH控制台</span></span><br><span class="line">docker <span class="built_in">exec</span> -it 容器<span class="built_in">id</span> /bin/bash</span><br><span class="line"></span><br><span class="line"><span class="comment"># docker 经常修改nginx配置文件</span></span><br><span class="line">docker run -d -p 80:80 \</span><br><span class="line">-v /data/html:/usr/share/nginx/html:ro \</span><br><span class="line">-v /data/conf/nginx.conf:/etc/nginx/nginx.conf \</span><br><span class="line">--name mynginx-02 \</span><br><span class="line">nginx</span><br><span class="line"></span><br><span class="line"><span class="comment">#把容器指定位置的东西复制出来 </span></span><br><span class="line">docker <span class="built_in">cp</span> 5eff66eec7e1:/etc/nginx/nginx.conf  /data/conf/nginx.conf  </span><br><span class="line"><span class="comment">#把外面的内容复制到容器里面</span></span><br><span class="line">docker <span class="built_in">cp</span>  /data/conf/nginx.conf  5eff66eec7e1:/etc/nginx/nginx.conf</span><br></pre></td></tr></table></figure>
+<h4 id="编写自己的应用并部署">5、编写自己的应用并部署：</h4>
 
     </div>
 
@@ -405,13 +456,13 @@ src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-202210311702453
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-line"></i>
     </span>
-    <span title="站点总字数">761k</span>
+    <span title="站点总字数">769k</span>
   </span>
   <span class="post-meta-item">
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">35:13</span>
+    <span title="站点阅读时长">35:35</span>
   </span>
 </div>
 <div class="busuanzi-count">
