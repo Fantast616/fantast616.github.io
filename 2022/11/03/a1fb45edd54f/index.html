@@ -23,26 +23,26 @@
 <meta name="description" content="云原生快速入门系列笔记，云平台+容器化">
 <meta property="og:type" content="article">
 <meta property="og:title" content="云原生快速入门系列Chap1——云平台+容器化">
-<meta property="og:url" content="https://blog.fantast.top/2022/04/27/a1c507dae6b0/index.html">
+<meta property="og:url" content="https://blog.fantast.top/2022/11/03/a1fb45edd54f/index.html">
 <meta property="og:site_name" content="Fantast&#39;s Blog">
 <meta property="og:description" content="云原生快速入门系列笔记，云平台+容器化">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20221101161243475.png">
 <meta property="og:image" content="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20221101161359831.png">
 <meta property="og:image" content="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20221101161524606.png">
-<meta property="article:published_time" content="2022-04-27T09:43:19.000Z">
-<meta property="article:modified_time" content="2022-11-01T08:54:51.000Z">
+<meta property="article:published_time" content="2022-11-03T09:43:19.000Z">
+<meta property="article:modified_time" content="2022-11-04T10:06:28.873Z">
 <meta property="article:author" content="Fantast">
 <meta property="article:tag" content="Cloud Native">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20221101161243475.png">
 
 
-<link rel="canonical" href="https://blog.fantast.top/2022/04/27/a1c507dae6b0/">
+<link rel="canonical" href="https://blog.fantast.top/2022/11/03/a1fb45edd54f/">
 
 
 
-<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://blog.fantast.top/2022/04/27/a1c507dae6b0/","path":"2022/04/27/a1c507dae6b0/","title":"云原生快速入门系列Chap1——云平台+容器化"}</script>
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://blog.fantast.top/2022/11/03/a1fb45edd54f/","path":"2022/11/03/a1fb45edd54f/","title":"云原生快速入门系列Chap1——云平台+容器化"}</script>
 
 <script class="next-config" data-name="calendar" type="application/json">""</script>
 <title>云原生快速入门系列Chap1——云平台+容器化 | Fantast's Blog</title>
@@ -152,7 +152,7 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
-            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%85%AC%E6%9C%89%E4%BA%91%E5%92%8C%E7%A7%81%E6%9C%89%E4%BA%91"><span class="nav-text">1、公有云和私有云：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%A7%81%E6%9C%89%E7%BD%91%E7%BB%9Cvpc"><span class="nav-text">2、私有网络VPC</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#docker%E5%AE%B9%E5%99%A8%E5%8C%96%E6%A6%82%E5%BF%B5"><span class="nav-text">3、Docker容器化概念</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#docker%E5%AE%B9%E5%99%A8%E5%8C%96%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4"><span class="nav-text">4、Docker容器化常用命令</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E9%95%9C%E5%83%8F%E7%9B%B8%E5%85%B3"><span class="nav-text">1）镜像相关</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%AE%B9%E5%99%A8%E5%90%AF%E5%8A%A8%E5%81%9C%E6%AD%A2%E7%9B%B8%E5%85%B3"><span class="nav-text">2）容器启动停止相关：</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E4%BF%AE%E6%94%B9%E5%AE%B9%E5%99%A8%E5%86%85%E5%AE%B9"><span class="nav-text">3）修改容器内容：</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%8F%90%E4%BA%A4%E6%94%B9%E5%8F%98"><span class="nav-text">4）提交改变：</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%85%B6%E4%BB%96%E5%91%BD%E4%BB%A4"><span class="nav-text">5）其他命令：</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%BC%96%E5%86%99%E8%87%AA%E5%B7%B1%E7%9A%84%E5%BA%94%E7%94%A8%E5%B9%B6%E9%83%A8%E7%BD%B2"><span class="nav-text">5、编写自己的应用并部署：</span></a></li></ol></div>
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%85%AC%E6%9C%89%E4%BA%91%E5%92%8C%E7%A7%81%E6%9C%89%E4%BA%91"><span class="nav-text">1、公有云和私有云：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%A7%81%E6%9C%89%E7%BD%91%E7%BB%9Cvpc"><span class="nav-text">2、私有网络VPC</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#docker%E5%AE%B9%E5%99%A8%E5%8C%96%E6%A6%82%E5%BF%B5"><span class="nav-text">3、Docker容器化概念</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#docker%E5%AE%B9%E5%99%A8%E5%8C%96%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4"><span class="nav-text">4、Docker容器化常用命令</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E9%95%9C%E5%83%8F%E7%9B%B8%E5%85%B3"><span class="nav-text">1）镜像相关</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%AE%B9%E5%99%A8%E5%90%AF%E5%8A%A8%E5%81%9C%E6%AD%A2%E7%9B%B8%E5%85%B3"><span class="nav-text">2）容器启动停止相关：</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E4%BF%AE%E6%94%B9%E5%AE%B9%E5%99%A8%E5%86%85%E5%AE%B9"><span class="nav-text">3）修改容器内容：</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%8F%90%E4%BA%A4%E6%94%B9%E5%8F%98"><span class="nav-text">4）提交改变：</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%85%B6%E4%BB%96%E5%91%BD%E4%BB%A4"><span class="nav-text">5）其他命令：</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%BC%96%E5%86%99%E4%B8%80%E4%B8%AA%E7%AE%80%E5%8D%95%E7%9A%84springboot%E5%BA%94%E7%94%A8%E5%B9%B6%E9%83%A8%E7%BD%B2"><span class="nav-text">5、编写一个简单的SpringBoot应用并部署：</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#docker%E9%83%A8%E7%BD%B2redis"><span class="nav-text">1）Docker部署Redis</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E9%9D%9Edocker%E9%83%A8%E7%BD%B2%E6%AD%A5%E9%AA%A4"><span class="nav-text">2）非Docker部署步骤：</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#docker%E9%83%A8%E7%BD%B2%E6%AD%A5%E9%AA%A4%E7%BC%96%E5%86%99dockerfile"><span class="nav-text">3）Docker部署步骤：编写DockerFile</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%88%86%E4%BA%ABdocker"><span class="nav-text">4）分享docker</span></a></li></ol></li></ol></div>
         </div>
         <!--/noindex-->
 
@@ -167,7 +167,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">167</span>
+          <span class="site-state-item-count">168</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -239,7 +239,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://blog.fantast.top/2022/04/27/a1c507dae6b0/">
+    <link itemprop="mainEntityOfPage" href="https://blog.fantast.top/2022/11/03/a1fb45edd54f/">
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.webp">
       <meta itemprop="name" content="Fantast">
@@ -263,14 +263,14 @@
       </span>
       <span class="post-meta-item-text">发表于</span>
 
-      <time title="创建时间：2022-04-27 17:43:19" itemprop="dateCreated datePublished" datetime="2022-04-27T17:43:19+08:00">2022-04-27</time>
+      <time title="创建时间：2022-11-03 17:43:19" itemprop="dateCreated datePublished" datetime="2022-11-03T17:43:19+08:00">2022-11-03</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2022-11-01 16:54:51" itemprop="dateModified" datetime="2022-11-01T16:54:51+08:00">2022-11-01</time>
+      <time title="修改时间：2022-11-04 18:06:28" itemprop="dateModified" datetime="2022-11-04T18:06:28+08:00">2022-11-04</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -300,14 +300,14 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">本文字数：</span>
-      <span>2.5k</span>
+      <span>3.4k</span>
     </span>
     <span class="post-meta-item" title="阅读时长">
       <span class="post-meta-item-icon">
         <i class="far fa-clock"></i>
       </span>
       <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>7 分钟</span>
+      <span>9 分钟</span>
     </span>
 </div>
 
@@ -397,7 +397,31 @@ src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-202210311702453
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 把旧镜像的名字，改成仓库要求的新版名字</span></span><br><span class="line">docker tag fantastnginx:v1.0 fantast616/fantastnginx:v1.0</span><br><span class="line"></span><br><span class="line"><span class="comment"># 登录到docker hub</span></span><br><span class="line">docker login       </span><br><span class="line"></span><br><span class="line">docker <span class="built_in">logout</span>（推送完成镜像后退出）</span><br><span class="line"></span><br><span class="line"><span class="comment"># 推送</span></span><br><span class="line">docker push fantast616/fantastnginx:v1.0</span><br><span class="line"></span><br><span class="line"><span class="comment"># 别的机器下载</span></span><br><span class="line">docker pull fantast616/fantastnginx:v1.0</span><br></pre></td></tr></table></figure>
 <h5 id="其他命令">5）其他命令：</h5>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># docker 运行日志</span></span><br><span class="line">docker logs 容器名/id</span><br><span class="line"><span class="comment"># docker 进入内部BASH控制台</span></span><br><span class="line">docker <span class="built_in">exec</span> -it 容器<span class="built_in">id</span> /bin/bash</span><br><span class="line"></span><br><span class="line"><span class="comment"># docker 经常修改nginx配置文件</span></span><br><span class="line">docker run -d -p 80:80 \</span><br><span class="line">-v /data/html:/usr/share/nginx/html:ro \</span><br><span class="line">-v /data/conf/nginx.conf:/etc/nginx/nginx.conf \</span><br><span class="line">--name mynginx-02 \</span><br><span class="line">nginx</span><br><span class="line"></span><br><span class="line"><span class="comment">#把容器指定位置的东西复制出来 </span></span><br><span class="line">docker <span class="built_in">cp</span> 5eff66eec7e1:/etc/nginx/nginx.conf  /data/conf/nginx.conf  </span><br><span class="line"><span class="comment">#把外面的内容复制到容器里面</span></span><br><span class="line">docker <span class="built_in">cp</span>  /data/conf/nginx.conf  5eff66eec7e1:/etc/nginx/nginx.conf</span><br></pre></td></tr></table></figure>
-<h4 id="编写自己的应用并部署">5、编写自己的应用并部署：</h4>
+<h4
+id="编写一个简单的springboot应用并部署">5、编写一个简单的SpringBoot应用并部署：</h4>
+<h5 id="docker部署redis">1）Docker部署Redis</h5>
+<p>首先下载redis镜像，并在外部配置文件，最后启动redis镜像完成映射</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">docker run [OPTIONS] IMAGE [COMMAND] [ARG...]</span><br><span class="line"></span><br><span class="line">#redis使用自定义配置文件启动</span><br><span class="line"></span><br><span class="line">docker run -v /data/redis/redis.conf:/etc/redis/redis.conf \</span><br><span class="line">-v /data/redis/data:/data \</span><br><span class="line">-d --name myredis \</span><br><span class="line">-p 6379:6379 \</span><br><span class="line">redis:latest  redis-server /etc/redis/redis.conf</span><br></pre></td></tr></table></figure>
+<h5 id="非docker部署步骤">2）非Docker部署步骤：</h5>
+<ul>
+<li>SpringBoot打包为可执行的jar包，并上传至服务器</li>
+<li>服务器运行java -jar</li>
+</ul>
+<h5
+id="docker部署步骤编写dockerfile">3）Docker部署步骤：编写DockerFile</h5>
+<ul>
+<li>Dockerfile如下：</li>
+</ul>
+<figure class="highlight dockerfile"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">FROM</span> openjdk:<span class="number">8</span>-jdk-slim  <span class="comment"># 基础镜像环境，比如说运行环境java</span></span><br><span class="line"><span class="keyword">LABEL</span><span class="language-bash"> maintainer=fantast</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">COPY</span><span class="language-bash"> target/*.jar /app.jar</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">ENTRYPOINT</span><span class="language-bash"> [<span class="string">&quot;java&quot;</span>,<span class="string">&quot;-jar&quot;</span>,<span class="string">&quot;/app.jar&quot;</span>]</span></span><br></pre></td></tr></table></figure>
+<ul>
+<li><p>还有一个Jar目录叫做 target</p></li>
+<li><p>将Dockerfile和target上传到服务器的一个目录下，然后执行以下命令构建镜像</p></li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker build -t java-demo:v1.0 .</span><br></pre></td></tr></table></figure>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/image-20221104142249625.png" /></p>
+<h5 id="分享docker">4）分享docker</h5>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 登录docker hub</span></span><br><span class="line">docker login</span><br><span class="line"></span><br><span class="line"><span class="comment">#给旧镜像起名</span></span><br><span class="line">docker tag java-demo:v1.0  fantast/java-demo:v1.0</span><br><span class="line"></span><br><span class="line"><span class="comment"># 推送到docker hub</span></span><br><span class="line">docker push fantast/java-demo:v1.0</span><br><span class="line"></span><br><span class="line"><span class="comment"># 别的机器</span></span><br><span class="line">docker pull fantast/java-demo:v1.0</span><br><span class="line"></span><br><span class="line"><span class="comment"># 别的机器运行</span></span><br><span class="line">docker run -d -p 8080:8080 --name myjava-app java-demo:v1.0</span><br></pre></td></tr></table></figure>
 
     </div>
 
@@ -405,6 +429,12 @@ src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-202210311702453
     
     
       
+  <div class="popular-posts-header">相关文章</div>
+  <ul class="popular-posts">
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2022\11\04\8e7c78160822\" rel="bookmark">云原生快速入门系列Chap2——Kubernetes入门</a></div>
+    </li>
+  </ul>
 
 
     <footer class="post-footer">
@@ -416,13 +446,13 @@ src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-202210311702453
 
           <div class="post-nav">
             <div class="post-nav-item">
-                <a href="/2022/04/24/22e32ee5ba59/" rel="prev" title="《Not All Tokens Are Equal Human-centric Visual Analysis via Token Clustering Transformer》">
-                  <i class="fa fa-chevron-left"></i> 《Not All Tokens Are Equal Human-centric Visual Analysis via Token Clustering Transformer》
+                <a href="/2022/10/28/a30af89db2dc/" rel="prev" title="Mysql数据库调优工具">
+                  <i class="fa fa-chevron-left"></i> Mysql数据库调优工具
                 </a>
             </div>
             <div class="post-nav-item">
-                <a href="/2022/04/27/698edcb24aab/" rel="next" title="计算机科学笔记1——P1~P10集内容笔记">
-                  计算机科学笔记1——P1~P10集内容笔记 <i class="fa fa-chevron-right"></i>
+                <a href="/2022/11/04/8e7c78160822/" rel="next" title="云原生快速入门系列Chap2——Kubernetes入门">
+                  云原生快速入门系列Chap2——Kubernetes入门 <i class="fa fa-chevron-right"></i>
                 </a>
             </div>
           </div>
@@ -456,13 +486,13 @@ src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-202210311702453
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-line"></i>
     </span>
-    <span title="站点总字数">769k</span>
+    <span title="站点总字数">771k</span>
   </span>
   <span class="post-meta-item">
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">35:36</span>
+    <span title="站点阅读时长">35:43</span>
   </span>
 </div>
 <div class="busuanzi-count">

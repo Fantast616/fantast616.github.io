@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.2.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css" integrity="sha256-mUZM63G8m73Mcidfrv5E+Y61y7a12O5mW4ezU3bxqW4=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"blog.fantast.top","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.9.0","exturl":false,"sidebar":{"position":"left","width":250,"display":"always","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":true,"color":"#222","save":"manual"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"utterances","storage":true,"lazyload":false,"nav":null,"activeClass":"utterances"},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+<meta name="description" content="云原生快速入门系列笔记，Kubernetes入门">
+<meta property="og:type" content="article">
+<meta property="og:title" content="云原生快速入门系列Chap2——Kubernetes入门">
+<meta property="og:url" content="https://blog.fantast.top/2022/11/04/8e7c78160822/index.html">
+<meta property="og:site_name" content="Fantast&#39;s Blog">
+<meta property="og:description" content="云原生快速入门系列笔记，Kubernetes入门">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2022-11-04T09:43:19.000Z">
+<meta property="article:modified_time" content="2022-11-04T15:02:11.767Z">
+<meta property="article:author" content="Fantast">
+<meta property="article:tag" content="Cloud Native">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://blog.fantast.top/2022/11/04/8e7c78160822/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://blog.fantast.top/2022/11/04/8e7c78160822/","path":"2022/11/04/8e7c78160822/","title":"云原生快速入门系列Chap2——Kubernetes入门"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>云原生快速入门系列Chap2——Kubernetes入门 | Fantast's Blog</title>
+  
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<link rel="alternate" href="/atom.xml" title="Fantast's Blog" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Fantast's Blog</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li>
+        <li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li>
+        <li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li>
+        <li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li>
+        <li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#kubernetes%E5%9F%BA%E7%A1%80%E6%A6%82%E5%BF%B5"><span class="nav-text">1、Kubernetes基础概念：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#kubernetes%E6%9E%B6%E6%9E%84"><span class="nav-text">2、Kubernetes架构：</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Fantast"
+      src="/images/avatar.webp">
+  <p class="site-author-name" itemprop="name">Fantast</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">168</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">42</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">98</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/fantast416" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;fantast416" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:fantast416@gmail.com" title="E-Mail → mailto:fantast416@gmail.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll site-overview-item animated">
+    <div class="links-of-blogroll-title"><i class="fa fa-globe fa-fw"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://www.zhihu.com/people/shuo-shuo-3-41" title="https:&#x2F;&#x2F;www.zhihu.com&#x2F;people&#x2F;shuo-shuo-3-41" rel="noopener" target="_blank">ZhiHu</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="http://www.next.zju.edu.cn/" title="http:&#x2F;&#x2F;www.next.zju.edu.cn&#x2F;" rel="noopener" target="_blank">NextLab</a>
+        </li>
+    </ul>
+  </div>
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://blog.fantast.top/2022/11/04/8e7c78160822/">
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.webp">
+      <meta itemprop="name" content="Fantast">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Fantast's Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          云原生快速入门系列Chap2——Kubernetes入门
+        </h1>
+
+        <div class="post-meta-container">
+          
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2022-11-04 17:43:19 / 修改时间：23:02:11" itemprop="dateCreated datePublished" datetime="2022-11-04T17:43:19+08:00">2022-11-04</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E2%91%A7-%E5%B7%A5%E7%A8%8B%E7%B1%BB%E7%AC%94%E8%AE%B0/" itemprop="url" rel="index"><span itemprop="name">⑧ 工程类笔记</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E2%91%A7-%E5%B7%A5%E7%A8%8B%E7%B1%BB%E7%AC%94%E8%AE%B0/%E4%BA%91%E5%8E%9F%E7%94%9F%E5%85%A5%E9%97%A8/" itemprop="url" rel="index"><span itemprop="name">云原生入门</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>1.6k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>4 分钟</span>
+    </span>
+</div>
+
+            <div class="post-description">云原生快速入门系列笔记，Kubernetes入门</div>
+            <div class="post-remind">Google Chrome is recommended, otherwise the image size may be wrong</div>
+            <div class="post-remind">FireFox is not recommended,Because it does not support the image zoom property</div>
+        </div>
+        
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h4 id="kubernetes基础概念">1、Kubernetes基础概念：</h4>
+<ul>
+<li><p>工程部署的演变：传统部署——虚拟机部署——容器化部署</p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/image-20221104180722605.png" /></p></li>
+<li><p>当容器化部署时代到来，微服务模块非常多的情境下，可能一台服务器上会有几十个容器，且不同的容器都部署在几十台服务器上，这个时候我们就需要一个<strong>大规模的容器编排管理系统</strong>。Kubernetes
+为你提供了一个可弹性运行分布式系统的框架。 Kubernetes
+会满足你的扩展要求、故障转移、部署模式等。</p></li>
+<li><p>Kubernetes的特性如下：</p>
+<ul>
+<li><strong>服务发现和负载均衡</strong>：如果进入容器的流量很大，
+Kubernetes 可以负载均衡并分配网络流量，从而使部署稳定。</li>
+<li><strong>存储编排</strong>：Kubernetes
+允许你自动挂载你选择的存储系统，例如本地存储、公共云提供商等。</li>
+<li><strong>自动部署和回滚</strong>：你可以自动化 Kubernetes
+来为你的部署创建新容器， 删除现有容器并将它们的所有资源用于新容器</li>
+<li><strong>自动完成装箱计算</strong>：Kubernetes 允许你指定每个容器所需
+CPU 和内存（RAM）。 当容器指定了资源请求时，Kubernetes
+可以做出更好的决策来管理容器的资源。</li>
+<li><strong>自我修复</strong>：Kubernetes
+重新启动失败的容器、替换容器、杀死不响应用户定义的
+运行状况检查的容器，并且在准备好服务之前不将其通告给客户端。</li>
+<li><strong>密钥与配置管理</strong>：Kubernetes
+允许你存储和管理敏感信息，例如密码、OAuth 令牌和 ssh 密钥。
+你可以在不重建容器镜像的情况下部署和更新密钥和应用程序配置，也无需在堆栈配置中暴露密钥。</li>
+</ul></li>
+</ul>
+<h4 id="kubernetes架构">2、Kubernetes架构：</h4>
+<ul>
+<li>K8s基于一个服务器集群进行安装：N个主节点+M个工作节点（N&gt;=1）</li>
+</ul>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/image-20221104181719685.png" /></p>
+<ul>
+<li><strong>Control Plane
+控制平面【相当于集团中心，Master节点】</strong>：控制平面的组件对集群做出全局决策(比如调度)，以及检测和响应集群事件。控制平面组件可以在集群中的任何节点上运行。
+<ul>
+<li>apiserver【相当于集团秘书部，一切对外活动都交给她中转】:API 服务器是
+Kubernetes 控制面的前端。它可通过部署多个实例进行伸缩。你可以运行
+kube-apiserver 的多个实例，并在这些实例之间平衡流量。</li>
+<li>scheduler【调度者】：责监视新创建的、未指定运行<a
+target="_blank" rel="noopener" href="https://kubernetes.io/zh/docs/concepts/architecture/nodes/">节点（node）</a>的
+容器，选择节点让容器在上面运行。调度决策考虑的因素包括单个 Pod 和 Pod
+集合的资源需求、硬件/软件/策略约束等等。</li>
+<li>etcd【相当于集团资料中心】：etcd
+是兼具一致性和高可用性的键值数据库，可以作为保存 Kubernetes
+所有集群数据的后台数据库。</li>
+<li>controller-manager(c-m)【集团决策者】：在主节点上运行 <a
+target="_blank" rel="noopener" href="https://kubernetes.io/zh/docs/concepts/architecture/controller/">控制器</a>
+的组件。从逻辑上讲，每个<a
+target="_blank" rel="noopener" href="https://kubernetes.io/zh/docs/concepts/architecture/controller/">控制器</a>都是一个单独的进程，
+但是为了降低复杂性，它们都被编译到同一个可执行文件，并在一个进程中运行。</li>
+<li>cloud-controller-manager(c-c-m)【外联部，可选】：仅运行特定于云平台的控制回路。
+如果你在自己的环境中运行 Kubernetes，或者在本地计算机中运行学习环境，
+所部署的环境中不需要云控制器管理器。</li>
+</ul></li>
+<li><strong>Node组件【相当于分工厂，Worker节点】</strong>：节点组件在每个节点上运行，维护运行的
+Pod 并提供 Kubernetes 运行环境
+<ul>
+<li><p>kubelet【厂长，监工】：一个在集群中每个<a
+target="_blank" rel="noopener" href="https://kubernetes.io/zh/docs/concepts/architecture/nodes/">节点（node）</a>上运行的代理。
+它保证<a
+target="_blank" rel="noopener" href="https://kubernetes.io/zh/docs/concepts/overview/what-is-kubernetes/#why-containers">容器（containers）</a>都
+运行在 <a
+target="_blank" rel="noopener" href="https://kubernetes.io/docs/concepts/workloads/pods/pod-overview/">Pod</a>
+中。kubelet 接收一组通过各类机制提供给它的 PodSpecs，确保这些 PodSpecs
+中描述的容器处于运行状态且健康。负责该节点中应用的启停以及销毁，能够探测到不同应用的状态，然后汇报给api-server。</p></li>
+<li><p>kube-proxy【门卫导航，网络访问入口】：是集群中每个节点上运行的网络代理，
+实现 Kubernetes <a
+target="_blank" rel="noopener" href="https://kubernetes.io/zh/docs/concepts/services-networking/service/">服务（Service）</a>
+概念的一部分。可以告知想要访问谁怎么访问，kube-proxy
+维护节点上的网络规则。这些网络规则允许从集群内部或外部的网络会话与 Pod
+进行网络通信。</p></li>
+</ul></li>
+<li>交互形式：</li>
+</ul>
+<p><img
+src="C:\Users\Fantast\AppData\Roaming\Typora\typora-user-images\image-20221104230011339.png" /></p>
+
+    </div>
+
+    
+    
+    
+      
+  <div class="popular-posts-header">相关文章</div>
+  <ul class="popular-posts">
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2022\11\03\a1fb45edd54f\" rel="bookmark">云原生快速入门系列Chap1——云平台+容器化</a></div>
+    </li>
+  </ul>
+
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Cloud-Native/" rel="tag"># Cloud Native</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2022/11/03/a1fb45edd54f/" rel="prev" title="云原生快速入门系列Chap1——云平台+容器化">
+                  <i class="fa fa-chevron-left"></i> 云原生快速入门系列Chap1——云平台+容器化
+                </a>
+            </div>
+            <div class="post-nav-item">
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments utterances-container"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Fantast</span>
+</div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+    <span title="站点总字数">771k</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">35:43</span>
+  </span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script><script src="/js/bookmark.js"></script>
+
+  
+<script src="https://cdn.jsdelivr.net/npm/hexo-generator-searchdb@1.4.0/dist/search.js" integrity="sha256-vXZMYLEqsROAXkEw93GGIvaB2ab+QW6w3+1ahD9nXXA=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdn.jsdelivr.net/npm/mathjax@3.2.0/es5/tex-mml-chtml.js","integrity":"sha256-r+3itOMtGGjap0x+10hu6jW/gZCzxHsoKrOd7gyRSGY="}}</script>
+<script src="/js/third-party/math/mathjax.js"></script>
+
+
+<script class="next-config" data-name="utterances" type="application/json">{"enable":true,"repo":"Fantast416/myblog-comment","issue_term":"pathname","theme":"github-light"}</script>
+<script src="/js/third-party/comments/utterances.js"></script>
+
+</body>
+</html>
