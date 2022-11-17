@@ -1,0 +1,623 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.2.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css" integrity="sha256-mUZM63G8m73Mcidfrv5E+Y61y7a12O5mW4ezU3bxqW4=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"blog.fantast.top","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.9.0","exturl":false,"sidebar":{"position":"left","width":250,"display":"always","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":true,"color":"#222","save":"manual"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"utterances","storage":true,"lazyload":false,"nav":null,"activeClass":"utterances"},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+<meta name="description" content="Chap15——Mysql 事务、事务日志与锁">
+<meta property="og:type" content="article">
+<meta property="og:title" content="事务、事务日志与锁">
+<meta property="og:url" content="https://blog.fantast.top/2022/11/10/02d829a87e69/index.html">
+<meta property="og:site_name" content="Fantast&#39;s Blog">
+<meta property="og:description" content="Chap15——Mysql 事务、事务日志与锁">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20221110143622797.png">
+<meta property="og:image" content="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20221110151010412.png">
+<meta property="og:image" content="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20221110151047171.png">
+<meta property="article:published_time" content="2022-11-10T09:09:19.000Z">
+<meta property="article:modified_time" content="2022-11-10T07:50:08.000Z">
+<meta property="article:author" content="Fantast">
+<meta property="article:tag" content="Database">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20221110143622797.png">
+
+
+<link rel="canonical" href="https://blog.fantast.top/2022/11/10/02d829a87e69/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://blog.fantast.top/2022/11/10/02d829a87e69/","path":"2022/11/10/02d829a87e69/","title":"事务、事务日志与锁"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>事务、事务日志与锁 | Fantast's Blog</title>
+  
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<link rel="alternate" href="/atom.xml" title="Fantast's Blog" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Fantast's Blog</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li>
+        <li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li>
+        <li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li>
+        <li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li>
+        <li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%80%E4%BA%8B%E5%8A%A1%E6%A6%82%E8%BF%B0"><span class="nav-text">一、事务概述</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#acid%E7%89%B9%E6%80%A7"><span class="nav-text">1、ACID特性：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BA%8B%E5%8A%A1%E7%9A%84%E7%8A%B6%E6%80%81"><span class="nav-text">2、事务的状态：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%98%BE%E5%BC%8F%E4%BA%8B%E5%8A%A1%E5%92%8C%E9%9A%90%E5%BC%8F%E4%BA%8B%E5%8A%A1"><span class="nav-text">3、显式事务和隐式事务：</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%98%BE%E5%BC%8F%E4%BA%8B%E5%8A%A1"><span class="nav-text">1）显式事务：</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E9%9A%90%E5%BC%8F%E4%BA%8B%E5%8A%A1"><span class="nav-text">2）隐式事务：</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BA%8B%E5%8A%A1%E7%B1%BB%E5%9E%8B"><span class="nav-text">4、事务类型：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BA%8B%E5%8A%A1%E7%9A%84%E9%9A%94%E7%A6%BB%E7%BA%A7%E5%88%AB"><span class="nav-text">5、事务的隔离级别：</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E8%AE%BF%E9%97%AE%E7%9B%B8%E5%90%8C%E6%95%B0%E6%8D%AE%E7%9A%84%E4%BA%8B%E5%8A%A1%E4%B8%8D%E4%B8%B2%E8%A1%8C%E5%8F%AF%E8%83%BD%E5%AF%BC%E8%87%B4%E7%9A%84%E9%97%AE%E9%A2%98"><span class="nav-text">1）访问相同数据的事务不串行可能导致的问题：</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%9B%9B%E7%A7%8D%E9%9A%94%E7%A6%BB%E7%BA%A7%E5%88%AB"><span class="nav-text">2）四种隔离级别：</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BA%8C%E4%BA%8B%E5%8A%A1%E6%97%A5%E5%BF%97"><span class="nav-text">二、事务日志：</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#redo%E6%97%A5%E5%BF%97"><span class="nav-text">1、REDO日志：</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#why%E9%9C%80%E8%A6%81redo%E6%97%A5%E5%BF%97"><span class="nav-text">1）Why需要REDO日志？</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%A6%82%E4%BD%95%E8%A7%A3%E5%86%B3%E4%B8%8A%E8%BF%B0%E9%97%AE%E9%A2%98"><span class="nav-text">2）如何解决上述问题？</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#redo%E6%97%A5%E5%BF%97%E7%9A%84%E4%BC%98%E7%BC%BA%E7%82%B9"><span class="nav-text">3）REDO日志的优缺点：</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#redo%E6%97%A5%E5%BF%97%E7%9A%84%E7%BB%84%E6%88%90%E4%B8%8E%E5%88%B7%E7%9B%98%E7%AD%96%E7%95%A5"><span class="nav-text">4）REDO日志的组成与刷盘策略：</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#undo%E6%97%A5%E5%BF%97"><span class="nav-text">2、UNDO日志：</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#why%E9%9C%80%E8%A6%81undo%E6%97%A5%E5%BF%97"><span class="nav-text">1）Why需要UNDO日志？</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#undo-%E6%97%A5%E5%BF%97%E7%9A%84%E4%BD%9C%E7%94%A8"><span class="nav-text">2）UNDO 日志的作用：</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#undo-%E6%97%A5%E5%BF%97%E7%9A%84%E5%AD%98%E5%82%A8%E7%BB%93%E6%9E%84"><span class="nav-text">3）UNDO 日志的存储结构：</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%89%E9%94%81"><span class="nav-text">三、锁：</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Fantast"
+      src="/images/avatar.webp">
+  <p class="site-author-name" itemprop="name">Fantast</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">171</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">43</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">100</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/fantast416" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;fantast416" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:fantast416@gmail.com" title="E-Mail → mailto:fantast416@gmail.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll site-overview-item animated">
+    <div class="links-of-blogroll-title"><i class="fa fa-globe fa-fw"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://www.zhihu.com/people/shuo-shuo-3-41" title="https:&#x2F;&#x2F;www.zhihu.com&#x2F;people&#x2F;shuo-shuo-3-41" rel="noopener" target="_blank">ZhiHu</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="http://www.next.zju.edu.cn/" title="http:&#x2F;&#x2F;www.next.zju.edu.cn&#x2F;" rel="noopener" target="_blank">NextLab</a>
+        </li>
+    </ul>
+  </div>
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://blog.fantast.top/2022/11/10/02d829a87e69/">
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.webp">
+      <meta itemprop="name" content="Fantast">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Fantast's Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          事务、事务日志与锁
+        </h1>
+
+        <div class="post-meta-container">
+          
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2022-11-10 17:09:19 / 修改时间：15:50:08" itemprop="dateCreated datePublished" datetime="2022-11-10T17:09:19+08:00">2022-11-10</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E2%93%B9-%E5%9F%BA%E7%A1%80%E7%B1%BB%E7%AC%94%E8%AE%B0/" itemprop="url" rel="index"><span itemprop="name">⓹ 基础类笔记</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E2%93%B9-%E5%9F%BA%E7%A1%80%E7%B1%BB%E7%AC%94%E8%AE%B0/%E6%95%B0%E6%8D%AE%E5%BA%93%E7%B2%BE%E7%AE%80%E7%AC%94%E8%AE%B0/" itemprop="url" rel="index"><span itemprop="name">数据库精简笔记</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>4.7k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>13 分钟</span>
+    </span>
+</div>
+
+            <div class="post-description">Chap15——Mysql 事务、事务日志与锁</div>
+            <div class="post-remind">Google Chrome is recommended, otherwise the image size may be wrong</div>
+            <div class="post-remind">FireFox is not recommended,Because it does not support the image zoom property</div>
+        </div>
+        
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h3 id="一事务概述">一、事务概述</h3>
+<h4 id="acid特性">1、ACID特性：</h4>
+<ul>
+<li><p>Atomicity：原子性</p></li>
+<li><p>Consistency：一致性，一致性是指事务执行前后，<strong>数据从一个合法性状态变换到另外一个合法性状态。</strong>这种状态是语义上的而不是语法上的，跟具体的业务有关。</p></li>
+<li><p>Isolation:
+隔离性，一个事务的执行不能被其他事务干扰，即一个事务内部的操作及使用的数据对并发的其他事务是隔离的，并发执行的各个事务之间不能互相干扰.</p></li>
+<li><p>Durability：持久性，指一个事务一旦被提交，它对数据库中数据的改变就是永久性的，接下来的其他操作和数据库故障不应该对其有任何影响。<strong>持久性是通过事务日志来保证的。日志包括了重做日志和回滚日志。</strong>当我们通过事务对数据进行修改的时候，首先会将数据库的变化信息记录到重做日志中，然后再对数据库中对应的行进行修改。这样做的好处是，即使数据库系统崩溃，数据库重启后也能找到没有更新到数据库系统中的重做日志，重新执行，从而使事务具有持久性。</p></li>
+</ul>
+<h4 id="事务的状态">2、事务的状态：</h4>
+<p><img src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20221110143622797.png" style="zoom: 33%;" /></p>
+<h4 id="显式事务和隐式事务">3、显式事务和隐式事务：</h4>
+<h5 id="显式事务">1）显式事务：</h5>
+<ol type="1">
+<li><p>START TRANSACTION [READ ONLY/READ WRITE/WITH CONSISTENT
+SNAPSHOT]</p>
+<p>显式开启一个事务,READ ONLY
+标识当前事务是一个只读事务，也就是属于该事务的数据库操作只能读取数据，而不
+能修改数据。READ WRITE
+：标识当前事务是一个读写事务，也就是属于该事务的数据库操作既可以读取数据，
+也可以修改数据。</p></li>
+<li><p>DML语句</p></li>
+<li><p>COMMIT / ROLLBACK / ROLLBACK TO [SAVEPOINT]</p></li>
+</ol>
+<h5 id="隐式事务">2）隐式事务：</h5>
+<ul>
+<li><p>Mysql中有系统变量：autocommit，当该变量为True时，每个DML语句执行后都会默认提交。【除了显式开启事务内的DML】</p></li>
+<li><p>当上述变量为False时，其在何时会隐式的提交数据呢？</p>
+<ul>
+<li><p>DDL 数据定义语言执行的时候</p></li>
+<li><p>隐式使用或修改mysql数据库中的表</p></li>
+<li><p>当我们在一个事务还没提交或者回滚时就又使用START TRANSACTION
+或者BEGIN 语句开启了另一个事务时，会隐式的提交上一个事务。</p></li>
+<li><p>使用LOCK TABLES 、UNLOCK TABLES
+等关于锁定的语句也会隐式的提交前边语句所属的事务。</p></li>
+<li><p>加载数据LOAD DATA，以及关于MYSQL复制的一些操作</p></li>
+</ul></li>
+</ul>
+<h4 id="事务类型">4、事务类型：</h4>
+<p>​ MYSQL中的事务类型参数：completion_type</p>
+<ul>
+<li>completion_type=0，默认情况，执行COMMIT时提交事务，执行下一个事务的时候还需要使用START_TRANSACTION或BEGIN来开启</li>
+<li>completion_type=1，提交事务后相当于执行了COMMIT AND
+CHAIN，相当于提交事务后又自动开启了一个相同隔离级别的事务。</li>
+<li>completion_type=2，提交事务后会自动与服务器断开连接。</li>
+</ul>
+<h4 id="事务的隔离级别">5、事务的隔离级别：</h4>
+<p>​
+事务有隔离性的特性，理论上在某个事务对某个数据进行访问时，其他事务应该进行排队，当该事务提交之后，其他事务才可以继续访问这个数据。但是这样对性能影响太大，我们既想保持事务的隔离性，又想让服务器在处理访问同一数据的多个事务时性能尽量高些，如何权衡？</p>
+<h5
+id="访问相同数据的事务不串行可能导致的问题">1）访问相同数据的事务不串行可能导致的问题：</h5>
+<ul>
+<li>脏写：事务Session A 修改了另一个<strong>未提交事务Session B
+修改过的数据</strong>，那就意味着发生了脏写</li>
+<li>脏读：Session A 读取了已经被 Session B
+更新但还没有被提交的字段，之后若 Session B 回滚，Session A
+读取的内容就是临时且无效的。</li>
+<li>不可重复读：Session A 读取了一个字段，然后 Session B 更新了该字段。
+之后Session A 再次读取同一个字段，
+值就不同了。那就意味着发生了不可重复读。</li>
+<li>幻读：Session A 从一个表中读取了一个字段, 然后 Session B
+在该表中插入了一些新的行。 之后, 如果 Session A 再次读取同一个表,
+就会多出几行。（幻读，并不是说两次读取获取的结果集不同，幻读侧重的方面是某一次的select操作得到的结果所表征的数据状态无法支撑后续的业务操作。更为具体一些：select某记录是否存在，不存在，准备插入此记录，但执行insert态无法支撑后续的业务操作。更为具体一些：select某记录是否存在，不存在，准备插入此记录，但执行insert
+时发现此记录已存在，无法插入，此时就发生了幻读。）</li>
+</ul>
+<h5 id="四种隔离级别">2）四种隔离级别：</h5>
+<p>​
+对于上述四种问题，其严重性实际上排序如下：脏写&gt;脏读&gt;不可重复读&gt;幻读，<strong>我们愿意舍弃一部分隔离性来换取一部分性能在这里就体现在：设立一些隔离级别，隔离级别越低，并发问题发生的就越多。SQL标准中设立了4个隔离级别：</strong></p>
+<p><img src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20221110151010412.png" style="zoom: 33%;" /></p>
+<ul>
+<li>READ UNCOMMITTED
+：读未提交，在该隔离级别，所有事务都可以看到其他未提交事务的执行结果。不能避免脏读、不可重复读、幻读。</li>
+<li>READ COMMITTED
+：读已提交，它满足了隔离的简单定义：一个事务只能看见已经提交事务所做的改变。这是大多数数据库系统的默认隔离级别（但不是MySQL默认的）。可以避免脏读，但不可重复读、幻读问题仍然存在。</li>
+<li>REPEATABLE READ
+：可重复读，事务A在读到一条数据之后，此时事务B对该数据进行了修改并提交，那么事务A再读该数据，读到的还是原来的内容。可以避免脏读、不可重复读，但幻读问题仍然存在。这是MySQL的默认隔离级别。</li>
+<li>SERIALIZABLE
+：可串行化，确保事务可以从一个表中读取相同的行。在这个事务持续期间，禁止其他事务对该表执行插入、更新和删除操作。所有的并发问题都可以避免，但性能十分低下。能避免脏读、不可重复读和幻读</li>
+</ul>
+<p>不同的隔离级别有不同的现象，并有不同的锁和并发机制，隔离级别越高，数据库的并发性能就越差，4种事务隔离级别与并发性能的关系如下：</p>
+<p><img src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20221110151047171.png" style="zoom: 33%;" /></p>
+<p>​ MySQL的<strong>默认隔离级别为REPEATABLE READ</strong></p>
+<h3 id="二事务日志">二、事务日志：</h3>
+<p>​
+事务有4种特性：原子性、一致性、隔离性和持久性。那么事务的四种特性到底是基于什么机制实现呢？</p>
+<ul>
+<li><p>事务的隔离性由锁机制实现。</p></li>
+<li><p>事务的原子性、一致性和持久性由事务的 redo 日志和undo
+日志来保证。</p>
+<ul>
+<li><p>REDO LOG
+称为重做日志，提供再写入操作，恢复提交事务修改的页操作，<strong>用来保证事务的持久性</strong>。</p></li>
+<li><p>UNDO LOG
+称为回滚日志，回滚行记录到某个特定版本，<strong>用来保证事务的原子性、一致性</strong>。</p></li>
+<li><p>REDO LOG
+是存储引擎层Innodb进行记录的，记录的是物理级别的一些操作，比如页号偏移量写入了啥数据，主要为了保证数据的可靠性。</p></li>
+<li><p>UNDO LOG
+是存储引擎层Innodb进行记录的，记录的是逻辑操作日志，比如对某一行数据进行INSERT语句操作，那么UNDO
+LOG就记录一条与之相反的DELETE操作，主要用于事务回滚和MVCC。</p></li>
+</ul></li>
+</ul>
+<h4 id="redo日志">1、REDO日志：</h4>
+<p>​
+InnoDB存储引擎是以页为单位来管理存储空间的。在真正访问页面之前，需要把在磁盘上的页缓存到内存中的Buffer
+Pool之后才可以访问。所有的变更都必须先更新缓冲池中的数据，<strong>然后缓冲池中的脏页会以一定的频率被刷入磁盘（checkPoint机制），通过缓冲池来优化CPU和磁盘之间的鸿沟，这样就可以保证整体的性能不会下降太快。</strong></p>
+<h5 id="why需要redo日志">1）Why需要REDO日志？</h5>
+<ul>
+<li>缓冲池可以帮助我们消除CPU和磁盘之间的鸿沟，checkpoint机制可以保证数据的最终落盘，然而由于checkpoint
+并不是每次变更的时候就触发的，而是master线程隔一段时间去处理的。<strong>所以最坏的情况就是事务提交后，刚写完缓冲池，数据库宕机了，那么这段数据就是丢失的，无法恢复。</strong></li>
+<li>事务包含持久性的特性，就是说对于一个已经提交的事务，在事务提交后即使系统发生了崩溃，这个事务对数据库中所做的更改也不能丢失，所以我们需要一个解决方案来解决。</li>
+</ul>
+<h5 id="如何解决上述问题">2）如何解决上述问题？</h5>
+<ul>
+<li>解决方案1：可以在事务提交完成之前，将该事务所修改的所有页面都刷到磁盘上，但是这种做法有问题：
+<ul>
+<li>修改量与刷新磁盘工作量严重不成比例。只修改1个字节，但是要刷1个页16KB的数据到磁盘上</li>
+<li>随机的IO刷盘是比较慢的</li>
+</ul></li>
+<li>解决方案2：REDO日志：我们只是想让已经提交了的事务对数据库中数据所做的修改永久生效，即使后来系统崩溃，在重启后也能把这种修改恢复出来。<strong>所以我们其实没有必要在每次事务提交时就把该事务在内存中修改过的全部页面刷新到磁盘，只需要把修改了哪些东西记录一下就好。</strong>比如，某个事务将系统表空间中第10号页面中偏移量为100
+处的那个字节的值 1 改成2
+。我们只需要记录一下：将第0号表空间的10号页面的偏移量为100处的值更新为
+2。同时：InnoDB引擎的事务采用了WAL技术（Write-Ahead
+Logging），这种技术的思想就是<strong>先写日志再写磁盘，只有日志写入成功，才算事务提交成功，</strong>这样即使事务提交了但是脏页还没有写入磁盘，还可以靠已经写入磁盘的redo
+log来进行恢复。当发生宕机且数据未刷到磁盘的时候，可以通过redo
+log来恢复，保证ACID中的D，这就是redo log的作用。</li>
+</ul>
+<h5 id="redo日志的优缺点">3）REDO日志的优缺点：</h5>
+<ul>
+<li>redo日志降低了刷盘频率，且因为其占用空间小，所以刷盘很快</li>
+<li>redo日志是顺序写入磁盘的，也就是说是顺序IO，比直接写磁盘的随机IO快的多。</li>
+<li>事务执行的过程中，redo
+log是在不停的记录的，并不是只有提交了才会写。</li>
+</ul>
+<h5 id="redo日志的组成与刷盘策略">4）REDO日志的组成与刷盘策略：</h5>
+<p>​</p>
+<h4 id="undo日志">2、UNDO日志：</h4>
+<h5 id="why需要undo日志">1）Why需要UNDO日志？</h5>
+<p>​ redo log是事务持久性的保证，undo
+log是事务原子性的保证。在事务中更新数据的前置操作其实是要先写入一个undo
+log。</p>
+<p>​
+但有时候事务执行到一半会出现一些情况，我们需要把数据改回原先的样子，这个过程称之为回滚，这样就可以造成一个假象：这
+个事务看起来什么都没做，所以符合原子性要求。</p>
+<p>​ 所以我们需要执行以下操作：</p>
+<p>​
+每当我们要对一条记录做改动时（这里的改动可以指INSERT、DELETE、UPDATE），都需要“留一手“—-把回
+滚时所需的东西记下来。比如：</p>
+<ul>
+<li>你插入一条记录时，至少要把这条记录的主键值记下来，之后回滚的时候只需要把这个主键值对应的记录删
+掉就好了。（对于每个INSERT，InnoDB存储引擎会完成一个DELETE）</li>
+<li>你删除了一条记录，至少要把这条记录中的内容都记下来，这样之后回滚时再把由这些内容组成的记录插入
+到表中就好了。（对于每个DELETE，InnoDB存储引擎会执行一个INSERT）</li>
+<li>你修改了一条记录，至少要把修改这条记录前的旧值都记录下来，这样之后回滚时再把这条记录更新为旧值就
+好了。（对于每个UPDATE，InnoDB存储引擎会执行一个相反的UPDATE，将修改前的行放回去）</li>
+<li>MySQL把这些为了回滚而记录的这些内容称之为撤销日志或者回滚日志（即undo
+log）。注意，由于查询操作
+（SELECT）并不会修改任何用户记录，所以在查询操作执行时，并不需要记录相应的undo日志。</li>
+</ul>
+<p>​ <strong>此外，undo log会产生redo log，也就是undo
+log的产生会伴随着redo log的产生，这是因为undo
+log也需要持久性的保护。</strong></p>
+<h5 id="undo-日志的作用">2）UNDO 日志的作用：</h5>
+<ul>
+<li><p>回滚数据：<strong>undo是逻辑日志，因此只是将数据库逻辑地恢复到原来的样子。</strong>所有修改都被逻辑地取消了，<strong>但是数据结构和页本身在回滚之后可能大不相同。</strong>因为在多用户并发系统中，可能会有数千个并发事务，其主要的任务就是协调对数据记录的并发访问。因此不能在物理上将一个页回滚到事务开始的时候，会影响别的事务。</p></li>
+<li><p>MVCC
+多版本并发控制：在InnoDB字储引擎中MVCC的实现是通过undo来完成。当用户读取一行记录时，若该记录已经被其他事务占用，当前事务可以通过undo读取之前的行版本信息，以此实现非锁定读取。</p></li>
+</ul>
+<h5 id="undo-日志的存储结构">3）UNDO 日志的存储结构：</h5>
+<h3 id="三锁">三、锁：</h3>
+
+    </div>
+
+    
+    
+    
+      
+  <div class="popular-posts-header">相关文章</div>
+  <ul class="popular-posts">
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2022\11\10\e7fbd86c0b92\" rel="bookmark">数据库设计范式</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2022\11\07\cd7b91a8821a\" rel="bookmark">数据库索引优化和查询优化</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2022\10\28\a30af89db2dc\" rel="bookmark">Mysql数据库调优工具</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2022\10\27\5b0755a55834\" rel="bookmark"></a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2022\10\25\df494e08f4d8\" rel="bookmark">InnoDB数据存储结构分析</a></div>
+    </li>
+  </ul>
+
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Database/" rel="tag"># Database</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2022/11/10/e7fbd86c0b92/" rel="prev" title="数据库设计范式">
+                  <i class="fa fa-chevron-left"></i> 数据库设计范式
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2022/11/12/fd10fe3b2e47/" rel="next" title="JavaWeb中一些技术的逻辑关系梳理">
+                  JavaWeb中一些技术的逻辑关系梳理 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments utterances-container"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Fantast</span>
+</div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+    <span title="站点总字数">826k</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">38:14</span>
+  </span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script><script src="/js/bookmark.js"></script>
+
+  
+<script src="https://cdn.jsdelivr.net/npm/hexo-generator-searchdb@1.4.0/dist/search.js" integrity="sha256-vXZMYLEqsROAXkEw93GGIvaB2ab+QW6w3+1ahD9nXXA=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdn.jsdelivr.net/npm/mathjax@3.2.0/es5/tex-mml-chtml.js","integrity":"sha256-r+3itOMtGGjap0x+10hu6jW/gZCzxHsoKrOd7gyRSGY="}}</script>
+<script src="/js/third-party/math/mathjax.js"></script>
+
+
+<script class="next-config" data-name="utterances" type="application/json">{"enable":true,"repo":"Fantast416/myblog-comment","issue_term":"pathname","theme":"github-light"}</script>
+<script src="/js/third-party/comments/utterances.js"></script>
+
+</body>
+</html>

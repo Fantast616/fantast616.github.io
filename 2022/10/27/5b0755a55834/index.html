@@ -20,15 +20,15 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
 
 <script class="next-config" data-name="main" type="application/json">{"hostname":"blog.fantast.top","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.9.0","exturl":false,"sidebar":{"position":"left","width":250,"display":"always","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":true,"color":"#222","save":"manual"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"utterances","storage":true,"lazyload":false,"nav":null,"activeClass":"utterances"},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
-<meta name="description" content="Chap11——Mysql 索引及调优原则">
+<meta name="description" content="Chap11——Mysql 索引与创建原则">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Fantast&#39;s Blog">
 <meta property="og:url" content="https://blog.fantast.top/2022/10/27/5b0755a55834/index.html">
 <meta property="og:site_name" content="Fantast&#39;s Blog">
-<meta property="og:description" content="Chap11——Mysql 索引及调优原则">
+<meta property="og:description" content="Chap11——Mysql 索引与创建原则">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2022-10-27T13:51:19.000Z">
-<meta property="article:modified_time" content="2022-10-28T08:39:45.000Z">
+<meta property="article:modified_time" content="2022-11-10T00:59:31.000Z">
 <meta property="article:author" content="Fantast">
 <meta property="article:tag" content="Database">
 <meta name="twitter:card" content="summary">
@@ -165,18 +165,18 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">168</span>
+          <span class="site-state-item-count">171</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
           <a href="/categories/">
-        <span class="site-state-item-count">42</span>
+        <span class="site-state-item-count">43</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
           <a href="/tags/">
-        <span class="site-state-item-count">98</span>
+        <span class="site-state-item-count">100</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -268,7 +268,7 @@
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2022-10-28 16:39:45" itemprop="dateModified" datetime="2022-10-28T16:39:45+08:00">2022-10-28</time>
+      <time title="修改时间：2022-11-10 08:59:31" itemprop="dateModified" datetime="2022-11-10T08:59:31+08:00">2022-11-10</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -309,7 +309,7 @@
     </span>
 </div>
 
-            <div class="post-description">Chap11——Mysql 索引及调优原则</div>
+            <div class="post-description">Chap11——Mysql 索引与创建原则</div>
             <div class="post-remind">Google Chrome is recommended, otherwise the image size may be wrong</div>
             <div class="post-remind">FireFox is not recommended,Because it does not support the image zoom property</div>
         </div>
@@ -471,19 +471,19 @@ id="避免对经常更新的表创建过多的索引">4）避免对经常更新�
   <div class="popular-posts-header">相关文章</div>
   <ul class="popular-posts">
     <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2022\11\10\02d829a87e69\" rel="bookmark">事务、事务日志与锁</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2022\11\10\e7fbd86c0b92\" rel="bookmark">数据库设计范式</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2022\11\07\cd7b91a8821a\" rel="bookmark">数据库索引优化和查询优化</a></div>
+    </li>
+    <li class="popular-posts-item">
       <div class="popular-posts-title"><a href="\2022\10\28\a30af89db2dc\" rel="bookmark">Mysql数据库调优工具</a></div>
     </li>
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="\2022\10\17\a0984953b2e8\" rel="bookmark">事务</a></div>
-    </li>
-    <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="\2022\10\17\f545bfc8e29a\" rel="bookmark">Mysql日志与备份</a></div>
-    </li>
-    <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="\2022\10\17\6d0d3039dfe2\" rel="bookmark">Mysql逻辑架构和存储引擎</a></div>
-    </li>
-    <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="\2022\10\17\bb6cac39113d\" rel="bookmark"></a></div>
+      <div class="popular-posts-title"><a href="\2022\10\25\df494e08f4d8\" rel="bookmark">InnoDB数据存储结构分析</a></div>
     </li>
   </ul>
 
@@ -497,8 +497,8 @@ id="避免对经常更新的表创建过多的索引">4）避免对经常更新�
 
           <div class="post-nav">
             <div class="post-nav-item">
-                <a href="/2022/10/17/a0984953b2e8/" rel="prev" title="事务">
-                  <i class="fa fa-chevron-left"></i> 事务
+                <a href="/2022/10/25/df494e08f4d8/" rel="prev" title="InnoDB数据存储结构分析">
+                  <i class="fa fa-chevron-left"></i> InnoDB数据存储结构分析
                 </a>
             </div>
             <div class="post-nav-item">
@@ -537,13 +537,13 @@ id="避免对经常更新的表创建过多的索引">4）避免对经常更新�
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-line"></i>
     </span>
-    <span title="站点总字数">771k</span>
+    <span title="站点总字数">826k</span>
   </span>
   <span class="post-meta-item">
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">35:43</span>
+    <span title="站点阅读时长">38:14</span>
   </span>
 </div>
 <div class="busuanzi-count">
