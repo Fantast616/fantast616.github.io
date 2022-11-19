@@ -228,7 +228,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://blog.fantast.top/2022/01/13/45d8498aa8b8/">
+    <link itemprop="mainEntityOfPage" href="https://blog.fantast.top/2022/01/13/56f3e5f0e0f5/">
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.webp">
       <meta itemprop="name" content="Fantast">
@@ -240,7 +240,7 @@
     </span>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
-          <a href="/2022/01/13/45d8498aa8b8/" class="post-title-link" itemprop="url">《SwinIR- Image Restoration Using Swin Transformer》论文笔记</a>
+          <a href="/2022/01/13/56f3e5f0e0f5/" class="post-title-link" itemprop="url">《Uformer A General U-Shaped Transformer for Image Restoration》论文笔记</a>
         </h2>
 
         <div class="post-meta-container">
@@ -282,14 +282,14 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">本文字数：</span>
-      <span>5.4k</span>
+      <span>3.8k</span>
     </span>
     <span class="post-meta-item" title="阅读时长">
       <span class="post-meta-item-icon">
         <i class="far fa-clock"></i>
       </span>
       <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>15 分钟</span>
+      <span>11 分钟</span>
     </span>
 </div>
 
@@ -301,10 +301,10 @@
     
     
     <div class="post-body" itemprop="articleBody">
-          <p>SwinIR是一个基于Swin Transformer做图像修复的网络结构，由浅层特征提取、深层特征提取、图像高质量重建三部分组成。首先浅层特征提取部分是由卷积层组成的，输出结果将直接传输到重建模块中，为了保持图像本身的低频信息，而深层特征提取模块主要由RSTB（Residual Swin Transformer blocks）组成。同时，其在每一个block的后面还加了一层卷积层，来做特征加强，以及使用残差网络来为特征聚合提供捷径。最终，浅层和深层特征被输送到重建模块，进行高质量的图像重建。</p>
+          <p>论文旨在在多尺度分辨率下，去恢复更多的图像细节。Uformer基于UNet，只不过将所有的卷积层替换为了Encoder-Decoder结构，同时保留了整体的Encoder-Decoder架构以及skip-connections。总体来说就是使用TransformerBlock 构建了一个层次化的Encoder-Decoder网络。</p>
           <!--noindex-->
             <div class="post-button">
-              <a class="btn" href="/2022/01/13/45d8498aa8b8/">
+              <a class="btn" href="/2022/01/13/56f3e5f0e0f5/">
                 阅读全文 &raquo;
               </a>
             </div>
