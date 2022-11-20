@@ -47,6 +47,73 @@
       </tags>
   </entry>
   <entry>
+    <title>Spring5概述与IOC容器</title>
+    <url>/2022/11/20/a47a2e7cc246/</url>
+    <content><![CDATA[<h4 id="一概述">一、概述：</h4>
+<p>1、Spring 是轻量级的开源的 JavaEE 框架
+，可以解决企业应用开发的复杂性</p>
+<p>2、Spring 有两个核心部分：IOC 和 Aop</p>
+<ul>
+<li>IOC：控制反转，把创建对象过程交给 Spring 进行管理</li>
+<li>Aop：面向切面，不修改源代码进行功能增强</li>
+</ul>
+<p>34、Spring 特点</p>
+<ul>
+<li>方便解耦，简化开发</li>
+<li>Aop 编程支持</li>
+<li>方便程序测试</li>
+<li>方便和其他框架进行整合</li>
+<li>方便进行事务操作</li>
+<li>降低 API 开发难度</li>
+</ul>
+<p>4、Spring下载链接：</p>
+<p>​
+https://repo.spring.io/ui/native/release/org/springframework/spring</p>
+<h4 id="二ioc容器底层原理">二、IOC容器底层原理：</h4>
+<p>​ IOC本质把对象创建和对象之间的调用过程，交给 Spring 进行管理
+，目的是为了耦合度降低</p>
+<ul>
+<li><p>在最初的对象之间的调用中，A类想要调用B类，是需要在A类中创建一个B类的对象，随后进行调用。A和B之间存在强耦合。</p></li>
+<li><p>起初，我们可以通过工厂类的形式来弥补这个问题，建立一个Factory类，用于统一管理B类对象的创建，这样的话A和B之间的耦合就消失了，但是所有的类都会和Factory类存在耦合。</p></li>
+<li><p>最后：IOC的实现实际上是要结合java反射机制：利用xml配置文件，创建工厂类,然后通过读取配置文件，利用反射机制完成模块之间耦合度的降低。</p></li>
+</ul>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/image-20221120212918659.png" /></p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/image-20221120212926975.png" /></p>
+<p>注意：IOC思想是基于IOC容器完成的，IOC容器底层其实就是对象工程。</p>
+<h4 id="三spring中的ioc">三、Spring中的IOC</h4>
+<p>​ 在Spring中，提供IOC容器实现的两个接口：</p>
+<ul>
+<li>BeanFactory：IOC 容器基本实现，是 Spring
+内部的使用接口，不提供开发人员进行使用
+<ul>
+<li>加载配置文件时候不会创建对象，在获取对象（使用）才去创建对象</li>
+</ul></li>
+<li>ApplicationContext：BeanFactory
+接口的子接口，提供更多更强大的功能，一般由开发人 员进行使用
+<ul>
+<li>加载配置文件时候就会把在配置文件对象进行创建</li>
+<li>其有具体实现类：
+<ul>
+<li>FileSystemXmlApplicationContext</li>
+<li>ClassPathXmlApplicationContext</li>
+</ul></li>
+</ul></li>
+</ul>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="type">ApplicationContext</span> <span class="variable">context</span> <span class="operator">=</span></span><br><span class="line">                <span class="keyword">new</span> <span class="title class_">ClassPathXmlApplicationContext</span>(<span class="string">&quot;bean1.xml&quot;</span>);</span><br></pre></td></tr></table></figure>
+<h4 id="四ioc操作的bean管理">四、IOC操作的Bean管理：</h4>
+]]></content>
+      <categories>
+        <category>⑨ 工程类笔记</category>
+        <category>JavaWeb</category>
+      </categories>
+      <tags>
+        <tag>Spring5</tag>
+        <tag>IOC</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Tomcat与Servelet入门</title>
     <url>/2022/11/15/50b9c3d3d025/</url>
     <content><![CDATA[<h3 id="一tomcat配置与简单部署html">一、Tomcat配置与简单部署Html</h3>
@@ -539,7 +606,7 @@ Johnson的程序员在 2002
       </tags>
   </entry>
   <entry>
-    <title>事务、事务日志与锁</title>
+    <title>Chap15 事务、事务日志与锁</title>
     <url>/2022/11/10/02d829a87e69/</url>
     <content><![CDATA[<h3 id="一事务概述">一、事务概述</h3>
 <h4 id="acid特性">1、ACID特性：</h4>
@@ -720,7 +787,7 @@ log也需要持久性的保护。</strong></p>
       </tags>
   </entry>
   <entry>
-    <title>数据库设计范式</title>
+    <title>Chap14 数据库设计范式</title>
     <url>/2022/11/10/e7fbd86c0b92/</url>
     <content><![CDATA[<h3 id="一范式">一、范式</h3>
 <p>​
@@ -877,7 +944,7 @@ id=XX;否则会产生间隙锁，内部扩大锁定范围，导致系统性能�
       </tags>
   </entry>
   <entry>
-    <title>数据库索引优化和查询优化</title>
+    <title>Chap13 数据库索引优化和查询优化</title>
     <url>/2022/11/07/cd7b91a8821a/</url>
     <content><![CDATA[<p>SQL查询优化的技术有很多，大方向上可以分为：</p>
 <ul>
@@ -1661,7 +1728,7 @@ src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/image-20221104142249625.png" 
       </tags>
   </entry>
   <entry>
-    <title>Mysql数据库调优工具</title>
+    <title>Chap12 Mysql数据库调优工具</title>
     <url>/2022/10/28/a30af89db2dc/</url>
     <content><![CDATA[<h3 id="一数据库优化步骤及优化工具">一、数据库优化步骤及优化工具</h3>
 <p><img src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20221028165505532.png" style="zoom:67%;" /></p>
@@ -2164,7 +2231,7 @@ id="避免对经常更新的表创建过多的索引">4）避免对经常更新�
       </tags>
   </entry>
   <entry>
-    <title>InnoDB数据存储结构分析</title>
+    <title>Chap10 InnoDB数据存储结构分析</title>
     <url>/2022/10/25/df494e08f4d8/</url>
     <content><![CDATA[<h3 id="一数据库的存储结构页">一、数据库的存储结构：页</h3>
 <h4
@@ -2476,204 +2543,7 @@ src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/image-20221023224238085.png" 
       </tags>
   </entry>
   <entry>
-    <title>Mysql逻辑架构和存储引擎</title>
-    <url>/2022/10/23/9dff215cdc98/</url>
-    <content><![CDATA[<h3 id="一逻辑架构">一、逻辑架构：</h3>
-<p>​ 使用经典的C/S架构，服务端程序使用的是
-mysqld服务，服务端大致分为三个步骤：</p>
-<ul>
-<li>连接管理（连接池）</li>
-<li>解析和优化（SQL接口、解析器、优化器）</li>
-<li>存储引擎（存储引擎和文件系统、日志文件）</li>
-</ul>
-<p><img
-src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20221017154005406.png" /></p>
-<h4 id="connectors">1、Connectors:</h4>
-<p>​
-MySQL是一个网络i程序，本质上就是在TCP连接上，通过MySql协议跟Mysql服务器进行数据的交互</p>
-<h4 id="连接管理">2、连接管理：</h4>
-<p>​
-用户名密码认证通过，会从权限表查出账号拥有的权限与连接关联，之后的权限判断逻辑，<strong>都将依赖于此时读到的权限。</strong></p>
-<p>​
-<strong>TCP连接池</strong>：用于限制连接数，可以采用长连接模式来复用TCP连接，解决上述问题</p>
-<p>​
-<strong>线程池</strong>：TCP连接收到请求后，必须要分配给一个线程专门与这个客户端的交互。所以还会有个线程池，去走后面的流程。每一个连接从线程池中获取线程，省去了创建和销毁线程的开销。</p>
-<p><img src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20221017161445894.png" style="zoom:50%;" /></p>
-<h4 id="服务层">3、服务层：</h4>
-<ul>
-<li><p>SQL接口：</p>
-<ul>
-<li>接收用户的SQL命令，并且返回用户需要查询的结果。比如SELECT ...
-FROM就是调用SQL Interface</li>
-</ul></li>
-<li><p>Parser解析器：</p>
-<ul>
-<li>在解析器中对 SQL
-语句进行语法分析、语义分析。将SQL语句分解成数据结构，并将这个结构传递到后续步骤，以后SQL语句的传递和处理就是基于这个结构的。如果在分解构成中遇到错误，那么就说明这个SQL语句是不合理的。</li>
-<li><strong>在SQL命令传递到解析器的时候会被解析器验证和解析，并为其创建语法树，并根据数据字典丰富查询语法树，会验证该客户端是否具有执行该查询的权限</strong></li>
-</ul></li>
-<li><p>Optimizer优化器：</p>
-<ul>
-<li><p>SQL语句在语法解析之后、查询之前会使用查询优化器确定 SQL
-语句的执行路径，生成一个执行计划。这个执行计划表明应该使用哪些索引进行查询（全表检索还是使用索引检索），表之间的连接顺序如何，最后会按照执行计划中的步骤调用存储引擎提供的方法来真正的执行查询，并将查询结果返回给用户。</p></li>
-<li><p>它使用“ 选取-投影-连接”策略进行查询</p></li>
-<li><pre><code>  SELECT id,name FROM student WHERE gender = &#39;女&#39;;</code></pre></li>
-<li><p>这个SELECT查询先根据WHERE语句进行选取，而不是将表全部查询出来以后再进行gender过滤。
-这个SELECT查询先根据id和name进行属性投影，而不是将属性全部取出以后再进行过滤，将这两个查询条件连接起来生成最终查询结果。</p></li>
-</ul></li>
-<li><p>Caches &amp; Buffers： 查询缓存组件</p>
-<ul>
-<li>这个缓存机制是由一系列小缓存组成的。比如表缓存，记录缓存，key缓存，权限缓存等
-。这个查询缓存可以在不同客户端之间共享</li>
-</ul></li>
-</ul>
-<h4 id="引擎层">4、引擎层</h4>
-<p>​ 插件式存储引擎层（ Storage
-Engines），真正的负责了MySQL中数据的存储和提取，对物理服务器级别维护的底层数据执行操作</p>
-<h4 id="存储层">5、存储层：</h4>
-<p>​
-所有的数据，数据库、表的定义，表的每一行的内容，索引，都是存在文件系统上，以文件的方式存在的，并完成与存储引擎的交互</p>
-<h3 id="二sql执行流程">二、SQL执行流程：</h3>
-<p><img
-src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20221017163209630.png" /></p>
-<h4 id="查询缓存">1、查询缓存：</h4>
-<p>​ 因为查询缓存往往效率不高，所以在 MySQL8.0
-之后就抛弃了这个功能。三大场景原因如下：</p>
-<ul>
-<li>在MySQL
-中的查询缓存，不是缓存查询计划，而是查询对应的结果。这就意味着查询匹配的鲁棒性大大降低，<strong>只有相同的查询操作才会命中查询缓存。</strong>两个查询请求在任何字符上的不同（例如：空格、注释、大小写），都会导致缓存不会命中。因此
-MySQL 的查询缓存命中率不高。</li>
-<li>如果<strong>查询请求中包含某些系统函数、用户自定义变量和函数</strong>、一些系统表，如
-mysql 、 information_schema、 performance_schema
-数据库中的表，那这个请求就不会被缓存。</li>
-<li>此外，既然是缓存，那就有它缓存失效的时候。<strong>MySQL的缓存系统会监测涉及到的每张表，只要该表的结构或者数据被修改，</strong>如对该表使用了INSERT
-、 UPDATE 、DELETE 、TRUNCATE TABLE 、ALTER TABLE 、DROP TABLE 或 DROP
-DATABASE
-语句，那<strong>使用该表的所有高速缓存查询都将变为无效并从高速缓存中删除！</strong>对于更新压力大的数据库来说，查询缓存的命中率会非常低。</li>
-</ul>
-<h4 id="解析器">2、解析器：</h4>
-<ul>
-<li><p>词法分析</p>
-<ul>
-<li>MySQL
-需要识别出SQL语句里面的字符串分别是什么，代表什么。是代表关键字还是表名</li>
-</ul></li>
-<li><p>语法分析</p>
-<ul>
-<li>根据词法分析的结果，语法分析器（比如：Bison）会根据语法规则，判断你输
-入的这个 SQL 语句是否满足 MySQL 语法。</li>
-</ul></li>
-<li><p>如果SQL语句正确，会生成一个语法树：</p>
-<p><img
-src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20221017165049678.png" /></p></li>
-</ul>
-<h4 id="优化器">3、优化器：</h4>
-<p>​ 在优化器中会确定 SQL
-语句的执行路径，优化器是在表里面有多个索引的时候，决定使用哪个索引；或者在一个语句有多表关联（join）的时候，决定各个表的连接顺序，还有表达式简化、子查询转为连接、外连接转为内连接等。</p>
-<p>​
-在查询优化器中，可以分为<strong>逻辑查询优化阶段</strong>和<strong>物理查询优化阶段</strong>。</p>
-<ul>
-<li>逻辑查询优化就是通过改变SQL
-语句的内容来使得SQL查询更高效，同时为物理查询优化提供更多的候选执行计划。通常采用的方式是对SQL语句进行等价变换，对查询进行重写，而查询重写的数学基础就是关系代数。<strong>对条件表达式进行等价谓词重写、条件简化，对视图进行重写，对子查询进行优化，对连接语义进行了外连接消除、嵌套连接消除等</strong></li>
-<li>物理查询优化是基于关系代数进行的查询重写，而关系代数的每一步都对应着物理计算，这些物理计算往往存在多种算法，因此需要计算各种物理路径的代价，从中选择代价最小的作为执行计划。在这个阶段里，对于单表和多表连接的操作，需要高效地使用索引，提升查询效率。</li>
-</ul>
-<h4 id="执行器">4、执行器：</h4>
-<p>​
-在执行之前需要判断该用户是否具备权限。如果没有，就会返回权限错误。如果具备权限，就执行
-SQL查询并返回结果。</p>
-<p><img
-src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20221017165434638.png" /></p>
-<h4 id="语法顺序">5、语法顺序：</h4>
-<p><img
-src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20221017170108824.png" /></p>
-<h3 id="三数据库缓冲池">三、数据库缓冲池：</h3>
-<p>​
-InnoDB存储引擎是以页为单位来管理存储空间的，我们进行的增删改查操作其实本质上都是在访问页面（包括读页面、写页面、创建新页面等操作）。而磁盘I/0需要消耗的时间很多，而在内存中进行操作，效率则会高很多，为了能让数据表或者索引中的数据随时被我们所用，DBMS会申请占用内存来作为数据缓冲池，在真正访问页面之前，需要把在磁盘上的页缓存到内存中的Buffer
-Poo1之后才可以访问。</p>
-<p>​ <strong>目的</strong>：减少与磁盘直接进行I/O的时间</p>
-<h4 id="缓冲池">1、缓冲池：</h4>
-<p><img
-src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20221017171714267.png" /></p>
-<p>​
-缓冲池可以帮助我们消除CPU和磁盘之间的鸿沟。所以InnoDB存储引擎在处理客户端的请求时，当需要访问某个页的数据时，就会把完整的页的数据全部加载到内存中，<strong>也就是说即使我们只需要访问一个页的一条记录，那也需要先把整个页的数据加载到内存中。</strong>将整个页加载到内存中后就可以进行读写访问了，<strong>在进行完读写访问之后并不着急把该页对应的内存空间释放掉，而是将其缓存起来，这样将来有请求再次访问该页面时，就可以省去磁盘IO的开销了。</strong></p>
-<p><strong>缓存原则：</strong></p>
-<p>​ 优先对使用频次高的数据进行加载</p>
-<p><strong>缓冲池的预读特性：</strong></p>
-<p>​
-缓冲池的作用就是提升I/0效率，而我们进行读取数据的时候存在一个“局部性原理”，也就是说我们使用了一些数据，大概率还会使用它周围的一些数据，因此采用“预读”的机制提前加载，可以减少未来可能的磁盘I/O操作。</p>
-<h4 id="缓冲池如何读取数据">2、缓冲池如何读取数据：</h4>
-<p>​
-缓冲池管理器会尽量将经常使用的数据保存起来，在数据库进行页面读操作的时候，首先会判断该页面是否在缓冲池中，如果存在就直接读取，如果不存在，就会通过内存或磁盘将页面存放到缓冲池中再进行读取。</p>
-<p><img
-src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20221017172013707.png" /></p>
-<p>​ 如果我们执行 SQL
-语句的时候更新了缓存池中的数据，那么这些数据会马上同步到磁盘上吗？</p>
-<p>​
-实际上，当我们对数据库中的记录进行修改的时候，<strong>首先会修改缓冲池中页里面的记录信息，然后数据库会以一定的频率刷新到磁盘上。</strong></p>
-<p>​
-注意并不是每次发生更新操作，都会立刻进行磁盘回写。缓冲池会采用一种叫做checkpoint的机制将数据回写到磁盘上，这样做的好处就是提升了数据库的整体性能。比如，当缓冲池不够用时，需要释放掉一些不常用的页，此时就可以强行采用checkpoint的方式，<strong>将不常用的脏页回写到磁盘上，然后再从缓冲池中将这些页释放掉。这里脏页（dirty
-page）指的是缓冲池中被修改过的页，与磁盘上的数据页不一致。</strong></p>
-<h4 id="多个buffer-pool实例">3、多个Buffer Pool实例：</h4>
-<p>​ Buffer
-Pool本质是InnoDB向操作系统申请的一块连续的内存空间，在多线程环境下，访问Buffer
-Pool中的数据都需要加锁处理。<strong>在Buffer
-Pool特别大而且多线程并发访问特别高的情况下，单一的Buffer
-Pool可能会影响请求的处理速度。</strong>所以在Buffer
-Pool特别大的时候，我们可以把它们拆分成若干个小的Buffer
-Pool，<strong>每个Buffer
-Pool都称为一个实例，它们都是独立的，独立的去申请内存空间，独立的管理各种链表。所以在多线程并发访问时并不会相互影响，从而提高并发处理能力。</strong></p>
-<h4 id="一些数据一致性问题">4、一些数据一致性问题</h4>
-<figure>
-<img
-src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20221017172737298.png"
-alt="image-20221017172737298" />
-<figcaption aria-hidden="true">image-20221017172737298</figcaption>
-</figure>
-<p>​ 假设我们修改Buffer
-Pool中的数据成功，但是还没来得及将数据刷入磁盘MySQL就挂了怎么办？按照上图的逻辑，此时更新之后的数据只存在于Buffer
-Pool中，如果此时MySQL宕机了，这部分数据将会永久地丢失；怎么办呢？</p>
-<p>​ 使用Redo Log和Undo Log来解决</p>
-<h3 id="四存储引擎">四、存储引擎：</h3>
-<h4
-id="innodb引擎具备外键支持功能的事务存储引擎">1、InnoDB引擎：具备外键支持功能的事务存储引擎</h4>
-<ul>
-<li>默认事务型引擎，设计用于处理大量的短期事务，确保事务的完整提交和回滚</li>
-<li>其为处理巨大数据量的最大性能设计</li>
-<li>InnoDB写的处理效率会差一些，其会占用更多的磁盘空间来保存数据和索引</li>
-<li>MyISAM只缓存索引，不缓存真实数据。InnoDB不仅缓存索引，还缓存真实数据，对内存要求较高，内存大小对性能有决定性的影响。</li>
-</ul>
-<h4
-id="myisam引擎主要的非事务处理存储引擎">2、MyISAM引擎：主要的非事务处理存储引擎</h4>
-<ul>
-<li>MyISAM提供了大量的特性，包括全文索引、压缩、空间函数(GIS)等，但MyISAM
-不支持事务、行级锁、外键，有一个毫无疑问的缺陷就是崩溃后无法安全恢复。</li>
-<li>优势是访问的速度快，对事务完整性没有要求或者以SELECT、INSERT为主的应用</li>
-<li>应用场景：只读应用或者以读为主的业务</li>
-</ul>
-<p><img
-src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20221018172423185.png" /></p>
-<h4 id="archive引擎用于数据归档">3、Archive引擎：用于数据归档</h4>
-<h4
-id="csv引擎可以快速便捷和外界进行数据交换">4、CSV引擎：可以快速便捷和外界进行数据交换</h4>
-<h4 id="memory引擎置于内存的表">5、Memory引擎：置于内存的表</h4>
-<p>​ Memory采用的逻辑介质是内存，
-响应速度很快，但是当mysqld守护进程崩溃的时候数据会丢失。如下应用场景：</p>
-<ol type="1">
-<li>目标数据比较小，而且非常频繁的进行访问，在内存中存放数据，如果太大的数据会造成内存溢出。</li>
-<li>如果数据是临时的，而且必须立即可用得到，那么就可以放在内存中。</li>
-<li>存储在Memory表中的数据如果突然间丢失的话也没有太大的关系。</li>
-</ol>
-]]></content>
-      <categories>
-        <category>⑥  基础类笔记</category>
-        <category>数据库精简笔记</category>
-      </categories>
-      <tags>
-        <tag>Database</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title></title>
+    <title>Chap9 Mysql索引优缺点与底层原理</title>
     <url>/2022/10/23/abee3bd85d4a/</url>
     <content><![CDATA[<h3 id="一为什么使用索引优缺点">一、为什么使用索引&amp;优缺点：</h3>
 <p>​
@@ -2894,9 +2764,206 @@ B 树中， 非叶子节点既保存索引，也保存数据记录。</li>
       </tags>
   </entry>
   <entry>
-    <title>Mysql日志与备份</title>
+    <title>Chap8 Mysql逻辑架构和存储引擎</title>
+    <url>/2022/10/23/9dff215cdc98/</url>
+    <content><![CDATA[<h3 id="一逻辑架构">一、逻辑架构：</h3>
+<p>​ 使用经典的C/S架构，服务端程序使用的是
+mysqld服务，服务端大致分为三个步骤：</p>
+<ul>
+<li>连接管理（连接池）</li>
+<li>解析和优化（SQL接口、解析器、优化器）</li>
+<li>存储引擎（存储引擎和文件系统、日志文件）</li>
+</ul>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20221017154005406.png" /></p>
+<h4 id="connectors">1、Connectors:</h4>
+<p>​
+MySQL是一个网络i程序，本质上就是在TCP连接上，通过MySql协议跟Mysql服务器进行数据的交互</p>
+<h4 id="连接管理">2、连接管理：</h4>
+<p>​
+用户名密码认证通过，会从权限表查出账号拥有的权限与连接关联，之后的权限判断逻辑，<strong>都将依赖于此时读到的权限。</strong></p>
+<p>​
+<strong>TCP连接池</strong>：用于限制连接数，可以采用长连接模式来复用TCP连接，解决上述问题</p>
+<p>​
+<strong>线程池</strong>：TCP连接收到请求后，必须要分配给一个线程专门与这个客户端的交互。所以还会有个线程池，去走后面的流程。每一个连接从线程池中获取线程，省去了创建和销毁线程的开销。</p>
+<p><img src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20221017161445894.png" style="zoom:50%;" /></p>
+<h4 id="服务层">3、服务层：</h4>
+<ul>
+<li><p>SQL接口：</p>
+<ul>
+<li>接收用户的SQL命令，并且返回用户需要查询的结果。比如SELECT ...
+FROM就是调用SQL Interface</li>
+</ul></li>
+<li><p>Parser解析器：</p>
+<ul>
+<li>在解析器中对 SQL
+语句进行语法分析、语义分析。将SQL语句分解成数据结构，并将这个结构传递到后续步骤，以后SQL语句的传递和处理就是基于这个结构的。如果在分解构成中遇到错误，那么就说明这个SQL语句是不合理的。</li>
+<li><strong>在SQL命令传递到解析器的时候会被解析器验证和解析，并为其创建语法树，并根据数据字典丰富查询语法树，会验证该客户端是否具有执行该查询的权限</strong></li>
+</ul></li>
+<li><p>Optimizer优化器：</p>
+<ul>
+<li><p>SQL语句在语法解析之后、查询之前会使用查询优化器确定 SQL
+语句的执行路径，生成一个执行计划。这个执行计划表明应该使用哪些索引进行查询（全表检索还是使用索引检索），表之间的连接顺序如何，最后会按照执行计划中的步骤调用存储引擎提供的方法来真正的执行查询，并将查询结果返回给用户。</p></li>
+<li><p>它使用“ 选取-投影-连接”策略进行查询</p></li>
+<li><pre><code>  SELECT id,name FROM student WHERE gender = &#39;女&#39;;</code></pre></li>
+<li><p>这个SELECT查询先根据WHERE语句进行选取，而不是将表全部查询出来以后再进行gender过滤。
+这个SELECT查询先根据id和name进行属性投影，而不是将属性全部取出以后再进行过滤，将这两个查询条件连接起来生成最终查询结果。</p></li>
+</ul></li>
+<li><p>Caches &amp; Buffers： 查询缓存组件</p>
+<ul>
+<li>这个缓存机制是由一系列小缓存组成的。比如表缓存，记录缓存，key缓存，权限缓存等
+。这个查询缓存可以在不同客户端之间共享</li>
+</ul></li>
+</ul>
+<h4 id="引擎层">4、引擎层</h4>
+<p>​ 插件式存储引擎层（ Storage
+Engines），真正的负责了MySQL中数据的存储和提取，对物理服务器级别维护的底层数据执行操作</p>
+<h4 id="存储层">5、存储层：</h4>
+<p>​
+所有的数据，数据库、表的定义，表的每一行的内容，索引，都是存在文件系统上，以文件的方式存在的，并完成与存储引擎的交互</p>
+<h3 id="二sql执行流程">二、SQL执行流程：</h3>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20221017163209630.png" /></p>
+<h4 id="查询缓存">1、查询缓存：</h4>
+<p>​ 因为查询缓存往往效率不高，所以在 MySQL8.0
+之后就抛弃了这个功能。三大场景原因如下：</p>
+<ul>
+<li>在MySQL
+中的查询缓存，不是缓存查询计划，而是查询对应的结果。这就意味着查询匹配的鲁棒性大大降低，<strong>只有相同的查询操作才会命中查询缓存。</strong>两个查询请求在任何字符上的不同（例如：空格、注释、大小写），都会导致缓存不会命中。因此
+MySQL 的查询缓存命中率不高。</li>
+<li>如果<strong>查询请求中包含某些系统函数、用户自定义变量和函数</strong>、一些系统表，如
+mysql 、 information_schema、 performance_schema
+数据库中的表，那这个请求就不会被缓存。</li>
+<li>此外，既然是缓存，那就有它缓存失效的时候。<strong>MySQL的缓存系统会监测涉及到的每张表，只要该表的结构或者数据被修改，</strong>如对该表使用了INSERT
+、 UPDATE 、DELETE 、TRUNCATE TABLE 、ALTER TABLE 、DROP TABLE 或 DROP
+DATABASE
+语句，那<strong>使用该表的所有高速缓存查询都将变为无效并从高速缓存中删除！</strong>对于更新压力大的数据库来说，查询缓存的命中率会非常低。</li>
+</ul>
+<h4 id="解析器">2、解析器：</h4>
+<ul>
+<li><p>词法分析</p>
+<ul>
+<li>MySQL
+需要识别出SQL语句里面的字符串分别是什么，代表什么。是代表关键字还是表名</li>
+</ul></li>
+<li><p>语法分析</p>
+<ul>
+<li>根据词法分析的结果，语法分析器（比如：Bison）会根据语法规则，判断你输
+入的这个 SQL 语句是否满足 MySQL 语法。</li>
+</ul></li>
+<li><p>如果SQL语句正确，会生成一个语法树：</p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20221017165049678.png" /></p></li>
+</ul>
+<h4 id="优化器">3、优化器：</h4>
+<p>​ 在优化器中会确定 SQL
+语句的执行路径，优化器是在表里面有多个索引的时候，决定使用哪个索引；或者在一个语句有多表关联（join）的时候，决定各个表的连接顺序，还有表达式简化、子查询转为连接、外连接转为内连接等。</p>
+<p>​
+在查询优化器中，可以分为<strong>逻辑查询优化阶段</strong>和<strong>物理查询优化阶段</strong>。</p>
+<ul>
+<li>逻辑查询优化就是通过改变SQL
+语句的内容来使得SQL查询更高效，同时为物理查询优化提供更多的候选执行计划。通常采用的方式是对SQL语句进行等价变换，对查询进行重写，而查询重写的数学基础就是关系代数。<strong>对条件表达式进行等价谓词重写、条件简化，对视图进行重写，对子查询进行优化，对连接语义进行了外连接消除、嵌套连接消除等</strong></li>
+<li>物理查询优化是基于关系代数进行的查询重写，而关系代数的每一步都对应着物理计算，这些物理计算往往存在多种算法，因此需要计算各种物理路径的代价，从中选择代价最小的作为执行计划。在这个阶段里，对于单表和多表连接的操作，需要高效地使用索引，提升查询效率。</li>
+</ul>
+<h4 id="执行器">4、执行器：</h4>
+<p>​
+在执行之前需要判断该用户是否具备权限。如果没有，就会返回权限错误。如果具备权限，就执行
+SQL查询并返回结果。</p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20221017165434638.png" /></p>
+<h4 id="语法顺序">5、语法顺序：</h4>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20221017170108824.png" /></p>
+<h3 id="三数据库缓冲池">三、数据库缓冲池：</h3>
+<p>​
+InnoDB存储引擎是以页为单位来管理存储空间的，我们进行的增删改查操作其实本质上都是在访问页面（包括读页面、写页面、创建新页面等操作）。而磁盘I/0需要消耗的时间很多，而在内存中进行操作，效率则会高很多，为了能让数据表或者索引中的数据随时被我们所用，DBMS会申请占用内存来作为数据缓冲池，在真正访问页面之前，需要把在磁盘上的页缓存到内存中的Buffer
+Poo1之后才可以访问。</p>
+<p>​ <strong>目的</strong>：减少与磁盘直接进行I/O的时间</p>
+<h4 id="缓冲池">1、缓冲池：</h4>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20221017171714267.png" /></p>
+<p>​
+缓冲池可以帮助我们消除CPU和磁盘之间的鸿沟。所以InnoDB存储引擎在处理客户端的请求时，当需要访问某个页的数据时，就会把完整的页的数据全部加载到内存中，<strong>也就是说即使我们只需要访问一个页的一条记录，那也需要先把整个页的数据加载到内存中。</strong>将整个页加载到内存中后就可以进行读写访问了，<strong>在进行完读写访问之后并不着急把该页对应的内存空间释放掉，而是将其缓存起来，这样将来有请求再次访问该页面时，就可以省去磁盘IO的开销了。</strong></p>
+<p><strong>缓存原则：</strong></p>
+<p>​ 优先对使用频次高的数据进行加载</p>
+<p><strong>缓冲池的预读特性：</strong></p>
+<p>​
+缓冲池的作用就是提升I/0效率，而我们进行读取数据的时候存在一个“局部性原理”，也就是说我们使用了一些数据，大概率还会使用它周围的一些数据，因此采用“预读”的机制提前加载，可以减少未来可能的磁盘I/O操作。</p>
+<h4 id="缓冲池如何读取数据">2、缓冲池如何读取数据：</h4>
+<p>​
+缓冲池管理器会尽量将经常使用的数据保存起来，在数据库进行页面读操作的时候，首先会判断该页面是否在缓冲池中，如果存在就直接读取，如果不存在，就会通过内存或磁盘将页面存放到缓冲池中再进行读取。</p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20221017172013707.png" /></p>
+<p>​ 如果我们执行 SQL
+语句的时候更新了缓存池中的数据，那么这些数据会马上同步到磁盘上吗？</p>
+<p>​
+实际上，当我们对数据库中的记录进行修改的时候，<strong>首先会修改缓冲池中页里面的记录信息，然后数据库会以一定的频率刷新到磁盘上。</strong></p>
+<p>​
+注意并不是每次发生更新操作，都会立刻进行磁盘回写。缓冲池会采用一种叫做checkpoint的机制将数据回写到磁盘上，这样做的好处就是提升了数据库的整体性能。比如，当缓冲池不够用时，需要释放掉一些不常用的页，此时就可以强行采用checkpoint的方式，<strong>将不常用的脏页回写到磁盘上，然后再从缓冲池中将这些页释放掉。这里脏页（dirty
+page）指的是缓冲池中被修改过的页，与磁盘上的数据页不一致。</strong></p>
+<h4 id="多个buffer-pool实例">3、多个Buffer Pool实例：</h4>
+<p>​ Buffer
+Pool本质是InnoDB向操作系统申请的一块连续的内存空间，在多线程环境下，访问Buffer
+Pool中的数据都需要加锁处理。<strong>在Buffer
+Pool特别大而且多线程并发访问特别高的情况下，单一的Buffer
+Pool可能会影响请求的处理速度。</strong>所以在Buffer
+Pool特别大的时候，我们可以把它们拆分成若干个小的Buffer
+Pool，<strong>每个Buffer
+Pool都称为一个实例，它们都是独立的，独立的去申请内存空间，独立的管理各种链表。所以在多线程并发访问时并不会相互影响，从而提高并发处理能力。</strong></p>
+<h4 id="一些数据一致性问题">4、一些数据一致性问题</h4>
+<figure>
+<img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20221017172737298.png"
+alt="image-20221017172737298" />
+<figcaption aria-hidden="true">image-20221017172737298</figcaption>
+</figure>
+<p>​ 假设我们修改Buffer
+Pool中的数据成功，但是还没来得及将数据刷入磁盘MySQL就挂了怎么办？按照上图的逻辑，此时更新之后的数据只存在于Buffer
+Pool中，如果此时MySQL宕机了，这部分数据将会永久地丢失；怎么办呢？</p>
+<p>​ 使用Redo Log和Undo Log来解决</p>
+<h3 id="四存储引擎">四、存储引擎：</h3>
+<h4
+id="innodb引擎具备外键支持功能的事务存储引擎">1、InnoDB引擎：具备外键支持功能的事务存储引擎</h4>
+<ul>
+<li>默认事务型引擎，设计用于处理大量的短期事务，确保事务的完整提交和回滚</li>
+<li>其为处理巨大数据量的最大性能设计</li>
+<li>InnoDB写的处理效率会差一些，其会占用更多的磁盘空间来保存数据和索引</li>
+<li>MyISAM只缓存索引，不缓存真实数据。InnoDB不仅缓存索引，还缓存真实数据，对内存要求较高，内存大小对性能有决定性的影响。</li>
+</ul>
+<h4
+id="myisam引擎主要的非事务处理存储引擎">2、MyISAM引擎：主要的非事务处理存储引擎</h4>
+<ul>
+<li>MyISAM提供了大量的特性，包括全文索引、压缩、空间函数(GIS)等，但MyISAM
+不支持事务、行级锁、外键，有一个毫无疑问的缺陷就是崩溃后无法安全恢复。</li>
+<li>优势是访问的速度快，对事务完整性没有要求或者以SELECT、INSERT为主的应用</li>
+<li>应用场景：只读应用或者以读为主的业务</li>
+</ul>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20221018172423185.png" /></p>
+<h4 id="archive引擎用于数据归档">3、Archive引擎：用于数据归档</h4>
+<h4
+id="csv引擎可以快速便捷和外界进行数据交换">4、CSV引擎：可以快速便捷和外界进行数据交换</h4>
+<h4 id="memory引擎置于内存的表">5、Memory引擎：置于内存的表</h4>
+<p>​ Memory采用的逻辑介质是内存，
+响应速度很快，但是当mysqld守护进程崩溃的时候数据会丢失。如下应用场景：</p>
+<ol type="1">
+<li>目标数据比较小，而且非常频繁的进行访问，在内存中存放数据，如果太大的数据会造成内存溢出。</li>
+<li>如果数据是临时的，而且必须立即可用得到，那么就可以放在内存中。</li>
+<li>存储在Memory表中的数据如果突然间丢失的话也没有太大的关系。</li>
+</ol>
+]]></content>
+      <categories>
+        <category>⑥  基础类笔记</category>
+        <category>数据库精简笔记</category>
+      </categories>
+      <tags>
+        <tag>Database</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Chap16 Mysql日志与备份</title>
     <url>/2022/10/17/a810e83d8611/</url>
-    <content><![CDATA[<h3 id="一">一、</h3>
+    <content><![CDATA[<h3 id="一暂无">一、暂无</h3>
 ]]></content>
       <categories>
         <category>⑥  基础类笔记</category>
@@ -3640,7 +3707,7 @@ AML)：用于大规模数学计算(一般是数
       </tags>
   </entry>
   <entry>
-    <title>Mysql 字符集底层原理，用户与权限管理</title>
+    <title>Chap7 Mysql 字符集底层原理，用户与权限管理</title>
     <url>/2022/09/13/50a88c64ec31/</url>
     <content><![CDATA[<h3 id="一字符集与底层原理">一、字符集与底层原理</h3>
 <p>mysql5.7默认server字符集为 latin，不支持中文</p>
@@ -3829,7 +3896,7 @@ tables_priv表用来对表设置操作权限，columns_priv表用来对表的某
       </tags>
   </entry>
   <entry>
-    <title>Mysql 视图，存储过程与函数</title>
+    <title>Chap5 Mysql 视图，存储过程与函数</title>
     <url>/2022/09/12/108274e25ef3/</url>
     <content><![CDATA[<h3 id="一视图">一、视图</h3>
 <p>​
@@ -3918,7 +3985,7 @@ INSERT、UPDATE、DELETE；</li>
       </tags>
   </entry>
   <entry>
-    <title>Mysql 变量与游标.触发器</title>
+    <title>Chap6 Mysql 变量与游标.触发器</title>
     <url>/2022/09/12/2c85f3f81b49/</url>
     <content><![CDATA[<h3 id="一系统变量">一、系统变量：</h3>
 <p>​
@@ -4011,7 +4078,7 @@ NULL子句，此时修改父表被引用的键值或删除父表被引用的记�
       </tags>
   </entry>
   <entry>
-    <title>Mysql 约束</title>
+    <title>Chap4 Mysql 约束</title>
     <url>/2022/09/10/ee0ee8e192df/</url>
     <content><![CDATA[<h3 id="一约束">一、约束</h3>
 <p>​ 约束是表级的强制规定,可以通过如下命令查看表的约束</p>
@@ -4253,7 +4320,7 @@ src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/image-20221103145458857.png" 
       </categories>
   </entry>
   <entry>
-    <title>Mysql DDL与DCL操作、增删改与数据类型</title>
+    <title>Chap3 Mysql DDL与DCL操作、增删改与数据类型</title>
     <url>/2022/09/07/60ff079d7c8c/</url>
     <content><![CDATA[<h3 id="一一些ddl与dcl操作">一、一些DDL与DCL操作：</h3>
 <h4 id="数据库相关操作">1、数据库相关操作：</h4>
@@ -4431,7 +4498,7 @@ TEXT，独立出来一张表，用主键来对应，避免影响其它字段索�
       </tags>
   </entry>
   <entry>
-    <title>Mysql各类函数与子查询</title>
+    <title>Chap2 Mysql各类函数与子查询</title>
     <url>/2022/09/05/22f2ef21dade/</url>
     <content><![CDATA[<h3 id="一函数">一、函数</h3>
 <h4 id="流程控制函数">1、流程控制函数</h4>
@@ -4584,7 +4651,7 @@ NOT EXISTS关键字</h4>
       </tags>
   </entry>
   <entry>
-    <title>Mysql基本查询内容</title>
+    <title>Chap1 Mysql基本查询内容</title>
     <url>/2022/09/03/7e7267227ba3/</url>
     <content><![CDATA[<h4 id="一些非关系型数据库">1、一些非关系型数据库</h4>
 <h5 id="键值型数据库">键值型数据库：</h5>
@@ -5606,77 +5673,6 @@ Java的集合类都可以使用<code>for each</code>循环，<code>List</code>�
       </tags>
   </entry>
   <entry>
-    <title>java精简系列笔记3——java继承</title>
-    <url>/2022/07/21/bfa2f3ecdb39/</url>
-    <content><![CDATA[<p><strong>知识来源：《Java核心技术卷I》第5章节，继承</strong></p>
-<ul>
-<li>在Java中，对象变量是多态的。一个父类对象可以引用子类对象</li>
-</ul>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="type">Employee</span> <span class="variable">e</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Manager</span>()</span><br></pre></td></tr></table></figure>
-<ul>
-<li><p>使用final修饰符就代表该类无法被继承。使用final修饰符修饰类中的某个特定方法，代表子类不能覆盖这个方法</p></li>
-<li><p>抽象方法的定义：</p></li>
-</ul>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">abstract</span> String <span class="title function_">getDescription</span><span class="params">()</span></span><br></pre></td></tr></table></figure>
-<ul>
-<li><p>包含一个或多个抽象方法的类本身需要声明为抽象的，除了抽象方法，抽象类可以包含字段和具体方法</p></li>
-<li><p>抽象类是不能实例化的，但我们可以定义一个抽象类的对象变量，这个变量只能引用非抽象子类的对象。</p></li>
-<li><p>访问控制符小结：</p>
-<ul>
-<li>仅对本类可见——private</li>
-<li>对外部完全可见——public</li>
-<li>对本包和所有子类可见——protected</li>
-<li>对本包可见——默认，不需要修饰符</li>
-</ul></li>
-<li><p>instanceof 函数：</p></li>
-</ul>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="type">Employee</span> <span class="variable">a</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Employee</span>(<span class="string">&quot;ss&quot;</span>,<span class="number">12</span>);</span><br><span class="line"><span class="type">Manager</span> <span class="variable">c</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Manager</span>(<span class="string">&quot;ss&quot;</span>,<span class="number">12</span>,<span class="number">14</span>);</span><br><span class="line">System.out.println(a <span class="keyword">instanceof</span> Manager);   <span class="comment">//false</span></span><br><span class="line">System.out.println(c <span class="keyword">instanceof</span> Employee);  <span class="comment">//true</span></span><br></pre></td></tr></table></figure>
-<ul>
-<li>getclass函数</li>
-</ul>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="type">Employee</span> <span class="variable">a</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Employee</span>(<span class="string">&quot;ss&quot;</span>,<span class="number">12</span>);</span><br><span class="line"><span class="type">Manager</span> <span class="variable">c</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Manager</span>(<span class="string">&quot;ss&quot;</span>,<span class="number">12</span>,<span class="number">14</span>);</span><br><span class="line">System.out.println(a.getClass());  <span class="comment">// class com.company.Employee</span></span><br><span class="line">System.out.println(c.getClass());  <span class="comment">// class com.company.Manager</span></span><br></pre></td></tr></table></figure>
-<ul>
-<li><p>所有类的超类——Object</p>
-<ul>
-<li>Object.equals方法用于检测两个对象的引用是否相等</li>
-</ul>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="type">Employee</span> <span class="variable">a</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Employee</span>(<span class="string">&quot;ss&quot;</span>,<span class="number">12</span>);</span><br><span class="line"><span class="type">Employee</span> <span class="variable">b</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Employee</span>(<span class="string">&quot;ss&quot;</span>,<span class="number">12</span>);</span><br><span class="line">System.out.print(a.equals(b));  <span class="comment">//false</span></span><br></pre></td></tr></table></figure>
-<ul>
-<li><p>如果需要基于对象状态进行检测，那么需要重写类的equals函数,如何编写一个正确完美的equals函数呢？</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">    <span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Employee</span>&#123;</span><br><span class="line">    	<span class="meta">@override</span> <span class="keyword">public</span> <span class="type">boolean</span> <span class="title function_">equals</span><span class="params">(Object otherObject)</span>&#123;</span><br><span class="line">    		<span class="keyword">if</span>(<span class="built_in">this</span> == otherObject) <span class="keyword">return</span> <span class="literal">true</span>;    <span class="comment">//检查引用是否相等</span></span><br><span class="line">    		<span class="keyword">if</span>(otherObject == <span class="literal">null</span>) <span class="keyword">return</span> <span class="literal">false</span>;   <span class="comment">//检查是否为null</span></span><br><span class="line">    		</span><br><span class="line">    		<span class="comment">//如果需要该类不同的子类被判定为不一样，则使用该行      </span></span><br><span class="line">            <span class="keyword">if</span>(getClass() != otherObject.getClass()) <span class="keyword">return</span> <span class="literal">false</span>; </span><br><span class="line">            </span><br><span class="line">            <span class="comment">//如果该类不同的子类可能被需要判定为一样，则使用该行 (即 只要这个被比较的对象是Employee类或其子类即可)</span></span><br><span class="line">            <span class="keyword">if</span>(!(otherObject <span class="keyword">instanceof</span> Employee)) <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">    		</span><br><span class="line">            <span class="comment">//使用强制类型转换</span></span><br><span class="line">    		<span class="type">Employee</span> <span class="variable">other</span> <span class="operator">=</span> (Employee)otherObject;</span><br><span class="line">            </span><br><span class="line">            <span class="comment">//随后根据相等性概念的要求比较字段即可</span></span><br><span class="line">    		<span class="keyword">return</span> name.equals(other.name) &amp;&amp; salary == other.salary;</span><br><span class="line">    	&#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">- hashCode方法：Object类中定义的hashCode方法默认会从对象的存储地址得出散列码</span><br><span class="line"></span><br><span class="line">- 注意equals和hashCode的定义必须相容，如果x.equals(y)返回<span class="literal">true</span>，那么x.hashCode(y)就必须返回<span class="literal">true</span></span><br><span class="line"></span><br><span class="line">- toString()方法，强烈建议为自定义的每个类添加这个方法，用途广泛</span><br><span class="line">  - 只要对象和一个字符串用加号连接，那么java编译器就会自动调用toString方法来获得这个对象的字符串描述</span><br><span class="line"></span><br><span class="line">- 泛型数组列表ArrayList，可以支持数组列表自动扩展容量</span><br><span class="line"></span><br><span class="line">  ```java</span><br><span class="line">  ArrayList&lt;Employee&gt; staff = <span class="keyword">new</span> <span class="title class_">ArrayList</span>&lt;Employee&gt;();</span><br></pre></td></tr></table></figure></li>
-</ul>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">staff.ensureCapacity(<span class="number">100</span>); <span class="comment">//分配一个包含100各对象的内部数组，这样的话前100次add调用不会带来很大的开销</span></span><br></pre></td></tr></table></figure>
-<ul>
-<li>只能使用set和get方法设置值以及取出值,可以用add和remove增加删除元素</li>
-</ul></li>
-<li><p>一个小技巧是可以用ArrayList动态扩展完所有元素以后，执行以下操作：</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">var a = new Employee[list.size];</span><br><span class="line">list.toArray(a);</span><br></pre></td></tr></table></figure></li>
-<li><p>对象包装器与自动装箱</p>
-<ul>
-<li><p>由于泛型的类型参数不可以是基本类型，这时候就可以用对应的对象包装器，其和基本类型一一对应</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="type">var</span> <span class="variable">list</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ArrayList</span>&lt;Integer&gt;();</span><br><span class="line">list.add(<span class="number">3</span>) <span class="comment">//等价于 list.add(Integer.valueOf(3));  叫做自动装箱</span></span><br><span class="line"><span class="type">int</span> <span class="variable">n</span> <span class="operator">=</span> list.get(<span class="number">1</span>); <span class="comment">// 自动拆箱</span></span><br></pre></td></tr></table></figure></li>
-<li><p>装箱类都是不可变的，即封装好数据后就不能变化内部封装的数值了。</p></li>
-</ul></li>
-<li><p>可变参数方法：</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">public static double max(double... values)&#123;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<ul>
-<li>上述这个函数可以接受任意个double类型的输入调用</li>
-</ul></li>
-<li><p>枚举类：</p></li>
-</ul>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">enum</span> <span class="title class_">Size</span>&#123; SMALL,MEDIUM,LARGE &#125;</span><br></pre></td></tr></table></figure>
-<p>所有的枚举类型都是Enum类的子类，其中有许多有意义的方法，</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">Size.SMALL.toString()</span><br><span class="line"><span class="type">Size</span> <span class="variable">s</span> <span class="operator">=</span> Enum.valueOf(Size.class,<span class="string">&quot;SMALL&quot;</span>)</span><br><span class="line">Size[] values = Size.values()</span><br></pre></td></tr></table></figure>
-]]></content>
-      <categories>
-        <category>⑤  编程语言类笔记</category>
-        <category>java精简系列笔记</category>
-      </categories>
-      <tags>
-        <tag>java</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>java精简系列笔记4——java接口、lambda表达式、内部类</title>
     <url>/2022/07/21/a3dcc1a0d43c/</url>
     <content><![CDATA[<p><strong>知识来源：《Java核心技术卷I》第6章节</strong></p>
@@ -5773,6 +5769,77 @@ static final</p></li>
 <li><p>在接口中声明的内部类自动是static和public</p></li>
 </ul></li>
 </ul>
+]]></content>
+      <categories>
+        <category>⑤  编程语言类笔记</category>
+        <category>java精简系列笔记</category>
+      </categories>
+      <tags>
+        <tag>java</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>java精简系列笔记3——java继承</title>
+    <url>/2022/07/21/bfa2f3ecdb39/</url>
+    <content><![CDATA[<p><strong>知识来源：《Java核心技术卷I》第5章节，继承</strong></p>
+<ul>
+<li>在Java中，对象变量是多态的。一个父类对象可以引用子类对象</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="type">Employee</span> <span class="variable">e</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Manager</span>()</span><br></pre></td></tr></table></figure>
+<ul>
+<li><p>使用final修饰符就代表该类无法被继承。使用final修饰符修饰类中的某个特定方法，代表子类不能覆盖这个方法</p></li>
+<li><p>抽象方法的定义：</p></li>
+</ul>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">abstract</span> String <span class="title function_">getDescription</span><span class="params">()</span></span><br></pre></td></tr></table></figure>
+<ul>
+<li><p>包含一个或多个抽象方法的类本身需要声明为抽象的，除了抽象方法，抽象类可以包含字段和具体方法</p></li>
+<li><p>抽象类是不能实例化的，但我们可以定义一个抽象类的对象变量，这个变量只能引用非抽象子类的对象。</p></li>
+<li><p>访问控制符小结：</p>
+<ul>
+<li>仅对本类可见——private</li>
+<li>对外部完全可见——public</li>
+<li>对本包和所有子类可见——protected</li>
+<li>对本包可见——默认，不需要修饰符</li>
+</ul></li>
+<li><p>instanceof 函数：</p></li>
+</ul>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="type">Employee</span> <span class="variable">a</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Employee</span>(<span class="string">&quot;ss&quot;</span>,<span class="number">12</span>);</span><br><span class="line"><span class="type">Manager</span> <span class="variable">c</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Manager</span>(<span class="string">&quot;ss&quot;</span>,<span class="number">12</span>,<span class="number">14</span>);</span><br><span class="line">System.out.println(a <span class="keyword">instanceof</span> Manager);   <span class="comment">//false</span></span><br><span class="line">System.out.println(c <span class="keyword">instanceof</span> Employee);  <span class="comment">//true</span></span><br></pre></td></tr></table></figure>
+<ul>
+<li>getclass函数</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="type">Employee</span> <span class="variable">a</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Employee</span>(<span class="string">&quot;ss&quot;</span>,<span class="number">12</span>);</span><br><span class="line"><span class="type">Manager</span> <span class="variable">c</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Manager</span>(<span class="string">&quot;ss&quot;</span>,<span class="number">12</span>,<span class="number">14</span>);</span><br><span class="line">System.out.println(a.getClass());  <span class="comment">// class com.company.Employee</span></span><br><span class="line">System.out.println(c.getClass());  <span class="comment">// class com.company.Manager</span></span><br></pre></td></tr></table></figure>
+<ul>
+<li><p>所有类的超类——Object</p>
+<ul>
+<li>Object.equals方法用于检测两个对象的引用是否相等</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="type">Employee</span> <span class="variable">a</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Employee</span>(<span class="string">&quot;ss&quot;</span>,<span class="number">12</span>);</span><br><span class="line"><span class="type">Employee</span> <span class="variable">b</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Employee</span>(<span class="string">&quot;ss&quot;</span>,<span class="number">12</span>);</span><br><span class="line">System.out.print(a.equals(b));  <span class="comment">//false</span></span><br></pre></td></tr></table></figure>
+<ul>
+<li><p>如果需要基于对象状态进行检测，那么需要重写类的equals函数,如何编写一个正确完美的equals函数呢？</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">    <span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Employee</span>&#123;</span><br><span class="line">    	<span class="meta">@override</span> <span class="keyword">public</span> <span class="type">boolean</span> <span class="title function_">equals</span><span class="params">(Object otherObject)</span>&#123;</span><br><span class="line">    		<span class="keyword">if</span>(<span class="built_in">this</span> == otherObject) <span class="keyword">return</span> <span class="literal">true</span>;    <span class="comment">//检查引用是否相等</span></span><br><span class="line">    		<span class="keyword">if</span>(otherObject == <span class="literal">null</span>) <span class="keyword">return</span> <span class="literal">false</span>;   <span class="comment">//检查是否为null</span></span><br><span class="line">    		</span><br><span class="line">    		<span class="comment">//如果需要该类不同的子类被判定为不一样，则使用该行      </span></span><br><span class="line">            <span class="keyword">if</span>(getClass() != otherObject.getClass()) <span class="keyword">return</span> <span class="literal">false</span>; </span><br><span class="line">            </span><br><span class="line">            <span class="comment">//如果该类不同的子类可能被需要判定为一样，则使用该行 (即 只要这个被比较的对象是Employee类或其子类即可)</span></span><br><span class="line">            <span class="keyword">if</span>(!(otherObject <span class="keyword">instanceof</span> Employee)) <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">    		</span><br><span class="line">            <span class="comment">//使用强制类型转换</span></span><br><span class="line">    		<span class="type">Employee</span> <span class="variable">other</span> <span class="operator">=</span> (Employee)otherObject;</span><br><span class="line">            </span><br><span class="line">            <span class="comment">//随后根据相等性概念的要求比较字段即可</span></span><br><span class="line">    		<span class="keyword">return</span> name.equals(other.name) &amp;&amp; salary == other.salary;</span><br><span class="line">    	&#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">- hashCode方法：Object类中定义的hashCode方法默认会从对象的存储地址得出散列码</span><br><span class="line"></span><br><span class="line">- 注意equals和hashCode的定义必须相容，如果x.equals(y)返回<span class="literal">true</span>，那么x.hashCode(y)就必须返回<span class="literal">true</span></span><br><span class="line"></span><br><span class="line">- toString()方法，强烈建议为自定义的每个类添加这个方法，用途广泛</span><br><span class="line">  - 只要对象和一个字符串用加号连接，那么java编译器就会自动调用toString方法来获得这个对象的字符串描述</span><br><span class="line"></span><br><span class="line">- 泛型数组列表ArrayList，可以支持数组列表自动扩展容量</span><br><span class="line"></span><br><span class="line">  ```java</span><br><span class="line">  ArrayList&lt;Employee&gt; staff = <span class="keyword">new</span> <span class="title class_">ArrayList</span>&lt;Employee&gt;();</span><br></pre></td></tr></table></figure></li>
+</ul>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">staff.ensureCapacity(<span class="number">100</span>); <span class="comment">//分配一个包含100各对象的内部数组，这样的话前100次add调用不会带来很大的开销</span></span><br></pre></td></tr></table></figure>
+<ul>
+<li>只能使用set和get方法设置值以及取出值,可以用add和remove增加删除元素</li>
+</ul></li>
+<li><p>一个小技巧是可以用ArrayList动态扩展完所有元素以后，执行以下操作：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">var a = new Employee[list.size];</span><br><span class="line">list.toArray(a);</span><br></pre></td></tr></table></figure></li>
+<li><p>对象包装器与自动装箱</p>
+<ul>
+<li><p>由于泛型的类型参数不可以是基本类型，这时候就可以用对应的对象包装器，其和基本类型一一对应</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="type">var</span> <span class="variable">list</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ArrayList</span>&lt;Integer&gt;();</span><br><span class="line">list.add(<span class="number">3</span>) <span class="comment">//等价于 list.add(Integer.valueOf(3));  叫做自动装箱</span></span><br><span class="line"><span class="type">int</span> <span class="variable">n</span> <span class="operator">=</span> list.get(<span class="number">1</span>); <span class="comment">// 自动拆箱</span></span><br></pre></td></tr></table></figure></li>
+<li><p>装箱类都是不可变的，即封装好数据后就不能变化内部封装的数值了。</p></li>
+</ul></li>
+<li><p>可变参数方法：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">public static double max(double... values)&#123;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>上述这个函数可以接受任意个double类型的输入调用</li>
+</ul></li>
+<li><p>枚举类：</p></li>
+</ul>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">enum</span> <span class="title class_">Size</span>&#123; SMALL,MEDIUM,LARGE &#125;</span><br></pre></td></tr></table></figure>
+<p>所有的枚举类型都是Enum类的子类，其中有许多有意义的方法，</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">Size.SMALL.toString()</span><br><span class="line"><span class="type">Size</span> <span class="variable">s</span> <span class="operator">=</span> Enum.valueOf(Size.class,<span class="string">&quot;SMALL&quot;</span>)</span><br><span class="line">Size[] values = Size.values()</span><br></pre></td></tr></table></figure>
 ]]></content>
       <categories>
         <category>⑤  编程语言类笔记</category>
@@ -8386,124 +8453,6 @@ src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-202204301146216
       </tags>
   </entry>
   <entry>
-    <title>《Not All Tokens Are Equal Human-centric Visual Analysis via Token Clustering Transformer》</title>
-    <url>/2022/04/24/22e32ee5ba59/</url>
-    <content><![CDATA[<h4
-id="论文名称not-all-tokens-are-equal-human-centric-visual-analysis-via-token-clustering-transformer">论文名称：《Not
-All Tokens Are Equal Human-centric Visual Analysis via Token Clustering
-Transformer》</h4>
-<h4 id="论文地址-httparxiv.orgabs2204.08680">论文地址：
-http://arxiv.org/abs/2204.08680</h4>
-<h2 id="关键词">1、关键词：</h2>
-<p>​ Dynamic Token</p>
-<h2 id="摘要">2、摘要：</h2>
-<p>​
-ViT在许多计算机视觉任务中取得了巨大的成功。大多数方法通过将图像分割成规则的固定patches并将每个patch作为一个token来生成视觉token。
-​
-然而，在以人为中心的视觉任务中，并不是所有区域都同等重要，例如，人体需要一个带有许多token的精细表示，而图像背景可以由少量token建模。
-​
-为了解决这个问题，论文提出了一种新的ViT，称为令牌聚类转换器(TCFormer)，它通过渐进聚类来合并token，其中token可以从不同的位置以灵活的形状和大小合并。</p>
-<p>​
-TCFormer中的令牌不仅可以关注重要区域，还可以调整令牌形状以适应语义概念，并对包含关键细节的区域采用精细分辨率，有利于捕获详细信息。</p>
-<h2 id="领域背景">3、领域背景：</h2>
-<p>​ 暂略</p>
-<h2 id="先前工作描述与比较">4、先前工作描述与比较：</h2>
-<p>​ 暂略</p>
-<h2 id="主要设计思想">5、主要设计思想：</h2>
-<p>​
-为了解决传统ViT中，大多将图像分割成规则的固定patches并将每个patch作为一个token来生成视觉token。然而在以人为中心的视觉任务中，并不是所有区域都同等重要，所以论文提出了一种新的ViT(TCFormer)，它通过渐进的令牌聚类生成TOKENS。</p>
-<p>​
-TCFormer在每个阶段动态生成TOKENS。如图所示，它能够生成具有不同位置、大小和形状的Token。首先，与基于网格的标记不同，聚类后的标记不局限于规则形状，可以专注于重要的区域，如人体。其次，TCFormer动态生成具有适当大小的令牌来表示不同的区域。比如说：<strong>对于充满重要细节(如人脸)的区域，分配更小尺寸的令牌。而仅有单个token(例如，图中的蓝色标记)被用来表示背景的大片区域。</strong></p>
-<p><img
-src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220424202223439.png" /></p>
-<p>​ 在TCFormer中，特征图中的每个像素在第一阶段被初始化为一个vision
-token，其token区域就是像素所覆盖的区域。我们逐步合并语义相近的token，在不同阶段得到不同数量的token。</p>
-<p>​ 为此，我们精心设计了一个聚类令牌合并(CTM)块：</p>
-<ul>
-<li>首先，给定上一阶段的tokens，CTM模块使用k-nearest-neighbor based
-density peaks clustering聚类算法对token进行分组。</li>
-<li>那些被分到一组的tokens，会合并到一个单独的token，其值为所有特征的平均值。</li>
-<li>最后，将tokens输入到一个transformer
-block中进行特征聚合。最终合并得到的token区域是所有输入导transformer
-block中的tokens的并集。</li>
-</ul>
-<p>​
-多阶段特征的聚合已经被证明有利于以人为中心的分析。大多数之前的研究将视觉token转换为特征图，并以特征图的形式聚合特征。然而，当我们将动态视觉token转换为特征图时，多个token可能位于同一个像素网格中，导致细节丢失。
-​
-为了解决这一问题，我们提出了一种多阶段令牌聚合(MTA)块，它能够有效地保存所有阶段的图像细节。具体来说：</p>
-<ul>
-<li>MTA从最后一个阶段的令牌开始，然后从前一个阶段逐步上采样tokens并聚合token特征，直到聚合所有阶段的特征。聚合的tokens与特征映射中的像素一一对应，并被reshape为特征映射以进行后续处理。</li>
-</ul>
-<h2 id="具体方法与网络架构">6、具体方法与网络架构：</h2>
-<p><img
-src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220424203340869.png" /><strong>概述：</strong>TCFormer由4个阶段和一个(MTA)头组成。每个阶段包含几个堆叠的Transformer块。在两个相邻的阶段之间，插入一个(CTM)块，以合并令牌并为下一个阶段生成令牌。最后MTA头将所有阶段的token特征聚集起来，并输出最终的热图</p>
-<h4 id="核心1-transformer-block">1） 核心1： Transformer Block：</h4>
-<p><img src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220424203928917.png" style="zoom:50%;" /></p>
-<p>​ 采用Spatial Reduction层来降低计算复杂度。Spatial
-Reduction层首先将视觉token转换为特征映射，然后通过跨卷积层降低特征映射分辨率。处理后的特征图中的像素，比视觉标记要少得多，被作为K和V输入到多头注意模块。多头注意模块在token之间聚合特征。
-​我们利用Depth-Wise
-Convolution来捕获局部特征和位置信息，并去除显式位置嵌入。</p>
-<h4 id="核心2-clustering-based-token-merge-ctm-block">2） 核心2：
-Clustering-based Token Merge (CTM) Block：</h4>
-<p>​
-如图所示，我们的CTM块有两个过程，即Clustering和特征Merge。我们使用通过Clustering来将vision
-tokens归到一定数量的聚类中.</p>
-<ul>
-<li>Clustering
-<ul>
-<li>在Clustering过程中，我们使用了一种基于k近邻密度峰值聚类算法(DPC-KNN)的变体。</li>
-<li>给定一组令牌X，我们根据其k近邻计算每个令牌的局部密度ρ:</li>
-<li>然后，对于每个令牌，我们 计算距离
-作为它与任何其他具有更高局部密度的令牌之间的最小距离。
-对于局部密度最高的token，其指示器设置为
-它与任何其他标记之间的最大距离。</li>
-<li><img
-src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220425150522682.png" /></li>
-<li><img
-src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220425150412421.png" /></li>
-<li>δi 是距离指示指标 ，ρi 是局部密度指标</li>
-<li>我们将δi 和 ρi 结合起来，得到每个token的得分为 ρi×δi。</li>
-<li>分数越高，成为集群中心的可能性就越大。我们通过选择得分最高的token来确定聚类中心，然后根据特征距离将其他标记分配到最近的聚类中心。</li>
-</ul></li>
-<li>Merge</li>
-</ul>
-<p>​
-对于token特征的合并，一种直观的方法是直接对一个聚类中的token特征进行平均。但是，即使是语义意义相似的符号，其重要性也不完全相同。论文引入了一个重要度评分P来明确表示每个token的重要性，它是由token的特征估计的。然后在token重要性的指导下，对token特征进行平均:</p>
-<p><img
-src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220425150756742.png" /></p>
-<p>​ 其中<span class="math inline">\(C_i\)</span>表示第<span
-class="math inline">\(i\)</span>个聚类的集合，<span
-class="math inline">\(x_j\)</span>和<span
-class="math inline">\(p_j\)</span>分别为原始token特征和对应的重要性得分，yi为合并后token的特征。合并令牌的令牌区域是原始令牌区域的并集。</p>
-<ul>
-<li><p>Final</p>
-<p>最终合并好的令牌作为查询Q被送入一个Transformer
-Block，原始的Token用作K和V。为了保证
-重要的token对输出的贡献更大，在注意力机制中增加重要性权重P，如下所示:</p>
-<p><img src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220425151005438.png" style="zoom:50%;" /></p>
-<p>引入token重要性评分使我们的CTM块在合并视觉标记时能够专注于关键的图像特征</p></li>
-</ul>
-<h4 id="核心3-multi-stage-token-aggregation-mta-head">3） 核心3：
-Multi-stage Token Aggregation (MTA) Head：</h4>
-<p>​
-之前的研究证明了在以人为中心的视觉任务中，在多个阶段中进行特征聚合的好处。为了聚合特性，我们提出了一种基于Transformer的多阶段令牌聚合(MTA)头，它能够维护所有阶段的细节信息。</p>
-<p>​ 下图
-(a)显示了令牌上采样过程。在令牌合并过程中(章节3.3)，每个令牌被分配到一个聚类，每个聚类由一个合并的令牌表示。
-我们记录原始token和合并token之间的关系。在token上采样过程中，我们利用所记录的信息将合并的token特征复制到相应的上采样token中。</p>
-<p><img src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220425152443159.png" style="zoom:67%;" /></p>
-<p>​ MTA
-Head将上一阶段的token特征添加到上采样的视觉token。然后，视觉token进入一个Transformer块。这样的处理是逐步执行的，直到所有的视觉token被聚合。最终的token，其token表示的区域是高分辨率特征图中的单个像素，可以很容易地重构为特征图进行进一步处理。</p>
-<p>​ 整体而言，有点像UFormer的那种形式。</p>
-]]></content>
-      <categories>
-        <category>③  论文阅读笔记</category>
-        <category>CV相关论文</category>
-      </categories>
-      <tags>
-        <tag>Transformer</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>《Vision Transformer with Deformable Attention》</title>
     <url>/2022/04/24/503bff4618b7/</url>
     <content><![CDATA[<h4
@@ -8652,6 +8601,124 @@ class="math inline">\([-H,H]和[-W,W]\)</span>间。</p>
 因为我们的可变形的注意力，有keys的连续位置，我们在正则化的范围内计算位置偏差，即在<span
 class="math inline">\([-1,+1]\)</span>之间。然后，我们对Swin
 Transformer中的 BiasTable 应用插值函数，来覆盖所有可能的offset值。</p>
+]]></content>
+      <categories>
+        <category>③  论文阅读笔记</category>
+        <category>CV相关论文</category>
+      </categories>
+      <tags>
+        <tag>Transformer</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>《Not All Tokens Are Equal Human-centric Visual Analysis via Token Clustering Transformer》</title>
+    <url>/2022/04/24/22e32ee5ba59/</url>
+    <content><![CDATA[<h4
+id="论文名称not-all-tokens-are-equal-human-centric-visual-analysis-via-token-clustering-transformer">论文名称：《Not
+All Tokens Are Equal Human-centric Visual Analysis via Token Clustering
+Transformer》</h4>
+<h4 id="论文地址-httparxiv.orgabs2204.08680">论文地址：
+http://arxiv.org/abs/2204.08680</h4>
+<h2 id="关键词">1、关键词：</h2>
+<p>​ Dynamic Token</p>
+<h2 id="摘要">2、摘要：</h2>
+<p>​
+ViT在许多计算机视觉任务中取得了巨大的成功。大多数方法通过将图像分割成规则的固定patches并将每个patch作为一个token来生成视觉token。
+​
+然而，在以人为中心的视觉任务中，并不是所有区域都同等重要，例如，人体需要一个带有许多token的精细表示，而图像背景可以由少量token建模。
+​
+为了解决这个问题，论文提出了一种新的ViT，称为令牌聚类转换器(TCFormer)，它通过渐进聚类来合并token，其中token可以从不同的位置以灵活的形状和大小合并。</p>
+<p>​
+TCFormer中的令牌不仅可以关注重要区域，还可以调整令牌形状以适应语义概念，并对包含关键细节的区域采用精细分辨率，有利于捕获详细信息。</p>
+<h2 id="领域背景">3、领域背景：</h2>
+<p>​ 暂略</p>
+<h2 id="先前工作描述与比较">4、先前工作描述与比较：</h2>
+<p>​ 暂略</p>
+<h2 id="主要设计思想">5、主要设计思想：</h2>
+<p>​
+为了解决传统ViT中，大多将图像分割成规则的固定patches并将每个patch作为一个token来生成视觉token。然而在以人为中心的视觉任务中，并不是所有区域都同等重要，所以论文提出了一种新的ViT(TCFormer)，它通过渐进的令牌聚类生成TOKENS。</p>
+<p>​
+TCFormer在每个阶段动态生成TOKENS。如图所示，它能够生成具有不同位置、大小和形状的Token。首先，与基于网格的标记不同，聚类后的标记不局限于规则形状，可以专注于重要的区域，如人体。其次，TCFormer动态生成具有适当大小的令牌来表示不同的区域。比如说：<strong>对于充满重要细节(如人脸)的区域，分配更小尺寸的令牌。而仅有单个token(例如，图中的蓝色标记)被用来表示背景的大片区域。</strong></p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220424202223439.png" /></p>
+<p>​ 在TCFormer中，特征图中的每个像素在第一阶段被初始化为一个vision
+token，其token区域就是像素所覆盖的区域。我们逐步合并语义相近的token，在不同阶段得到不同数量的token。</p>
+<p>​ 为此，我们精心设计了一个聚类令牌合并(CTM)块：</p>
+<ul>
+<li>首先，给定上一阶段的tokens，CTM模块使用k-nearest-neighbor based
+density peaks clustering聚类算法对token进行分组。</li>
+<li>那些被分到一组的tokens，会合并到一个单独的token，其值为所有特征的平均值。</li>
+<li>最后，将tokens输入到一个transformer
+block中进行特征聚合。最终合并得到的token区域是所有输入导transformer
+block中的tokens的并集。</li>
+</ul>
+<p>​
+多阶段特征的聚合已经被证明有利于以人为中心的分析。大多数之前的研究将视觉token转换为特征图，并以特征图的形式聚合特征。然而，当我们将动态视觉token转换为特征图时，多个token可能位于同一个像素网格中，导致细节丢失。
+​
+为了解决这一问题，我们提出了一种多阶段令牌聚合(MTA)块，它能够有效地保存所有阶段的图像细节。具体来说：</p>
+<ul>
+<li>MTA从最后一个阶段的令牌开始，然后从前一个阶段逐步上采样tokens并聚合token特征，直到聚合所有阶段的特征。聚合的tokens与特征映射中的像素一一对应，并被reshape为特征映射以进行后续处理。</li>
+</ul>
+<h2 id="具体方法与网络架构">6、具体方法与网络架构：</h2>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220424203340869.png" /><strong>概述：</strong>TCFormer由4个阶段和一个(MTA)头组成。每个阶段包含几个堆叠的Transformer块。在两个相邻的阶段之间，插入一个(CTM)块，以合并令牌并为下一个阶段生成令牌。最后MTA头将所有阶段的token特征聚集起来，并输出最终的热图</p>
+<h4 id="核心1-transformer-block">1） 核心1： Transformer Block：</h4>
+<p><img src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220424203928917.png" style="zoom:50%;" /></p>
+<p>​ 采用Spatial Reduction层来降低计算复杂度。Spatial
+Reduction层首先将视觉token转换为特征映射，然后通过跨卷积层降低特征映射分辨率。处理后的特征图中的像素，比视觉标记要少得多，被作为K和V输入到多头注意模块。多头注意模块在token之间聚合特征。
+​我们利用Depth-Wise
+Convolution来捕获局部特征和位置信息，并去除显式位置嵌入。</p>
+<h4 id="核心2-clustering-based-token-merge-ctm-block">2） 核心2：
+Clustering-based Token Merge (CTM) Block：</h4>
+<p>​
+如图所示，我们的CTM块有两个过程，即Clustering和特征Merge。我们使用通过Clustering来将vision
+tokens归到一定数量的聚类中.</p>
+<ul>
+<li>Clustering
+<ul>
+<li>在Clustering过程中，我们使用了一种基于k近邻密度峰值聚类算法(DPC-KNN)的变体。</li>
+<li>给定一组令牌X，我们根据其k近邻计算每个令牌的局部密度ρ:</li>
+<li>然后，对于每个令牌，我们 计算距离
+作为它与任何其他具有更高局部密度的令牌之间的最小距离。
+对于局部密度最高的token，其指示器设置为
+它与任何其他标记之间的最大距离。</li>
+<li><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220425150522682.png" /></li>
+<li><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220425150412421.png" /></li>
+<li>δi 是距离指示指标 ，ρi 是局部密度指标</li>
+<li>我们将δi 和 ρi 结合起来，得到每个token的得分为 ρi×δi。</li>
+<li>分数越高，成为集群中心的可能性就越大。我们通过选择得分最高的token来确定聚类中心，然后根据特征距离将其他标记分配到最近的聚类中心。</li>
+</ul></li>
+<li>Merge</li>
+</ul>
+<p>​
+对于token特征的合并，一种直观的方法是直接对一个聚类中的token特征进行平均。但是，即使是语义意义相似的符号，其重要性也不完全相同。论文引入了一个重要度评分P来明确表示每个token的重要性，它是由token的特征估计的。然后在token重要性的指导下，对token特征进行平均:</p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220425150756742.png" /></p>
+<p>​ 其中<span class="math inline">\(C_i\)</span>表示第<span
+class="math inline">\(i\)</span>个聚类的集合，<span
+class="math inline">\(x_j\)</span>和<span
+class="math inline">\(p_j\)</span>分别为原始token特征和对应的重要性得分，yi为合并后token的特征。合并令牌的令牌区域是原始令牌区域的并集。</p>
+<ul>
+<li><p>Final</p>
+<p>最终合并好的令牌作为查询Q被送入一个Transformer
+Block，原始的Token用作K和V。为了保证
+重要的token对输出的贡献更大，在注意力机制中增加重要性权重P，如下所示:</p>
+<p><img src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220425151005438.png" style="zoom:50%;" /></p>
+<p>引入token重要性评分使我们的CTM块在合并视觉标记时能够专注于关键的图像特征</p></li>
+</ul>
+<h4 id="核心3-multi-stage-token-aggregation-mta-head">3） 核心3：
+Multi-stage Token Aggregation (MTA) Head：</h4>
+<p>​
+之前的研究证明了在以人为中心的视觉任务中，在多个阶段中进行特征聚合的好处。为了聚合特性，我们提出了一种基于Transformer的多阶段令牌聚合(MTA)头，它能够维护所有阶段的细节信息。</p>
+<p>​ 下图
+(a)显示了令牌上采样过程。在令牌合并过程中(章节3.3)，每个令牌被分配到一个聚类，每个聚类由一个合并的令牌表示。
+我们记录原始token和合并token之间的关系。在token上采样过程中，我们利用所记录的信息将合并的token特征复制到相应的上采样token中。</p>
+<p><img src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220425152443159.png" style="zoom:67%;" /></p>
+<p>​ MTA
+Head将上一阶段的token特征添加到上采样的视觉token。然后，视觉token进入一个Transformer块。这样的处理是逐步执行的，直到所有的视觉token被聚合。最终的token，其token表示的区域是高分辨率特征图中的单个像素，可以很容易地重构为特征图进行进一步处理。</p>
+<p>​ 整体而言，有点像UFormer的那种形式。</p>
 ]]></content>
       <categories>
         <category>③  论文阅读笔记</category>
@@ -8952,6 +9019,29 @@ src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-202204121731375
       </tags>
   </entry>
   <entry>
+    <title>字体生成论文研究进度</title>
+    <url>/2022/04/01/f225f383e158/</url>
+    <content><![CDATA[<div class="hbe hbe-container" id="hexo-blog-encrypt" data-wpm="Oh, this is an invalid password. Check and try again, please." data-whm="OOPS, these decrypted content may changed, but you can still have a look.">
+  <script id="hbeData" type="hbeData" data-hmacdigest="f490f6d4eff128b6f8c23e395e0b13f44dd14e197fc50f16d44b6fec836d5931">1557a4d06c41b8b7cb942a6d0525c027cbeeadc10caf98a45705387558304bb469290ed727bac22c14368bef657fb469dfaa63f24918c0cff3b2760cd4c7e41d903d1a82d66af59312cac4cac46cf8eb876b40a6bca879a6bb5005f2de6cb7700621bad9f290d26f23d98ad7d10aad36bec4e6306e0626ed5b58ff9d6c87b6b9fb9358b7c8663eb4e3f6b73813f33f206cb37ad8174d4a8dec552525d1b17d29a7ff9a69af1c0464d7be2cd47663a8511470a8a9ecf52a3eea3d24def5ef2b867aabfebd01f658d97f48cb62241de8f7a8c19ea8bc92d6c680ec59bc38b048d425d487212984d3aa9277e8bafa990fdb34d8a30bc941854858dcbd2c49e5f28f21e8ba546f2f0da3365f940432813ee29c950135eadb5b7ed325594771d8ec8a9d1f3ad8cf5cc9eae23197303a55f47176df2e97551922502deccc82ba3a0d0fa712a9261862f2788aace95a046bffc7cce1f66e50a2c6021f4cfc9cd90935fbb6ec3c290ffa4add6317fab63a83f5691b98f8d19efca83ec4ffbd8614b8e7ac3a4260a007377813591b13e3737b007a82ef659ab4845a4799af73318bfedd75e021f0cee0157996154ee0b0d89a5481f558e1ea747d3de2bffa3166672fac1271864c41d9dbc04032d309ab8a8324d0df005f78c8f05a18e52d005529009028238e2e96252ca2ef67df0c8bb09b9894362b07c22ed169e86ba234b046d063a31a0dc8f90ad0cd26dc956e5280d31639778338271930a6aa2a2a4fcc6fe161b45a9a85fd07125410a1633279d8c785ab1913ad30f45a18498b3fb2829dd6f067a17c541be12a01e37c08c82707915cbfb4e002bf5025e5d81f5fa08ce6bf18c3184420ff1921e17f4126b1f10ebc8e7395006f2a552f0c0c37ef4b17c2138b950e4574c440a94e9bd4e400277723250738f15e2d9bbf5e2116f22848e8102dc33ac5d504f10f4a7f3d18f2687064f51f963e819f143fdf829a9d4db46e025d1d774c60ec1e91eca7e55241e8fe4fb65bb309cfa0f612aa9422a90d9ac32ece2d4ba42db909f0efd04c39637eb5e351870d5f1d12e57dda4f141f9f11058392e3f5f378451f43884cceaf6e78ec090bbf3eaf9f919ecc6d0d84b01f1be6501f387c8daacebaa9c608e9bcabc8790e3c1cb980add9e6fb12430856ede148fd91c08f7485709962926e803d404c3c7a7f38fd0ef69e9c4a32f491d49234a74432572a5090c296002c73df41a4ed7bcfd4bc6d23ba76427aa950f5128a0455186d99b9a09cf6789e31f76f8938a95d8e861be3b1f051b1af3a674a08677aa18071301825dcfb11697eae002fa97923a9ee69ad49ab4b3ba810ade6c531b4a79f4c0befa976492d07ded5cb76ace66549c6c40f7e4927fe047273209af3269d43d4905b4c271ce055d131103b7bc6bb7fe95d94f338b1e2a31a90e512eb78fbfe8469b69718a88307a747af389488f2d91fd56813772a3e6c47de32f4ae1e0fe965f791663fa3173d62c91644df73790f4ff69fba0170822a1ef6cb002f7e2a1179ec3c6ac8fb8f138ad559c2ffb4938d0a710d78d62ebb23944ae7255d6a6a3eecf42d65a95f6adb81f85952df61009dfc7477c9fe7228478a902c5fc3ddcb883dd4975a19f59ad4bf0b1ef764536efeecc05dcf770806e90809f6698e4575294da06eb572d6c224c03a0711d84ed672dde635e459697ba656dac1ba45a831f42bb618e0b8fec82eb048869dc25e32748d1cbd62069b10b52ea4a07640142bb989a33eadf9672c17a80e88328d20704a54fc7a2714c339717b286d7981e643ec7d4b6cc15c2e071390341a281de9143f1e24a1ba629221a707b69c80a2ca9f094c7d9ac03335d7e218eefe70f727e2722b8fb97393e0f9a6353fdb707beafa0f757512e806cc385fdcbb7a6bad6d0dde17bf69fe942694ead75e3fef7d1128d59bba906687e0fa41d2c5adda355b8beaab883286c47ad6a7935b4d036c683a27e003c07a6c671a4b5bf4ab53186d38e6b33062a44d06bad09cbc1fabe988b57e55f879cfc52a48a3122b85aa3cbdeb48fcdaaf94296cbc36c01e36baa2fe7f949bef7d33fa5ef3c4d389b202f0838b69bc5d0ed3f1394795785c66cd0a747454f5a1399b9d92c8f99a77cf57d076a26926921ff5c8197a4a885243cb34ce767b60e9f245801b12f26031a04fe4328d2797c2cf89401fd2175cd14c67aabbbd136babd04d29aa82d8ca0d1cafe077dad0cdf3388733c9ee25d4b35b64bba9e08d8c8ba76794d1fdaeb04698e65ca41db67949d35d2c397123ffc1952a230ab01eaab37b123d12c3b4ea86e1a35148bdd509196a1b11b94f7abc212664e048b6973f6bb0017907e7efbb27541b4d2e1d716e04bc604babb71480d50734739670e3223ccbcaa4262d018c9b95d0a836dc8fd0671aa9adbc636dccdf1a9900c72273a3e1c515a4388028aeafc9a40c278ba0412abf4015a3b12974704e0a2fe7c3cbb7ec3fc4daf29c429127f91fc7b7f506a0270cbdd3c58b07a637ddabc02b9221ed0ea1c8f0810fdd468017f05a24345cd00a3ba386fa7b8c518d992cf3aaf8a79f19a2ed8608c07d06f753c99c9aa3aa3533cf953e77c7bf1a618e2f27312484a43e066ee4bfe2d466bc6f4f8edab0c0ef1dbbc67ac4567d0d0caba0d28016e3ed175c99760f18ef52da6b4439ce583a602f770519a0e5b51afadd40555fafaa5ce1fca1fcad4719415e24768a8f20e499df0ae6470725b9eff2620b05c9e6e9ea3f5ebaf0ce68f61a7d490055fe37751d95d68377ab85ebc1d0a7fd7b442cb6072ceb86c0924a05b543e812d2e8e4f356401d7159fc7a21ac96260f4ae955820bca21c4acb3fdae05d173dace8314e19951f6f124fe423f91024cdf37d0e204543a3091c59d33fbdbda6c8972ac935b64eaba4fd416b03c03ba1dc8c55b8c11ecbc13d7fe7d0291e791da4f296d6e1d88a9ac411003fac452f1b46d269896cebb2c509719309ff7709c2cd9af21c774e3c9f08fb35395b94b26425fb5e45bf3e2c8280650041dffadffb2c34c5ed0e524f1dc9aa40fce6e468410537ba94cee8bcfbcbf0353f5a762a834ee2bb5c0e9a5c4dd8c917a847435444d4f9d33079bb6734eb4a98e22ad71346eec0132955e314951125e75f7103b7c3ef355592ad38c19a7c315215ac4b8be62211e9de5861e2d1dcee6a51090401dcdcb4099624335e58169a57268cfcb4d2f41e1dfa88f39c75b1695c70ae4fd6050beb6302eebaeb6d6a803830336ee92e95d2ce4e7a8b9b7aa5dd47bb6407ad3e36950c100aede82aebf699f08f70b62e1dfa50b01396f2be85393aa07852c093d7b69fa4862ce0ef60329ec0fcd416de1b9d479d7aa332de7dc01b474368e84d60f39161fc67f2b07f61b04be956424c8e451dad46365faafb4465f8d451e62d3fe766dfb221f1a70980d5758f476eef24ac1f8d2caac580b408f2171575e698c2fd12e466fc7d45cb653cebf8799ceb658e0dbf40bef8edc696a809d141f2b75348d04bab8aa089ff4248f83fd0779926e912ad6c82f6b0af284bc2cd9e11b54b429c868e90c07e73a6bd619916c9bc2e327868dd10a301093aee43d806daf59c6b8e7043afcf7cfdd3fa7ae79aad1b622e9bfb108e3a455828c2c2fec2104101521cee7d2475a55000b6d5c22054c591774eb3aae62e1db8707002ee75677a33b1d7f7a885a97311eceff5ef2cbdd7698da1e3c2fac51c933f96209442681db84800ee1d89ea7377c46c09e7daac64a025245fa6a595caf6d1929c1327f6467cc213fb500a3f68a35122feeb20bac0a103e4796e5dfb8be3735404e07d57f21e1348fe0d9c33509a6478ae6633e103ca91feacf073a3205b225347e66865afc10a701835c36f32300e7161c2994ab08de939bd5de7ab73b941d19c5fd8c09dfbf691bc63d2170d6906b84a0a8db17e19f4773d9ca159bcaf99eb65437489c4e700eda4d245f560522c07562701efd7c8e2e32f45babe30163086d26d47b39ac7e85626c206bc4237dfac9429ed9a86ab5d003ac6f72a4aa60275fc0e48421d9bf4a463b12ee7f177c2e24daf3b328674371add4a53541779ba630c65e9f9fffb20ca8ce56971110d7754ac06047715efc3686d26fe48f012fd58124b6d6df9ec48cde85e88186377aac90aa5127e8f713f6184b71ee8e4a292937f16f080beaefe3361bd75f5c388f7a38e78fbd4b02e1b29801f11145f9de4d3dbbd7755c69b6eddd0fce30fc4340b92632823672bc9e1487f20b709951f45df5d16177c7c4650d0d1c515d6aff984b4971bc82d6ad77e51e75e825b58b5d11aa8a0b3dda15bb83f31fd2e4e7510de5430181fece3add3b5eeb4933b3c3a3791a741a9f722104336308b335786f9fbf9b3f723eca78ead99c66989a6d670c4f1b258f8ac919a7f94d4c363e02d0416a0ae22fefde72d4735d0b80b8e8aa83644987f13c80ecfabd0ed22fa069f7acb2a83a24cedfafccaf394b9cf4c9b03ac2feb7031632e9fbb30b940ba4a0e2de53004caab755c9534e723b4cc6bcc60e54ad911b442d8b9c9a4a8f6763a9f081243659b47a24cc6338390d23946ee0164b30967142610116332f56cde7db6f2daeacb12c30c038bdb5237f3f9c42eb7dd663fa087736f22fdf05080ffa45fe5fb9c615ae00bbf09eb2510eb373a699e5f5962547d949689862216c4192b6ae6031ef9fd3aa371e9ca9a3295689c25e5fb79b99d346f6da797d002e75b3cdc00c57575d223f34bf68f08e7ab2eb4008c979f6383c9d477fb9a3e1ab53d13a91daa2f19a38e9fc0e12aa2a5df9c22d78b22a889184f0401b192f826ce9310b8c68a5598971c12eeabbc295b4d4453de6831141f45d571f5921b3f85079746c5155d3a35cc42a5fe4cc6977e840d6be74b53319b045596bcf749eed8da82be7f1c6f936c5de1b23f465e90d214b69041f532bd1dd88a43c4fcaa3008bfe9851b718fdaefb3e13250e68eeffcf81db7d34bb8f70fb9ffa88dff8e16ab79f8e1034c067123bc9fb66d14d6bf46afe66a0f450d5423746e937ed07bca09c57ba91ec9c5e5815bc5c8a32ea1db6c302a35facfb8bdc6b862e71d65636cefa270d95fa347c9823be59a0c9417f60d2ed67b8785f856ea2d9e048aa7268902e11598fda3bcd39f52adbcd44e268390bcf9973cb8b944fd1960b577687c5b4e86a2997f3e619715e007d9ab31dd677c4281c664ce7b5469f06e28e856f22ef62cfe95302a40fe42a16f666796e4e770901f21d721d63638b9f45c2313e20e0ac139157d80cf580afa4496f20fe85fc426cf8705f4be4919090758c3325de703e9d0081bbf50d2afbe83543b93c195e07def8f34776d11fb0c756ef40ede73663a12368fb3f1c4e55421fa946b797d882d273274ba821d71a6f93ecbc03aed844915bcd8aafa216a4726adc56a755251d806f7f83c4206ecb932cf420e5cd7bc7389e6854c8b015d71cef2b8a40ab49c471299fb802ff6e9b7c8430a07d90a77a920d501a09e9caba863221e29cb1e7231949327e29e907636f3d157108f4908a12b026dce46a1da809d45fdbf270b59e184d8628df5ce958b3adba4fae387965e478bcbab63a1421b7df5754fc27b5cc14646264d4ddffb063828e7e25bfdf83c581d58dd74788773ca428698b5d6fd46262d2f02555a14bac6a4ee60dc727713b5f85ebec1d23910f39ea85feaa7b7e6ab13f9dab626ad218f027fe2b43c5cdcbf53f6898b644bf13cad3d3bd7c14656660f0d327c052f012871e9c6bf41dc8457653df9ffcb0c26a696a8feb3c0a9952ddd025cde585204166ad2669f91c6a0a937c8562585b9003924622f7d2bc317389dc3ddec19c8980cc2e59d821ddba53615f061d262678b7b7713f52ea40ef12e4fe0ee5a9a338d66d6440c50c7eb13379ac3580da2574dd9fab111273ee68c1ac56b598cefdb154c1c4e78e00a7aa82b317883a5a6e689fd071b734b6c482b1dcfb190de4819724acf30499c192fc908c5721072b908635d509a5966c399809329acc0727066ab852eb2db99af278c804b3a4548374accabe91274035d7f15d46f8f76b16f9c4ef167c24042490da7fe0d3f6ee446976b118279397627ed23d5995aad439f7f5e1993f3f15e9c8bace901a6f7dcd62075705385653bf17476b369618af5a94c9e290fca4bf9fa0562a616bd1f515a0935bb9f102fa600629d195e85c45e1dcafabc243e295665f510bcf862a1f34fe24ec7f66cc1c5ed3a1001f042b0860fea84e0ce9e4397137ee8c1d174224d2dbb1343b7e9073821e3f3d296d4bfe4f760447631f6c36cbe35bc3571687572ad714d350bc6a4d850c8b229534f643b18079ab04f609daac0d626a3469b6f53fb36e1bf6fb9edba4f7759ef47108820e61ad2139ac5abebe02d143aee1aac859eb14b85d626ee563148799fbe718038e042a0bcacdc9f807c537e0f4998f30cc0cf89fed226e07964fb29ce934ebdcec140b9f7b05cce7d5c6a607e1a3d4919e572fe58874552607440919d5a4fd88d4f86ceb9297396da5945c558c9f7750b7ec161461cec373dcc2eb32ff3f50fe7556d4fc76b343340e04602142bd528b3133cf43ad5b284f27b69689c539642382163e59cfde59a816e68d1d26cf9cd9a79ef7b8dc2a6d42a39d6c13aa76620da6740bfc9bec628108a357576b397ed1fca004a6f9d73290b1cdfcff2fc60089dc6142a45e1aeb49e8c816a368156e10179cec538ef0ae075c2cda37644f59134e259da190cd1faee883136451af3c09869c47bf92fc20082f249a45a51cd2e06828b6b19c0bf5cc9cd31513b0cf8550f4663290c29a34c3340779df57a029784e443d0d83ecbe9b02ae27ed3ac8348ffc2ad0d6eb84ad5d3ec25c86d633913847b92d670d868a64526ffd2515dc88537f490558d11204bb6f212dad15d4d5c03891c3ef00861e44296410cb23e7b1fc01348557ca64d87cc840ca74fba4cd07f1f412eb85bad3033cc3631f6cbf81d7667200003767784947a38d0351bbc85dd08f8bddcc992d3a10ca8abba0c0f7b152e2ea35ee4bb1484338037a29ff9e00bc8fc8fe91949c23f759849675f8e95e7eb777da28c3600d8c322dd3e1323dfe13deac921e38053436260001746a5f67dc92fa29ddd5c9b34a83cd12008bfe0f1f0e7757f8ffc768fc3c4a01d00df7367ae93915596b1a7415403f0e84274454d2930edb66a303bdb10fabf7be9a8d5c3642e80236b49c5119740896226fc7518bc198fad8be3b031a0237599f821a060d07c668ad23073c4ebea6329e640b073a571c2991666b63a79ff019570c2c0b14c6afc336d992349894cca1db80e46204756d7d301e86d66f682e0d899607c5afdd8631ca51c941c2dd71348da367cbee6386cb27ef982731c92a72cad6ed6199f49ef7d65da85999695783ee29bc427f93cf15646eb6ed8d453aa193591e32bd861e7fac62265993eb5c8087132e3d8bea229f066841bf3ede3015695e0216d17ae0eada638d28e11bb5f76fe0da18809bfe83f21061ddcaa3b9835a1fa16d8d5ab9441ec3bbd64b22b36581b15525100f79e86e2217ab24505168b6710f7b1c4680b76a769de32aa6306c19a721a83b6df9f6690a8b43d25f491110259de1717a01db232c8bd56b36b5985923d3f5682db9b484cee9432f32d75fe8425ea0aa476ece0986d3755dbd475f95b15600b6bdd18e414e865bd952ca7e9d1032b774d0f0613905c016f906371784e0e4d48b39a7068aeb70ef5cd5c30c86756ccd01bdfb1ef076a6e76bf46888cc6e7eab8f10f26139f9abfd2cdd3a08fae5db925df506c9b30d0e7f8d10845debf4e9bdd4c9617fead37bab5d6cdabfc86893a3e0fe373de13860318f5e711f87a5168b09b6b630f9babe385e34a4822f48a1492841ff914a188052e5a26e2c0d3714fb7412390900d7036f4cd7cd2a017f4db9c2d5c5b224685d868c94e37f5352f7c17b14eb7bfc2ad380ac75f1a9d47038086cebd8b363107348251dd80c5baab6ce35bac1231949a43f7ac5b8aa9974ef49f8f728b464d8e948bc7a51349d0d79ce82b7457b15b626e3f483ce11453de74be0d9e68054321b537b57bd9b941854ae7e6171ceb4fb860f33dd478a0f23c4e57f8db51ee5d26b50164e696a842170998a6e401914b833e494b284d14afe73f2023be88b18e5c980fa4f4fa837134f582ea850d4d354a33da91d5d576eb17a2f00e4eb06e0847856ae845b64e200737b44a63c82d595e7c9673385f0cbfba514e73335e45bdf9de3a303d9087be57a7fdfa26f66197381eb977bf2f3e0538bb82e83137eb0b3003ae9e7ab65fa75611985ffcb8c5c18b5e920b89cc9745aa17f62c0b530390820d0bc2d70173bcba06443abbe645d320b3c3e57c0aaace8e0d1d0889791091ad7103cc6506f79142064cda2c34e1e89f8b141cfc812f03b71c89c686d2c2ac432ba11f3811e4e18b188b099d843e6e2c21d99bed95e5ddd12b51df0e84ecf8a5a9b0be4e0315bf702783d32283d28798846c15586a473268e8c61ca0f598190780c2c0b7d5db3e4b1fef37dd1a619979dc1ba9411f1f7867df2cc952f4925aab542d1bec25c3498d4618e141611daf17f0bfec0ebca2c3fe3a41d484fe198d6f13fdf1f6ad921d8257f6ea26a02cd8759e8be76aaa285b428a001a254b36dfeac65aa0b30798decccaa5983c8bfe2deaf163a6d1be4d8bfbb27a283d1a1331a979e4cdf9b216b1f82597c0cbaea4aeb5e3d062ece79e9ddd76040c02c7e0c0af4c091ff0d9056d46ce6b40e7730f9f151bab2fb7c8773a1160164d4b512748b5e0866c6b68ac494cb833506e7e2d7722315133fff8295841e1c672d5b18cc775c0be4605358ba1bfcfeef5d69de194ec9c9082e22e6c7ea9c168844d12f734f02080ecafb0d8a5446ec1661c9a80fc72829322c626df2d55c46355d958d1ded286c4cf163549c0fb5e9a9396dcd7eb857047538acdeaf4a4862a4994e38697664b31baa24861f7822c68e1f97d1f880d0308959f1605fed18589f412edd6c0e7fe0912d73337c4467fe4d299bc40efc863ef29666c2e1b094eafc88788b63a51ad5080013fe9b9922486ec3408dabb6aebc95291d8dee2bc120406161076049ddb71a3b87c7dd0b5e32c054ef38c73c3fdfc730d17062a2baaef8fdf19c15f0a5affda581cb0e07d39ce15f242bdff89ef539b69cefc691dae5259a2364dea76353298453e8751bf6193a0de6e0a6b0c678bece9ee54518c3d30ebe95c1df456101c9d52d149310f41bc2587584d102492d4864a6df55b60a2264602d30d02740edabb574b93b4c7ab23f0c30c89e60829972d663ae7b493726a15419b88a4812817de34ff4561b70638c909ec55debf03180f76564e807be3005f1a472477dd02062bef43d96cc9867dc1f2fd445b4d74d6901bccbc6d03f71eb88bc0a97055a9fdc796d25185083174d673420a1fed53642cc055878ec2059015fb8678ea9dfd4445f26d71fd529282e73880999058de5050258974c1f6949a66006f78dde2a097c3eb9c1ac863ef683662f77bb0a53677d87af675d2d93057c93233bcfb1b54f2eb5a7b432d30bf4b71af6833064c1d9381e58f50cfe334c31653bfffd099d84a37d5e544836fbe7e2bc19dbad13d3f7dad18e31f7e295f2ceac01fa39180dbf817b15efad01379a4bd6e81470b85a04862b48755e4f1d6c959b6d94114f27ebe0e24fcf8d3e40ff5da01b3b72a3d2d2d8a7ffbc4aeb5331d0d3684f8be5d4d48316026f45df634b8938c336799c27023833d67ed9363afc3dbdf3db0593a10b00cf24055d0348623540be1c30ffbbd43e9cb7f50d8605e44231c64df2a0b518a8a3110e908b53edbf83bdbd32c4e128d5fed12a2bee6220f0faaa0ec5f07c65edc6a88fe5fa5c5bc7f1ecbb0f362298b72facb48adb83c3d8d707ec3fc7883d6ab5f50b6d022555cdf3782c4b71718925e722f779e069b010a41437e6f85651ff5e8d3b8adbfa6606afac8966dce53909d08047034eff0fb8b03ed275b349f6e31667302ac4b4e1904f89374a1b4da0b8bb51806be747e13fb89b69d8f4cf1e8db8484233d3505a8dcb17a09f08354ecb2bf7e9abf243ac4a573545cddb60126260cdca26f4343e87a56a8c5ce95ddc7ba8f3c4690d3d0eaa4963aecce8fe4b2ecb740ea8ed140186040380d51ca7bf146405e7c20298468b66868c8c54bdc4ef20d5f930f512e20cfde7336608c54c094a4b26168fce225551305e53124cffdea17af778e5c91bfee4f54ffa3904dba95e12e2ab3410e2efc94f04919f322d57ada05f1766aba019df8dde45174f555df82dfd577d6bf1d0156361685934d5db47781ec306d21133bb804d681a6b8a59072c274d65931cffa1b580d7a28140a4248f8470e4fc4336c83deaa752eb4a71fd8fe541fc31f5f01aa00e0657c75989a4767a69f17d06229f5b2cea466c8a38d46c5000a24869c519decff81c1b6e96ad448000746e294bcde4d2e3fd5dbc28eca3d09c7a7a73ba2fea7be3f7d0c17a13de552af929df3d0fea29b75bc3b1a4c6146289df0c52a97f9b3e552a417a5ec88ac5067dfe368e457a004c35036a617da6f3434003905551fff6d77336b813b2af4b90f792ad486373403b0c80459dc29f5911ca89e940b15d7cc20b72c9e12dc4fcd0a258d8ff89bf75257fc0f9dbdaea4e4c8dfa776becbdbdc64b09a915b18d6960ad54e78238cba555358a0267ee39924846201f1233774283b22efd33f1fe14ef286a754c3cf7172c1981484a7ffe1673a6e30609ecb32909206cc1c3046401870d3b10fe2ebb04f05a62d09340784e91b170529497868e7fec0c7687da90f8c45a97716906368f169c728effdf3d94eaa6822ee2dfa6c0e4e7520d8bf2125e0ca416f299e26db08e71a4f0d353310950bd4eae7235292744b218dd4d6f22cd4c61eba3df2e6b1649ffe83207b46d46cf9816739178f1cb587a7ca1125d0c715cccd3d1ee2262d0edf724dd907412b1405c67c10cfd084984bf3c2ae470173aeca8459779910bed14b0ea8210f751db4d0b7cafb40ec5e156e271d8b2fe0ea84a252b894ff1fdec04b208774307a10b7d22cac0c453360a6fbe2497ad808707dc16343909e0acb4adddf342a881d29ec7f97533a921f3a53e8ee8d117f44787dee0b1a4869d0482250fffb5168d9f40cd36a852f11bd5857d3f46849578ecc2d849216f530fa16e7a36c13f7a648e76d22990a5875e55686b67c33968e6e549f5f943eb3d843305f01a0af7bd3579a3549dedddac797b9b7d20ddb7ceeb8d11d23aa6fad0e2e8c6b2befd812aaa8a220a3c69a4977d00f3efe1d0ee40bf0ccc98ae</script>
+  <div class="hbe hbe-content">
+    <div class="hbe hbe-input hbe-input-default">
+      <input class="hbe hbe-input-field hbe-input-field-default" type="password" id="hbePass">
+      <label class="hbe hbe-input-label hbe-input-label-default" for="hbePass">
+        <span class="hbe hbe-input-label-content hbe-input-label-content-default">Hey, password is required here.</span>
+      </label>
+    </div>
+  </div>
+</div>
+<script data-pjax src="/lib/hbe.js"></script><link href="/css/hbe.style.css" rel="stylesheet" type="text/css">]]></content>
+      <categories>
+        <category>①  项目笔记</category>
+        <category>字体生成项目</category>
+      </categories>
+      <tags>
+        <tag>Font Generation</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Java绘图机制与事件处理机制</title>
     <url>/2022/04/01/9d060fe0d5ae/</url>
     <content><![CDATA[<h4 id="一绘图机制">一、绘图机制：</h4>
@@ -8981,29 +9071,6 @@ src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-202204121731375
       </categories>
       <tags>
         <tag>JPanel</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>字体生成论文研究进度</title>
-    <url>/2022/04/01/f225f383e158/</url>
-    <content><![CDATA[<div class="hbe hbe-container" id="hexo-blog-encrypt" data-wpm="Oh, this is an invalid password. Check and try again, please." data-whm="OOPS, these decrypted content may changed, but you can still have a look.">
-  <script id="hbeData" type="hbeData" data-hmacdigest="f490f6d4eff128b6f8c23e395e0b13f44dd14e197fc50f16d44b6fec836d5931">1557a4d06c41b8b7cb942a6d0525c027cbeeadc10caf98a45705387558304bb469290ed727bac22c14368bef657fb469dfaa63f24918c0cff3b2760cd4c7e41d903d1a82d66af59312cac4cac46cf8eb876b40a6bca879a6bb5005f2de6cb7700621bad9f290d26f23d98ad7d10aad36bec4e6306e0626ed5b58ff9d6c87b6b9fb9358b7c8663eb4e3f6b73813f33f206cb37ad8174d4a8dec552525d1b17d29a7ff9a69af1c0464d7be2cd47663a8511470a8a9ecf52a3eea3d24def5ef2b867aabfebd01f658d97f48cb62241de8f7a8c19ea8bc92d6c680ec59bc38b048d425d487212984d3aa9277e8bafa990fdb34d8a30bc941854858dcbd2c49e5f28f21e8ba546f2f0da3365f940432813ee29c950135eadb5b7ed325594771d8ec8a9d1f3ad8cf5cc9eae23197303a55f47176df2e97551922502deccc82ba3a0d0fa712a9261862f2788aace95a046bffc7cce1f66e50a2c6021f4cfc9cd90935fbb6ec3c290ffa4add6317fab63a83f5691b98f8d19efca83ec4ffbd8614b8e7ac3a4260a007377813591b13e3737b007a82ef659ab4845a4799af73318bfedd75e021f0cee0157996154ee0b0d89a5481f558e1ea747d3de2bffa3166672fac1271864c41d9dbc04032d309ab8a8324d0df005f78c8f05a18e52d005529009028238e2e96252ca2ef67df0c8bb09b9894362b07c22ed169e86ba234b046d063a31a0dc8f90ad0cd26dc956e5280d31639778338271930a6aa2a2a4fcc6fe161b45a9a85fd07125410a1633279d8c785ab1913ad30f45a18498b3fb2829dd6f067a17c541be12a01e37c08c82707915cbfb4e002bf5025e5d81f5fa08ce6bf18c3184420ff1921e17f4126b1f10ebc8e7395006f2a552f0c0c37ef4b17c2138b950e4574c440a94e9bd4e400277723250738f15e2d9bbf5e2116f22848e8102dc33ac5d504f10f4a7f3d18f2687064f51f963e819f143fdf829a9d4db46e025d1d774c60ec1e91eca7e55241e8fe4fb65bb309cfa0f612aa9422a90d9ac32ece2d4ba42db909f0efd04c39637eb5e351870d5f1d12e57dda4f141f9f11058392e3f5f378451f43884cceaf6e78ec090bbf3eaf9f919ecc6d0d84b01f1be6501f387c8daacebaa9c608e9bcabc8790e3c1cb980add9e6fb12430856ede148fd91c08f7485709962926e803d404c3c7a7f38fd0ef69e9c4a32f491d49234a74432572a5090c296002c73df41a4ed7bcfd4bc6d23ba76427aa950f5128a0455186d99b9a09cf6789e31f76f8938a95d8e861be3b1f051b1af3a674a08677aa18071301825dcfb11697eae002fa97923a9ee69ad49ab4b3ba810ade6c531b4a79f4c0befa976492d07ded5cb76ace66549c6c40f7e4927fe047273209af3269d43d4905b4c271ce055d131103b7bc6bb7fe95d94f338b1e2a31a90e512eb78fbfe8469b69718a88307a747af389488f2d91fd56813772a3e6c47de32f4ae1e0fe965f791663fa3173d62c91644df73790f4ff69fba0170822a1ef6cb002f7e2a1179ec3c6ac8fb8f138ad559c2ffb4938d0a710d78d62ebb23944ae7255d6a6a3eecf42d65a95f6adb81f85952df61009dfc7477c9fe7228478a902c5fc3ddcb883dd4975a19f59ad4bf0b1ef764536efeecc05dcf770806e90809f6698e4575294da06eb572d6c224c03a0711d84ed672dde635e459697ba656dac1ba45a831f42bb618e0b8fec82eb048869dc25e32748d1cbd62069b10b52ea4a07640142bb989a33eadf9672c17a80e88328d20704a54fc7a2714c339717b286d7981e643ec7d4b6cc15c2e071390341a281de9143f1e24a1ba629221a707b69c80a2ca9f094c7d9ac03335d7e218eefe70f727e2722b8fb97393e0f9a6353fdb707beafa0f757512e806cc385fdcbb7a6bad6d0dde17bf69fe942694ead75e3fef7d1128d59bba906687e0fa41d2c5adda355b8beaab883286c47ad6a7935b4d036c683a27e003c07a6c671a4b5bf4ab53186d38e6b33062a44d06bad09cbc1fabe988b57e55f879cfc52a48a3122b85aa3cbdeb48fcdaaf94296cbc36c01e36baa2fe7f949bef7d33fa5ef3c4d389b202f0838b69bc5d0ed3f1394795785c66cd0a747454f5a1399b9d92c8f99a77cf57d076a26926921ff5c8197a4a885243cb34ce767b60e9f245801b12f26031a04fe4328d2797c2cf89401fd2175cd14c67aabbbd136babd04d29aa82d8ca0d1cafe077dad0cdf3388733c9ee25d4b35b64bba9e08d8c8ba76794d1fdaeb04698e65ca41db67949d35d2c397123ffc1952a230ab01eaab37b123d12c3b4ea86e1a35148bdd509196a1b11b94f7abc212664e048b6973f6bb0017907e7efbb27541b4d2e1d716e04bc604babb71480d50734739670e3223ccbcaa4262d018c9b95d0a836dc8fd0671aa9adbc636dccdf1a9900c72273a3e1c515a4388028aeafc9a40c278ba0412abf4015a3b12974704e0a2fe7c3cbb7ec3fc4daf29c429127f91fc7b7f506a0270cbdd3c58b07a637ddabc02b9221ed0ea1c8f0810fdd468017f05a24345cd00a3ba386fa7b8c518d992cf3aaf8a79f19a2ed8608c07d06f753c99c9aa3aa3533cf953e77c7bf1a618e2f27312484a43e066ee4bfe2d466bc6f4f8edab0c0ef1dbbc67ac4567d0d0caba0d28016e3ed175c99760f18ef52da6b4439ce583a602f770519a0e5b51afadd40555fafaa5ce1fca1fcad4719415e24768a8f20e499df0ae6470725b9eff2620b05c9e6e9ea3f5ebaf0ce68f61a7d490055fe37751d95d68377ab85ebc1d0a7fd7b442cb6072ceb86c0924a05b543e812d2e8e4f356401d7159fc7a21ac96260f4ae955820bca21c4acb3fdae05d173dace8314e19951f6f124fe423f91024cdf37d0e204543a3091c59d33fbdbda6c8972ac935b64eaba4fd416b03c03ba1dc8c55b8c11ecbc13d7fe7d0291e791da4f296d6e1d88a9ac411003fac452f1b46d269896cebb2c509719309ff7709c2cd9af21c774e3c9f08fb35395b94b26425fb5e45bf3e2c8280650041dffadffb2c34c5ed0e524f1dc9aa40fce6e468410537ba94cee8bcfbcbf0353f5a762a834ee2bb5c0e9a5c4dd8c917a847435444d4f9d33079bb6734eb4a98e22ad71346eec0132955e314951125e75f7103b7c3ef355592ad38c19a7c315215ac4b8be62211e9de5861e2d1dcee6a51090401dcdcb4099624335e58169a57268cfcb4d2f41e1dfa88f39c75b1695c70ae4fd6050beb6302eebaeb6d6a803830336ee92e95d2ce4e7a8b9b7aa5dd47bb6407ad3e36950c100aede82aebf699f08f70b62e1dfa50b01396f2be85393aa07852c093d7b69fa4862ce0ef60329ec0fcd416de1b9d479d7aa332de7dc01b474368e84d60f39161fc67f2b07f61b04be956424c8e451dad46365faafb4465f8d451e62d3fe766dfb221f1a70980d5758f476eef24ac1f8d2caac580b408f2171575e698c2fd12e466fc7d45cb653cebf8799ceb658e0dbf40bef8edc696a809d141f2b75348d04bab8aa089ff4248f83fd0779926e912ad6c82f6b0af284bc2cd9e11b54b429c868e90c07e73a6bd619916c9bc2e327868dd10a301093aee43d806daf59c6b8e7043afcf7cfdd3fa7ae79aad1b622e9bfb108e3a455828c2c2fec2104101521cee7d2475a55000b6d5c22054c591774eb3aae62e1db8707002ee75677a33b1d7f7a885a97311eceff5ef2cbdd7698da1e3c2fac51c933f96209442681db84800ee1d89ea7377c46c09e7daac64a025245fa6a595caf6d1929c1327f6467cc213fb500a3f68a35122feeb20bac0a103e4796e5dfb8be3735404e07d57f21e1348fe0d9c33509a6478ae6633e103ca91feacf073a3205b225347e66865afc10a701835c36f32300e7161c2994ab08de939bd5de7ab73b941d19c5fd8c09dfbf691bc63d2170d6906b84a0a8db17e19f4773d9ca159bcaf99eb65437489c4e700eda4d245f560522c07562701efd7c8e2e32f45babe30163086d26d47b39ac7e85626c206bc4237dfac9429ed9a86ab5d003ac6f72a4aa60275fc0e48421d9bf4a463b12ee7f177c2e24daf3b328674371add4a53541779ba630c65e9f9fffb20ca8ce56971110d7754ac06047715efc3686d26fe48f012fd58124b6d6df9ec48cde85e88186377aac90aa5127e8f713f6184b71ee8e4a292937f16f080beaefe3361bd75f5c388f7a38e78fbd4b02e1b29801f11145f9de4d3dbbd7755c69b6eddd0fce30fc4340b92632823672bc9e1487f20b709951f45df5d16177c7c4650d0d1c515d6aff984b4971bc82d6ad77e51e75e825b58b5d11aa8a0b3dda15bb83f31fd2e4e7510de5430181fece3add3b5eeb4933b3c3a3791a741a9f722104336308b335786f9fbf9b3f723eca78ead99c66989a6d670c4f1b258f8ac919a7f94d4c363e02d0416a0ae22fefde72d4735d0b80b8e8aa83644987f13c80ecfabd0ed22fa069f7acb2a83a24cedfafccaf394b9cf4c9b03ac2feb7031632e9fbb30b940ba4a0e2de53004caab755c9534e723b4cc6bcc60e54ad911b442d8b9c9a4a8f6763a9f081243659b47a24cc6338390d23946ee0164b30967142610116332f56cde7db6f2daeacb12c30c038bdb5237f3f9c42eb7dd663fa087736f22fdf05080ffa45fe5fb9c615ae00bbf09eb2510eb373a699e5f5962547d949689862216c4192b6ae6031ef9fd3aa371e9ca9a3295689c25e5fb79b99d346f6da797d002e75b3cdc00c57575d223f34bf68f08e7ab2eb4008c979f6383c9d477fb9a3e1ab53d13a91daa2f19a38e9fc0e12aa2a5df9c22d78b22a889184f0401b192f826ce9310b8c68a5598971c12eeabbc295b4d4453de6831141f45d571f5921b3f85079746c5155d3a35cc42a5fe4cc6977e840d6be74b53319b045596bcf749eed8da82be7f1c6f936c5de1b23f465e90d214b69041f532bd1dd88a43c4fcaa3008bfe9851b718fdaefb3e13250e68eeffcf81db7d34bb8f70fb9ffa88dff8e16ab79f8e1034c067123bc9fb66d14d6bf46afe66a0f450d5423746e937ed07bca09c57ba91ec9c5e5815bc5c8a32ea1db6c302a35facfb8bdc6b862e71d65636cefa270d95fa347c9823be59a0c9417f60d2ed67b8785f856ea2d9e048aa7268902e11598fda3bcd39f52adbcd44e268390bcf9973cb8b944fd1960b577687c5b4e86a2997f3e619715e007d9ab31dd677c4281c664ce7b5469f06e28e856f22ef62cfe95302a40fe42a16f666796e4e770901f21d721d63638b9f45c2313e20e0ac139157d80cf580afa4496f20fe85fc426cf8705f4be4919090758c3325de703e9d0081bbf50d2afbe83543b93c195e07def8f34776d11fb0c756ef40ede73663a12368fb3f1c4e55421fa946b797d882d273274ba821d71a6f93ecbc03aed844915bcd8aafa216a4726adc56a755251d806f7f83c4206ecb932cf420e5cd7bc7389e6854c8b015d71cef2b8a40ab49c471299fb802ff6e9b7c8430a07d90a77a920d501a09e9caba863221e29cb1e7231949327e29e907636f3d157108f4908a12b026dce46a1da809d45fdbf270b59e184d8628df5ce958b3adba4fae387965e478bcbab63a1421b7df5754fc27b5cc14646264d4ddffb063828e7e25bfdf83c581d58dd74788773ca428698b5d6fd46262d2f02555a14bac6a4ee60dc727713b5f85ebec1d23910f39ea85feaa7b7e6ab13f9dab626ad218f027fe2b43c5cdcbf53f6898b644bf13cad3d3bd7c14656660f0d327c052f012871e9c6bf41dc8457653df9ffcb0c26a696a8feb3c0a9952ddd025cde585204166ad2669f91c6a0a937c8562585b9003924622f7d2bc317389dc3ddec19c8980cc2e59d821ddba53615f061d262678b7b7713f52ea40ef12e4fe0ee5a9a338d66d6440c50c7eb13379ac3580da2574dd9fab111273ee68c1ac56b598cefdb154c1c4e78e00a7aa82b317883a5a6e689fd071b734b6c482b1dcfb190de4819724acf30499c192fc908c5721072b908635d509a5966c399809329acc0727066ab852eb2db99af278c804b3a4548374accabe91274035d7f15d46f8f76b16f9c4ef167c24042490da7fe0d3f6ee446976b118279397627ed23d5995aad439f7f5e1993f3f15e9c8bace901a6f7dcd62075705385653bf17476b369618af5a94c9e290fca4bf9fa0562a616bd1f515a0935bb9f102fa600629d195e85c45e1dcafabc243e295665f510bcf862a1f34fe24ec7f66cc1c5ed3a1001f042b0860fea84e0ce9e4397137ee8c1d174224d2dbb1343b7e9073821e3f3d296d4bfe4f760447631f6c36cbe35bc3571687572ad714d350bc6a4d850c8b229534f643b18079ab04f609daac0d626a3469b6f53fb36e1bf6fb9edba4f7759ef47108820e61ad2139ac5abebe02d143aee1aac859eb14b85d626ee563148799fbe718038e042a0bcacdc9f807c537e0f4998f30cc0cf89fed226e07964fb29ce934ebdcec140b9f7b05cce7d5c6a607e1a3d4919e572fe58874552607440919d5a4fd88d4f86ceb9297396da5945c558c9f7750b7ec161461cec373dcc2eb32ff3f50fe7556d4fc76b343340e04602142bd528b3133cf43ad5b284f27b69689c539642382163e59cfde59a816e68d1d26cf9cd9a79ef7b8dc2a6d42a39d6c13aa76620da6740bfc9bec628108a357576b397ed1fca004a6f9d73290b1cdfcff2fc60089dc6142a45e1aeb49e8c816a368156e10179cec538ef0ae075c2cda37644f59134e259da190cd1faee883136451af3c09869c47bf92fc20082f249a45a51cd2e06828b6b19c0bf5cc9cd31513b0cf8550f4663290c29a34c3340779df57a029784e443d0d83ecbe9b02ae27ed3ac8348ffc2ad0d6eb84ad5d3ec25c86d633913847b92d670d868a64526ffd2515dc88537f490558d11204bb6f212dad15d4d5c03891c3ef00861e44296410cb23e7b1fc01348557ca64d87cc840ca74fba4cd07f1f412eb85bad3033cc3631f6cbf81d7667200003767784947a38d0351bbc85dd08f8bddcc992d3a10ca8abba0c0f7b152e2ea35ee4bb1484338037a29ff9e00bc8fc8fe91949c23f759849675f8e95e7eb777da28c3600d8c322dd3e1323dfe13deac921e38053436260001746a5f67dc92fa29ddd5c9b34a83cd12008bfe0f1f0e7757f8ffc768fc3c4a01d00df7367ae93915596b1a7415403f0e84274454d2930edb66a303bdb10fabf7be9a8d5c3642e80236b49c5119740896226fc7518bc198fad8be3b031a0237599f821a060d07c668ad23073c4ebea6329e640b073a571c2991666b63a79ff019570c2c0b14c6afc336d992349894cca1db80e46204756d7d301e86d66f682e0d899607c5afdd8631ca51c941c2dd71348da367cbee6386cb27ef982731c92a72cad6ed6199f49ef7d65da85999695783ee29bc427f93cf15646eb6ed8d453aa193591e32bd861e7fac62265993eb5c8087132e3d8bea229f066841bf3ede3015695e0216d17ae0eada638d28e11bb5f76fe0da18809bfe83f21061ddcaa3b9835a1fa16d8d5ab9441ec3bbd64b22b36581b15525100f79e86e2217ab24505168b6710f7b1c4680b76a769de32aa6306c19a721a83b6df9f6690a8b43d25f491110259de1717a01db232c8bd56b36b5985923d3f5682db9b484cee9432f32d75fe8425ea0aa476ece0986d3755dbd475f95b15600b6bdd18e414e865bd952ca7e9d1032b774d0f0613905c016f906371784e0e4d48b39a7068aeb70ef5cd5c30c86756ccd01bdfb1ef076a6e76bf46888cc6e7eab8f10f26139f9abfd2cdd3a08fae5db925df506c9b30d0e7f8d10845debf4e9bdd4c9617fead37bab5d6cdabfc86893a3e0fe373de13860318f5e711f87a5168b09b6b630f9babe385e34a4822f48a1492841ff914a188052e5a26e2c0d3714fb7412390900d7036f4cd7cd2a017f4db9c2d5c5b224685d868c94e37f5352f7c17b14eb7bfc2ad380ac75f1a9d47038086cebd8b363107348251dd80c5baab6ce35bac1231949a43f7ac5b8aa9974ef49f8f728b464d8e948bc7a51349d0d79ce82b7457b15b626e3f483ce11453de74be0d9e68054321b537b57bd9b941854ae7e6171ceb4fb860f33dd478a0f23c4e57f8db51ee5d26b50164e696a842170998a6e401914b833e494b284d14afe73f2023be88b18e5c980fa4f4fa837134f582ea850d4d354a33da91d5d576eb17a2f00e4eb06e0847856ae845b64e200737b44a63c82d595e7c9673385f0cbfba514e73335e45bdf9de3a303d9087be57a7fdfa26f66197381eb977bf2f3e0538bb82e83137eb0b3003ae9e7ab65fa75611985ffcb8c5c18b5e920b89cc9745aa17f62c0b530390820d0bc2d70173bcba06443abbe645d320b3c3e57c0aaace8e0d1d0889791091ad7103cc6506f79142064cda2c34e1e89f8b141cfc812f03b71c89c686d2c2ac432ba11f3811e4e18b188b099d843e6e2c21d99bed95e5ddd12b51df0e84ecf8a5a9b0be4e0315bf702783d32283d28798846c15586a473268e8c61ca0f598190780c2c0b7d5db3e4b1fef37dd1a619979dc1ba9411f1f7867df2cc952f4925aab542d1bec25c3498d4618e141611daf17f0bfec0ebca2c3fe3a41d484fe198d6f13fdf1f6ad921d8257f6ea26a02cd8759e8be76aaa285b428a001a254b36dfeac65aa0b30798decccaa5983c8bfe2deaf163a6d1be4d8bfbb27a283d1a1331a979e4cdf9b216b1f82597c0cbaea4aeb5e3d062ece79e9ddd76040c02c7e0c0af4c091ff0d9056d46ce6b40e7730f9f151bab2fb7c8773a1160164d4b512748b5e0866c6b68ac494cb833506e7e2d7722315133fff8295841e1c672d5b18cc775c0be4605358ba1bfcfeef5d69de194ec9c9082e22e6c7ea9c168844d12f734f02080ecafb0d8a5446ec1661c9a80fc72829322c626df2d55c46355d958d1ded286c4cf163549c0fb5e9a9396dcd7eb857047538acdeaf4a4862a4994e38697664b31baa24861f7822c68e1f97d1f880d0308959f1605fed18589f412edd6c0e7fe0912d73337c4467fe4d299bc40efc863ef29666c2e1b094eafc88788b63a51ad5080013fe9b9922486ec3408dabb6aebc95291d8dee2bc120406161076049ddb71a3b87c7dd0b5e32c054ef38c73c3fdfc730d17062a2baaef8fdf19c15f0a5affda581cb0e07d39ce15f242bdff89ef539b69cefc691dae5259a2364dea76353298453e8751bf6193a0de6e0a6b0c678bece9ee54518c3d30ebe95c1df456101c9d52d149310f41bc2587584d102492d4864a6df55b60a2264602d30d02740edabb574b93b4c7ab23f0c30c89e60829972d663ae7b493726a15419b88a4812817de34ff4561b70638c909ec55debf03180f76564e807be3005f1a472477dd02062bef43d96cc9867dc1f2fd445b4d74d6901bccbc6d03f71eb88bc0a97055a9fdc796d25185083174d673420a1fed53642cc055878ec2059015fb8678ea9dfd4445f26d71fd529282e73880999058de5050258974c1f6949a66006f78dde2a097c3eb9c1ac863ef683662f77bb0a53677d87af675d2d93057c93233bcfb1b54f2eb5a7b432d30bf4b71af6833064c1d9381e58f50cfe334c31653bfffd099d84a37d5e544836fbe7e2bc19dbad13d3f7dad18e31f7e295f2ceac01fa39180dbf817b15efad01379a4bd6e81470b85a04862b48755e4f1d6c959b6d94114f27ebe0e24fcf8d3e40ff5da01b3b72a3d2d2d8a7ffbc4aeb5331d0d3684f8be5d4d48316026f45df634b8938c336799c27023833d67ed9363afc3dbdf3db0593a10b00cf24055d0348623540be1c30ffbbd43e9cb7f50d8605e44231c64df2a0b518a8a3110e908b53edbf83bdbd32c4e128d5fed12a2bee6220f0faaa0ec5f07c65edc6a88fe5fa5c5bc7f1ecbb0f362298b72facb48adb83c3d8d707ec3fc7883d6ab5f50b6d022555cdf3782c4b71718925e722f779e069b010a41437e6f85651ff5e8d3b8adbfa6606afac8966dce53909d08047034eff0fb8b03ed275b349f6e31667302ac4b4e1904f89374a1b4da0b8bb51806be747e13fb89b69d8f4cf1e8db8484233d3505a8dcb17a09f08354ecb2bf7e9abf243ac4a573545cddb60126260cdca26f4343e87a56a8c5ce95ddc7ba8f3c4690d3d0eaa4963aecce8fe4b2ecb740ea8ed140186040380d51ca7bf146405e7c20298468b66868c8c54bdc4ef20d5f930f512e20cfde7336608c54c094a4b26168fce225551305e53124cffdea17af778e5c91bfee4f54ffa3904dba95e12e2ab3410e2efc94f04919f322d57ada05f1766aba019df8dde45174f555df82dfd577d6bf1d0156361685934d5db47781ec306d21133bb804d681a6b8a59072c274d65931cffa1b580d7a28140a4248f8470e4fc4336c83deaa752eb4a71fd8fe541fc31f5f01aa00e0657c75989a4767a69f17d06229f5b2cea466c8a38d46c5000a24869c519decff81c1b6e96ad448000746e294bcde4d2e3fd5dbc28eca3d09c7a7a73ba2fea7be3f7d0c17a13de552af929df3d0fea29b75bc3b1a4c6146289df0c52a97f9b3e552a417a5ec88ac5067dfe368e457a004c35036a617da6f3434003905551fff6d77336b813b2af4b90f792ad486373403b0c80459dc29f5911ca89e940b15d7cc20b72c9e12dc4fcd0a258d8ff89bf75257fc0f9dbdaea4e4c8dfa776becbdbdc64b09a915b18d6960ad54e78238cba555358a0267ee39924846201f1233774283b22efd33f1fe14ef286a754c3cf7172c1981484a7ffe1673a6e30609ecb32909206cc1c3046401870d3b10fe2ebb04f05a62d09340784e91b170529497868e7fec0c7687da90f8c45a97716906368f169c728effdf3d94eaa6822ee2dfa6c0e4e7520d8bf2125e0ca416f299e26db08e71a4f0d353310950bd4eae7235292744b218dd4d6f22cd4c61eba3df2e6b1649ffe83207b46d46cf9816739178f1cb587a7ca1125d0c715cccd3d1ee2262d0edf724dd907412b1405c67c10cfd084984bf3c2ae470173aeca8459779910bed14b0ea8210f751db4d0b7cafb40ec5e156e271d8b2fe0ea84a252b894ff1fdec04b208774307a10b7d22cac0c453360a6fbe2497ad808707dc16343909e0acb4adddf342a881d29ec7f97533a921f3a53e8ee8d117f44787dee0b1a4869d0482250fffb5168d9f40cd36a852f11bd5857d3f46849578ecc2d849216f530fa16e7a36c13f7a648e76d22990a5875e55686b67c33968e6e549f5f943eb3d843305f01a0af7bd3579a3549dedddac797b9b7d20ddb7ceeb8d11d23aa6fad0e2e8c6b2befd812aaa8a220a3c69a4977d00f3efe1d0ee40bf0ccc98ae</script>
-  <div class="hbe hbe-content">
-    <div class="hbe hbe-input hbe-input-default">
-      <input class="hbe hbe-input-field hbe-input-field-default" type="password" id="hbePass">
-      <label class="hbe hbe-input-label hbe-input-label-default" for="hbePass">
-        <span class="hbe hbe-input-label-content hbe-input-label-content-default">Hey, password is required here.</span>
-      </label>
-    </div>
-  </div>
-</div>
-<script data-pjax src="/lib/hbe.js"></script><link href="/css/hbe.style.css" rel="stylesheet" type="text/css">]]></content>
-      <categories>
-        <category>①  项目笔记</category>
-        <category>字体生成项目</category>
-      </categories>
-      <tags>
-        <tag>Font Generation</tag>
       </tags>
   </entry>
   <entry>
@@ -9655,8 +9722,8 @@ class="math inline">\(\lambda_{id2}\)</span> = { 10 , 7 , 50 , 1 }</p>
         <category>CV相关论文</category>
       </categories>
       <tags>
-        <tag>Style Transfer</tag>
         <tag>CNN</tag>
+        <tag>Style Transfer</tag>
         <tag>Transformer</tag>
       </tags>
   </entry>
@@ -11460,47 +11527,6 @@ href="https://blog.fantast.top/2022/02/21/80b7b127a404/">图系列——矩阵�
       </tags>
   </entry>
   <entry>
-    <title>图系列——多余的边（DSU应用）</title>
-    <url>/2022/02/21/0f9e9b187c29/</url>
-    <content><![CDATA[<h4 id="剑指-offer-ii-118.-多余的边"><a
-href="https://leetcode-cn.com/problems/7LpjUW/">剑指 Offer II 118.
-多余的边</a></h4>
-<p>​ 树可以看成是一个连通且 无环 的 无向 图。</p>
-<p>​ 给定往一棵 n 个节点 (节点值 1～n)
-的树中添加一条边后的图。添加的边的两个顶点包含在 1 到 n
-中间，且这条附加的边不属于树中已存在的边。图的信息记录于长度为 n
-的二维数组 edges ，edges[i] = [ai, bi] 表示图中在 ai 和 bi
-之间存在一条边。</p>
-<p>​ 请找出一条可以删去的边，删除后可使得剩余部分是一个有着 n
-个节点的树。如果有多个答案，则返回数组 edges 中最后出现的边。</p>
-<p><strong>示例 1：</strong></p>
-<p><img src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/mac/1626676174-hOEVUL-image.png" style="zoom: 50%;" /></p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">输入: edges = [[1,2],[1,3],[2,3]]</span><br><span class="line">输出: [2,3]</span><br></pre></td></tr></table></figure>
-<h5 id="解题思路"><strong>解题思路</strong>：</h5>
-<p>​
-一开始，我的思路是找到一种方法，能够判断一个图有无环。毫无疑问，我们可以使用拓扑排序去进行这个思路，但是这样子的话，对于每删掉一条边就要进行一次拓扑排序来判断，时间复杂度无疑是比较高的。</p>
-<p>​
-这个时候，查看官方解答，原来这类题目还可以使用<strong>并查集</strong>来做：</p>
-<p>​
-初始时，每个节点都属于不同的连通分量。遍历每一条边，判断这条边连接的两个顶点是否属于相同的连通分量。</p>
-<ul>
-<li>如果两个顶点属于不同的连通分量，则说明在遍历到当前的边之前，这两个顶点之间不连通，因此当前的边不会导致环出现，合并这两个顶点的连通分量。</li>
-<li>如果两个顶点属于相同的连通分量，则说明在遍历到当前的边之前，这两个顶点之间已经连通，因此当前的边导致环出现，为多余的边，将当前的边作为答案返回。</li>
-</ul>
-<h5 id="解题代码"><strong>解题代码</strong>：</h5>
-<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function">vector&lt;<span class="type">int</span>&gt; <span class="title">findRedundantConnection</span><span class="params">(vector&lt;vector&lt;<span class="type">int</span>&gt;&gt;&amp; edges)</span> </span>&#123;</span><br><span class="line">        <span class="function">vector&lt;<span class="type">int</span>&gt; <span class="title">root</span><span class="params">(<span class="number">1001</span>,<span class="number">-1</span>)</span></span>;</span><br><span class="line">        <span class="type">int</span> i;</span><br><span class="line">        <span class="keyword">for</span>(i =<span class="number">0</span>;i&lt;edges.<span class="built_in">size</span>();i++)&#123;</span><br><span class="line">            <span class="type">bool</span> res = <span class="built_in">unionTwo</span>(edges[i][<span class="number">0</span>],edges[i][<span class="number">1</span>],root);</span><br><span class="line">            <span class="keyword">if</span>(!res) <span class="keyword">break</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> edges[i]; </span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="type">int</span> <span class="title">getRoot</span><span class="params">(<span class="type">int</span> index,vector&lt;<span class="type">int</span>&gt; &amp;root)</span></span>&#123;</span><br><span class="line">        <span class="keyword">while</span>(root[index] != <span class="number">-1</span>)&#123;</span><br><span class="line">            index = root[index];</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> index;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="type">bool</span> <span class="title">unionTwo</span><span class="params">(<span class="type">int</span> index1,<span class="type">int</span> index2,vector&lt;<span class="type">int</span>&gt; &amp;root)</span></span>&#123;</span><br><span class="line">        <span class="type">int</span> root1 = <span class="built_in">getRoot</span>(index1,root);</span><br><span class="line">        <span class="type">int</span> root2 = <span class="built_in">getRoot</span>(index2,root);</span><br><span class="line">        <span class="keyword">if</span>(root1 != root2)&#123;</span><br><span class="line">            root[root1] = root2;</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">        &#125;<span class="keyword">else</span> <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">    &#125;  </span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
-]]></content>
-      <categories>
-        <category>④ 算法类笔记</category>
-        <category>图系列</category>
-      </categories>
-      <tags>
-        <tag>leetcode</tag>
-        <tag>graph</tag>
-        <tag>DSU</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>图系列——矩阵中的距离</title>
     <url>/2022/02/21/80b7b127a404/</url>
     <content><![CDATA[<h4 id="剑指-offer-ii-107.-矩阵中的距离"><a
@@ -11560,6 +11586,47 @@ class="math inline">\(f(i,j)\)</span>中，再第二轮遍历的时候，只要�
         <tag>BFS</tag>
         <tag>dynamic programming</tag>
         <tag>graph</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>图系列——多余的边（DSU应用）</title>
+    <url>/2022/02/21/0f9e9b187c29/</url>
+    <content><![CDATA[<h4 id="剑指-offer-ii-118.-多余的边"><a
+href="https://leetcode-cn.com/problems/7LpjUW/">剑指 Offer II 118.
+多余的边</a></h4>
+<p>​ 树可以看成是一个连通且 无环 的 无向 图。</p>
+<p>​ 给定往一棵 n 个节点 (节点值 1～n)
+的树中添加一条边后的图。添加的边的两个顶点包含在 1 到 n
+中间，且这条附加的边不属于树中已存在的边。图的信息记录于长度为 n
+的二维数组 edges ，edges[i] = [ai, bi] 表示图中在 ai 和 bi
+之间存在一条边。</p>
+<p>​ 请找出一条可以删去的边，删除后可使得剩余部分是一个有着 n
+个节点的树。如果有多个答案，则返回数组 edges 中最后出现的边。</p>
+<p><strong>示例 1：</strong></p>
+<p><img src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/mac/1626676174-hOEVUL-image.png" style="zoom: 50%;" /></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">输入: edges = [[1,2],[1,3],[2,3]]</span><br><span class="line">输出: [2,3]</span><br></pre></td></tr></table></figure>
+<h5 id="解题思路"><strong>解题思路</strong>：</h5>
+<p>​
+一开始，我的思路是找到一种方法，能够判断一个图有无环。毫无疑问，我们可以使用拓扑排序去进行这个思路，但是这样子的话，对于每删掉一条边就要进行一次拓扑排序来判断，时间复杂度无疑是比较高的。</p>
+<p>​
+这个时候，查看官方解答，原来这类题目还可以使用<strong>并查集</strong>来做：</p>
+<p>​
+初始时，每个节点都属于不同的连通分量。遍历每一条边，判断这条边连接的两个顶点是否属于相同的连通分量。</p>
+<ul>
+<li>如果两个顶点属于不同的连通分量，则说明在遍历到当前的边之前，这两个顶点之间不连通，因此当前的边不会导致环出现，合并这两个顶点的连通分量。</li>
+<li>如果两个顶点属于相同的连通分量，则说明在遍历到当前的边之前，这两个顶点之间已经连通，因此当前的边导致环出现，为多余的边，将当前的边作为答案返回。</li>
+</ul>
+<h5 id="解题代码"><strong>解题代码</strong>：</h5>
+<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function">vector&lt;<span class="type">int</span>&gt; <span class="title">findRedundantConnection</span><span class="params">(vector&lt;vector&lt;<span class="type">int</span>&gt;&gt;&amp; edges)</span> </span>&#123;</span><br><span class="line">        <span class="function">vector&lt;<span class="type">int</span>&gt; <span class="title">root</span><span class="params">(<span class="number">1001</span>,<span class="number">-1</span>)</span></span>;</span><br><span class="line">        <span class="type">int</span> i;</span><br><span class="line">        <span class="keyword">for</span>(i =<span class="number">0</span>;i&lt;edges.<span class="built_in">size</span>();i++)&#123;</span><br><span class="line">            <span class="type">bool</span> res = <span class="built_in">unionTwo</span>(edges[i][<span class="number">0</span>],edges[i][<span class="number">1</span>],root);</span><br><span class="line">            <span class="keyword">if</span>(!res) <span class="keyword">break</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> edges[i]; </span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="type">int</span> <span class="title">getRoot</span><span class="params">(<span class="type">int</span> index,vector&lt;<span class="type">int</span>&gt; &amp;root)</span></span>&#123;</span><br><span class="line">        <span class="keyword">while</span>(root[index] != <span class="number">-1</span>)&#123;</span><br><span class="line">            index = root[index];</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> index;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="type">bool</span> <span class="title">unionTwo</span><span class="params">(<span class="type">int</span> index1,<span class="type">int</span> index2,vector&lt;<span class="type">int</span>&gt; &amp;root)</span></span>&#123;</span><br><span class="line">        <span class="type">int</span> root1 = <span class="built_in">getRoot</span>(index1,root);</span><br><span class="line">        <span class="type">int</span> root2 = <span class="built_in">getRoot</span>(index2,root);</span><br><span class="line">        <span class="keyword">if</span>(root1 != root2)&#123;</span><br><span class="line">            root[root1] = root2;</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">        &#125;<span class="keyword">else</span> <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">    &#125;  </span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+]]></content>
+      <categories>
+        <category>④ 算法类笔记</category>
+        <category>图系列</category>
+      </categories>
+      <tags>
+        <tag>leetcode</tag>
+        <tag>graph</tag>
+        <tag>DSU</tag>
       </tags>
   </entry>
   <entry>
@@ -16970,8 +17037,8 @@ class="math inline">\(\alpha\)</span>是一个超参数，在训练我们的模�
         <category>CV相关论文</category>
       </categories>
       <tags>
-        <tag>GAN</tag>
         <tag>Transformer</tag>
+        <tag>GAN</tag>
         <tag>HandWritting Generation</tag>
       </tags>
   </entry>
@@ -18641,244 +18708,6 @@ class="math inline">\(\alpha_2\)</span>为tradeoff参数，通常为0.05 和
       </tags>
   </entry>
   <entry>
-    <title>《Uformer A General U-Shaped Transformer for Image Restoration》论文笔记</title>
-    <url>/2022/01/13/56f3e5f0e0f5/</url>
-    <content><![CDATA[<h3
-id="论文名称uformer-a-general-u-shaped-transformer-for-image-restoration">论文名称：《Uformer:
-A General U-Shaped Transformer for Image Restoration》</h3>
-<h3 id="论文地址-httpsarxiv.orgabs2106.03106">论文地址：
-https://arxiv.org/abs/2106.03106</h3>
-<h2 id="关键词">1、关键词：</h2>
-<p>​ 图像修复（Image Restoration）、类UNet结构、Transformer</p>
-<h2 id="领域背景图像修复">2、领域背景—图像修复：</h2>
-<p>​
-图像修复是一个经典问题，一般而言其目标为从低分辨率的图像中恢复出高分辨率的图像。通常可以用于超分辨率、图像去噪，以及JPEG压缩鬼影去除等应用。此篇文章将Swin
-Transformer应用于图像修复领域中。</p>
-<h2 id="先前工作描述与比较">3、先前工作描述与比较：</h2>
-<p>​ 近年来图像修复很好结果的都是基于卷积的网络，但是卷积网络在long-range
-dependencies上依旧存在局限性。同时，最近也有很多文章使用transofmer对低分辨率的特征图进行处理（限于self-attention的计算复杂度）。</p>
-<h2 id="主要设计思想">4、主要设计思想：</h2>
-<p>​ 论文旨在
-在多尺度分辨率下，去恢复更多的图像细节。Uformer基于UNet，只不过将所有的卷积层替换为了Encoder-Decoder结构，同时保留了整体的Encoder-Decoder架构以及skip-connections。总体来说就是使用TransformerBlock
-构建了一个层次化的encoder-decoder网络。</p>
-<p>​ <strong>2个核心设计</strong></p>
-<p>​ 1、<strong>LeWin Transformer Block</strong>( locally-enhanced window
-Transformer block
-),使用分块的self-attetiond代替全局的self-attention，在捕获高分辨率图像的局部特征时，减少了计算量。</p>
-<p>​ 2、提出了<strong>可学习的多尺度恢复调制器</strong>，以多尺度
-<strong>spatial bias</strong>
-的形式去在decoder的不同层上调节特征。来处理不同的图像退化问题（比如说虚焦、运动模糊等。这个模块本身由一个多尺度的spatial
-bias组成，用来在decoder的不同层级上调整特征。更具体一点的话，就是一个可学习的基于窗口的tensor张量，和特征直接相加，从而来调整特征能够恢复更多的细节。整体而言，这个调制器对于恢复图像细节而言有非常强的能力，同时只带来了一点点额外的参数和计算代价。</p>
-<h2 id="具体方法与网络架构">5、具体方法与网络架构：</h2>
-<p><img
-src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/imac/image-20220112112308268.png" /></p>
-<h3 id="整体架构overall-pipeline">1) 整体架构（Overall Pipeline）</h3>
-<ul>
-<li><strong>概述</strong>：U型带Skip-Connection的Encoder-Decoder网络，基于UNet结构，但是将UNet中的所有卷积层都替换成了LeWinBlocks。</li>
-<li><strong>输入</strong>：退化图像 <span class="math inline">\(I \in
-R^{3\times H\times W}\)</span></li>
-<li><strong>输出</strong>：修复图像 <span
-class="math inline">\(I^{&#39;} \in R^{3\times H\times W}\)</span>
-<ul>
-<li><span class="math inline">\(Residual \in R^{3\times H\times W
-}\)</span></li>
-<li><span class="math inline">\(I^{&#39;} = I + R e sidual\)</span></li>
-</ul></li>
-</ul>
-<h3 id="input-projection">2) Input Projection</h3>
-<ul>
-<li><strong>概述</strong>：用于从退化图像中提取低层级信息</li>
-<li><strong>输入</strong>：退化图像 <span class="math inline">\(I \in
-R^{3\times H\times W}\)</span></li>
-<li><strong>输出</strong>：low-level 特征图 <span
-class="math inline">\(X_0\)</span></li>
-<li><strong>网络结构</strong>：
-<ul>
-<li><span class="math inline">\(3\times 3\)</span>卷积层 +
-LeakyReLU激活函数</li>
-</ul></li>
-</ul>
-<h3 id="encoder---one-stage-encoder中总共k个stage">3) Encoder - One
-Stage （ Encoder中总共K个Stage ）</h3>
-<ul>
-<li><strong>概述</strong>：用于从退化图像中提取低层级信息</li>
-<li><strong>输入</strong>：特征图 <span
-class="math inline">\(X_{l-1}\)</span></li>
-<li><strong>输出</strong>：第<span
-class="math inline">\(l\)</span>个阶段的输出特征图 <span
-class="math inline">\(X_l \in R^{2^lC \times \frac{H}{2^l} \times
-\frac{W}{2^l}}\)</span></li>
-<li><strong>网络结构</strong>：
-<ul>
-<li><span class="math inline">\({N_l}\)</span>个
-LeWinBlocks的叠加，以及一个下采样层（$4 $卷积 $stride$2）</li>
-</ul></li>
-<li><strong>实现细节（官方代码）</strong>
-<ul>
-<li>LeWinBlocks
-<ul>
-<li>将2D空间特征图先进行patch划分，然后展平，具体见后</li>
-</ul></li>
-<li>Down Sampling：（channel 翻倍，特征图宽高 减半）
-<ul>
-<li>Reshape 展平的特征 至 2D的空间特征图，然后使用 <span
-class="math inline">\(4 \times 4\)</span>卷积
-$stride$2，对其进行卷积</li>
-</ul></li>
-</ul></li>
-<li><strong>意义</strong>：在一遍遍的下采样与Lewin Transformer
-Blocks中提取特征信息，Lewin Transformer
-Block可以更好的提取远距离的相关性依赖信息，并且有效的降低计算复杂度</li>
-</ul>
-<h3 id="bottleneck-stage">4) BottleNeck Stage</h3>
-<ul>
-<li><strong>概述</strong>：用于提取更长距离的信息，甚至是全局的信息</li>
-<li><strong>输入</strong>：特征图 <span
-class="math inline">\(X_{K}\)</span></li>
-<li><strong>输出</strong>：序列向量 V</li>
-<li><strong>网络结构</strong>：
-<ul>
-<li><span class="math inline">\({N_?}\)</span>个 LeWinBlocks的叠加</li>
-</ul></li>
-<li><strong>实现细节（官方代码）</strong>
-<ul>
-<li>LeWinBlocks
-<ul>
-<li>将2D空间特征图先进行patch划分，然后展平，具体见后</li>
-</ul></li>
-</ul></li>
-<li><strong>意义</strong>：由于前面已经进行了许多次的特征提取以及下采样了，所以在此处再增加一个LeWinBlocks的模块，能够捕获到更长距离的信息，甚至是能够捕获全局的信息。</li>
-</ul>
-<p><!-- 但是这个模块难道不可以用Encoder阶段更大的K 来弥补吗？需要实验 --></p>
-<h3
-id="decoder---one-stage-decoder中总共k个stage与encoder一致">5）Decoder -
-One Stage （Decoder中总共K个Stage，与Encoder一致 ）</h3>
-<ul>
-<li><strong>概述</strong>：用于小尺寸的特征图中逐渐重建恢复特征信息</li>
-<li><strong>输入</strong>：1维特征序列 <span
-class="math inline">\(V_{in}\)</span></li>
-<li><strong>输出</strong>：1维特征输出序列 <span
-class="math inline">\(V_{out}\)</span></li>
-<li><strong>网络结构</strong>：
-<ul>
-<li>一个上采样层（$2 $反卷积 $stride$2）以及 <span
-class="math inline">\({N_l}\)</span>个 LeWinBlocks的叠加</li>
-</ul></li>
-<li><strong>实现细节（官方代码）</strong>
-<ul>
-<li>Up Sampling：（channel 减半，特征图宽高 翻倍）
-<ul>
-<li>先将输入的特征序列 Reshape 成
-2D特征图，然后进行上采样，得到新的2D特征图</li>
-</ul></li>
-<li>Residual Module：
-<ul>
-<li>Up Sampling 完以后得到的2D特征图需要和对应Encoder-Stage中
-输出的2D特征图进行Concat，然后得到一个新的2D特征图。</li>
-</ul></li>
-<li>LeWinBlocks
-<ul>
-<li>将残差Concat得到的2D空间特征图先进行patch划分，然后展平，具体见后</li>
-</ul></li>
-</ul></li>
-<li><strong>意义</strong>：在一遍遍的上采样与Lewin Transformer
-Blocks中重建特征信息。</li>
-</ul>
-<h3 id="output-projection">6) Output Projection</h3>
-<ul>
-<li><strong>概述</strong>：用于将输出的序列，变换成2D特征图后，再 映射至
-3通道的残差图像，准备和原图像叠加。</li>
-<li><strong>输入</strong>：1维特征输出序列 <span
-class="math inline">\(V_{out}\)</span></li>
-<li><strong>输出</strong>：残差图像 <span class="math inline">\(Residual
-\in R^{3\times H\times W }\)</span></li>
-<li><strong>网络结构</strong>：
-<ul>
-<li><span class="math inline">\(3\times 3\)</span>卷积层</li>
-</ul></li>
-<li><strong>实现细节（官方代码）</strong>：
-<ul>
-<li>先将 最后一个Decoder Stage输出的 序列 <span
-class="math inline">\(V_{out}\)</span>Reshape成2D的特征图，然后应用<span
-class="math inline">\(3 \times
-3\)</span>的卷积层，来获得一个残差图像</li>
-</ul></li>
-</ul>
-<h3 id="最终输出-loss函数">7）最终输出 &amp; Loss函数</h3>
-<ul>
-<li><strong>概述</strong>：将OutPut Projection 得到的Residual Image 和
-原来的输入图像相加，得到 最终的修复图像。</li>
-<li><strong>Loss</strong>：使用 <strong>Charbonnier Loss</strong>，<span
-class="math inline">\(I^{&#39;}\)</span>是 ground-truth 图像
-<ul>
-<li><span class="math display">\[l(I^{&#39;},\hat I) = \sqrt{||I^{&#39;}
-- \hat I||^2 + \varepsilon^2}\]</span></li>
-</ul></li>
-</ul>
-<h3 id="lewin-transformer-block">8）LeWin Transformer Block</h3>
-<ul>
-<li><p><strong>概述</strong>：由W-MSA 以及LeFF两个模块组成</p></li>
-<li><p><strong>输入</strong>：2D特征图</p></li>
-<li><p><strong>输出</strong>：2D特征图</p></li>
-<li><p><strong>网络结构</strong>：公式表达：</p>
-<ul>
-<li><span class="math inline">\(X_{l}^{&#39;} = W-MSA(LN(X_{l-1})) +
-X_{l-1}\)</span><strong>W-MSA 模块的输出</strong></li>
-<li><span class="math inline">\(X_l = LeFF(LN(X_l^{&#39;})) +
-X_l^{&#39;}\)</span>**LeFF模块的输出*</li>
-</ul></li>
-<li><p><strong>实现细节（官方代码）</strong>：</p>
-<ul>
-<li><p>W-MSA 与 Vision Transformer中一致</p></li>
-<li><p>作者论文中说尝试了移动窗口，但是带来的结果好坏增长微乎其微，说明：在图像修复领域，窗口与窗口之间的信息交互并不是很重要。图像修复领域比较注重局部的信息交互？</p></li>
-<li><p>LeFF模块结构：</p>
-<p><img
-src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/imac/截屏2022-01-12%20下午3.31.12.png" /></p>
-<ul>
-<li>1、对于每个Token，应用一个Linear Projection，增加特征channel</li>
-<li>2、将tokens Reshape 成 2D 特征图，用 <span class="math inline">\(3
-\times 3\)</span>depth-wise convolutional 捕获局部信息</li>
-<li>3、再将2D特征图展平回tokens，再应用一个Linear
-Projection，缩减特征channel</li>
-<li>在每一个Linear Projection / Convolution 后都会应用
-GELU激活函数。</li>
-</ul></li>
-</ul></li>
-<li><p><strong>意义</strong>：解决了如下两个问题
-1）全局计算self-attention复杂度太高
-2）在捕捉局部的依赖关系时有限制。</p></li>
-</ul>
-<h3 id="multi-scale-restoration-modulator">9）Multi-Scale Restoration
-Modulator</h3>
-<ul>
-<li><strong>概述</strong>：因为不同的图像有不同的混乱残差形式，比如模糊、噪音、下雨等等，为了更好的应对各种不同的修复任务，提出了这个light-weight
-multi-scale的恢复模块。来calibrate特征以及更好的修复细节。<br />
-</li>
-<li><strong>网络结构</strong>：
-<ul>
-<li>在每一个LeWin Transformer Block中，其为一个<span
-class="math inline">\(M \times M \times
-C\)</span>大小的张量，M为window_size，C为特征图通道数。</li>
-<li>在一个LeWin Transformer Block中，对于所有其分割出来的windows，这个
-调制器模块的参数都是共享的。</li>
-</ul></li>
-<li><strong>形式</strong>：在Self-Attention计算前，将其直接加到每一个窗口的像素值上。</li>
-<li><strong>意义</strong>：在Image Deblurring 和 Image
-Denoising里面，作者证实了该模块的重要性，能够更好的修复细节。一种可能的解释是添加
-在解码器的每个阶段的modulator可以对特征图进行更为灵活的调整，从而提高恢复的细节的性能表现。这个跟先前的StyleGAN的某个模块一致。</li>
-</ul>
-]]></content>
-      <categories>
-        <category>③  论文阅读笔记</category>
-        <category>CV相关论文</category>
-      </categories>
-      <tags>
-        <tag>UNet</tag>
-        <tag>Swin Transformer</tag>
-        <tag>Image Restoration</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>《SwinIR- Image Restoration Using Swin Transformer》论文笔记</title>
     <url>/2022/01/13/45d8498aa8b8/</url>
     <content><![CDATA[<h3
@@ -19187,6 +19016,244 @@ class="math inline">\(10^{-3}\)</span></li>
         <category>CV相关论文</category>
       </categories>
       <tags>
+        <tag>Swin Transformer</tag>
+        <tag>Image Restoration</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>《Uformer A General U-Shaped Transformer for Image Restoration》论文笔记</title>
+    <url>/2022/01/13/56f3e5f0e0f5/</url>
+    <content><![CDATA[<h3
+id="论文名称uformer-a-general-u-shaped-transformer-for-image-restoration">论文名称：《Uformer:
+A General U-Shaped Transformer for Image Restoration》</h3>
+<h3 id="论文地址-httpsarxiv.orgabs2106.03106">论文地址：
+https://arxiv.org/abs/2106.03106</h3>
+<h2 id="关键词">1、关键词：</h2>
+<p>​ 图像修复（Image Restoration）、类UNet结构、Transformer</p>
+<h2 id="领域背景图像修复">2、领域背景—图像修复：</h2>
+<p>​
+图像修复是一个经典问题，一般而言其目标为从低分辨率的图像中恢复出高分辨率的图像。通常可以用于超分辨率、图像去噪，以及JPEG压缩鬼影去除等应用。此篇文章将Swin
+Transformer应用于图像修复领域中。</p>
+<h2 id="先前工作描述与比较">3、先前工作描述与比较：</h2>
+<p>​ 近年来图像修复很好结果的都是基于卷积的网络，但是卷积网络在long-range
+dependencies上依旧存在局限性。同时，最近也有很多文章使用transofmer对低分辨率的特征图进行处理（限于self-attention的计算复杂度）。</p>
+<h2 id="主要设计思想">4、主要设计思想：</h2>
+<p>​ 论文旨在
+在多尺度分辨率下，去恢复更多的图像细节。Uformer基于UNet，只不过将所有的卷积层替换为了Encoder-Decoder结构，同时保留了整体的Encoder-Decoder架构以及skip-connections。总体来说就是使用TransformerBlock
+构建了一个层次化的encoder-decoder网络。</p>
+<p>​ <strong>2个核心设计</strong></p>
+<p>​ 1、<strong>LeWin Transformer Block</strong>( locally-enhanced window
+Transformer block
+),使用分块的self-attetiond代替全局的self-attention，在捕获高分辨率图像的局部特征时，减少了计算量。</p>
+<p>​ 2、提出了<strong>可学习的多尺度恢复调制器</strong>，以多尺度
+<strong>spatial bias</strong>
+的形式去在decoder的不同层上调节特征。来处理不同的图像退化问题（比如说虚焦、运动模糊等。这个模块本身由一个多尺度的spatial
+bias组成，用来在decoder的不同层级上调整特征。更具体一点的话，就是一个可学习的基于窗口的tensor张量，和特征直接相加，从而来调整特征能够恢复更多的细节。整体而言，这个调制器对于恢复图像细节而言有非常强的能力，同时只带来了一点点额外的参数和计算代价。</p>
+<h2 id="具体方法与网络架构">5、具体方法与网络架构：</h2>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/imac/image-20220112112308268.png" /></p>
+<h3 id="整体架构overall-pipeline">1) 整体架构（Overall Pipeline）</h3>
+<ul>
+<li><strong>概述</strong>：U型带Skip-Connection的Encoder-Decoder网络，基于UNet结构，但是将UNet中的所有卷积层都替换成了LeWinBlocks。</li>
+<li><strong>输入</strong>：退化图像 <span class="math inline">\(I \in
+R^{3\times H\times W}\)</span></li>
+<li><strong>输出</strong>：修复图像 <span
+class="math inline">\(I^{&#39;} \in R^{3\times H\times W}\)</span>
+<ul>
+<li><span class="math inline">\(Residual \in R^{3\times H\times W
+}\)</span></li>
+<li><span class="math inline">\(I^{&#39;} = I + R e sidual\)</span></li>
+</ul></li>
+</ul>
+<h3 id="input-projection">2) Input Projection</h3>
+<ul>
+<li><strong>概述</strong>：用于从退化图像中提取低层级信息</li>
+<li><strong>输入</strong>：退化图像 <span class="math inline">\(I \in
+R^{3\times H\times W}\)</span></li>
+<li><strong>输出</strong>：low-level 特征图 <span
+class="math inline">\(X_0\)</span></li>
+<li><strong>网络结构</strong>：
+<ul>
+<li><span class="math inline">\(3\times 3\)</span>卷积层 +
+LeakyReLU激活函数</li>
+</ul></li>
+</ul>
+<h3 id="encoder---one-stage-encoder中总共k个stage">3) Encoder - One
+Stage （ Encoder中总共K个Stage ）</h3>
+<ul>
+<li><strong>概述</strong>：用于从退化图像中提取低层级信息</li>
+<li><strong>输入</strong>：特征图 <span
+class="math inline">\(X_{l-1}\)</span></li>
+<li><strong>输出</strong>：第<span
+class="math inline">\(l\)</span>个阶段的输出特征图 <span
+class="math inline">\(X_l \in R^{2^lC \times \frac{H}{2^l} \times
+\frac{W}{2^l}}\)</span></li>
+<li><strong>网络结构</strong>：
+<ul>
+<li><span class="math inline">\({N_l}\)</span>个
+LeWinBlocks的叠加，以及一个下采样层（$4 $卷积 $stride$2）</li>
+</ul></li>
+<li><strong>实现细节（官方代码）</strong>
+<ul>
+<li>LeWinBlocks
+<ul>
+<li>将2D空间特征图先进行patch划分，然后展平，具体见后</li>
+</ul></li>
+<li>Down Sampling：（channel 翻倍，特征图宽高 减半）
+<ul>
+<li>Reshape 展平的特征 至 2D的空间特征图，然后使用 <span
+class="math inline">\(4 \times 4\)</span>卷积
+$stride$2，对其进行卷积</li>
+</ul></li>
+</ul></li>
+<li><strong>意义</strong>：在一遍遍的下采样与Lewin Transformer
+Blocks中提取特征信息，Lewin Transformer
+Block可以更好的提取远距离的相关性依赖信息，并且有效的降低计算复杂度</li>
+</ul>
+<h3 id="bottleneck-stage">4) BottleNeck Stage</h3>
+<ul>
+<li><strong>概述</strong>：用于提取更长距离的信息，甚至是全局的信息</li>
+<li><strong>输入</strong>：特征图 <span
+class="math inline">\(X_{K}\)</span></li>
+<li><strong>输出</strong>：序列向量 V</li>
+<li><strong>网络结构</strong>：
+<ul>
+<li><span class="math inline">\({N_?}\)</span>个 LeWinBlocks的叠加</li>
+</ul></li>
+<li><strong>实现细节（官方代码）</strong>
+<ul>
+<li>LeWinBlocks
+<ul>
+<li>将2D空间特征图先进行patch划分，然后展平，具体见后</li>
+</ul></li>
+</ul></li>
+<li><strong>意义</strong>：由于前面已经进行了许多次的特征提取以及下采样了，所以在此处再增加一个LeWinBlocks的模块，能够捕获到更长距离的信息，甚至是能够捕获全局的信息。</li>
+</ul>
+<p><!-- 但是这个模块难道不可以用Encoder阶段更大的K 来弥补吗？需要实验 --></p>
+<h3
+id="decoder---one-stage-decoder中总共k个stage与encoder一致">5）Decoder -
+One Stage （Decoder中总共K个Stage，与Encoder一致 ）</h3>
+<ul>
+<li><strong>概述</strong>：用于小尺寸的特征图中逐渐重建恢复特征信息</li>
+<li><strong>输入</strong>：1维特征序列 <span
+class="math inline">\(V_{in}\)</span></li>
+<li><strong>输出</strong>：1维特征输出序列 <span
+class="math inline">\(V_{out}\)</span></li>
+<li><strong>网络结构</strong>：
+<ul>
+<li>一个上采样层（$2 $反卷积 $stride$2）以及 <span
+class="math inline">\({N_l}\)</span>个 LeWinBlocks的叠加</li>
+</ul></li>
+<li><strong>实现细节（官方代码）</strong>
+<ul>
+<li>Up Sampling：（channel 减半，特征图宽高 翻倍）
+<ul>
+<li>先将输入的特征序列 Reshape 成
+2D特征图，然后进行上采样，得到新的2D特征图</li>
+</ul></li>
+<li>Residual Module：
+<ul>
+<li>Up Sampling 完以后得到的2D特征图需要和对应Encoder-Stage中
+输出的2D特征图进行Concat，然后得到一个新的2D特征图。</li>
+</ul></li>
+<li>LeWinBlocks
+<ul>
+<li>将残差Concat得到的2D空间特征图先进行patch划分，然后展平，具体见后</li>
+</ul></li>
+</ul></li>
+<li><strong>意义</strong>：在一遍遍的上采样与Lewin Transformer
+Blocks中重建特征信息。</li>
+</ul>
+<h3 id="output-projection">6) Output Projection</h3>
+<ul>
+<li><strong>概述</strong>：用于将输出的序列，变换成2D特征图后，再 映射至
+3通道的残差图像，准备和原图像叠加。</li>
+<li><strong>输入</strong>：1维特征输出序列 <span
+class="math inline">\(V_{out}\)</span></li>
+<li><strong>输出</strong>：残差图像 <span class="math inline">\(Residual
+\in R^{3\times H\times W }\)</span></li>
+<li><strong>网络结构</strong>：
+<ul>
+<li><span class="math inline">\(3\times 3\)</span>卷积层</li>
+</ul></li>
+<li><strong>实现细节（官方代码）</strong>：
+<ul>
+<li>先将 最后一个Decoder Stage输出的 序列 <span
+class="math inline">\(V_{out}\)</span>Reshape成2D的特征图，然后应用<span
+class="math inline">\(3 \times
+3\)</span>的卷积层，来获得一个残差图像</li>
+</ul></li>
+</ul>
+<h3 id="最终输出-loss函数">7）最终输出 &amp; Loss函数</h3>
+<ul>
+<li><strong>概述</strong>：将OutPut Projection 得到的Residual Image 和
+原来的输入图像相加，得到 最终的修复图像。</li>
+<li><strong>Loss</strong>：使用 <strong>Charbonnier Loss</strong>，<span
+class="math inline">\(I^{&#39;}\)</span>是 ground-truth 图像
+<ul>
+<li><span class="math display">\[l(I^{&#39;},\hat I) = \sqrt{||I^{&#39;}
+- \hat I||^2 + \varepsilon^2}\]</span></li>
+</ul></li>
+</ul>
+<h3 id="lewin-transformer-block">8）LeWin Transformer Block</h3>
+<ul>
+<li><p><strong>概述</strong>：由W-MSA 以及LeFF两个模块组成</p></li>
+<li><p><strong>输入</strong>：2D特征图</p></li>
+<li><p><strong>输出</strong>：2D特征图</p></li>
+<li><p><strong>网络结构</strong>：公式表达：</p>
+<ul>
+<li><span class="math inline">\(X_{l}^{&#39;} = W-MSA(LN(X_{l-1})) +
+X_{l-1}\)</span><strong>W-MSA 模块的输出</strong></li>
+<li><span class="math inline">\(X_l = LeFF(LN(X_l^{&#39;})) +
+X_l^{&#39;}\)</span>**LeFF模块的输出*</li>
+</ul></li>
+<li><p><strong>实现细节（官方代码）</strong>：</p>
+<ul>
+<li><p>W-MSA 与 Vision Transformer中一致</p></li>
+<li><p>作者论文中说尝试了移动窗口，但是带来的结果好坏增长微乎其微，说明：在图像修复领域，窗口与窗口之间的信息交互并不是很重要。图像修复领域比较注重局部的信息交互？</p></li>
+<li><p>LeFF模块结构：</p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/imac/截屏2022-01-12%20下午3.31.12.png" /></p>
+<ul>
+<li>1、对于每个Token，应用一个Linear Projection，增加特征channel</li>
+<li>2、将tokens Reshape 成 2D 特征图，用 <span class="math inline">\(3
+\times 3\)</span>depth-wise convolutional 捕获局部信息</li>
+<li>3、再将2D特征图展平回tokens，再应用一个Linear
+Projection，缩减特征channel</li>
+<li>在每一个Linear Projection / Convolution 后都会应用
+GELU激活函数。</li>
+</ul></li>
+</ul></li>
+<li><p><strong>意义</strong>：解决了如下两个问题
+1）全局计算self-attention复杂度太高
+2）在捕捉局部的依赖关系时有限制。</p></li>
+</ul>
+<h3 id="multi-scale-restoration-modulator">9）Multi-Scale Restoration
+Modulator</h3>
+<ul>
+<li><strong>概述</strong>：因为不同的图像有不同的混乱残差形式，比如模糊、噪音、下雨等等，为了更好的应对各种不同的修复任务，提出了这个light-weight
+multi-scale的恢复模块。来calibrate特征以及更好的修复细节。<br />
+</li>
+<li><strong>网络结构</strong>：
+<ul>
+<li>在每一个LeWin Transformer Block中，其为一个<span
+class="math inline">\(M \times M \times
+C\)</span>大小的张量，M为window_size，C为特征图通道数。</li>
+<li>在一个LeWin Transformer Block中，对于所有其分割出来的windows，这个
+调制器模块的参数都是共享的。</li>
+</ul></li>
+<li><strong>形式</strong>：在Self-Attention计算前，将其直接加到每一个窗口的像素值上。</li>
+<li><strong>意义</strong>：在Image Deblurring 和 Image
+Denoising里面，作者证实了该模块的重要性，能够更好的修复细节。一种可能的解释是添加
+在解码器的每个阶段的modulator可以对特征图进行更为灵活的调整，从而提高恢复的细节的性能表现。这个跟先前的StyleGAN的某个模块一致。</li>
+</ul>
+]]></content>
+      <categories>
+        <category>③  论文阅读笔记</category>
+        <category>CV相关论文</category>
+      </categories>
+      <tags>
+        <tag>UNet</tag>
         <tag>Swin Transformer</tag>
         <tag>Image Restoration</tag>
       </tags>
@@ -21584,8 +21651,8 @@ src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/bvbcf123.png" /></p>
       </categories>
       <tags>
         <tag>Transformer</tag>
-        <tag>Computer Vision</tag>
         <tag>Swin Transformer</tag>
+        <tag>Computer Vision</tag>
       </tags>
   </entry>
   <entry>
@@ -21688,8 +21755,8 @@ src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-202201151202116
       </categories>
       <tags>
         <tag>Transformer</tag>
-        <tag>Vision Transformer</tag>
         <tag>Computer Vision</tag>
+        <tag>Vision Transformer</tag>
       </tags>
   </entry>
   <entry>
