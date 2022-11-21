@@ -47,7 +47,7 @@
       </tags>
   </entry>
   <entry>
-    <title>Spring5概述与IOC容器</title>
+    <title>Spring5 Chap1——概述与IOC容器</title>
     <url>/2022/11/20/a47a2e7cc246/</url>
     <content><![CDATA[<h4 id="一概述">一、概述：</h4>
 <p>1、Spring 是轻量级的开源的 JavaEE 框架
@@ -101,8 +101,195 @@ src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/image-20221120212926975.png" 
 </ul></li>
 </ul></li>
 </ul>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="type">ApplicationContext</span> <span class="variable">context</span> <span class="operator">=</span></span><br><span class="line">                <span class="keyword">new</span> <span class="title class_">ClassPathXmlApplicationContext</span>(<span class="string">&quot;bean1.xml&quot;</span>);</span><br></pre></td></tr></table></figure>
-<h4 id="四ioc操作的bean管理">四、IOC操作的Bean管理：</h4>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="type">ApplicationContext</span> <span class="variable">context</span> <span class="operator">=</span></span><br><span class="line">                <span class="keyword">new</span> <span class="title class_">ClassPathXmlApplicationContext</span>(<span class="string">&quot;bean1.xml&quot;</span>);</span><br><span class="line"><span class="type">UserService</span> <span class="variable">userService</span> <span class="operator">=</span> context.getBean(<span class="string">&quot;userService&quot;</span>, UserService.class);</span><br></pre></td></tr></table></figure>
+<h4 id="四ioc操作的bean管理与注入">四、IOC操作的Bean管理与注入：</h4>
+<ul>
+<li><p>Bean管理指：Spring创建对象+注入属性</p></li>
+<li><p>管理操作的两种方式：</p>
+<ul>
+<li>基于xml配置文件方式的实现</li>
+<li>基于注解方式的实现</li>
+</ul></li>
+</ul>
+<h5 id="基于xml配置文件方式">1、基于xml配置文件方式：</h5>
+<h6 id="创建对象">1）创建对象</h6>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/image-20221120212918659.png" /></p>
+<ul>
+<li><p>在spring配置文件中，使用bean标签，标签里面添加对应属性，就可以实现对象创建</p></li>
+<li><p>在bean标签有很多属性，常用的属性如下：</p>
+<ul>
+<li><p>id属性：唯一标识</p></li>
+<li><p>class属性：类全路径（包类路径）</p></li>
+</ul></li>
+<li><p>创建对象时候，默认也是执行无参数构造方法完成对象创建</p></li>
+</ul>
+<h6 id="注入属性di-依赖注入">2）注入属性：DI 依赖注入</h6>
+<ul>
+<li>使用set方法进行注入，创建类定义属性和对应的set方法</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Book</span> &#123; </span><br><span class="line">    <span class="keyword">private</span> String bname;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">setBname</span><span class="params">(String bname)</span> &#123; </span><br><span class="line">        <span class="built_in">this</span>.bname = bname; </span><br><span class="line">    &#125; </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">&quot;book&quot;</span> <span class="attr">class</span>=<span class="string">&quot;com.atguigu.spring5.Book&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;bname&quot;</span> <span class="attr">value</span>=<span class="string">&quot;易筋经&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">bean</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<ul>
+<li>使用有参数构造进行注入，创建类，定义属性，创建属性对应有参数构造方法</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Orders</span> &#123; </span><br><span class="line">	<span class="keyword">private</span> String oname; </span><br><span class="line">    <span class="keyword">public</span> <span class="title function_">Orders</span><span class="params">(String oname,String address)</span> &#123; </span><br><span class="line">        <span class="built_in">this</span>.oname = oname; </span><br><span class="line">    &#125; </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">&quot;orders&quot;</span> <span class="attr">class</span>=<span class="string">&quot;com.atguigu.spring5.Orders&quot;</span>&gt;</span> </span><br><span class="line">    <span class="tag">&lt;<span class="name">constructor-arg</span> <span class="attr">name</span>=<span class="string">&quot;oname&quot;</span> <span class="attr">value</span>=<span class="string">&quot;电脑&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">constructor-arg</span>&gt;</span> </span><br><span class="line"><span class="tag">&lt;/<span class="name">bean</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<ul>
+<li>注入一些其他类型的属性：</li>
+</ul>
+<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;address&quot;</span>&gt;</span> </span><br><span class="line">	<span class="tag">&lt;<span class="name">null</span>/&gt;</span> </span><br><span class="line"><span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;address&quot;</span>&gt;</span>   </span><br><span class="line">    <span class="comment">&lt;!--属性值包含特殊符号 1 把&lt;&gt;进行转义 &amp;lt; &amp;gt; 2 把带特殊符号内容写到CDATA --&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">value</span>&gt;</span>&lt;![CDATA[&lt;&lt;南京&gt;&gt;]]&gt;<span class="tag">&lt;/<span class="name">value</span>&gt;</span> </span><br><span class="line"><span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<ul>
+<li>注入对象属性
+<ul>
+<li>写法1：外部Bean属性注入+级联赋值：比如说UserService类中有UserDao属性，需要调用其方法</li>
+</ul></li>
+</ul>
+<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">&quot;userService&quot;</span> <span class="attr">class</span>=<span class="string">&quot;com.fantast.service.UserService&quot;</span>&gt;</span> </span><br><span class="line">    <span class="comment">&lt;!--注入userDao对象 name属性：类里面属性名称 ref属性：创建userDao对象bean标签id值 --&gt;</span> 		<span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;userDao&quot;</span> <span class="attr">ref</span>=<span class="string">&quot;userDaoImpl&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">property</span>&gt;</span> </span><br><span class="line"><span class="tag">&lt;/<span class="name">bean</span>&gt;</span> </span><br><span class="line"><span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">&quot;userDaoImpl&quot;</span> <span class="attr">class</span>=<span class="string">&quot;com.fantast.dao.UserDaoImpl&quot;</span>&gt;</span></span><br><span class="line"> 	<span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;name&quot;</span> <span class="attr">value</span>=<span class="string">&quot;myname&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">bean</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<ul>
+<li>注入集合类型属性</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Stu</span> &#123; </span><br><span class="line">    <span class="keyword">private</span> String[] courses; </span><br><span class="line">    <span class="keyword">private</span> List&lt;String&gt; list;</span><br><span class="line">    <span class="keyword">private</span> Map&lt;String,String&gt; maps;</span><br><span class="line">    <span class="keyword">private</span> Set&lt;String&gt; sets; </span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">setSets</span><span class="params">(Set&lt;String&gt; sets)</span> &#123; </span><br><span class="line">    	<span class="built_in">this</span>.sets = sets; </span><br><span class="line">    &#125; </span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">setCourses</span><span class="params">(String[] courses)</span> &#123;</span><br><span class="line">    	<span class="built_in">this</span>.courses = courses; </span><br><span class="line">    &#125; </span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">setList</span><span class="params">(List&lt;String&gt; list)</span> &#123; </span><br><span class="line">    	<span class="built_in">this</span>.list = list; </span><br><span class="line">    &#125; </span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">setMaps</span><span class="params">(Map&lt;String, String&gt; maps)</span> &#123; </span><br><span class="line">    	<span class="built_in">this</span>.maps = maps; </span><br><span class="line">    &#125; </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">&quot;stu&quot;</span> <span class="attr">class</span>=<span class="string">&quot;com.fantast.collectiontype.Stu&quot;</span>&gt;</span> </span><br><span class="line"><span class="comment">&lt;!--数组类型属性注入--&gt;</span> </span><br><span class="line">    <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;courses&quot;</span>&gt;</span> </span><br><span class="line">        <span class="tag">&lt;<span class="name">array</span>&gt;</span> </span><br><span class="line">            <span class="tag">&lt;<span class="name">value</span>&gt;</span>java课程<span class="tag">&lt;/<span class="name">value</span>&gt;</span> </span><br><span class="line">            <span class="tag">&lt;<span class="name">value</span>&gt;</span>数据库课程<span class="tag">&lt;/<span class="name">value</span>&gt;</span> </span><br><span class="line">        <span class="tag">&lt;/<span class="name">array</span>&gt;</span> </span><br><span class="line">    <span class="tag">&lt;/<span class="name">property</span>&gt;</span> </span><br><span class="line">    <span class="comment">&lt;!--list类型属性注入--&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;list&quot;</span>&gt;</span> </span><br><span class="line">        <span class="tag">&lt;<span class="name">list</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">value</span>&gt;</span>张三<span class="tag">&lt;/<span class="name">value</span>&gt;</span> </span><br><span class="line">            <span class="tag">&lt;<span class="name">value</span>&gt;</span>小三<span class="tag">&lt;/<span class="name">value</span>&gt;</span> </span><br><span class="line">        <span class="tag">&lt;/<span class="name">list</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">property</span>&gt;</span> </span><br><span class="line">    <span class="comment">&lt;!--map类型属性注入--&gt;</span> </span><br><span class="line">    <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;maps&quot;</span>&gt;</span> </span><br><span class="line">        <span class="tag">&lt;<span class="name">map</span>&gt;</span> </span><br><span class="line">            <span class="tag">&lt;<span class="name">entry</span> <span class="attr">key</span>=<span class="string">&quot;JAVA&quot;</span> <span class="attr">value</span>=<span class="string">&quot;java&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">entry</span>&gt;</span> </span><br><span class="line">            <span class="tag">&lt;<span class="name">entry</span> <span class="attr">key</span>=<span class="string">&quot;PHP&quot;</span> <span class="attr">value</span>=<span class="string">&quot;php&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">entry</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">map</span>&gt;</span> </span><br><span class="line">    <span class="tag">&lt;/<span class="name">property</span>&gt;</span> </span><br><span class="line">    <span class="comment">&lt;!--set类型属性注入--&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;sets&quot;</span>&gt;</span> </span><br><span class="line">        <span class="tag">&lt;<span class="name">set</span>&gt;</span> </span><br><span class="line">            <span class="tag">&lt;<span class="name">value</span>&gt;</span>MySQL<span class="tag">&lt;/<span class="name">value</span>&gt;</span> </span><br><span class="line">            <span class="tag">&lt;<span class="name">value</span>&gt;</span>Redis<span class="tag">&lt;/<span class="name">value</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">set</span>&gt;</span> </span><br><span class="line">    <span class="tag">&lt;/<span class="name">property</span>&gt;</span> </span><br><span class="line"><span class="tag">&lt;/<span class="name">bean</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<ul>
+<li>集合中注入对象类型的值：</li>
+</ul>
+<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">&quot;course1&quot;</span> <span class="attr">class</span>=<span class="string">&quot;com.fantast.collectiontype.Course&quot;</span>&gt;</span> </span><br><span class="line">    <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;cname&quot;</span> <span class="attr">value</span>=<span class="string">&quot;Spring5框架&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">property</span>&gt;</span> </span><br><span class="line"><span class="tag">&lt;/<span class="name">bean</span>&gt;</span> </span><br><span class="line"><span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">&quot;course2&quot;</span> <span class="attr">class</span>=<span class="string">&quot;com.atguigu.spring5.collectiontype.Course&quot;</span>&gt;</span> </span><br><span class="line">    <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;cname&quot;</span> <span class="attr">value</span>=<span class="string">&quot;MyBatis框架&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">property</span>&gt;</span> </span><br><span class="line"><span class="tag">&lt;/<span class="name">bean</span>&gt;</span> </span><br><span class="line"></span><br><span class="line"><span class="comment">&lt;!--注入list集合类型，值是对象--&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;courseList&quot;</span>&gt;</span> </span><br><span class="line">    <span class="tag">&lt;<span class="name">list</span>&gt;</span> </span><br><span class="line">        <span class="tag">&lt;<span class="name">ref</span> <span class="attr">bean</span>=<span class="string">&quot;course1&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">ref</span>&gt;</span> </span><br><span class="line">        <span class="tag">&lt;<span class="name">ref</span> <span class="attr">bean</span>=<span class="string">&quot;course2&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">ref</span>&gt;</span> </span><br><span class="line">    <span class="tag">&lt;/<span class="name">list</span>&gt;</span> </span><br><span class="line"><span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<h6 id="名称空间注入">3）名称空间注入：</h6>
+<p>添加一个p名称空间约束</p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20221121145057857.png" /></p>
+<p>进行属性注入，在bean标签里面进行操作</p>
+<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">&quot;book&quot;</span> <span class="attr">class</span>=<span class="string">&quot;com.atguigu.spring5.Book&quot;</span> <span class="attr">p:bname</span>=<span class="string">&quot;九阳神功&quot;</span> <span class="attr">p:bauthor</span>=<span class="string">&quot;无名氏&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">bean</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<h6 id="工厂bean">4）工厂Bean：</h6>
+<p>​
+Spring有两种类型bean，一种普通bean，另外一种工厂bean（FactoryBean）</p>
+<ul>
+<li><p>普通bean：在配置文件中定义bean类型就是返回类型(指在代码内获取的类型)</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="type">UserService</span> <span class="variable">userService</span> <span class="operator">=</span> context.getBean(<span class="string">&quot;userService&quot;</span>, UserService.class);</span><br></pre></td></tr></table></figure></li>
+<li><p>工厂bean：在配置文件定义bean类型可以和返回类型不一样</p>
+<ul>
+<li>创建类，实现接口FactoryBean，在实现的方法中定义返回的Bean类型”</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">MyBean</span> <span class="keyword">implements</span> <span class="title class_">FactoryBean</span>&lt;Course&gt; &#123; </span><br><span class="line">	<span class="comment">//定义返回bean</span></span><br><span class="line">	<span class="meta">@Override</span> </span><br><span class="line">    <span class="keyword">public</span> Course <span class="title function_">getObject</span><span class="params">()</span> <span class="keyword">throws</span> Exception &#123; </span><br><span class="line">        <span class="type">Course</span> <span class="variable">course</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Course</span>(); </span><br><span class="line">        course.setCname(<span class="string">&quot;abc&quot;</span>); </span><br><span class="line">        <span class="keyword">return</span> course; </span><br><span class="line">    &#125; </span><br><span class="line">    <span class="meta">@Override</span> </span><br><span class="line">    <span class="keyword">public</span> Class&lt;?&gt; getObjectType() &#123; </span><br><span class="line">    	<span class="keyword">return</span> <span class="literal">null</span>; </span><br><span class="line">    &#125; </span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span> <span class="keyword">public</span> <span class="type">boolean</span> <span class="title function_">isSingleton</span><span class="params">()</span> &#123; </span><br><span class="line">    	<span class="keyword">return</span> <span class="literal">false</span>; </span><br><span class="line">    &#125; </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">&quot;myBean&quot;</span> <span class="attr">class</span>=<span class="string">&quot;com.atguigu.spring5.factorybean.MyBean&quot;</span>&gt;</span> <span class="tag">&lt;/<span class="name">bean</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="meta">@Test</span> </span><br><span class="line"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">test3</span><span class="params">()</span> &#123; </span><br><span class="line">	<span class="type">ApplicationContext</span> <span class="variable">context</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ClassPathXmlApplicationContext</span>(<span class="string">&quot;bean3.xml&quot;</span>); </span><br><span class="line">	<span class="type">Course</span> <span class="variable">course</span> <span class="operator">=</span> context.getBean(<span class="string">&quot;myBean&quot;</span>, Course.class); <span class="comment">// 获取的是Course类对象，而非MyBean类的对象	 	</span></span><br><span class="line">	System.out.println(course); </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h6 id="bean作用域">5）Bean作用域</h6>
+<ul>
+<li><p>在Spring里面，默认情况下，bean是单实例对象，比如说在xml定义一个以后：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="type">Course</span> <span class="variable">course1</span> <span class="operator">=</span> context.getBean(<span class="string">&quot;myBean&quot;</span>, Course.class);</span><br><span class="line"><span class="type">Course</span> <span class="variable">course2</span> <span class="operator">=</span> context.getBean(<span class="string">&quot;myBean&quot;</span>, Course.class);</span><br><span class="line"><span class="comment">//实际上course1和course2是同一个对象</span></span><br></pre></td></tr></table></figure></li>
+<li><p>设置多实例Bean: 设置scope属性即可</p>
+<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">&quot;book&quot;</span> <span class="attr">class</span>=<span class="string">&quot;com.atguigu.spring5.Book&quot;</span> <span class="attr">scope</span>=<span class="string">&quot;prototype&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;bname&quot;</span> <span class="attr">value</span>=<span class="string">&quot;易筋经&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">bean</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p><strong>注意：</strong></p>
+<p>设置scope值是singleton时候，加载spring配置文件时候就会创建单实例对象
+设置scope值是prototype时候，不是在加载spring配置文件时候创建
+对象，在调用getBean方法时候创建多实例对象</p></li>
+</ul>
+<h6 id="bean生命周期">6）Bean生命周期</h6>
+<p>（1）通过构造器创建bean实例（无参数构造）
+（2）为bean的属性设置值和对其他bean引用（调用set方法）
+（3）调用bean的初始化的方法（需要进行配置初始化的方法）
+（4）bean可以使用了（对象获取到了）
+（5）当容器关闭时候，调用bean的销毁的方法（需要进行配置销毁的方法）</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Orders</span> &#123;</span><br><span class="line"><span class="comment">//无参数构造 </span></span><br><span class="line">    <span class="keyword">public</span> <span class="title function_">Orders</span><span class="params">()</span> &#123; </span><br><span class="line">    	System.out.println(<span class="string">&quot;第一步 执行无参数构造创建bean实例&quot;</span>); </span><br><span class="line">    &#125; </span><br><span class="line">	<span class="keyword">private</span> String oname; </span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">setOname</span><span class="params">(String oname)</span> &#123; </span><br><span class="line">        <span class="built_in">this</span>.oname = oname; </span><br><span class="line">        System.out.println(<span class="string">&quot;第二步 调用set方法设置属性值&quot;</span>); </span><br><span class="line">    &#125; </span><br><span class="line"></span><br><span class="line"><span class="comment">//创建执行的初始化的方法 </span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">initMethod</span><span class="params">()</span> &#123; </span><br><span class="line">    	System.out.println(<span class="string">&quot;第三步 执行初始化的方法&quot;</span>); </span><br><span class="line">    &#125; </span><br><span class="line"></span><br><span class="line"><span class="comment">//创建执行的销毁的方法 </span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">destroyMethod</span><span class="params">()</span> &#123; </span><br><span class="line">    	System.out.println(<span class="string">&quot;第五步 执行销毁的方法&quot;</span>); </span><br><span class="line">    &#125; </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">&quot;orders&quot;</span> <span class="attr">class</span>=<span class="string">&quot;com.atguigu.spring5.bean.Orders&quot;</span> <span class="attr">init-method</span>=<span class="string">&quot;initMethod&quot;</span> <span class="attr">destroy-method</span>=<span class="string">&quot;destroyMethod&quot;</span>&gt;</span> <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;oname&quot;</span> <span class="attr">value</span>=<span class="string">&quot;手机&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">property</span>&gt;</span> <span class="tag">&lt;/<span class="name">bean</span>&gt;</span> </span><br></pre></td></tr></table></figure>
+<h6 id="bean的后置处理器">7）Bean的后置处理器</h6>
+<p>如果类实现了后置处理器接口，那么Bean的生命周期有7步</p>
+<ul>
+<li>在原(3)步之前和之后，各自会有额外的一步：
+<ul>
+<li><strong>把bean实例传递bean后置处理器的方法postProcessBeforeInitialization</strong></li>
+<li>原（3）步：调用bean的初始化的方法（需要进行配置初始化的方法）</li>
+<li><strong>把bean实例传递bean后置处理器的方法
+postProcessAfterInitialization</strong></li>
+</ul></li>
+</ul>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">MyBeanPost</span> <span class="keyword">implements</span> <span class="title class_">BeanPostProcessor</span> &#123; </span><br><span class="line">    <span class="meta">@Override</span> <span class="keyword">public</span> Object <span class="title function_">postProcessBeforeInitialization</span><span class="params">(Object bean, String beanName)</span> <span class="keyword">throws</span> BeansException &#123; </span><br><span class="line">        System.out.println(<span class="string">&quot;在初始化之前执行的方法&quot;</span>); </span><br><span class="line">        <span class="keyword">return</span> bean; </span><br><span class="line">    &#125; </span><br><span class="line">    <span class="meta">@Override</span> <span class="keyword">public</span> Object <span class="title function_">postProcessAfterInitialization</span><span class="params">(Object bean, String beanName)</span> <span class="keyword">throws</span> BeansException &#123; </span><br><span class="line">        System.out.println(<span class="string">&quot;在初始化之后执行的方法&quot;</span>); </span><br><span class="line">        <span class="keyword">return</span> bean;</span><br><span class="line">    &#125; </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h6 id="自动装配略">8）自动装配：(略)</h6>
+<p>​
+根据指定装配规则（属性名称或者属性类型），Spring自动将匹配的属性值进行注入</p>
+<h6 id="引入外部属性文件">10）引入外部属性文件：</h6>
+<ul>
+<li>创建外部属性文件，properties格式文件，写数据库信息</li>
+</ul>
+<figure class="highlight properties"><table><tr><td class="code"><pre><span class="line"><span class="comment"># jdbc.properties</span></span><br><span class="line"><span class="attr">prop.driverClass</span>=<span class="string">com.mysql.jdbc.Driver</span></span><br><span class="line"><span class="attr">prop.url</span>=<span class="string">jdbc:mysql://localhost:3306/userDb</span></span><br><span class="line"><span class="attr">prop.userName</span>=<span class="string">root</span></span><br><span class="line"><span class="attr">prop.password</span>=<span class="string">root</span></span><br></pre></td></tr></table></figure>
+<ul>
+<li><p>把外部properties属性文件引入到spring配置文件中</p>
+<ul>
+<li>引入context名称空间</li>
+</ul>
+<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">beans</span> <span class="attr">xmlns</span>=<span class="string">&quot;http://www.springframework.org/schema/beans&quot;</span></span></span><br><span class="line"><span class="tag"><span class="attr">xmlns:xsi</span>=<span class="string">&quot;http://www.w3.org/2001/XMLSchema-instance&quot;</span> <span class="attr">xmlns:context</span>=<span class="string">&quot;http://www.springframework.org/schema/context&quot;</span> <span class="attr">xsi:schemaLocation</span>=<span class="string">&quot;http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd&quot;</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<ul>
+<li>使用标签引入外部属性文件</li>
+</ul>
+<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="comment">&lt;!--引入外部属性文件--&gt;</span> </span><br><span class="line"><span class="tag">&lt;<span class="name">context:property-placeholder</span> <span class="attr">location</span>=<span class="string">&quot;classpath:jdbc.properties&quot;</span>/&gt;</span> </span><br><span class="line"><span class="comment">&lt;!--配置连接池--&gt;</span> </span><br><span class="line"><span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">&quot;dataSource&quot;</span> <span class="attr">class</span>=<span class="string">&quot;com.alibaba.druid.pool.DruidDataSource&quot;</span>&gt;</span> </span><br><span class="line">    <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;driverClassName&quot;</span> <span class="attr">value</span>=<span class="string">&quot;$&#123;prop.driverClass&#125;&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">property</span>&gt;</span> </span><br><span class="line">    <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;url&quot;</span> <span class="attr">value</span>=<span class="string">&quot;$&#123;prop.url&#125;&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">property</span>&gt;</span> </span><br><span class="line">    <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;username&quot;</span> <span class="attr">value</span>=<span class="string">&quot;$&#123;prop.userName&#125;&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">property</span>&gt;</span> </span><br><span class="line">    <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;password&quot;</span> <span class="attr">value</span>=<span class="string">&quot;$&#123;prop.password&#125;&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">property</span>&gt;</span> </span><br><span class="line"><span class="tag">&lt;/<span class="name">bean</span>&gt;</span></span><br></pre></td></tr></table></figure></li>
+</ul>
+<h5 id="基于注解方式管理">2、基于注解方式管理：</h5>
+<p>​ 注解是代码特殊标记，格式：<span class="citation"
+data-cites="注解名称">@注解名称</span>(属性名称=属性值,
+属性名称=属性值..)，使用注解，注解作用在类上面，方法上面，属性上面。</p>
+<p>​
+Spring针对Bean管理中创建对象提供注解，以下四个都可以用来创建bean实例</p>
+<ul>
+<li><span class="citation" data-cites="Component">@Component</span></li>
+<li><span class="citation" data-cites="Service">@Service</span>
+常用于业务逻辑层</li>
+<li><span class="citation" data-cites="Controller">@Controller</span>
+常用于Web层</li>
+<li><span class="citation" data-cites="Repository">@Repository</span>
+常用于DAO层</li>
+</ul>
+<p>第一步：引入AOP依赖</p>
+<p>第二步：开启组件扫描：告诉Spring去扫描哪些包中的类，有注解就可以自动读取</p>
+<ul>
+<li><p>如果扫描多个包，多个包使用逗号隔开</p></li>
+<li><p>引入名称空间context</p></li>
+<li><p>在配置文件中加入：</p></li>
+</ul>
+<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">context:component-scan</span> <span class="attr">base-package</span>=<span class="string">&quot;com.fantast&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">context:component-scan</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>第三步：创建类：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="meta">@Component(value = &quot;userService&quot;)</span> <span class="comment">//&lt;bean id=&quot;userService&quot; class=&quot;..&quot;/&gt;</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">UserService</span> &#123;</span><br><span class="line"> <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">add</span><span class="params">()</span> &#123;</span><br><span class="line"> System.out.println(<span class="string">&quot;service add.......&quot;</span>);</span><br><span class="line"> &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h6 id="组件扫描的扩展配置">1）组件扫描的扩展配置：</h6>
+<ul>
+<li>使用自己配置的Filter</li>
+</ul>
+<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line">context:component-scan base-package=&quot;com.atguigu&quot; use-default-filters=&quot;false&quot;&gt;</span><br><span class="line"> <span class="tag">&lt;<span class="name">context:include-filter</span> <span class="attr">type</span>=<span class="string">&quot;annotation&quot;</span> </span></span><br><span class="line"><span class="tag"> </span></span><br><span class="line"><span class="tag"><span class="attr">expression</span>=<span class="string">&quot;org.springframework.stereotype.Controller&quot;</span>/&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">context:component-scan</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<ul>
+<li>设置哪些内容不扫描：</li>
+</ul>
+<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">context:component-scan</span> <span class="attr">base-package</span>=<span class="string">&quot;com.atguigu&quot;</span>&gt;</span></span><br><span class="line"> <span class="tag">&lt;<span class="name">context:exclude-filter</span> <span class="attr">type</span>=<span class="string">&quot;annotation&quot;</span> </span></span><br><span class="line"><span class="tag"> </span></span><br><span class="line"><span class="tag"><span class="attr">expression</span>=<span class="string">&quot;org.springframework.stereotype.Controller&quot;</span>/&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">context:component-scan</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<h6 id="实现属性注入">2）实现属性注入：</h6>
+<ul>
+<li><span class="citation"
+data-cites="Autowired">@Autowired</span>：根据属性类型进行自动装配</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="meta">@Service</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">UserService</span> &#123;</span><br><span class="line">     <span class="comment">//定义 dao 类型属性</span></span><br><span class="line">     <span class="comment">//不需要添加 set 方法</span></span><br><span class="line">     <span class="comment">//添加注入属性注解</span></span><br><span class="line">     <span class="meta">@Autowired</span> </span><br><span class="line">     <span class="keyword">private</span> UserDao userDao;</span><br><span class="line">     <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">add</span><span class="params">()</span> &#123;</span><br><span class="line">     	System.out.println(<span class="string">&quot;service add.......&quot;</span>);</span><br><span class="line">     	userDao.add();</span><br><span class="line">     &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li><span class="citation"
+data-cites="Qualifier">@Qualifier</span>：根据名称进行注入</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">//添加注入属性注解</span></span><br><span class="line"><span class="meta">@Autowired</span> <span class="comment">//根据类型进行注入</span></span><br><span class="line"><span class="meta">@Qualifier(value = &quot;userDaoImpl1&quot;)</span> <span class="comment">//根据名称进行注入</span></span><br><span class="line"><span class="keyword">private</span> UserDao userDao;</span><br></pre></td></tr></table></figure>
+<ul>
+<li><span class="citation"
+data-cites="Resource">@Resource</span>：可以根据类型注入，可以根据名称注入</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="meta">@Resource(name = &quot;userDaoImpl1&quot;)</span> <span class="comment">//根据名称进行注入</span></span><br><span class="line"><span class="keyword">private</span> UserDao userDao;</span><br></pre></td></tr></table></figure>
+<ul>
+<li><span class="citation"
+data-cites="Value">@Value</span>：注入普通类型属性</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="meta">@Value(value = &quot;abc&quot;)</span></span><br><span class="line"><span class="keyword">private</span> String name;</span><br></pre></td></tr></table></figure>
+<h6 id="完全注解开发">3）完全注解开发：</h6>
+<ul>
+<li>创建配置类，替代xml配置文件：</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="meta">@Configuration</span> <span class="comment">//作为配置类，替代 xml 配置文件</span></span><br><span class="line"><span class="meta">@ComponentScan(basePackages = &#123;&quot;com.atguigu&quot;&#125;)</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">SpringConfig</span> &#123;</span><br><span class="line">    </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>编写测试类</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">Public <span class="keyword">void</span> <span class="title function_">testService2</span><span class="params">()</span> &#123;</span><br><span class="line"> 	<span class="comment">//加载配置类</span></span><br><span class="line">     <span class="type">ApplicationContext</span> <span class="variable">context</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">AnnotationConfigApplicationContext</span>(SpringConfig.class);</span><br><span class="line">     <span class="type">UserService</span> <span class="variable">userService</span> <span class="operator">=</span> context.getBean(<span class="string">&quot;userService&quot;</span>, UserService.class);</span><br><span class="line">     System.out.println(userService);</span><br><span class="line">     userService.add();</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
 ]]></content>
       <categories>
         <category>⑨ 工程类笔记</category>
@@ -4313,7 +4500,69 @@ id="问11实现汉字字形表示的方法一般可分为______两大类">问11�
 src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/image-20221103145458857.png" /></li>
 </ul>
 <hr />
-<h3 id="问12">问12：</h3>
+<h3
+id="问12以下哪种存储介质具有较大的存储容量">问12：以下哪种存储介质具有较大的存储容量?</h3>
+<p>A.floppy diskette</p>
+<p>B.cd(compact disc)</p>
+<p>C.dvd(digital video disc)</p>
+<p>D.blu-ray disc</p>
+<p>答案：D.</p>
+<p>A为<strong>软盘</strong>（Floppy Disk)，是一种<a
+href="https://zh.wikipedia.org/wiki/碟盤存儲">碟盘存储</a>，主要部分是一张薄软的<a
+href="https://zh.wikipedia.org/wiki/磁儲存">磁存储</a><a
+href="https://zh.wikipedia.org/wiki/介质">介质</a>盘片，盘片封装在矩形塑料壳中，内衬有用于清理灰尘的纤维织物。读写软盘需要借助软盘驱动器（英语：floppy
+disk drive，简称 <strong>FDD</strong>）。</p>
+<p>第一个软盘是由<a
+href="https://zh.wikipedia.org/wiki/IBM">IBM</a>于1971年开发出的，直径8<a
+href="https://zh.wikipedia.org/wiki/吋">吋</a>。随着硬件技术的发展与使用的需要，又派生出5.25吋的软盘，并广泛使用在<a
+href="https://zh.wikipedia.org/wiki/Apple_II">Apple II</a>、<a
+href="https://zh.wikipedia.org/wiki/IBM_PC">IBM
+PC</a>及其他兼容电脑上。苹果1984年在Mac机开始采用3.5吋软盘，此时容量还不到1MB，后来，由日本<a
+href="https://zh.wikipedia.org/wiki/索尼">索尼</a>的3.5吋软盘片容量有1.44MB所取代，这种软盘片80至90年代盛行，在20世纪后期3.5吋软盘驱动器仍是电脑普及设备之一，但是在进入21世纪后后逐渐过时并被淘汰</p>
+<p>B为<strong>激光唱片</strong>（英语：<strong>C</strong>ompact
+<strong>D</strong>isc，缩写：<strong>CD</strong>）是一种用以存储数字资料的<a
+href="https://zh.wikipedia.org/wiki/光學碟片">光学盘片</a>，原被开发用作存储<a
+href="https://zh.wikipedia.org/wiki/數位音訊">数字音频</a>。CD在1982年面世，至今仍然是商业录音的标准<a
+href="https://zh.wikipedia.org/wiki/儲存裝置">存储设备</a>。</p>
+<p>CD的基本规格（根据1983年9月的Audio-CD 标准红皮书）：</p>
+<ul>
+<li>扫描速度：1.2–1.4 m/s，固定线速度/<a
+href="https://zh.wikipedia.org/wiki/CLV">CLV</a>（Constant Linear
+Velocity）- 约相等于碟内环每分钟500转，碟外环每分钟200转。</li>
+<li>读写速度：1X = 150 KiB/s = 153,600 Bytes/s</li>
+<li>容量：700MB</li>
+</ul>
+<p>C为<strong>数字多功能光盘</strong>（英语：<strong>D</strong>igital
+<strong>V</strong>ersatile
+<strong>D</strong>isc，缩写：<strong>DVD</strong>）是一种<a
+href="https://zh.wikipedia.org/wiki/光碟">光盘</a>存储媒体，通常用来播放<a
+href="https://zh.wikipedia.org/wiki/標清">标清</a>（标准解晰度）的<a
+href="https://zh.wikipedia.org/wiki/電影">电影</a>，高清音质的<a
+href="https://zh.wikipedia.org/wiki/音樂">音乐</a>与大容量存储资料用途。DVD与<a
+href="https://zh.wikipedia.org/wiki/CD">CD</a>或<a
+href="https://zh.wikipedia.org/wiki/藍光光碟">蓝光光盘</a>（Blu-ray
+Disc）的外观极为相似，直径有80mm、120mm规格等。</p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20221121142748993.png" /></p>
+<p>D为<strong>蓝光光盘</strong>（英语：<strong>B</strong>lu-ray
+<strong>D</strong>isc，缩写：<strong>BD</strong>）是<a
+href="https://zh.wikipedia.org/wiki/DVD">DVD</a>之后的下一代<a
+href="https://zh.wikipedia.org/wiki/光碟">光盘</a>格式之一，用以存储高质量的影音以及高容量的资料。</p>
+<p>最终：</p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20221121142841827.png" /></p>
+<hr />
+<h3
+id="问13要查看设置修改显示器分辨率可以从___________进入谁">问13：要查看设置修改显示器分辨率，可以从___________进入谁。。</h3>
+<ul>
+<li>答案：windows桌面的空白地方右键弹出的菜单中点击“显示设置（D）”</li>
+</ul>
+<hr />
+<h3
+id="问14windows操作系统通过________管理接入的设备windows每一个设备都有一个________windows操作系统与设备之间的通信标准是________它用于规范电脑与外部设备的连接和通讯">问14：Windows操作系统通过________管理接入的设备，windows每一个设备都有一个________，windows操作系统与设备之间的通信标准是________，它用于规范电脑与外部设备的连接和通讯。。</h3>
+<ul>
+<li>答案：设备管理器、设备驱动、USB</li>
+</ul>
 ]]></content>
       <categories>
         <category>⑩ 其他内容</category>
@@ -4651,6 +4900,19 @@ NOT EXISTS关键字</h4>
       </tags>
   </entry>
   <entry>
+    <title>设计模式1</title>
+    <url>/2022/09/03/2ceecb19279d/</url>
+    <content><![CDATA[<h4 id="设计模式">1、设计模式</h4>
+]]></content>
+      <categories>
+        <category>⑥  基础类笔记</category>
+        <category>设计模式</category>
+      </categories>
+      <tags>
+        <tag>Database</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Chap1 Mysql基本查询内容</title>
     <url>/2022/09/03/7e7267227ba3/</url>
     <content><![CDATA[<h4 id="一些非关系型数据库">1、一些非关系型数据库</h4>
@@ -4810,19 +5072,6 @@ src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-202209051137400
       <categories>
         <category>⑥  基础类笔记</category>
         <category>数据库精简笔记</category>
-      </categories>
-      <tags>
-        <tag>Database</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>设计模式1</title>
-    <url>/2022/09/03/2ceecb19279d/</url>
-    <content><![CDATA[<h4 id="设计模式">1、设计模式</h4>
-]]></content>
-      <categories>
-        <category>⑥  基础类笔记</category>
-        <category>设计模式</category>
       </categories>
       <tags>
         <tag>Database</tag>
@@ -7679,162 +7928,6 @@ AND/ OR / NOT / XOR 逻辑门，从而构建更为复杂的逻辑门。</p>
       </tags>
   </entry>
   <entry>
-    <title>计算机组成原理Chapter1—概述</title>
-    <url>/2022/04/27/5b4ea41fcadf/</url>
-    <content><![CDATA[<p>视频地址：https://www.bilibili.com/video/BV1BE411D7ii</p>
-<h4 id="一计算机硬件发展">一、计算机硬件发展：</h4>
-<p>​ 电子管时代——晶体管时代——中小规模集成电路——大规模集成电路</p>
-<h4
-id="二计算机硬件的基本组成冯诺依曼-现代计算机">二、计算机硬件的基本组成（冯诺依曼
-&amp; 现代计算机）</h4>
-<h5 id="冯诺依曼的计算机工作原理">1、冯诺依曼的计算机工作原理：</h5>
-<ul>
-<li><strong>存储程序：</strong>指将指令<strong>以二进制代码的形式事先输入计算机的主存储器，</strong>然后按其在存储器中的首地址执行程序的第一条指令，以后就按该程序的规定顺序执行其他指令，直至程序执行结束。</li>
-<li><strong>程序控制：</strong>按指令地址访问存储器并取出指令，经译码依次产生指令执行所需的控制信号，实现对计算的控制，完成指令的功能。</li>
-</ul>
-<h5 id="冯诺依曼的计算机的组成">2、冯诺依曼的计算机的组成：</h5>
-<ul>
-<li><p>硬件系统总览：</p>
-<ul>
-<li><p>主机：CPU（运算器【算数运算、逻辑运算】 +
-控制器【指挥程序运行】）、内存</p></li>
-<li><p>外设：输入输出设备（将信息转换成机器能识别的形式）、外存储器</p></li>
-<li><p>总线：地址线、数据线、控制线</p>
-<p><img src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220430165516086.png" style="zoom: 50%;" /></p>
-<p><strong>在计算机系统中，软件和硬件在逻辑上是等效的</strong></p></li>
-</ul></li>
-<li><p>特点：</p>
-<ul>
-<li><p>计算机由五大部件组成【如下图】</p></li>
-<li><p>指令和数据以同等地位存于存储器，可按照地址寻访</p></li>
-<li><p>指令和数据用二进制标识</p></li>
-<li><p>指令由操作码和地址码组成</p></li>
-<li><p>存储程序</p></li>
-</ul></li>
-</ul>
-<p>​
-<strong>以运算器为中心</strong>，数据的传输都要经过运算器进行中转</p>
-<h5 id="现代计算机的组成">3、现代计算机的组成：</h5>
-<p>​
-相比于冯诺依曼计算机，现代计算机以<strong>存储器为核心</strong>，如下图所示</p>
-<p><img src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220430170456159.png" style="zoom:50%;" /></p>
-<p>由于运算器和控制器联系很紧密，在现代的大规模集成电路中，运算器和控制器往往会被集成到一个芯片中，即我们熟知的CPU。</p>
-<p>故：<strong>CPU = 运算器 +
-控制器</strong>，简化后的现代计算机结构如下：</p>
-<p><img src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220430170613131.png" alt="image-20220430170613131" style="zoom:50%;" /></p>
-<p>各个专业名词的区分：</p>
-<ul>
-<li>主存一般指
-主存储器，比如手机中经常写的运行内存RAM就是指主存储器</li>
-<li>辅存一般指 像机械硬盘、固态硬盘等外部IO设备</li>
-</ul>
-<p><img src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220430170848656.png" style="zoom:50%;" /></p>
-<h4 id="三各个硬件部件">三、各个硬件部件</h4>
-<h5 id="主存储器的基本组成">1、主存储器的基本组成</h5>
-<h6 id="总览">1）总览</h6>
-<ul>
-<li>1、存储体：用于存放数据</li>
-<li>2、MAR 存储地址寄存器、3、MDR 存储数据寄存器：
-<ul>
-<li>CPU将地址放到MAR中，主存储器根据MAR中的地址，去存储体中拿到这个数据，然后把这个数据写入MDR中，CPU通过数据线路从MDR中取走数据。</li>
-</ul></li>
-<li>示意图：</li>
-</ul>
-<p><img src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220430171815662.png" style="zoom:50%;" /></p>
-<h6 id="存储体">2）存储体：</h6>
-<p>​ 存储体由许多存储单元组成。</p>
-<ul>
-<li>存储单元：每个存储单元中将会存放一串二进制代码，每个存储单元会对应一个地址</li>
-<li>存储字：存储单元中二进制代码的组合</li>
-<li>存储字长：存储单元中二进制代码的位数（常见的有8bit,16bit,32bit,64bit）</li>
-<li>存储元：存储二进制的电子元件，每个存储元可以存1bit【电容】</li>
-</ul>
-<p><img src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220430172031137.png" style="zoom:50%;" /></p>
-<h6 id="marmdr">3）MAR、MDR</h6>
-<p>​ MAR的位数反映了存储单元的个数（因为要指明地址）</p>
-<p>​ MDR的位数 = 存储字长,即一个存储单元可以存储二进制代码的位数</p>
-<h5 id="运算器的基本组成">2、运算器的基本组成</h5>
-<p>​ 用于实现算术运算、逻辑运算，由三个寄存器和算术逻辑单元组成</p>
-<p><img src="C:\Users\14012\AppData\Roaming\Typora\typora-user-images\image-20220430204256104.png" style="zoom:50%;" /></p>
-<ul>
-<li>ACC：累加器，用于存放操作数或运算结果</li>
-<li>MQ（Multiple-Quotient）：乘商寄存器，在乘、陈运算时，用于存放操作数或运算结果。</li>
-<li>X：通用的操作数寄存器，用于存放操作数</li>
-<li>ALU: 算术逻辑单元，通过内部复杂的电路实现算数运算、逻辑运算</li>
-</ul>
-<h5 id="控制器的基本组成">3、控制器的基本组成</h5>
-<p><img src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220430204642685.png" style="zoom:50%;" /></p>
-<ul>
-<li>CU：控制单元，分析指令，给出控制信号</li>
-<li>IR：指令寄存器，存放当前执行的指令</li>
-<li>PC：程序计数器，存放下一条指令地址，有自动+1的功能。</li>
-</ul>
-<p>我们的计算机每完成一条指令，需要有以下三个步骤：</p>
-<ul>
-<li>取指令，由PC配合执行</li>
-<li>分析指令，由IR配合执行</li>
-<li>执行指令，由CU配合执行</li>
-</ul>
-<h4 id="四计算机的工作过程示例">四、计算机的工作过程示例</h4>
-<p>​ <strong>步骤1：</strong>高级语言 —》 编译装入主存</p>
-<p>​ <img
-src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220430213423487.png" /></p>
-<p>​ <strong>步骤2</strong>：完成指令的示例过程：</p>
-<p>​ 初始：指令、数据存入主存，PC指向第一条指令</p>
-<p>​
-步骤概述：从主存中取指令放入IR、PC自动加1、CU分析指令、CU指挥其他部件执行指令<img
-src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220430213124210.png" /></p>
-<p><img
-src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220430213216295.png" /></p>
-<p><img
-src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220430213523337.png" /></p>
-<p><img
-src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220430213547286.png" /></p>
-<p><img
-src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220501000330518.png" /></p>
-<p>总结：</p>
-<p><img src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220501000641611.png" style="zoom:67%;" /></p>
-<h4 id="三计算机系统性能评价">三、计算机系统性能评价</h4>
-<h5 id="非时间指标">1、非时间指标：</h5>
-<ul>
-<li><p>1）机器字长：指机器一次能处理的二进制位数</p>
-<p><img src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220429110326661.png" style="zoom: 67%;" /></p>
-<ul>
-<li>由加法器、寄存器的位数决定；</li>
-<li>一般与内部寄存器的位数相等（字长）；</li>
-<li>字长越长，表示数据的范围就越大，精确度越高；</li>
-<li>目前常见的有32位和64位字长。</li>
-</ul></li>
-<li><p>2）总线宽度：数据总线一次能够并行传送的最大信息位数</p>
-<p>​ <img
-src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220429110651202.png" /></p>
-<ul>
-<li>一般指运算器与存储器之间的数据总线位数。有些计算机内部与外部数据总线宽度不一致：</li>
-</ul></li>
-<li><p>3）主存容量与存储带宽</p>
-<ul>
-<li><strong>主存容量：</strong>一台计算机贮存所包含的存储单元总数</li>
-<li><strong>存储带宽：</strong>指单位时间内与贮存交换的二进制信息量</li>
-</ul></li>
-</ul>
-<h5 id="时间指标">2、时间指标：</h5>
-<ul>
-<li>主频f / 时钟周期T，外频与倍频
-<ul>
-<li>主频f：CPU内核工作的时钟频率</li>
-<li>时钟周期T：</li>
-</ul></li>
-</ul>
-]]></content>
-      <categories>
-        <category>⑥  基础类笔记</category>
-        <category>计算机组成原理</category>
-      </categories>
-      <tags>
-        <tag>Computer Composition</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>计网微课堂Chap1——计网基础知识与概述</title>
     <url>/2022/04/27/dcdee696a9ce/</url>
     <content><![CDATA[<p>视频地址：https://www.bilibili.com/video/BV1c4411d7jb?p=2</p>
@@ -8141,6 +8234,162 @@ src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-202204301146216
       </categories>
       <tags>
         <tag>Computer Network</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>计算机组成原理Chapter1—概述</title>
+    <url>/2022/04/27/5b4ea41fcadf/</url>
+    <content><![CDATA[<p>视频地址：https://www.bilibili.com/video/BV1BE411D7ii</p>
+<h4 id="一计算机硬件发展">一、计算机硬件发展：</h4>
+<p>​ 电子管时代——晶体管时代——中小规模集成电路——大规模集成电路</p>
+<h4
+id="二计算机硬件的基本组成冯诺依曼-现代计算机">二、计算机硬件的基本组成（冯诺依曼
+&amp; 现代计算机）</h4>
+<h5 id="冯诺依曼的计算机工作原理">1、冯诺依曼的计算机工作原理：</h5>
+<ul>
+<li><strong>存储程序：</strong>指将指令<strong>以二进制代码的形式事先输入计算机的主存储器，</strong>然后按其在存储器中的首地址执行程序的第一条指令，以后就按该程序的规定顺序执行其他指令，直至程序执行结束。</li>
+<li><strong>程序控制：</strong>按指令地址访问存储器并取出指令，经译码依次产生指令执行所需的控制信号，实现对计算的控制，完成指令的功能。</li>
+</ul>
+<h5 id="冯诺依曼的计算机的组成">2、冯诺依曼的计算机的组成：</h5>
+<ul>
+<li><p>硬件系统总览：</p>
+<ul>
+<li><p>主机：CPU（运算器【算数运算、逻辑运算】 +
+控制器【指挥程序运行】）、内存</p></li>
+<li><p>外设：输入输出设备（将信息转换成机器能识别的形式）、外存储器</p></li>
+<li><p>总线：地址线、数据线、控制线</p>
+<p><img src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220430165516086.png" style="zoom: 50%;" /></p>
+<p><strong>在计算机系统中，软件和硬件在逻辑上是等效的</strong></p></li>
+</ul></li>
+<li><p>特点：</p>
+<ul>
+<li><p>计算机由五大部件组成【如下图】</p></li>
+<li><p>指令和数据以同等地位存于存储器，可按照地址寻访</p></li>
+<li><p>指令和数据用二进制标识</p></li>
+<li><p>指令由操作码和地址码组成</p></li>
+<li><p>存储程序</p></li>
+</ul></li>
+</ul>
+<p>​
+<strong>以运算器为中心</strong>，数据的传输都要经过运算器进行中转</p>
+<h5 id="现代计算机的组成">3、现代计算机的组成：</h5>
+<p>​
+相比于冯诺依曼计算机，现代计算机以<strong>存储器为核心</strong>，如下图所示</p>
+<p><img src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220430170456159.png" style="zoom:50%;" /></p>
+<p>由于运算器和控制器联系很紧密，在现代的大规模集成电路中，运算器和控制器往往会被集成到一个芯片中，即我们熟知的CPU。</p>
+<p>故：<strong>CPU = 运算器 +
+控制器</strong>，简化后的现代计算机结构如下：</p>
+<p><img src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220430170613131.png" alt="image-20220430170613131" style="zoom:50%;" /></p>
+<p>各个专业名词的区分：</p>
+<ul>
+<li>主存一般指
+主存储器，比如手机中经常写的运行内存RAM就是指主存储器</li>
+<li>辅存一般指 像机械硬盘、固态硬盘等外部IO设备</li>
+</ul>
+<p><img src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220430170848656.png" style="zoom:50%;" /></p>
+<h4 id="三各个硬件部件">三、各个硬件部件</h4>
+<h5 id="主存储器的基本组成">1、主存储器的基本组成</h5>
+<h6 id="总览">1）总览</h6>
+<ul>
+<li>1、存储体：用于存放数据</li>
+<li>2、MAR 存储地址寄存器、3、MDR 存储数据寄存器：
+<ul>
+<li>CPU将地址放到MAR中，主存储器根据MAR中的地址，去存储体中拿到这个数据，然后把这个数据写入MDR中，CPU通过数据线路从MDR中取走数据。</li>
+</ul></li>
+<li>示意图：</li>
+</ul>
+<p><img src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220430171815662.png" style="zoom:50%;" /></p>
+<h6 id="存储体">2）存储体：</h6>
+<p>​ 存储体由许多存储单元组成。</p>
+<ul>
+<li>存储单元：每个存储单元中将会存放一串二进制代码，每个存储单元会对应一个地址</li>
+<li>存储字：存储单元中二进制代码的组合</li>
+<li>存储字长：存储单元中二进制代码的位数（常见的有8bit,16bit,32bit,64bit）</li>
+<li>存储元：存储二进制的电子元件，每个存储元可以存1bit【电容】</li>
+</ul>
+<p><img src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220430172031137.png" style="zoom:50%;" /></p>
+<h6 id="marmdr">3）MAR、MDR</h6>
+<p>​ MAR的位数反映了存储单元的个数（因为要指明地址）</p>
+<p>​ MDR的位数 = 存储字长,即一个存储单元可以存储二进制代码的位数</p>
+<h5 id="运算器的基本组成">2、运算器的基本组成</h5>
+<p>​ 用于实现算术运算、逻辑运算，由三个寄存器和算术逻辑单元组成</p>
+<p><img src="C:\Users\14012\AppData\Roaming\Typora\typora-user-images\image-20220430204256104.png" style="zoom:50%;" /></p>
+<ul>
+<li>ACC：累加器，用于存放操作数或运算结果</li>
+<li>MQ（Multiple-Quotient）：乘商寄存器，在乘、陈运算时，用于存放操作数或运算结果。</li>
+<li>X：通用的操作数寄存器，用于存放操作数</li>
+<li>ALU: 算术逻辑单元，通过内部复杂的电路实现算数运算、逻辑运算</li>
+</ul>
+<h5 id="控制器的基本组成">3、控制器的基本组成</h5>
+<p><img src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220430204642685.png" style="zoom:50%;" /></p>
+<ul>
+<li>CU：控制单元，分析指令，给出控制信号</li>
+<li>IR：指令寄存器，存放当前执行的指令</li>
+<li>PC：程序计数器，存放下一条指令地址，有自动+1的功能。</li>
+</ul>
+<p>我们的计算机每完成一条指令，需要有以下三个步骤：</p>
+<ul>
+<li>取指令，由PC配合执行</li>
+<li>分析指令，由IR配合执行</li>
+<li>执行指令，由CU配合执行</li>
+</ul>
+<h4 id="四计算机的工作过程示例">四、计算机的工作过程示例</h4>
+<p>​ <strong>步骤1：</strong>高级语言 —》 编译装入主存</p>
+<p>​ <img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220430213423487.png" /></p>
+<p>​ <strong>步骤2</strong>：完成指令的示例过程：</p>
+<p>​ 初始：指令、数据存入主存，PC指向第一条指令</p>
+<p>​
+步骤概述：从主存中取指令放入IR、PC自动加1、CU分析指令、CU指挥其他部件执行指令<img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220430213124210.png" /></p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220430213216295.png" /></p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220430213523337.png" /></p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220430213547286.png" /></p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220501000330518.png" /></p>
+<p>总结：</p>
+<p><img src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220501000641611.png" style="zoom:67%;" /></p>
+<h4 id="三计算机系统性能评价">三、计算机系统性能评价</h4>
+<h5 id="非时间指标">1、非时间指标：</h5>
+<ul>
+<li><p>1）机器字长：指机器一次能处理的二进制位数</p>
+<p><img src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220429110326661.png" style="zoom: 67%;" /></p>
+<ul>
+<li>由加法器、寄存器的位数决定；</li>
+<li>一般与内部寄存器的位数相等（字长）；</li>
+<li>字长越长，表示数据的范围就越大，精确度越高；</li>
+<li>目前常见的有32位和64位字长。</li>
+</ul></li>
+<li><p>2）总线宽度：数据总线一次能够并行传送的最大信息位数</p>
+<p>​ <img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20220429110651202.png" /></p>
+<ul>
+<li>一般指运算器与存储器之间的数据总线位数。有些计算机内部与外部数据总线宽度不一致：</li>
+</ul></li>
+<li><p>3）主存容量与存储带宽</p>
+<ul>
+<li><strong>主存容量：</strong>一台计算机贮存所包含的存储单元总数</li>
+<li><strong>存储带宽：</strong>指单位时间内与贮存交换的二进制信息量</li>
+</ul></li>
+</ul>
+<h5 id="时间指标">2、时间指标：</h5>
+<ul>
+<li>主频f / 时钟周期T，外频与倍频
+<ul>
+<li>主频f：CPU内核工作的时钟频率</li>
+<li>时钟周期T：</li>
+</ul></li>
+</ul>
+]]></content>
+      <categories>
+        <category>⑥  基础类笔记</category>
+        <category>计算机组成原理</category>
+      </categories>
+      <tags>
+        <tag>Computer Composition</tag>
       </tags>
   </entry>
   <entry>
@@ -9722,8 +9971,8 @@ class="math inline">\(\lambda_{id2}\)</span> = { 10 , 7 , 50 , 1 }</p>
         <category>CV相关论文</category>
       </categories>
       <tags>
-        <tag>Style Transfer</tag>
         <tag>CNN</tag>
+        <tag>Style Transfer</tag>
         <tag>Transformer</tag>
       </tags>
   </entry>
@@ -11517,13 +11766,13 @@ href="https://blog.fantast.top/2022/02/21/80b7b127a404/">图系列——矩阵�
 ]]></content>
       <categories>
         <category>④ 算法类笔记</category>
-        <category>动态规划系列</category>
         <category>DFS与BFS系列</category>
+        <category>动态规划系列</category>
       </categories>
       <tags>
         <tag>leetcode</tag>
-        <tag>dynamic programming</tag>
         <tag>DFS</tag>
+        <tag>dynamic programming</tag>
       </tags>
   </entry>
   <entry>
@@ -11618,14 +11867,14 @@ class="math inline">\(f(i,j)\)</span>中，再第二轮遍历的时候，只要�
 ]]></content>
       <categories>
         <category>④ 算法类笔记</category>
-        <category>动态规划系列</category>
         <category>DFS与BFS系列</category>
+        <category>动态规划系列</category>
         <category>图系列</category>
       </categories>
       <tags>
         <tag>leetcode</tag>
-        <tag>dynamic programming</tag>
         <tag>BFS</tag>
+        <tag>dynamic programming</tag>
         <tag>graph</tag>
       </tags>
   </entry>
@@ -13094,44 +13343,6 @@ href="https://leetcode-cn.com/problems/LwUNpT/">剑指 Offer II 045.
       </tags>
   </entry>
   <entry>
-    <title>容器设计——LRU最近最少使用缓存的容器设计</title>
-    <url>/2022/02/05/4cd58a8a96c9/</url>
-    <content><![CDATA[<h3 id="剑指-offer-ii-031.-最近最少使用缓存"><a
-href="https://leetcode-cn.com/problems/OrIXps/">剑指 Offer II 031.
-最近最少使用缓存</a></h3>
-<h5 id="题目简要描述"><strong>题目简要描述</strong>：</h5>
-<p>​ 运用所掌握的数据结构，设计和实现一个 LRU (Least Recently
-Used，最近最少使用) 缓存机制 。</p>
-<p><strong>实现 LRUCache 类：</strong></p>
-<ul>
-<li><p>LRUCache(int capacity) 以正整数作为容量 capacity 初始化 LRU
-缓存</p></li>
-<li><p>int get(int key) 如果关键字 key
-存在于缓存中，则返回关键字的值，否则返回 -1 。</p></li>
-<li><p>void put(int key, int value)
-如果关键字已经存在，则变更其数据值；如果关键字不存在，则插入该组「关键字-值」。当缓存容量达到上限时，它应该在写入新数据之前删除最久未使用的数据值，从而为新的数据值留出空间。</p></li>
-</ul>
-<p><strong>类模版</strong>：</p>
-<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">LRUCache</span> &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="built_in">LRUCache</span>(<span class="type">int</span> capacity) &#123;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="type">int</span> <span class="title">get</span><span class="params">(<span class="type">int</span> key)</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="type">void</span> <span class="title">put</span><span class="params">(<span class="type">int</span> key, <span class="type">int</span> value)</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
-<h5 id="解题思路"><strong>解题思路</strong>：</h5>
-<p>​ <strong>使用 双向链表 与 Hash 表</strong>，实现
-LRU：将新插入的元素放在链表头部，或将最新访问的节点放在链表的头部。如果容量到达上限，去除链表最后的元素。在此期间，<strong>为了保证访问链表的头部和尾部都是O(1)时间，我们需要维护一个Head和一个Tail节点，分别指向双向链表的头部和尾部，这两个头部和尾部的节点中是不存放数据，留空的，仅为了进行指示。</strong>并且为了保证<strong>在O(1)时间内能够获取任意一个元素</strong>，我们还需要建立一个HashMap，将key值与对应的链表节点关联，以方便以O(1)时间进行访问。</p>
-<p><strong>代码</strong>：以下代码我并没有做任何的优化，比如说合并一些可复用的函数，因为这样看上去更简单明了一些，其实比如说像一些将Node插入到链表前方的操作，以及删除链表最后一个元素的操作，都是可以写成函数封装起来的。</p>
-<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Node</span> &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">	Node* prev;</span><br><span class="line">	Node* next;</span><br><span class="line">	<span class="type">int</span> key;</span><br><span class="line">	<span class="type">int</span> value;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">	<span class="built_in">Node</span>() &#123;</span><br><span class="line">		<span class="keyword">this</span>-&gt;prev = <span class="literal">NULL</span>;</span><br><span class="line">		<span class="keyword">this</span>-&gt;next = <span class="literal">NULL</span>;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="built_in">Node</span>(<span class="type">int</span> key, <span class="type">int</span> value) &#123;</span><br><span class="line">		<span class="keyword">this</span>-&gt;prev = <span class="literal">NULL</span>;</span><br><span class="line">		<span class="keyword">this</span>-&gt;next = <span class="literal">NULL</span>;</span><br><span class="line">		<span class="keyword">this</span>-&gt;key = key;</span><br><span class="line">		<span class="keyword">this</span>-&gt;value = value;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">LRUCache</span> &#123;</span><br><span class="line">	<span class="type">int</span> capacity;</span><br><span class="line">	<span class="type">int</span> curr_size;</span><br><span class="line">	Node* head; <span class="comment">//链表头节点</span></span><br><span class="line">	Node* tail; <span class="comment">//链表尾巴节点</span></span><br><span class="line">	unordered_map&lt;<span class="type">int</span>, Node*&gt; key2Node; <span class="comment">//key - Node 的转换</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">	<span class="built_in">LRUCache</span>(<span class="type">int</span> capacity) &#123;</span><br><span class="line">		<span class="keyword">this</span>-&gt;curr_size = <span class="number">0</span>;</span><br><span class="line">		<span class="keyword">this</span>-&gt;capacity = capacity;</span><br><span class="line">		<span class="keyword">this</span>-&gt;head = <span class="keyword">new</span> <span class="built_in">Node</span>();</span><br><span class="line">		<span class="keyword">this</span>-&gt;tail = <span class="keyword">new</span> <span class="built_in">Node</span>();</span><br><span class="line">		head-&gt;next = tail;</span><br><span class="line">		tail-&gt;prev = head;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="type">int</span> <span class="title">get</span><span class="params">(<span class="type">int</span> key)</span> </span>&#123;</span><br><span class="line">		<span class="keyword">if</span> (key2Node.<span class="built_in">find</span>(key) == key2Node.<span class="built_in">end</span>()) <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">		Node* curr = key2Node[key];</span><br><span class="line">		<span class="comment">//将curr先从链表中删掉</span></span><br><span class="line">		Node* prev = curr-&gt;prev;</span><br><span class="line">		<span class="keyword">if</span> (prev) prev-&gt;next = curr-&gt;next;</span><br><span class="line">		<span class="keyword">if</span> (curr-&gt;next) curr-&gt;next-&gt;prev = prev;</span><br><span class="line">		<span class="comment">//然后添加到链表的最前面</span></span><br><span class="line">		Node* next = <span class="keyword">this</span>-&gt;head-&gt;next;</span><br><span class="line">		curr-&gt;prev = head;</span><br><span class="line">		head-&gt;next = curr;</span><br><span class="line">		curr-&gt;next = next;</span><br><span class="line">		next-&gt;prev = curr;</span><br><span class="line">		<span class="keyword">return</span> curr-&gt;value;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="type">void</span> <span class="title">put</span><span class="params">(<span class="type">int</span> key, <span class="type">int</span> value)</span> </span>&#123;</span><br><span class="line">		<span class="keyword">if</span> (key2Node.<span class="built_in">find</span>(key) != key2Node.<span class="built_in">end</span>()) &#123;</span><br><span class="line">			<span class="comment">//修改值并将该元素插到最前面</span></span><br><span class="line">			Node* curr = key2Node[key];</span><br><span class="line">			curr-&gt;value = value;</span><br><span class="line">			<span class="comment">//将curr先从链表中删掉</span></span><br><span class="line">			Node* prev = curr-&gt;prev;</span><br><span class="line">			<span class="keyword">if</span> (prev) prev-&gt;next = curr-&gt;next;</span><br><span class="line">			<span class="keyword">if</span> (curr-&gt;next) curr-&gt;next-&gt;prev = prev;</span><br><span class="line">			<span class="comment">//然后添加到链表的最前面</span></span><br><span class="line">			Node* next = <span class="keyword">this</span>-&gt;head-&gt;next;</span><br><span class="line">			curr-&gt;prev = head;</span><br><span class="line">			head-&gt;next = curr;</span><br><span class="line">			curr-&gt;next = next;</span><br><span class="line">			next-&gt;prev = curr;</span><br><span class="line">			<span class="keyword">return</span>;</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">if</span> (<span class="keyword">this</span>-&gt;curr_size == <span class="keyword">this</span>-&gt;capacity) &#123;</span><br><span class="line">			<span class="comment">//如果容量满了,丢掉最尾巴的那个，然后插入到最前面</span></span><br><span class="line">			<span class="comment">//丢掉最尾巴那个</span></span><br><span class="line">			Node* prev = <span class="keyword">this</span>-&gt;tail-&gt;prev;</span><br><span class="line">			key2Node.<span class="built_in">erase</span>(prev-&gt;key); <span class="comment">//抹除key2Node里</span></span><br><span class="line">			<span class="keyword">if</span> (prev-&gt;prev) prev-&gt;prev-&gt;next = tail;</span><br><span class="line">			tail-&gt;prev = prev-&gt;prev;</span><br><span class="line">			prev-&gt;prev = prev-&gt;next = <span class="literal">NULL</span>;</span><br><span class="line">			<span class="comment">//插入该元素到最前面</span></span><br><span class="line">			Node* temp = <span class="keyword">new</span> <span class="built_in">Node</span>(key, value);</span><br><span class="line">			Node* next = <span class="keyword">this</span>-&gt;head-&gt;next;</span><br><span class="line">			temp-&gt;prev = head;</span><br><span class="line">			head-&gt;next = temp;</span><br><span class="line">			temp-&gt;next = next;</span><br><span class="line">			next-&gt;prev = temp;</span><br><span class="line">			key2Node[key] = temp;</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">else</span> &#123;</span><br><span class="line">			<span class="comment">//如果容量没满，元素插入到最前面，并加载入map中</span></span><br><span class="line">			Node* temp = <span class="keyword">new</span> <span class="built_in">Node</span>(key, value);</span><br><span class="line">			Node* next = <span class="keyword">this</span>-&gt;head-&gt;next;</span><br><span class="line">			temp-&gt;prev = head;</span><br><span class="line">			head-&gt;next = temp;</span><br><span class="line">			temp-&gt;next = next;</span><br><span class="line">			next-&gt;prev = temp;</span><br><span class="line">			key2Node[key] = temp;</span><br><span class="line">			<span class="keyword">this</span>-&gt;curr_size++;</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">	&#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
-<p><strong>运行结果</strong>:</p>
-<p><img
-src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/屏幕捕获_2022_02_06_11_41_37_32.png" /></p>
-]]></content>
-      <categories>
-        <category>④ 算法类笔记</category>
-        <category>容器设计系列</category>
-      </categories>
-      <tags>
-        <tag>leetcode</tag>
-        <tag>container</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>容器设计——前缀树容器设计</title>
     <url>/2022/02/05/06a3e97dc7c2/</url>
     <content><![CDATA[<h4 id="剑指-offer-ii-062.-实现前缀树"><a
@@ -13210,6 +13421,44 @@ href="https://leetcode-cn.com/problems/ms70jA/">剑指 Offer II 067.
       <categories>
         <category>④ 算法类笔记</category>
         <category>字符串系列</category>
+      </categories>
+      <tags>
+        <tag>leetcode</tag>
+        <tag>container</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>容器设计——LRU最近最少使用缓存的容器设计</title>
+    <url>/2022/02/05/4cd58a8a96c9/</url>
+    <content><![CDATA[<h3 id="剑指-offer-ii-031.-最近最少使用缓存"><a
+href="https://leetcode-cn.com/problems/OrIXps/">剑指 Offer II 031.
+最近最少使用缓存</a></h3>
+<h5 id="题目简要描述"><strong>题目简要描述</strong>：</h5>
+<p>​ 运用所掌握的数据结构，设计和实现一个 LRU (Least Recently
+Used，最近最少使用) 缓存机制 。</p>
+<p><strong>实现 LRUCache 类：</strong></p>
+<ul>
+<li><p>LRUCache(int capacity) 以正整数作为容量 capacity 初始化 LRU
+缓存</p></li>
+<li><p>int get(int key) 如果关键字 key
+存在于缓存中，则返回关键字的值，否则返回 -1 。</p></li>
+<li><p>void put(int key, int value)
+如果关键字已经存在，则变更其数据值；如果关键字不存在，则插入该组「关键字-值」。当缓存容量达到上限时，它应该在写入新数据之前删除最久未使用的数据值，从而为新的数据值留出空间。</p></li>
+</ul>
+<p><strong>类模版</strong>：</p>
+<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">LRUCache</span> &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="built_in">LRUCache</span>(<span class="type">int</span> capacity) &#123;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="type">int</span> <span class="title">get</span><span class="params">(<span class="type">int</span> key)</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="type">void</span> <span class="title">put</span><span class="params">(<span class="type">int</span> key, <span class="type">int</span> value)</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<h5 id="解题思路"><strong>解题思路</strong>：</h5>
+<p>​ <strong>使用 双向链表 与 Hash 表</strong>，实现
+LRU：将新插入的元素放在链表头部，或将最新访问的节点放在链表的头部。如果容量到达上限，去除链表最后的元素。在此期间，<strong>为了保证访问链表的头部和尾部都是O(1)时间，我们需要维护一个Head和一个Tail节点，分别指向双向链表的头部和尾部，这两个头部和尾部的节点中是不存放数据，留空的，仅为了进行指示。</strong>并且为了保证<strong>在O(1)时间内能够获取任意一个元素</strong>，我们还需要建立一个HashMap，将key值与对应的链表节点关联，以方便以O(1)时间进行访问。</p>
+<p><strong>代码</strong>：以下代码我并没有做任何的优化，比如说合并一些可复用的函数，因为这样看上去更简单明了一些，其实比如说像一些将Node插入到链表前方的操作，以及删除链表最后一个元素的操作，都是可以写成函数封装起来的。</p>
+<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Node</span> &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">	Node* prev;</span><br><span class="line">	Node* next;</span><br><span class="line">	<span class="type">int</span> key;</span><br><span class="line">	<span class="type">int</span> value;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">	<span class="built_in">Node</span>() &#123;</span><br><span class="line">		<span class="keyword">this</span>-&gt;prev = <span class="literal">NULL</span>;</span><br><span class="line">		<span class="keyword">this</span>-&gt;next = <span class="literal">NULL</span>;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="built_in">Node</span>(<span class="type">int</span> key, <span class="type">int</span> value) &#123;</span><br><span class="line">		<span class="keyword">this</span>-&gt;prev = <span class="literal">NULL</span>;</span><br><span class="line">		<span class="keyword">this</span>-&gt;next = <span class="literal">NULL</span>;</span><br><span class="line">		<span class="keyword">this</span>-&gt;key = key;</span><br><span class="line">		<span class="keyword">this</span>-&gt;value = value;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">LRUCache</span> &#123;</span><br><span class="line">	<span class="type">int</span> capacity;</span><br><span class="line">	<span class="type">int</span> curr_size;</span><br><span class="line">	Node* head; <span class="comment">//链表头节点</span></span><br><span class="line">	Node* tail; <span class="comment">//链表尾巴节点</span></span><br><span class="line">	unordered_map&lt;<span class="type">int</span>, Node*&gt; key2Node; <span class="comment">//key - Node 的转换</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">	<span class="built_in">LRUCache</span>(<span class="type">int</span> capacity) &#123;</span><br><span class="line">		<span class="keyword">this</span>-&gt;curr_size = <span class="number">0</span>;</span><br><span class="line">		<span class="keyword">this</span>-&gt;capacity = capacity;</span><br><span class="line">		<span class="keyword">this</span>-&gt;head = <span class="keyword">new</span> <span class="built_in">Node</span>();</span><br><span class="line">		<span class="keyword">this</span>-&gt;tail = <span class="keyword">new</span> <span class="built_in">Node</span>();</span><br><span class="line">		head-&gt;next = tail;</span><br><span class="line">		tail-&gt;prev = head;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="type">int</span> <span class="title">get</span><span class="params">(<span class="type">int</span> key)</span> </span>&#123;</span><br><span class="line">		<span class="keyword">if</span> (key2Node.<span class="built_in">find</span>(key) == key2Node.<span class="built_in">end</span>()) <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">		Node* curr = key2Node[key];</span><br><span class="line">		<span class="comment">//将curr先从链表中删掉</span></span><br><span class="line">		Node* prev = curr-&gt;prev;</span><br><span class="line">		<span class="keyword">if</span> (prev) prev-&gt;next = curr-&gt;next;</span><br><span class="line">		<span class="keyword">if</span> (curr-&gt;next) curr-&gt;next-&gt;prev = prev;</span><br><span class="line">		<span class="comment">//然后添加到链表的最前面</span></span><br><span class="line">		Node* next = <span class="keyword">this</span>-&gt;head-&gt;next;</span><br><span class="line">		curr-&gt;prev = head;</span><br><span class="line">		head-&gt;next = curr;</span><br><span class="line">		curr-&gt;next = next;</span><br><span class="line">		next-&gt;prev = curr;</span><br><span class="line">		<span class="keyword">return</span> curr-&gt;value;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="type">void</span> <span class="title">put</span><span class="params">(<span class="type">int</span> key, <span class="type">int</span> value)</span> </span>&#123;</span><br><span class="line">		<span class="keyword">if</span> (key2Node.<span class="built_in">find</span>(key) != key2Node.<span class="built_in">end</span>()) &#123;</span><br><span class="line">			<span class="comment">//修改值并将该元素插到最前面</span></span><br><span class="line">			Node* curr = key2Node[key];</span><br><span class="line">			curr-&gt;value = value;</span><br><span class="line">			<span class="comment">//将curr先从链表中删掉</span></span><br><span class="line">			Node* prev = curr-&gt;prev;</span><br><span class="line">			<span class="keyword">if</span> (prev) prev-&gt;next = curr-&gt;next;</span><br><span class="line">			<span class="keyword">if</span> (curr-&gt;next) curr-&gt;next-&gt;prev = prev;</span><br><span class="line">			<span class="comment">//然后添加到链表的最前面</span></span><br><span class="line">			Node* next = <span class="keyword">this</span>-&gt;head-&gt;next;</span><br><span class="line">			curr-&gt;prev = head;</span><br><span class="line">			head-&gt;next = curr;</span><br><span class="line">			curr-&gt;next = next;</span><br><span class="line">			next-&gt;prev = curr;</span><br><span class="line">			<span class="keyword">return</span>;</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">if</span> (<span class="keyword">this</span>-&gt;curr_size == <span class="keyword">this</span>-&gt;capacity) &#123;</span><br><span class="line">			<span class="comment">//如果容量满了,丢掉最尾巴的那个，然后插入到最前面</span></span><br><span class="line">			<span class="comment">//丢掉最尾巴那个</span></span><br><span class="line">			Node* prev = <span class="keyword">this</span>-&gt;tail-&gt;prev;</span><br><span class="line">			key2Node.<span class="built_in">erase</span>(prev-&gt;key); <span class="comment">//抹除key2Node里</span></span><br><span class="line">			<span class="keyword">if</span> (prev-&gt;prev) prev-&gt;prev-&gt;next = tail;</span><br><span class="line">			tail-&gt;prev = prev-&gt;prev;</span><br><span class="line">			prev-&gt;prev = prev-&gt;next = <span class="literal">NULL</span>;</span><br><span class="line">			<span class="comment">//插入该元素到最前面</span></span><br><span class="line">			Node* temp = <span class="keyword">new</span> <span class="built_in">Node</span>(key, value);</span><br><span class="line">			Node* next = <span class="keyword">this</span>-&gt;head-&gt;next;</span><br><span class="line">			temp-&gt;prev = head;</span><br><span class="line">			head-&gt;next = temp;</span><br><span class="line">			temp-&gt;next = next;</span><br><span class="line">			next-&gt;prev = temp;</span><br><span class="line">			key2Node[key] = temp;</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">else</span> &#123;</span><br><span class="line">			<span class="comment">//如果容量没满，元素插入到最前面，并加载入map中</span></span><br><span class="line">			Node* temp = <span class="keyword">new</span> <span class="built_in">Node</span>(key, value);</span><br><span class="line">			Node* next = <span class="keyword">this</span>-&gt;head-&gt;next;</span><br><span class="line">			temp-&gt;prev = head;</span><br><span class="line">			head-&gt;next = temp;</span><br><span class="line">			temp-&gt;next = next;</span><br><span class="line">			next-&gt;prev = temp;</span><br><span class="line">			key2Node[key] = temp;</span><br><span class="line">			<span class="keyword">this</span>-&gt;curr_size++;</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">	&#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<p><strong>运行结果</strong>:</p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/屏幕捕获_2022_02_06_11_41_37_32.png" /></p>
+]]></content>
+      <categories>
+        <category>④ 算法类笔记</category>
+        <category>容器设计系列</category>
       </categories>
       <tags>
         <tag>leetcode</tag>
@@ -21651,8 +21900,8 @@ src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/bvbcf123.png" /></p>
       </categories>
       <tags>
         <tag>Transformer</tag>
-        <tag>Computer Vision</tag>
         <tag>Swin Transformer</tag>
+        <tag>Computer Vision</tag>
       </tags>
   </entry>
   <entry>
@@ -21755,8 +22004,8 @@ src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-202201151202116
       </categories>
       <tags>
         <tag>Transformer</tag>
-        <tag>Vision Transformer</tag>
         <tag>Computer Vision</tag>
+        <tag>Vision Transformer</tag>
       </tags>
   </entry>
   <entry>
