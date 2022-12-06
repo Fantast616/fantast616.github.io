@@ -1,0 +1,613 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.2.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css" integrity="sha256-mUZM63G8m73Mcidfrv5E+Y61y7a12O5mW4ezU3bxqW4=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"blog.fantast.top","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.9.0","exturl":false,"sidebar":{"position":"left","width":250,"display":"always","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":true,"color":"#222","save":"manual"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"utterances","storage":true,"lazyload":false,"nav":null,"activeClass":"utterances"},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+<meta name="description" content="Maven Chap4——Maven单一架构案例，单一架构也叫『all-in-one』结构，就是所有代码、配置文件、各种资源都在同一个工程。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Maven Chap4——Maven单一架构案例">
+<meta property="og:url" content="https://blog.fantast.top/2022/11/27/d75a3ba3c1a2/index.html">
+<meta property="og:site_name" content="Fantast&#39;s Blog">
+<meta property="og:description" content="Maven Chap4——Maven单一架构案例，单一架构也叫『all-in-one』结构，就是所有代码、配置文件、各种资源都在同一个工程。">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2022-11-27T05:38:19.000Z">
+<meta property="article:modified_time" content="2022-11-27T11:31:58.732Z">
+<meta property="article:author" content="Fantast">
+<meta property="article:tag" content="Maven">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://blog.fantast.top/2022/11/27/d75a3ba3c1a2/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://blog.fantast.top/2022/11/27/d75a3ba3c1a2/","path":"2022/11/27/d75a3ba3c1a2/","title":"Maven Chap4——Maven单一架构案例"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Maven Chap4——Maven单一架构案例 | Fantast's Blog</title>
+  
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<link rel="alternate" href="/atom.xml" title="Fantast's Blog" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Fantast's Blog</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li>
+        <li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li>
+        <li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li>
+        <li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li>
+        <li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%80%E5%BC%95%E5%85%A5%E4%BE%9D%E8%B5%96"><span class="nav-text">一、引入依赖</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BA%8C%E5%BB%BA%E5%8C%85"><span class="nav-text">二、建包：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%89%E6%90%AD%E5%BB%BA%E6%8C%81%E4%B9%85%E5%8C%96%E5%B1%82"><span class="nav-text">三、搭建持久化层：</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E5%BB%BA%E6%A8%A1%E6%96%B0%E5%BB%BA%E7%89%A9%E7%90%86%E6%A8%A1%E5%9E%8B%E9%80%BB%E8%BE%91%E6%A8%A1%E5%9E%8B"><span class="nav-text">1、数据建模，新建物理模型+逻辑模型</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E5%BA%93%E8%BF%9E%E6%8E%A5%E4%BF%A1%E6%81%AF"><span class="nav-text">2、数据库连接信息</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9B%9B%E4%B8%80%E4%B8%AA%E6%9C%80%E6%99%AE%E9%80%9A%E7%9A%84java%E5%B7%A5%E7%A8%8B%E7%9A%84%E9%80%BB%E8%BE%91%E6%9E%B6%E6%9E%84%E6%A1%86%E6%9E%B6%E5%A6%82%E4%B8%8B"><span class="nav-text">四、一个最普通的Java工程的逻辑架构，框架如下：</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Fantast"
+      src="/images/avatar.webp">
+  <p class="site-author-name" itemprop="name">Fantast</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">198</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">50</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">110</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/fantast416" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;fantast416" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:fantast416@gmail.com" title="E-Mail → mailto:fantast416@gmail.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll site-overview-item animated">
+    <div class="links-of-blogroll-title"><i class="fa fa-globe fa-fw"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://www.zhihu.com/people/shuo-shuo-3-41" title="https:&#x2F;&#x2F;www.zhihu.com&#x2F;people&#x2F;shuo-shuo-3-41" rel="noopener" target="_blank">ZhiHu</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="http://www.next.zju.edu.cn/" title="http:&#x2F;&#x2F;www.next.zju.edu.cn&#x2F;" rel="noopener" target="_blank">NextLab</a>
+        </li>
+    </ul>
+  </div>
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://blog.fantast.top/2022/11/27/d75a3ba3c1a2/">
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.webp">
+      <meta itemprop="name" content="Fantast">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Fantast's Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Maven Chap4——Maven单一架构案例
+        </h1>
+
+        <div class="post-meta-container">
+          
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2022-11-27 13:38:19 / 修改时间：19:31:58" itemprop="dateCreated datePublished" datetime="2022-11-27T13:38:19+08:00">2022-11-27</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E2%91%A8-%E5%B7%A5%E7%A8%8B%E7%B1%BB%E7%AC%94%E8%AE%B0/" itemprop="url" rel="index"><span itemprop="name">⑨ 工程类笔记</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E2%91%A8-%E5%B7%A5%E7%A8%8B%E7%B1%BB%E7%AC%94%E8%AE%B0/Maven/" itemprop="url" rel="index"><span itemprop="name">Maven</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>6.2k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>17 分钟</span>
+    </span>
+</div>
+
+            <div class="post-description">Maven Chap4——Maven单一架构案例，单一架构也叫『all-in-one』结构，就是所有代码、配置文件、各种资源都在同一个工程。</div>
+            <div class="post-remind">Google Chrome is recommended, otherwise the image size may be wrong</div>
+            <div class="post-remind">FireFox is not recommended,Because it does not support the image zoom property</div>
+        </div>
+        
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <ul>
+<li><p>单一架构也叫『all-in-one』结构，就是所有代码、配置文件、各种资源都在同一个工程。</p>
+<ul>
+<li><p>一个项目包含一个工程</p></li>
+<li><p>导出一个 war 包</p></li>
+<li><p>放在一个 Tomcat 上运行</p></li>
+</ul></li>
+</ul>
+<h3 id="一引入依赖">一、引入依赖</h3>
+<ul>
+<li><p>依赖搜索网址：https://mvnrepository.com/</p></li>
+<li><p>确定技术选型：确定我们项目中要使用哪些技术</p></li>
+<li><p>到 mvnrepository 网站搜索具体技术对应的具体依赖信息</p></li>
+</ul>
+<p>确定这个技术使用哪个版本的依赖</p>
+<ul>
+<li>考虑因素1：看是否有别的技术要求这里必须用某一个版本</li>
+<li>考虑因素2：如果没有硬性要求，那么选择较高版本或下载量大的版本</li>
+</ul>
+<p>此Demo，依赖如下：</p>
+<ul>
+<li><p>持久化层所需依赖</p>
+<ul>
+<li><p>mysql:mysql-connector-java:5.1.37</p></li>
+<li><p>com.alibaba:druid:1.2.8</p></li>
+<li><p>commons-dbutils:commons-dbutils:1.6</p></li>
+</ul></li>
+<li><p>表述层所需依赖</p>
+<ul>
+<li><p>javax.servlet:javax.servlet-api:3.1.0</p></li>
+<li><p>org.thymeleaf:thymeleaf:3.0.11.RELEASE</p></li>
+</ul></li>
+<li><p>辅助功能所需依赖</p>
+<ul>
+<li><p>junit:junit:4.12</p></li>
+<li><p>ch.qos.logback:logback-classic:1.2.3</p></li>
+</ul></li>
+</ul>
+<p>完整依赖信息：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><span class="line">&lt;dependency&gt;</span><br><span class="line">    &lt;groupId&gt;mysql&lt;/groupId&gt;</span><br><span class="line">    &lt;artifactId&gt;mysql-connector-java&lt;/artifactId&gt;</span><br><span class="line">    &lt;version&gt;<span class="number">5.1</span><span class="number">.37</span>&lt;/version&gt;</span><br><span class="line">&lt;/dependency&gt;</span><br><span class="line">&lt;!-- https:<span class="comment">//mvnrepository.com/artifact/com.alibaba/druid --&gt;</span></span><br><span class="line">&lt;dependency&gt;</span><br><span class="line">    &lt;groupId&gt;com.alibaba&lt;/groupId&gt;</span><br><span class="line">    &lt;artifactId&gt;druid&lt;/artifactId&gt;</span><br><span class="line">    &lt;version&gt;<span class="number">1.2</span><span class="number">.8</span>&lt;/version&gt;</span><br><span class="line">&lt;/dependency&gt;</span><br><span class="line">&lt;!-- https:<span class="comment">//mvnrepository.com/artifact/commons-dbutils/commons-dbutils --&gt;</span></span><br><span class="line">&lt;dependency&gt;</span><br><span class="line">    &lt;groupId&gt;commons-dbutils&lt;/groupId&gt;</span><br><span class="line">    &lt;artifactId&gt;commons-dbutils&lt;/artifactId&gt;</span><br><span class="line">    &lt;version&gt;<span class="number">1.6</span>&lt;/version&gt;</span><br><span class="line">&lt;/dependency&gt;</span><br><span class="line">&lt;!-- https:<span class="comment">//mvnrepository.com/artifact/javax.servlet/javax.servlet-api --&gt;</span></span><br><span class="line">&lt;dependency&gt;</span><br><span class="line">    &lt;groupId&gt;javax.servlet&lt;/groupId&gt;</span><br><span class="line">    &lt;artifactId&gt;javax.servlet-api&lt;/artifactId&gt;</span><br><span class="line">    &lt;version&gt;<span class="number">3.1</span><span class="number">.0</span>&lt;/version&gt;</span><br><span class="line">    &lt;scope&gt;provided&lt;/scope&gt;</span><br><span class="line">&lt;/dependency&gt;</span><br><span class="line">&lt;!-- https:<span class="comment">//mvnrepository.com/artifact/org.thymeleaf/thymeleaf --&gt;</span></span><br><span class="line">&lt;dependency&gt;</span><br><span class="line">    &lt;groupId&gt;org.thymeleaf&lt;/groupId&gt;</span><br><span class="line">    &lt;artifactId&gt;thymeleaf&lt;/artifactId&gt;</span><br><span class="line">    &lt;version&gt;<span class="number">3.0</span><span class="number">.11</span>.RELEASE&lt;/version&gt;</span><br><span class="line">&lt;/dependency&gt;</span><br><span class="line">&lt;!-- https:<span class="comment">//mvnrepository.com/artifact/junit/junit --&gt;</span></span><br><span class="line">&lt;dependency&gt;</span><br><span class="line">    &lt;groupId&gt;junit&lt;/groupId&gt;</span><br><span class="line">    &lt;artifactId&gt;junit&lt;/artifactId&gt;</span><br><span class="line">    &lt;version&gt;<span class="number">4.12</span>&lt;/version&gt;</span><br><span class="line">    &lt;scope&gt;test&lt;/scope&gt;</span><br><span class="line">&lt;/dependency&gt;</span><br><span class="line">&lt;!-- https:<span class="comment">//mvnrepository.com/artifact/ch.qos.logback/logback-classic --&gt;</span></span><br><span class="line">&lt;dependency&gt;</span><br><span class="line">    &lt;groupId&gt;ch.qos.logback&lt;/groupId&gt;</span><br><span class="line">    &lt;artifactId&gt;logback-classic&lt;/artifactId&gt;</span><br><span class="line">    &lt;version&gt;<span class="number">1.2</span><span class="number">.3</span>&lt;/version&gt;</span><br><span class="line">    &lt;scope&gt;test&lt;/scope&gt;</span><br><span class="line">&lt;/dependency&gt;</span><br></pre></td></tr></table></figure>
+<h3 id="二建包">二、建包：</h3>
+<table>
+<thead>
+<tr class="header">
+<th>package 功能</th>
+<th>package 名称</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>主包</td>
+<td>com.fantast.demo</td>
+</tr>
+<tr class="even">
+<td>子包[实体类]</td>
+<td>com.fantast.demo.entity</td>
+</tr>
+<tr class="odd">
+<td>子包[Servlet基类包]</td>
+<td>com.fantast.demo.servlet.base</td>
+</tr>
+<tr class="even">
+<td>子包[Servlet模块包]</td>
+<td>com.fantast.demo.servlet.module</td>
+</tr>
+<tr class="odd">
+<td>子包[Service接口包]</td>
+<td>com.fantast.demo.service.api</td>
+</tr>
+<tr class="even">
+<td>子包[Service实现类包]</td>
+<td>com.fantast.demo.service.impl</td>
+</tr>
+<tr class="odd">
+<td>子包[Dao接口包]</td>
+<td>com.fantast.demo.dao.api</td>
+</tr>
+<tr class="even">
+<td>子包[Dao实现类包]</td>
+<td>com.fantast.demo.dao.impl</td>
+</tr>
+<tr class="odd">
+<td>子包[Filter]</td>
+<td>com.fantast.demo.filter</td>
+</tr>
+<tr class="even">
+<td>子包[异常类包]</td>
+<td>com.fantast.demo.exception</td>
+</tr>
+<tr class="odd">
+<td>子包[工具类]</td>
+<td>com.fantast.demo.util</td>
+</tr>
+<tr class="even">
+<td>子包[测试类]</td>
+<td>com.fantast.demo.test</td>
+</tr>
+</tbody>
+</table>
+<h3 id="三搭建持久化层">三、搭建持久化层：</h3>
+<h4
+id="数据建模新建物理模型逻辑模型">1、数据建模，新建物理模型+逻辑模型</h4>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br></pre></td><td class="code"><pre><span class="line">create database db_imperial_court;</span><br><span class="line"></span><br><span class="line">use db_imperial_court;</span><br><span class="line"></span><br><span class="line">create table t_emp</span><br><span class="line">(</span><br><span class="line">    emp_id         int primary key auto_increment,</span><br><span class="line">    emp_name       char(100) not null,</span><br><span class="line">    emp_position   char(100) not null,</span><br><span class="line">    login_account  char(100) not null unique,</span><br><span class="line">    login_password char(100) not null</span><br><span class="line">);</span><br><span class="line"></span><br><span class="line">insert into t_emp(emp_name, emp_position, login_account, login_password)</span><br><span class="line">values (&#x27;爱新觉罗·玄烨&#x27;, &#x27;emperor&#x27;, &#x27;xiaoxuanzi1654&#x27;, &#x27;25325C896624D444B2E241807DCAC98B&#x27;), # 16540504</span><br><span class="line">       (&#x27;纳兰明珠&#x27;, &#x27;minister&#x27;, &#x27;brightball1635&#x27;, &#x27;A580D0EF93C22036C859E194C14CB777&#x27;),   # 16351119</span><br><span class="line">       (&#x27;赫舍里·索额图&#x27;, &#x27;minister&#x27;, &#x27;tutu1636&#x27;, &#x27;E40FD7D49B8B7EF46F47407D583C3538&#x27;); # 17030921</span><br><span class="line"></span><br><span class="line">create table t_memorials</span><br><span class="line">(</span><br><span class="line">    memorials_id          int primary key auto_increment,</span><br><span class="line">    memorials_title       char(100)     not null,</span><br><span class="line">    memorials_content     varchar(5000) not null,</span><br><span class="line">    memorials_emp         int           not null,</span><br><span class="line">    memorials_create_time char(100),</span><br><span class="line">    feedback_time       char(100),</span><br><span class="line">    feedback_content    varchar(1000),</span><br><span class="line">    memorials_status      int           not null</span><br><span class="line">);</span><br><span class="line"></span><br><span class="line">insert into t_memorials(memorials_title,</span><br><span class="line">                      memorials_content,</span><br><span class="line">                      memorials_emp,</span><br><span class="line">                      memorials_create_time,</span><br><span class="line">                      feedback_time,</span><br><span class="line">                      feedback_content,</span><br><span class="line">                      memorials_status)</span><br><span class="line">values (&#x27;浙江巡抚奏钱塘堤决口疏&#x27;, &#x27;皇上啊，不好啦！钱塘江发大水啦！堤坝冲毁啦！您看这咋弄啊！&#x27;, 2, &#x27;1690-05-07&#x27;, null, null, 0),</span><br><span class="line">       (&#x27;左都御史参鳌拜圈地疏&#x27;, &#x27;皇上啊，鳌拜这厮不是东西呀！占老百姓的地哇！还打人呀！您看咋弄啊！&#x27;, 3, &#x27;1690-04-14&#x27;, null, null, 0),</span><br><span class="line">       (&#x27;都察院劾吴三桂不臣疏&#x27;, &#x27;皇上啊，不得了啦！吴三桂那孙子想造反呀！&#x27;, 2, &#x27;1693-11-18&#x27;, null, null, 0),</span><br><span class="line">       (&#x27;兵部奏准噶尔犯境疏&#x27;, &#x27;皇上啊，不得了啦！葛尔丹要打过来了呀！&#x27;, 3, &#x27;1693-11-18&#x27;, null, null, 0),</span><br><span class="line">       (&#x27;朝鲜使臣朝拜事宜呈皇上御览&#x27;, &#x27;皇上啊！朝鲜国的人要来啦！咱们请他们吃猪肉炖粉条子吧！&#x27;, 2, &#x27;1680-06-11&#x27;, null, null, 0),</span><br><span class="line">       (&#x27;英吉利炮舰购买事宜疏&#x27;, &#x27;皇上啊！英国的小船船咱们买多少啊？&#x27;, 3, &#x27;1680-06-12&#x27;, null, null, 0),</span><br><span class="line">       (&#x27;劾杭州织造贪墨疏&#x27;, &#x27;皇上啊！杭州织造有问题啊！&#x27;, 2, &#x27;1680-06-13&#x27;, null, null, 0),</span><br><span class="line">       (&#x27;禀畅春园落成疏&#x27;, &#x27;皇上啊！畅春园修好了哇！您啥时候过来看看呀！&#x27;, 3, &#x27;1680-06-14&#x27;, null, null, 0),</span><br><span class="line">       (&#x27;请旨木兰秋狝疏&#x27;, &#x27;皇上啊！秋天到啦，又该打猎啦！&#x27;, 2, &#x27;1680-06-15&#x27;, null, null, 0),</span><br><span class="line">       (&#x27;核准西北军饷银两疏&#x27;, &#x27;皇上啊！您看看这钱数算的对不对呀！&#x27;, 3, &#x27;1680-06-16&#x27;, null, null, 0),</span><br><span class="line">       (&#x27;请旨裁撤三藩疏&#x27;, &#x27;皇上啊！咱们不裁撤三藩就芭比Q了哇！&#x27;, 2, &#x27;1680-06-17&#x27;, null, null, 0),</span><br><span class="line">       (&#x27;蒙古王公进京朝拜疏&#x27;, &#x27;皇上啊！蒙古王公要来啦！咱们请他们吃猪肉炖粉条子吧！&#x27;, 3, &#x27;1680-06-18&#x27;, null, null, 0),</span><br><span class="line">       (&#x27;礼部请旨九阿哥赐名疏&#x27;, &#x27;皇上啊！您看九阿哥该叫什么名字呀？&#x27;, 2, &#x27;1680-06-19&#x27;, null, null, 0),</span><br><span class="line">       (&#x27;户部尚书请旨告老还乡疏&#x27;, &#x27;皇上啊！臣想回家养老啦！您看看啥时候给臣把俸禄结一下啊！&#x27;, 3, &#x27;1680-06-20&#x27;, null, null, 0),</span><br><span class="line">       (&#x27;查江宁织造贪墨疏&#x27;, &#x27;皇上啊！江宁织造有问题啊！&#x27;, 2, &#x27;1680-06-21&#x27;, null, null, 0)</span><br><span class="line">       ;</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Emp</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> Integer empId;</span><br><span class="line">    <span class="keyword">private</span> String empName;</span><br><span class="line">    <span class="keyword">private</span> String empPosition;</span><br><span class="line">    <span class="keyword">private</span> String loginAccount;</span><br><span class="line">    <span class="keyword">private</span> String loginPassword;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Memorials</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> Integer memorialsId;</span><br><span class="line">    <span class="keyword">private</span> String memorialsTitle;</span><br><span class="line">    <span class="keyword">private</span> String memorialsContent;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 奏折摘要数据库没有，这里是为了配和页面显示</span></span><br><span class="line">    <span class="keyword">private</span> String memorialsContentDigest;</span><br><span class="line">    <span class="keyword">private</span> Integer memorialsEmp;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 员工姓名数据库没有，这里是为了配合页面显示</span></span><br><span class="line">    <span class="keyword">private</span> String memorialsEmpName;</span><br><span class="line">    <span class="keyword">private</span> String memorialsCreateTime;</span><br><span class="line">    <span class="keyword">private</span> String feedbackTime;</span><br><span class="line">    <span class="keyword">private</span> String feedbackContent;</span><br><span class="line">    <span class="keyword">private</span> Integer memorialsStatus;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="数据库连接信息">2、数据库连接信息</h4>
+<ul>
+<li>​ Maven 约定目录结构中的 resources
+目录，这个目录存放各种配置文件</li>
+</ul>
+<h3
+id="四一个最普通的java工程的逻辑架构框架如下">四、一个最普通的Java工程的逻辑架构，框架如下：</h3>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/image-20221127191410956.png" /></p>
+<ul>
+<li><p>entity包：</p>
+<ul>
+<li>里面的类是实体类</li>
+</ul></li>
+<li><p>dao包：</p>
+<ul>
+<li>完成单个SQL逻辑的类，继承自BaseDao</li>
+<li>直接跟数据库完成SQL交互</li>
+</ul></li>
+<li><p>service包：</p>
+<ul>
+<li>执行业务逻辑的类，负责根据参数执行相关的业务逻辑</li>
+</ul></li>
+<li><p>servlet包：</p>
+<ul>
+<li><p>base</p>
+<ul>
+<li>负责模板渲染：</li>
+<li>根据路径，调用不同的Servlet模块</li>
+</ul>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/image-20221127191152881.png" /></p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/image-20221127191200817.png" /></p></li>
+</ul></li>
+<li><p>filter包：</p>
+<ul>
+<li><p>一些过滤器，比如说事务过滤器：</p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/image-20221127191142676.png" /></p></li>
+</ul></li>
+<li><p>util包：</p>
+<ul>
+<li>一些依赖项</li>
+</ul></li>
+<li><p>resources包：</p>
+<ul>
+<li>存放着配置文件，比如说jdbc的配置文件，日志文件等等</li>
+</ul></li>
+<li><p>webapp结构：</p>
+<ul>
+<li>WEB-INF
+<ul>
+<li>pages：一些静态的html文件</li>
+</ul></li>
+<li>web.xml
+<ul>
+<li>web应用配置，Servlet、Filter、视图都需要在里面配置</li>
+</ul></li>
+</ul></li>
+<li><p>test包：</p>
+<ul>
+<li>用于做单元测试</li>
+</ul></li>
+</ul>
+
+    </div>
+
+    
+    
+    
+      
+  <div class="popular-posts-header">相关文章</div>
+  <ul class="popular-posts">
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2022\11\26\672a767ba264\" rel="bookmark">Maven Chap3——使用Maven IDEA环境</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2022\11\24\857b065dd01a\" rel="bookmark">Chap2 Maven的命令行使用</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2022\11\24\d526879dd1ca\" rel="bookmark">Maven Chap1——概述与解压和配置</a></div>
+    </li>
+  </ul>
+
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Maven/" rel="tag"># Maven</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2022/11/26/672a767ba264/" rel="prev" title="Maven Chap3——使用Maven IDEA环境">
+                  <i class="fa fa-chevron-left"></i> Maven Chap3——使用Maven IDEA环境
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2022/11/28/7fbe0f73c350/" rel="next" title="SpringMVC Chap1——简介与入门">
+                  SpringMVC Chap1——简介与入门 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments utterances-container"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Fantast</span>
+</div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+    <span title="站点总字数">986k</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">45:38</span>
+  </span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script><script src="/js/bookmark.js"></script>
+
+  
+<script src="https://cdn.jsdelivr.net/npm/hexo-generator-searchdb@1.4.0/dist/search.js" integrity="sha256-vXZMYLEqsROAXkEw93GGIvaB2ab+QW6w3+1ahD9nXXA=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdn.jsdelivr.net/npm/mathjax@3.2.0/es5/tex-mml-chtml.js","integrity":"sha256-r+3itOMtGGjap0x+10hu6jW/gZCzxHsoKrOd7gyRSGY="}}</script>
+<script src="/js/third-party/math/mathjax.js"></script>
+
+
+<script class="next-config" data-name="utterances" type="application/json">{"enable":true,"repo":"Fantast416/myblog-comment","issue_term":"pathname","theme":"github-light"}</script>
+<script src="/js/third-party/comments/utterances.js"></script>
+
+</body>
+</html>

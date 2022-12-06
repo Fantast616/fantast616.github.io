@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.2.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css" integrity="sha256-mUZM63G8m73Mcidfrv5E+Y61y7a12O5mW4ezU3bxqW4=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"blog.fantast.top","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.9.0","exturl":false,"sidebar":{"position":"left","width":250,"display":"always","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":true,"color":"#222","save":"manual"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"utterances","storage":true,"lazyload":false,"nav":null,"activeClass":"utterances"},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+<meta name="description" content="MyBatis Chap2——特殊SQL与自定义映射">
+<meta property="og:type" content="article">
+<meta property="og:title" content="MyBatis Chap2——特殊SQL与自定义映射">
+<meta property="og:url" content="https://blog.fantast.top/2022/11/30/2b283f7c4252/index.html">
+<meta property="og:site_name" content="Fantast&#39;s Blog">
+<meta property="og:description" content="MyBatis Chap2——特殊SQL与自定义映射">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2022-11-30T06:58:19.000Z">
+<meta property="article:modified_time" content="2022-11-30T08:06:32.000Z">
+<meta property="article:author" content="Fantast">
+<meta property="article:tag" content="MyBatis">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://blog.fantast.top/2022/11/30/2b283f7c4252/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://blog.fantast.top/2022/11/30/2b283f7c4252/","path":"2022/11/30/2b283f7c4252/","title":"MyBatis Chap2——特殊SQL与自定义映射"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>MyBatis Chap2——特殊SQL与自定义映射 | Fantast's Blog</title>
+  
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<link rel="alternate" href="/atom.xml" title="Fantast's Blog" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Fantast's Blog</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li>
+        <li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li>
+        <li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li>
+        <li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li>
+        <li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%80%E7%89%B9%E6%AE%8Asql"><span class="nav-text">一、特殊SQL</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%A8%A1%E7%B3%8A%E6%9F%A5%E8%AF%A2"><span class="nav-text">1、模糊查询：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%89%B9%E9%87%8F%E5%88%A0%E9%99%A4"><span class="nav-text">2、批量删除</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%8A%A8%E6%80%81%E8%AE%BE%E7%BD%AE%E8%A1%A8%E5%90%8D"><span class="nav-text">3、动态设置表名：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%8E%B7%E5%8F%96%E6%96%B0%E6%B7%BB%E5%8A%A0%E7%9A%84%E8%AE%B0%E5%BD%95%E7%9A%84%E8%87%AA%E5%A2%9E%E4%B8%BB%E9%94%AE"><span class="nav-text">4、获取新添加的记录的自增主键：</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BA%8C%E8%87%AA%E5%AE%9A%E4%B9%89%E6%98%A0%E5%B0%84resultmap"><span class="nav-text">二、自定义映射ResultMap:</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%A4%84%E7%90%86%E5%AD%97%E6%AE%B5%E5%92%8C%E5%B1%9E%E6%80%A7%E7%9A%84%E6%98%A0%E5%B0%84%E5%85%B3%E7%B3%BB"><span class="nav-text">1、处理字段和属性的映射关系</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%A4%9A%E5%AF%B9%E4%B8%80%E6%98%A0%E5%B0%84%E5%A4%84%E7%90%86"><span class="nav-text">2、多对一映射处理：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%80%E5%AF%B9%E5%A4%9A%E6%98%A0%E5%B0%84%E5%A4%84%E7%90%86"><span class="nav-text">3、一对多映射处理：</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Fantast"
+      src="/images/avatar.webp">
+  <p class="site-author-name" itemprop="name">Fantast</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">198</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">50</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">110</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/fantast416" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;fantast416" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:fantast416@gmail.com" title="E-Mail → mailto:fantast416@gmail.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll site-overview-item animated">
+    <div class="links-of-blogroll-title"><i class="fa fa-globe fa-fw"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://www.zhihu.com/people/shuo-shuo-3-41" title="https:&#x2F;&#x2F;www.zhihu.com&#x2F;people&#x2F;shuo-shuo-3-41" rel="noopener" target="_blank">ZhiHu</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="http://www.next.zju.edu.cn/" title="http:&#x2F;&#x2F;www.next.zju.edu.cn&#x2F;" rel="noopener" target="_blank">NextLab</a>
+        </li>
+    </ul>
+  </div>
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://blog.fantast.top/2022/11/30/2b283f7c4252/">
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.webp">
+      <meta itemprop="name" content="Fantast">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Fantast's Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          MyBatis Chap2——特殊SQL与自定义映射
+        </h1>
+
+        <div class="post-meta-container">
+          
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2022-11-30 14:58:19 / 修改时间：16:06:32" itemprop="dateCreated datePublished" datetime="2022-11-30T14:58:19+08:00">2022-11-30</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E2%91%A8-%E5%B7%A5%E7%A8%8B%E7%B1%BB%E7%AC%94%E8%AE%B0/" itemprop="url" rel="index"><span itemprop="name">⑨ 工程类笔记</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E2%91%A8-%E5%B7%A5%E7%A8%8B%E7%B1%BB%E7%AC%94%E8%AE%B0/MyBatis/" itemprop="url" rel="index"><span itemprop="name">MyBatis</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>5.4k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>15 分钟</span>
+    </span>
+</div>
+
+            <div class="post-description">MyBatis Chap2——特殊SQL与自定义映射</div>
+            <div class="post-remind">Google Chrome is recommended, otherwise the image size may be wrong</div>
+            <div class="post-remind">FireFox is not recommended,Because it does not support the image zoom property</div>
+        </div>
+        
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h3 id="一特殊sql">一、特殊SQL</h3>
+<h4 id="模糊查询">1、模糊查询：</h4>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">&lt;!--List&lt;User&gt; testMohu(@Param(&quot;mohu&quot;) String mohu);--&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">select</span> <span class="attr">id</span>=<span class="string">&quot;testMohu&quot;</span> <span class="attr">resultType</span>=<span class="string">&quot;User&quot;</span>&gt;</span></span><br><span class="line"><span class="comment">&lt;!--select * from t_user where username like &#x27;%$&#123;mohu&#125;%&#x27;--&gt;</span></span><br><span class="line"><span class="comment">&lt;!--select * from t_user where username like concat(&#x27;%&#x27;,#&#123;mohu&#125;,&#x27;%&#x27;)--&gt;</span></span><br><span class="line">select * from t_user where username like &quot;%&quot;#&#123;mohu&#125;&quot;%&quot;</span><br><span class="line"><span class="tag">&lt;/<span class="name">select</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<h4 id="批量删除">2、批量删除</h4>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">&lt;!--int deleteMore(@Param(&quot;ids&quot;) String ids);--&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">delete</span> <span class="attr">id</span>=<span class="string">&quot;deleteMore&quot;</span>&gt;</span></span><br><span class="line">	delete from t_user where id in ($&#123;ids&#125;)</span><br><span class="line"><span class="tag">&lt;/<span class="name">delete</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<h4 id="动态设置表名">3、动态设置表名：</h4>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">&lt;!--List&lt;User&gt; getAllUser(@Param(&quot;tableName&quot;) String tableName);--&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">select</span> <span class="attr">id</span>=<span class="string">&quot;getAllUser&quot;</span> <span class="attr">resultType</span>=<span class="string">&quot;User&quot;</span>&gt;</span></span><br><span class="line">	select * from $&#123;tableName&#125;</span><br><span class="line"><span class="tag">&lt;/<span class="name">select</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<h4 id="获取新添加的记录的自增主键">4、获取新添加的记录的自增主键：</h4>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">* 添加用户信息</span></span><br><span class="line"><span class="comment">* <span class="doctag">@param</span> user</span></span><br><span class="line"><span class="comment">* <span class="doctag">@return</span></span></span><br><span class="line"><span class="comment">* useGeneratedKeys：设置使用自增的主键</span></span><br><span class="line"><span class="comment">* keyProperty：因为增删改有统一的返回值是受影响的行数，因此只能将获取的自增的主键放在传输的参</span></span><br><span class="line"><span class="comment">数user对象的某个属性中</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"><span class="type">int</span> <span class="title function_">insertUser</span><span class="params">(User user)</span>;</span><br></pre></td></tr></table></figure>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">&lt;!--int insertUser(User user);--&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">insert</span> <span class="attr">id</span>=<span class="string">&quot;insertUser&quot;</span> <span class="attr">useGeneratedKeys</span>=<span class="string">&quot;true&quot;</span> <span class="attr">keyProperty</span>=<span class="string">&quot;id&quot;</span>&gt;</span></span><br><span class="line">insert into t_user values(null,#&#123;username&#125;,#&#123;password&#125;,#&#123;age&#125;,#&#123;sex&#125;)</span><br><span class="line"><span class="tag">&lt;/<span class="name">insert</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<h3 id="二自定义映射resultmap">二、自定义映射ResultMap:</h3>
+<h4 id="处理字段和属性的映射关系">1、处理字段和属性的映射关系</h4>
+<p>​
+若字段名和实体类中的属性名不一致，则可以通过resultMap设置自定义映射</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">&lt;!--</span></span><br><span class="line"><span class="comment">resultMap：设置自定义映射</span></span><br><span class="line"><span class="comment">属性：</span></span><br><span class="line"><span class="comment">id：表示自定义映射的唯一标识</span></span><br><span class="line"><span class="comment">type：查询的数据要映射的实体类的类型</span></span><br><span class="line"><span class="comment">子标签：</span></span><br><span class="line"><span class="comment">id：设置主键的映射关系</span></span><br><span class="line"><span class="comment">result：设置普通字段的映射关系</span></span><br><span class="line"><span class="comment">association：设置多对一的映射关系</span></span><br><span class="line"><span class="comment">collection：设置一对多的映射关系</span></span><br><span class="line"><span class="comment">属性：</span></span><br><span class="line"><span class="comment">property：设置映射关系中实体类中的属性名</span></span><br><span class="line"><span class="comment">column：设置映射关系中表中的字段名</span></span><br><span class="line"><span class="comment">--&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">resultMap</span> <span class="attr">id</span>=<span class="string">&quot;userMap&quot;</span> <span class="attr">type</span>=<span class="string">&quot;User&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">id</span> <span class="attr">property</span>=<span class="string">&quot;id&quot;</span> <span class="attr">column</span>=<span class="string">&quot;id&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">id</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">result</span> <span class="attr">property</span>=<span class="string">&quot;userName&quot;</span> <span class="attr">column</span>=<span class="string">&quot;user_name&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">result</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">result</span> <span class="attr">property</span>=<span class="string">&quot;password&quot;</span> <span class="attr">column</span>=<span class="string">&quot;password&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">result</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">result</span> <span class="attr">property</span>=<span class="string">&quot;age&quot;</span> <span class="attr">column</span>=<span class="string">&quot;age&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">result</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">result</span> <span class="attr">property</span>=<span class="string">&quot;sex&quot;</span> <span class="attr">column</span>=<span class="string">&quot;sex&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">result</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">resultMap</span>&gt;</span></span><br><span class="line"><span class="comment">&lt;!--List&lt;User&gt; testMohu(@Param(&quot;mohu&quot;) String mohu);--&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">select</span> <span class="attr">id</span>=<span class="string">&quot;testMohu&quot;</span> <span class="attr">resultMap</span>=<span class="string">&quot;userMap&quot;</span>&gt;</span></span><br><span class="line"><span class="comment">&lt;!--select * from t_user where username like &#x27;%$&#123;mohu&#125;%&#x27;--&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">select</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<ul>
+<li>或者如果是字段名符合数据库的规则（使用_），实体类中的属性名符合Java的规则（使用驼峰）,也可以在mybatis的核心配置文件中设置一个全局配置信息：mapUnderscoreToCamelCase，可以在查询表中数据时，自动将_类型的字段名转换为驼峰</li>
+</ul>
+<h4 id="多对一映射处理">2、多对一映射处理：</h4>
+<ul>
+<li>使用级联方式处理映射关系：</li>
+</ul>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">resultMap</span> <span class="attr">id</span>=<span class="string">&quot;empDeptMap&quot;</span> <span class="attr">type</span>=<span class="string">&quot;Emp&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">id</span> <span class="attr">column</span>=<span class="string">&quot;eid&quot;</span> <span class="attr">property</span>=<span class="string">&quot;eid&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">id</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">result</span> <span class="attr">column</span>=<span class="string">&quot;ename&quot;</span> <span class="attr">property</span>=<span class="string">&quot;ename&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">result</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">result</span> <span class="attr">column</span>=<span class="string">&quot;age&quot;</span> <span class="attr">property</span>=<span class="string">&quot;age&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">result</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">result</span> <span class="attr">column</span>=<span class="string">&quot;sex&quot;</span> <span class="attr">property</span>=<span class="string">&quot;sex&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">result</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">result</span> <span class="attr">column</span>=<span class="string">&quot;did&quot;</span> <span class="attr">property</span>=<span class="string">&quot;dept.did&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">result</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">result</span> <span class="attr">column</span>=<span class="string">&quot;dname&quot;</span> <span class="attr">property</span>=<span class="string">&quot;dept.dname&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">result</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">resultMap</span>&gt;</span></span><br><span class="line"><span class="comment">&lt;!--Emp getEmpAndDeptByEid(@Param(&quot;eid&quot;) int eid);--&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">select</span> <span class="attr">id</span>=<span class="string">&quot;getEmpAndDeptByEid&quot;</span> <span class="attr">resultMap</span>=<span class="string">&quot;empDeptMap&quot;</span>&gt;</span></span><br><span class="line">    select emp.*,dept.* from t_emp emp left join t_dept dept on emp.did =</span><br><span class="line">    dept.did where emp.eid = #&#123;eid&#125;</span><br><span class="line"><span class="tag">&lt;/<span class="name">select</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<ul>
+<li>使用association处理映射关系：</li>
+</ul>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">resultMap</span> <span class="attr">id</span>=<span class="string">&quot;empDeptMap&quot;</span> <span class="attr">type</span>=<span class="string">&quot;Emp&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">id</span> <span class="attr">column</span>=<span class="string">&quot;eid&quot;</span> <span class="attr">property</span>=<span class="string">&quot;eid&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">id</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">result</span> <span class="attr">column</span>=<span class="string">&quot;ename&quot;</span> <span class="attr">property</span>=<span class="string">&quot;ename&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">result</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">result</span> <span class="attr">column</span>=<span class="string">&quot;age&quot;</span> <span class="attr">property</span>=<span class="string">&quot;age&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">result</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">result</span> <span class="attr">column</span>=<span class="string">&quot;sex&quot;</span> <span class="attr">property</span>=<span class="string">&quot;sex&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">result</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">association</span> <span class="attr">property</span>=<span class="string">&quot;dept&quot;</span> <span class="attr">javaType</span>=<span class="string">&quot;Dept&quot;</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">id</span> <span class="attr">column</span>=<span class="string">&quot;did&quot;</span> <span class="attr">property</span>=<span class="string">&quot;did&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">id</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">result</span> <span class="attr">column</span>=<span class="string">&quot;dname&quot;</span> <span class="attr">property</span>=<span class="string">&quot;dname&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">result</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;/<span class="name">association</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">resultMap</span>&gt;</span></span><br><span class="line"><span class="comment">&lt;!--Emp getEmpAndDeptByEid(@Param(&quot;eid&quot;) int eid);--&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">select</span> <span class="attr">id</span>=<span class="string">&quot;getEmpAndDeptByEid&quot;</span> <span class="attr">resultMap</span>=<span class="string">&quot;empDeptMap&quot;</span>&gt;</span></span><br><span class="line">    select emp.*,dept.* from t_emp emp left join t_dept dept on emp.did =</span><br><span class="line">    dept.did where emp.eid = #&#123;eid&#125;</span><br><span class="line"><span class="tag">&lt;/<span class="name">select</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<ul>
+<li>分步查询</li>
+</ul>
+<h4 id="一对多映射处理">3、一对多映射处理：</h4>
+<ul>
+<li>collection</li>
+</ul>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line">* 根据部门id查新部门以及部门中的员工信息</span><br><span class="line">* @param did</span><br><span class="line">* @return</span><br><span class="line">*/</span><br><span class="line">Dept getDeptEmpByDid(@Param(&quot;did&quot;) int did);</span><br><span class="line"><span class="tag">&lt;<span class="name">resultMap</span> <span class="attr">id</span>=<span class="string">&quot;deptEmpMap&quot;</span> <span class="attr">type</span>=<span class="string">&quot;Dept&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">id</span> <span class="attr">property</span>=<span class="string">&quot;did&quot;</span> <span class="attr">column</span>=<span class="string">&quot;did&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">id</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">result</span> <span class="attr">property</span>=<span class="string">&quot;dname&quot;</span> <span class="attr">column</span>=<span class="string">&quot;dname&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">result</span>&gt;</span></span><br><span class="line">    <span class="comment">&lt;!--</span></span><br><span class="line"><span class="comment">    ofType：设置collection标签所处理的集合属性中存储数据的类型</span></span><br><span class="line"><span class="comment">    --&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">collection</span> <span class="attr">property</span>=<span class="string">&quot;emps&quot;</span> <span class="attr">ofType</span>=<span class="string">&quot;Emp&quot;</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">id</span> <span class="attr">property</span>=<span class="string">&quot;eid&quot;</span> <span class="attr">column</span>=<span class="string">&quot;eid&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">id</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">result</span> <span class="attr">property</span>=<span class="string">&quot;ename&quot;</span> <span class="attr">column</span>=<span class="string">&quot;ename&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">result</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">result</span> <span class="attr">property</span>=<span class="string">&quot;age&quot;</span> <span class="attr">column</span>=<span class="string">&quot;age&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">result</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">result</span> <span class="attr">property</span>=<span class="string">&quot;sex&quot;</span> <span class="attr">column</span>=<span class="string">&quot;sex&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">result</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">collection</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">resultMap</span>&gt;</span></span><br><span class="line"><span class="comment">&lt;!--Dept getDeptEmpByDid(@Param(&quot;did&quot;) int did);--&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">select</span> <span class="attr">id</span>=<span class="string">&quot;getDeptEmpByDid&quot;</span> <span class="attr">resultMap</span>=<span class="string">&quot;deptEmpMap&quot;</span>&gt;</span></span><br><span class="line">    select dept.*,emp.* from t_dept dept left join t_emp emp on dept.did =</span><br><span class="line">    emp.did where dept.did = #&#123;did&#125;</span><br><span class="line"><span class="tag">&lt;/<span class="name">select</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<ul>
+<li>分步查询
+<ul>
+<li>分步查询的优点：可以实现延迟加载，但是必须在核心配置文件中设置全局配置信息：</li>
+<li>lazyLoadingEnabled：延迟加载的全局开关。当开启时，所有关联对象都会延迟加载</li>
+<li>aggressiveLazyLoading：当开启时，任何方法的调用都会加载该对象的所有属性。
+否则，每个属性会按需加载此时就可以实现按需加载，获取的数据是什么，就只会执行相应的sql。此时可通过association和collection中的fetchType属性设置当前的分步查询是否使用延迟加载，fetchType="lazy(延迟加载)|eager(立即加载)"</li>
+</ul></li>
+</ul>
+
+    </div>
+
+    
+    
+    
+      
+  <div class="popular-posts-header">相关文章</div>
+  <ul class="popular-posts">
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2022\11\30\bd661c23b30a\" rel="bookmark">MyBatis Chap4——MyBatis逆向工程和分页插件</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2022\11\30\0f32141cfe00\" rel="bookmark">MyBatis Chap3——动态SQL、缓存机制</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2022\11\29\4b24005dfff4\" rel="bookmark">MyBatisPlus Chap1——简介与基本操作</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2022\11\29\ec35995347ad\" rel="bookmark">MyBatis Chap1——简介与基本操作</a></div>
+    </li>
+  </ul>
+
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/MyBatis/" rel="tag"># MyBatis</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2022/11/30/2f4fcd6e89f6/" rel="prev" title="Git Flow项目管理思维">
+                  <i class="fa fa-chevron-left"></i> Git Flow项目管理思维
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2022/11/30/0f32141cfe00/" rel="next" title="MyBatis Chap3——动态SQL、缓存机制">
+                  MyBatis Chap3——动态SQL、缓存机制 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments utterances-container"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Fantast</span>
+</div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+    <span title="站点总字数">986k</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">45:38</span>
+  </span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script><script src="/js/bookmark.js"></script>
+
+  
+<script src="https://cdn.jsdelivr.net/npm/hexo-generator-searchdb@1.4.0/dist/search.js" integrity="sha256-vXZMYLEqsROAXkEw93GGIvaB2ab+QW6w3+1ahD9nXXA=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdn.jsdelivr.net/npm/mathjax@3.2.0/es5/tex-mml-chtml.js","integrity":"sha256-r+3itOMtGGjap0x+10hu6jW/gZCzxHsoKrOd7gyRSGY="}}</script>
+<script src="/js/third-party/math/mathjax.js"></script>
+
+
+<script class="next-config" data-name="utterances" type="application/json">{"enable":true,"repo":"Fantast416/myblog-comment","issue_term":"pathname","theme":"github-light"}</script>
+<script src="/js/third-party/comments/utterances.js"></script>
+
+</body>
+</html>

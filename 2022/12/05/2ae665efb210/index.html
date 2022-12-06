@@ -1,0 +1,692 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.2.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css" integrity="sha256-mUZM63G8m73Mcidfrv5E+Y61y7a12O5mW4ezU3bxqW4=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"blog.fantast.top","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.9.0","exturl":false,"sidebar":{"position":"left","width":250,"display":"always","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":true,"color":"#222","save":"manual"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"utterances","storage":true,"lazyload":false,"nav":null,"activeClass":"utterances"},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+<meta name="description" content="SpringBoot2【核心功能】——Chap6 数据访问场景与单元测试">
+<meta property="og:type" content="article">
+<meta property="og:title" content="SpringBoot2【核心功能】——Chap6 数据访问场景与单元测试">
+<meta property="og:url" content="https://blog.fantast.top/2022/12/05/2ae665efb210/index.html">
+<meta property="og:site_name" content="Fantast&#39;s Blog">
+<meta property="og:description" content="SpringBoot2【核心功能】——Chap6 数据访问场景与单元测试">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2022-12-05T08:05:19.000Z">
+<meta property="article:modified_time" content="2022-12-06T02:25:26.000Z">
+<meta property="article:author" content="Fantast">
+<meta property="article:tag" content="SpringBoot2">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://blog.fantast.top/2022/12/05/2ae665efb210/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://blog.fantast.top/2022/12/05/2ae665efb210/","path":"2022/12/05/2ae665efb210/","title":"SpringBoot2【核心功能】——Chap6 数据访问场景与单元测试"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>SpringBoot2【核心功能】——Chap6 数据访问场景与单元测试 | Fantast's Blog</title>
+  
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<link rel="alternate" href="/atom.xml" title="Fantast's Blog" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Fantast's Blog</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li>
+        <li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li>
+        <li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li>
+        <li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li>
+        <li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%80%E6%95%B4%E5%90%88mybatisplus%E6%93%8D%E4%BD%9C%E6%95%B0%E6%8D%AE%E5%BA%93"><span class="nav-text">一、整合MyBatisPlus操作数据库</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E8%AE%BF%E9%97%AE-crud%E5%AE%9E%E9%AA%8C-%E6%95%B0%E6%8D%AE%E5%88%97%E8%A1%A8%E5%B1%95%E7%A4%BA"><span class="nav-text">1、数据访问-CRUD实验-数据列表展示</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BA%8C%E6%95%B4%E5%90%88redis"><span class="nav-text">二、整合Redis</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#redis%E6%93%8D%E4%BD%9C%E4%B8%8E%E7%BB%9F%E8%AE%A1%E5%B0%8F%E5%AE%9E%E9%AA%8C"><span class="nav-text">1、Redis操作与统计小实验</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%89%E5%8D%95%E5%85%83%E6%B5%8B%E8%AF%95-junit5"><span class="nav-text">三、单元测试-JUnit5</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%B8%B8%E7%94%A8%E6%B5%8B%E8%AF%95%E6%B3%A8%E8%A7%A3"><span class="nav-text">1、常用测试注解</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%96%AD%E8%A8%80%E6%9C%BA%E5%88%B6"><span class="nav-text">2、断言机制</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E7%AE%80%E5%8D%95%E6%96%AD%E8%A8%80"><span class="nav-text">简单断言</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%95%B0%E7%BB%84%E6%96%AD%E8%A8%80"><span class="nav-text">数组断言</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E7%BB%84%E5%90%88%E6%96%AD%E8%A8%80"><span class="nav-text">组合断言</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%BC%82%E5%B8%B8%E6%96%AD%E8%A8%80"><span class="nav-text">异常断言</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E8%B6%85%E6%97%B6%E6%96%AD%E8%A8%80"><span class="nav-text">超时断言</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%BF%AB%E9%80%9F%E5%A4%B1%E8%B4%A5"><span class="nav-text">快速失败</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%89%8D%E7%BD%AE%E6%9D%A1%E4%BB%B6"><span class="nav-text">3、前置条件</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%B5%8C%E5%A5%97%E6%B5%8B%E8%AF%95"><span class="nav-text">4、嵌套测试</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%8D%95%E5%85%83%E6%B5%8B%E8%AF%95-%E5%8F%82%E6%95%B0%E5%8C%96%E6%B5%8B%E8%AF%95"><span class="nav-text">5、单元测试-参数化测试</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Fantast"
+      src="/images/avatar.webp">
+  <p class="site-author-name" itemprop="name">Fantast</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">198</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">50</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">110</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/fantast416" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;fantast416" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:fantast416@gmail.com" title="E-Mail → mailto:fantast416@gmail.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll site-overview-item animated">
+    <div class="links-of-blogroll-title"><i class="fa fa-globe fa-fw"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://www.zhihu.com/people/shuo-shuo-3-41" title="https:&#x2F;&#x2F;www.zhihu.com&#x2F;people&#x2F;shuo-shuo-3-41" rel="noopener" target="_blank">ZhiHu</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="http://www.next.zju.edu.cn/" title="http:&#x2F;&#x2F;www.next.zju.edu.cn&#x2F;" rel="noopener" target="_blank">NextLab</a>
+        </li>
+    </ul>
+  </div>
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://blog.fantast.top/2022/12/05/2ae665efb210/">
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.webp">
+      <meta itemprop="name" content="Fantast">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Fantast's Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          SpringBoot2【核心功能】——Chap6 数据访问场景与单元测试
+        </h1>
+
+        <div class="post-meta-container">
+          
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2022-12-05 16:05:19" itemprop="dateCreated datePublished" datetime="2022-12-05T16:05:19+08:00">2022-12-05</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2022-12-06 10:25:26" itemprop="dateModified" datetime="2022-12-06T10:25:26+08:00">2022-12-06</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E2%91%A8-%E5%B7%A5%E7%A8%8B%E7%B1%BB%E7%AC%94%E8%AE%B0/" itemprop="url" rel="index"><span itemprop="name">⑨ 工程类笔记</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E2%91%A8-%E5%B7%A5%E7%A8%8B%E7%B1%BB%E7%AC%94%E8%AE%B0/SpringBoot2/" itemprop="url" rel="index"><span itemprop="name">SpringBoot2</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>15k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>43 分钟</span>
+    </span>
+</div>
+
+            <div class="post-description">SpringBoot2【核心功能】——Chap6 数据访问场景与单元测试</div>
+            <div class="post-remind">Google Chrome is recommended, otherwise the image size may be wrong</div>
+            <div class="post-remind">FireFox is not recommended,Because it does not support the image zoom property</div>
+        </div>
+        
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h3 id="一整合mybatisplus操作数据库">一、整合MyBatisPlus操作数据库</h3>
+<p><a
+target="_blank" rel="noopener" href="https://github.com/baomidou/mybatis-plus">MyBatis-Plus</a>（简称
+MP）是一个 <a
+target="_blank" rel="noopener" href="http://www.mybatis.org/mybatis-3/">MyBatis</a>的增强工具，在
+MyBatis 的基础上只做增强不做改变，为简化开发、提高效率而生。</p>
+<p>添加依赖：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>com.baomidou<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>mybatis-plus-boot-starter<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>3.4.1<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<ul>
+<li><p><code>MybatisPlusAutoConfiguration</code>配置类，<code>MybatisPlusProperties</code>配置项绑定。</p></li>
+<li><p><code>SqlSessionFactory</code>自动配置好，底层是容器中默认的数据源。</p></li>
+<li><p><code>mapperLocations</code>自动配置好的，有默认值<code>classpath*:/mapper/**/*.xml</code>，这表示任意包的类路径下的所有mapper文件夹下任意路径下的所有xml都是sql映射文件。
+建议以后sql映射文件放在 mapper下。</p></li>
+<li><p>容器中也自动配置好了<code>SqlSessionTemplate</code>。</p></li>
+<li><p><code>@Mapper</code> 标注的接口也会被自动扫描，建议直接
+<code>@MapperScan("com.lun.boot.mapper")</code>批量扫描。</p></li>
+<li><p>MyBatisPlus<strong>优点</strong>之一：只需要我们的Mapper继承MyBatisPlus的<code>BaseMapper</code>
+就可以拥有CRUD能力，减轻开发工作。</p></li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> com.baomidou.mybatisplus.core.mapper.BaseMapper;</span><br><span class="line"><span class="keyword">import</span> com.lun.hellomybatisplus.model.User;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">interface</span> <span class="title class_">UserMapper</span> <span class="keyword">extends</span> <span class="title class_">BaseMapper</span>&lt;User&gt; &#123;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4
+id="数据访问-crud实验-数据列表展示">1、数据访问-CRUD实验-数据列表展示</h4>
+<p><a target="_blank" rel="noopener" href="https://baomidou.com/guide/crud-interface.html">官方文档 -
+CRUD接口</a></p>
+<p>使用MyBatis
+Plus提供的<code>IService</code>，<code>ServiceImpl</code>，减轻Service层开发工作。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> com.lun.hellomybatisplus.model.User;</span><br><span class="line"><span class="keyword">import</span> com.baomidou.mybatisplus.extension.service.IService;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.util.List;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> *  Service 的CRUD也不用写了</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">interface</span> <span class="title class_">UserService</span> <span class="keyword">extends</span> <span class="title class_">IService</span>&lt;User&gt; &#123;</span><br><span class="line">	<span class="comment">//此处故意为空</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> com.lun.hellomybatisplus.model.User;</span><br><span class="line"><span class="keyword">import</span> com.lun.hellomybatisplus.mapper.UserMapper;</span><br><span class="line"><span class="keyword">import</span> com.lun.hellomybatisplus.service.UserService;</span><br><span class="line"><span class="keyword">import</span> com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;</span><br><span class="line"><span class="keyword">import</span> org.springframework.beans.factory.annotation.Autowired;</span><br><span class="line"><span class="keyword">import</span> org.springframework.stereotype.Service;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.util.List;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Service</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">UserServiceImpl</span> <span class="keyword">extends</span> <span class="title class_">ServiceImpl</span>&lt;UserMapper,User&gt; <span class="keyword">implements</span> <span class="title class_">UserService</span> &#123;</span><br><span class="line">	<span class="comment">//此处故意为空</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="二整合redis">二、整合Redis</h3>
+<p><strong>添加依赖</strong>：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">&lt;!-- redis --&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.boot<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-boot-starter-data-redis<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="comment">&lt;!-- spring2.X集成redis所需common-pool2--&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.apache.commons<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>commons-pool2<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>2.6.0<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<ul>
+<li><code>RedisAutoConfiguration</code>自动配置类，RedisProperties
+属性类 --&gt; spring.redis.xxx是对redis的配置。</li>
+<li>连接工厂<code>LettuceConnectionConfiguration</code>、<code>JedisConnectionConfiguration</code>是准备好的。</li>
+<li>自动注入了<code>RedisTemplate&lt;Object, Object&gt;</code>，<code>xxxTemplate</code>。</li>
+<li>自动注入了<code>StringRedisTemplate</code>，key，value都是String</li>
+<li>底层只要我们使用<code>StringRedisTemplate</code>、<code>RedisTemplate</code>就可以操作Redis。</li>
+</ul>
+<h4 id="redis操作与统计小实验">1、Redis操作与统计小实验</h4>
+<p>相关Redis配置：</p>
+<figure class="highlight properties"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#Redis服务器地址</span></span><br><span class="line"><span class="attr">spring.redis.host</span>=<span class="string">192.168.140.136</span></span><br><span class="line"><span class="comment">#Redis服务器连接端口</span></span><br><span class="line"><span class="attr">spring.redis.port</span>=<span class="string">6379</span></span><br><span class="line"><span class="comment">#Redis数据库索引（默认为0）</span></span><br><span class="line"><span class="attr">spring.redis.database</span>= <span class="string">0</span></span><br><span class="line"><span class="comment">#连接超时时间（毫秒）</span></span><br><span class="line"><span class="attr">spring.redis.timeout</span>=<span class="string">1800000</span></span><br><span class="line"><span class="comment">#连接池最大连接数（使用负值表示没有限制）</span></span><br><span class="line"><span class="attr">spring.redis.lettuce.pool.max-active</span>=<span class="string">20</span></span><br><span class="line"><span class="comment">#最大阻塞等待时间(负数表示没限制)</span></span><br><span class="line"><span class="attr">spring.redis.lettuce.pool.max-wait</span>=<span class="string">-1</span></span><br><span class="line"><span class="comment">#连接池中的最大空闲连接</span></span><br><span class="line"><span class="attr">spring.redis.lettuce.pool.max-idle</span>=<span class="string">5</span></span><br><span class="line"><span class="comment">#连接池中的最小空闲连接</span></span><br><span class="line"><span class="attr">spring.redis.lettuce.pool.min-idle</span>=<span class="string">0</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<ul>
+<li>Redis配置类：</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@EnableCaching</span></span><br><span class="line"><span class="meta">@Configuration</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">RedisConfig</span> <span class="keyword">extends</span> <span class="title class_">CachingConfigurerSupport</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Bean</span></span><br><span class="line">    <span class="keyword">public</span> RedisTemplate&lt;String, Object&gt; <span class="title function_">redisTemplate</span><span class="params">(RedisConnectionFactory factory)</span> &#123;</span><br><span class="line">        RedisTemplate&lt;String, Object&gt; template = <span class="keyword">new</span> <span class="title class_">RedisTemplate</span>&lt;&gt;();</span><br><span class="line">        RedisSerializer&lt;String&gt; redisSerializer = <span class="keyword">new</span> <span class="title class_">StringRedisSerializer</span>();</span><br><span class="line">        <span class="type">Jackson2JsonRedisSerializer</span> <span class="variable">jackson2JsonRedisSerializer</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Jackson2JsonRedisSerializer</span>(Object.class);</span><br><span class="line">        <span class="type">ObjectMapper</span> <span class="variable">om</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ObjectMapper</span>();</span><br><span class="line">        om.setVisibility(PropertyAccessor.ALL, JsonAutoDetect.Visibility.ANY);</span><br><span class="line">        om.enableDefaultTyping(ObjectMapper.DefaultTyping.NON_FINAL);</span><br><span class="line">        jackson2JsonRedisSerializer.setObjectMapper(om);</span><br><span class="line">        template.setConnectionFactory(factory);</span><br><span class="line"><span class="comment">//key序列化方式</span></span><br><span class="line">        template.setKeySerializer(redisSerializer);</span><br><span class="line"><span class="comment">//value序列化</span></span><br><span class="line">        template.setValueSerializer(jackson2JsonRedisSerializer);</span><br><span class="line"><span class="comment">//value hashmap序列化</span></span><br><span class="line">        template.setHashValueSerializer(jackson2JsonRedisSerializer);</span><br><span class="line">        <span class="keyword">return</span> template;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Bean</span></span><br><span class="line">    <span class="keyword">public</span> CacheManager <span class="title function_">cacheManager</span><span class="params">(RedisConnectionFactory factory)</span> &#123;</span><br><span class="line">        RedisSerializer&lt;String&gt; redisSerializer = <span class="keyword">new</span> <span class="title class_">StringRedisSerializer</span>();</span><br><span class="line">        <span class="type">Jackson2JsonRedisSerializer</span> <span class="variable">jackson2JsonRedisSerializer</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Jackson2JsonRedisSerializer</span>(Object.class);</span><br><span class="line"><span class="comment">//解决查询缓存转换异常的问题</span></span><br><span class="line">        <span class="type">ObjectMapper</span> <span class="variable">om</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ObjectMapper</span>();</span><br><span class="line">        om.setVisibility(PropertyAccessor.ALL, JsonAutoDetect.Visibility.ANY);</span><br><span class="line">        om.enableDefaultTyping(ObjectMapper.DefaultTyping.NON_FINAL);</span><br><span class="line">        jackson2JsonRedisSerializer.setObjectMapper(om);</span><br><span class="line"><span class="comment">// 配置序列化（解决乱码的问题）,过期时间600秒</span></span><br><span class="line">        <span class="type">RedisCacheConfiguration</span> <span class="variable">config</span> <span class="operator">=</span> RedisCacheConfiguration.defaultCacheConfig()</span><br><span class="line">                .entryTtl(Duration.ofSeconds(<span class="number">600</span>))</span><br><span class="line">                .serializeKeysWith(RedisSerializationContext.SerializationPair.fromSerializer(redisSerializer))</span><br><span class="line">                .serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer(jackson2JsonRedisSerializer))</span><br><span class="line">                .disableCachingNullValues();</span><br><span class="line">        <span class="type">RedisCacheManager</span> <span class="variable">cacheManager</span> <span class="operator">=</span> RedisCacheManager.builder(factory)</span><br><span class="line">                .cacheDefaults(config)</span><br><span class="line">                .build();</span><br><span class="line">        <span class="keyword">return</span> cacheManager;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>测试Redis连接：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@RestController</span></span><br><span class="line"><span class="meta">@RequestMapping(&quot;/redisTest&quot;)</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">RedisTestController</span> &#123;</span><br><span class="line">    <span class="meta">@Autowired</span></span><br><span class="line">    <span class="keyword">private</span> RedisTemplate redisTemplate;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@GetMapping</span></span><br><span class="line">    <span class="keyword">public</span> String <span class="title function_">testRedis</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="comment">//设置值到redis</span></span><br><span class="line">        redisTemplate.opsForValue().set(<span class="string">&quot;name&quot;</span>,<span class="string">&quot;lucy&quot;</span>);</span><br><span class="line">        <span class="comment">//从redis获取值</span></span><br><span class="line">        <span class="type">String</span> <span class="variable">name</span> <span class="operator">=</span> (String)redisTemplate.opsForValue().get(<span class="string">&quot;name&quot;</span>);</span><br><span class="line">        <span class="keyword">return</span> name;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>URL统计拦截器：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">RedisUrlCountInterceptor</span> <span class="keyword">implements</span> <span class="title class_">HandlerInterceptor</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Autowired</span></span><br><span class="line">    StringRedisTemplate redisTemplate;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="type">boolean</span> <span class="title function_">preHandle</span><span class="params">(HttpServletRequest request, HttpServletResponse response, Object handler)</span> <span class="keyword">throws</span> Exception &#123;</span><br><span class="line">        <span class="type">String</span> <span class="variable">uri</span> <span class="operator">=</span> request.getRequestURI();</span><br><span class="line"></span><br><span class="line">        <span class="comment">//默认每次访问当前uri就会计数+1</span></span><br><span class="line">        redisTemplate.opsForValue().increment(uri);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>注册URL统计拦截器：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Configuration</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">AdminWebConfig</span> <span class="keyword">implements</span> <span class="title class_">WebMvcConfigurer</span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Autowired</span></span><br><span class="line">    RedisUrlCountInterceptor redisUrlCountInterceptor;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">addInterceptors</span><span class="params">(InterceptorRegistry registry)</span> &#123;</span><br><span class="line"></span><br><span class="line">        registry.addInterceptor(redisUrlCountInterceptor)</span><br><span class="line">                .addPathPatterns(<span class="string">&quot;/**&quot;</span>)</span><br><span class="line">                .excludePathPatterns(<span class="string">&quot;/&quot;</span>,<span class="string">&quot;/login&quot;</span>,<span class="string">&quot;/css/**&quot;</span>,<span class="string">&quot;/fonts/**&quot;</span>,<span class="string">&quot;/images/**&quot;</span>,</span><br><span class="line">                        <span class="string">&quot;/js/**&quot;</span>,<span class="string">&quot;/aa/**&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>Filter、Interceptor 几乎拥有相同的功能？</p>
+<ul>
+<li>Filter是Servlet定义的原生组件，它的好处是脱离Spring应用也能使用。</li>
+<li>Interceptor是Spring定义的接口，可以使用Spring的自动装配等功能。</li>
+</ul>
+<p>调用Redis内的统计数据：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Slf4j</span></span><br><span class="line"><span class="meta">@Controller</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">IndexController</span> &#123;</span><br><span class="line"></span><br><span class="line">	<span class="meta">@Autowired</span></span><br><span class="line">    StringRedisTemplate redisTemplate;</span><br><span class="line">    </span><br><span class="line">	<span class="meta">@GetMapping(&quot;/main.html&quot;)</span></span><br><span class="line">    <span class="keyword">public</span> String <span class="title function_">mainPage</span><span class="params">(HttpSession session,Model model)</span>&#123;</span><br><span class="line"></span><br><span class="line">        log.info(<span class="string">&quot;当前方法是：&#123;&#125;&quot;</span>,<span class="string">&quot;mainPage&quot;</span>);</span><br><span class="line"></span><br><span class="line">        ValueOperations&lt;String, String&gt; opsForValue =</span><br><span class="line">                redisTemplate.opsForValue();</span><br><span class="line"></span><br><span class="line">        <span class="type">String</span> <span class="variable">s</span> <span class="operator">=</span> opsForValue.get(<span class="string">&quot;/main.html&quot;</span>);</span><br><span class="line">        <span class="type">String</span> <span class="variable">s1</span> <span class="operator">=</span> opsForValue.get(<span class="string">&quot;/sql&quot;</span>);</span><br><span class="line"></span><br><span class="line">        model.addAttribute(<span class="string">&quot;mainCount&quot;</span>,s);</span><br><span class="line">        model.addAttribute(<span class="string">&quot;sqlCount&quot;</span>,s1);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> <span class="string">&quot;main&quot;</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="三单元测试-junit5">三、单元测试-JUnit5</h3>
+<p><strong>Spring Boot 2.2.0 版本开始引入 JUnit 5
+作为单元测试默认库</strong></p>
+<p><a
+target="_blank" rel="noopener" href="https://junit.org/junit5/docs/current/user-guide/#writing-tests-annotations">JUnit
+5官方文档</a></p>
+<p>作为最新版本的JUnit框架，JUnit5与之前版本的JUnit框架有很大的不同。由三个不同子项目的几个不同模块组成。</p>
+<p><strong>JUnit 5 = JUnit Platform + JUnit Jupiter + JUnit
+Vintage</strong></p>
+<ul>
+<li><p><strong>JUnit Platform</strong>: Junit
+Platform是在JVM上启动测试框架的基础，不仅支持Junit自制的测试引擎，其他测试引擎也都可以接入。</p></li>
+<li><p><strong>JUnit Jupiter</strong>: JUnit
+Jupiter提供了JUnit5的新的编程模型，是JUnit5新特性的核心。内部包含了一个<strong>测试引擎</strong>，用于在Junit
+Platform上运行。</p></li>
+<li><p><strong>JUnit Vintage</strong>:
+由于JUint已经发展多年，为了照顾老的项目，JUnit
+Vintage提供了兼容JUnit4.x，JUnit3.x的测试引擎。</p></li>
+</ul>
+<p><strong>注意</strong>：</p>
+<ul>
+<li><p>SpringBoot 2.4 以上版本移除了默认对 Vintage
+的依赖。如果需要兼容JUnit4需要自行引入（不能使用JUnit4的功能 <span
+class="citation" data-cites="Test">@Test</span>）</p></li>
+<li><p>JUnit 5’s
+Vintage已经从<code>spring-boot-starter-test</code>从移除。如果需要继续兼容Junit4需要自行引入Vintage依赖：</p></li>
+</ul>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.junit.vintage<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>junit-vintage-engine<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">scope</span>&gt;</span>test<span class="tag">&lt;/<span class="name">scope</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">exclusions</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">exclusion</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.hamcrest<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>hamcrest-core<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">exclusion</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">exclusions</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<ul>
+<li>使用添加JUnit 5，添加对应的starter：</li>
+</ul>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.boot<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-boot-starter-test<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">scope</span>&gt;</span>test<span class="tag">&lt;/<span class="name">scope</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<ul>
+<li>Spring的JUnit
+5的基本单元测试模板（Spring的JUnit4的是<code>@SpringBootTest</code>+<code>@RunWith(SpringRunner.class)</code>）：</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> org.junit.jupiter.api.Assertions;</span><br><span class="line"><span class="keyword">import</span> org.junit.jupiter.api.Test;<span class="comment">//注意不是org.junit.Test（这是JUnit4版本的）</span></span><br><span class="line"><span class="keyword">import</span> org.springframework.beans.factory.annotation.Autowired;</span><br><span class="line"><span class="keyword">import</span> org.springframework.boot.test.context.SpringBootTest;</span><br><span class="line"></span><br><span class="line"><span class="meta">@SpringBootTest</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">SpringBootApplicationTests</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Autowired</span></span><br><span class="line">    <span class="keyword">private</span> Component component;</span><br><span class="line">    </span><br><span class="line">    <span class="meta">@Test</span></span><br><span class="line">    <span class="comment">//@Transactional 标注后连接数据库有回滚功能</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">contextLoads</span><span class="params">()</span> &#123;</span><br><span class="line">		Assertions.assertEquals(<span class="number">5</span>, component.getFive());</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="常用测试注解">1、常用测试注解</h4>
+<p><a
+target="_blank" rel="noopener" href="https://junit.org/junit5/docs/current/user-guide/#writing-tests-annotations">官方文档
+- Annotations</a></p>
+<ul>
+<li><strong><span class="citation"
+data-cites="Test">@Test</span></strong>：表示方法是测试方法。但是与JUnit4的@Test不同，他的职责非常单一不能声明任何属性，拓展的测试将会由Jupiter提供额外测试</li>
+<li><strong><span class="citation"
+data-cites="ParameterizedTest">@ParameterizedTest</span></strong>：表示方法是参数化测试。</li>
+<li><strong><span class="citation"
+data-cites="RepeatedTest">@RepeatedTest</span></strong>：表示方法可重复执行。</li>
+<li><strong><span class="citation"
+data-cites="DisplayName">@DisplayName</span></strong>：为测试类或者测试方法设置展示名称。</li>
+<li><strong><span class="citation"
+data-cites="BeforeEach">@BeforeEach</span></strong>：表示在<strong>每个</strong>单元测试<strong>之前</strong>执行。</li>
+<li><strong><span class="citation"
+data-cites="AfterEach">@AfterEach</span></strong>：表示在<strong>每个</strong>单元测试<strong>之后</strong>执行。</li>
+<li><strong><span class="citation"
+data-cites="BeforeAll">@BeforeAll</span></strong>：表示在<strong>所有</strong>单元测试<strong>之前</strong>执行。</li>
+<li><strong><span class="citation"
+data-cites="AfterAll">@AfterAll</span></strong>：表示在<strong>所有</strong>单元测试<strong>之后</strong>执行。</li>
+<li><strong><span class="citation"
+data-cites="Tag">@Tag</span></strong>：表示单元测试类别，类似于JUnit4中的@Categories。</li>
+<li><strong><span class="citation"
+data-cites="Disabled">@Disabled</span></strong>：表示测试类或测试方法不执行，类似于JUnit4中的@Ignore。</li>
+<li><strong><span class="citation"
+data-cites="Timeout">@Timeout</span></strong>：表示测试方法运行如果超过了指定时间将会返回错误。</li>
+<li><strong><span class="citation"
+data-cites="ExtendWith">@ExtendWith</span></strong>：为测试类或测试方法提供扩展类引用。</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> org.junit.jupiter.api.*;</span><br><span class="line"></span><br><span class="line"><span class="meta">@DisplayName(&quot;junit5功能测试类&quot;)</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Junit5Test</span> &#123;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="meta">@DisplayName(&quot;测试displayname注解&quot;)</span></span><br><span class="line">    <span class="meta">@Test</span></span><br><span class="line">    <span class="keyword">void</span> <span class="title function_">testDisplayName</span><span class="params">()</span> &#123;</span><br><span class="line">        System.out.println(<span class="number">1</span>);</span><br><span class="line">        System.out.println(jdbcTemplate);</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="meta">@ParameterizedTest</span></span><br><span class="line">    <span class="meta">@ValueSource(strings = &#123; &quot;racecar&quot;, &quot;radar&quot;, &quot;able was I ere I saw elba&quot; &#125;)</span></span><br><span class="line">    <span class="keyword">void</span> <span class="title function_">palindromes</span><span class="params">(String candidate)</span> &#123;</span><br><span class="line">        assertTrue(StringUtils.isPalindrome(candidate));</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line"></span><br><span class="line">    <span class="meta">@Disabled</span></span><br><span class="line">    <span class="meta">@DisplayName(&quot;测试方法2&quot;)</span></span><br><span class="line">    <span class="meta">@Test</span></span><br><span class="line">    <span class="keyword">void</span> <span class="title function_">test2</span><span class="params">()</span> &#123;</span><br><span class="line">        System.out.println(<span class="number">2</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@RepeatedTest(5)</span></span><br><span class="line">    <span class="meta">@Test</span></span><br><span class="line">    <span class="keyword">void</span> <span class="title function_">test3</span><span class="params">()</span> &#123;</span><br><span class="line">        System.out.println(<span class="number">5</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 规定方法超时时间。超出时间测试出异常</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@throws</span> InterruptedException</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="meta">@Timeout(value = 500, unit = TimeUnit.MILLISECONDS)</span></span><br><span class="line">    <span class="meta">@Test</span></span><br><span class="line">    <span class="keyword">void</span> <span class="title function_">testTimeout</span><span class="params">()</span> <span class="keyword">throws</span> InterruptedException &#123;</span><br><span class="line">        Thread.sleep(<span class="number">600</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="meta">@BeforeEach</span></span><br><span class="line">    <span class="keyword">void</span> <span class="title function_">testBeforeEach</span><span class="params">()</span> &#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;测试就要开始了...&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@AfterEach</span></span><br><span class="line">    <span class="keyword">void</span> <span class="title function_">testAfterEach</span><span class="params">()</span> &#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;测试结束了...&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@BeforeAll</span></span><br><span class="line">    <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">testBeforeAll</span><span class="params">()</span> &#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;所有测试就要开始了...&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@AfterAll</span></span><br><span class="line">    <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">testAfterAll</span><span class="params">()</span> &#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;所有测试以及结束了...&quot;</span>);</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="断言机制">2、断言机制</h4>
+<p>断言Assertion是测试方法中的核心部分，用来对测试需要满足的条件进行验证。这些断言方法都是org.junit.jupiter.api.Assertions的静态方法。检查业务逻辑返回的数据是否合理。所有的测试运行结束以后，会有一个详细的测试报告。</p>
+<p>JUnit 5 内置的断言可以分成如下几个类别：</p>
+<h5 id="简单断言">简单断言</h5>
+<p>用来对单个值进行简单的验证。如：</p>
+<table>
+<thead>
+<tr class="header">
+<th>方法</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>assertEquals</td>
+<td>判断两个对象或两个原始类型是否相等</td>
+</tr>
+<tr class="even">
+<td>assertNotEquals</td>
+<td>判断两个对象或两个原始类型是否不相等</td>
+</tr>
+<tr class="odd">
+<td>assertSame</td>
+<td>判断两个对象引用是否指向同一个对象</td>
+</tr>
+<tr class="even">
+<td>assertNotSame</td>
+<td>判断两个对象引用是否指向不同的对象</td>
+</tr>
+<tr class="odd">
+<td>assertTrue</td>
+<td>判断给定的布尔值是否为 true</td>
+</tr>
+<tr class="even">
+<td>assertFalse</td>
+<td>判断给定的布尔值是否为 false</td>
+</tr>
+<tr class="odd">
+<td>assertNull</td>
+<td>判断给定的对象引用是否为 null</td>
+</tr>
+<tr class="even">
+<td>assertNotNull</td>
+<td>判断给定的对象引用是否不为 null</td>
+</tr>
+</tbody>
+</table>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Test</span></span><br><span class="line"><span class="meta">@DisplayName(&quot;simple assertion&quot;)</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">simple</span><span class="params">()</span> &#123;</span><br><span class="line">     assertEquals(<span class="number">3</span>, <span class="number">1</span> + <span class="number">2</span>, <span class="string">&quot;simple math&quot;</span>);</span><br><span class="line">     assertNotEquals(<span class="number">3</span>, <span class="number">1</span> + <span class="number">1</span>);</span><br><span class="line"></span><br><span class="line">     assertNotSame(<span class="keyword">new</span> <span class="title class_">Object</span>(), <span class="keyword">new</span> <span class="title class_">Object</span>());</span><br><span class="line">     <span class="type">Object</span> <span class="variable">obj</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Object</span>();</span><br><span class="line">     assertSame(obj, obj);</span><br><span class="line"></span><br><span class="line">     assertFalse(<span class="number">1</span> &gt; <span class="number">2</span>);</span><br><span class="line">     assertTrue(<span class="number">1</span> &lt; <span class="number">2</span>);</span><br><span class="line"></span><br><span class="line">     assertNull(<span class="literal">null</span>);</span><br><span class="line">     assertNotNull(<span class="keyword">new</span> <span class="title class_">Object</span>());</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h5 id="数组断言">数组断言</h5>
+<p>通过 assertArrayEquals
+方法来判断两个对象或原始类型的数组是否相等。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Test</span></span><br><span class="line"><span class="meta">@DisplayName(&quot;array assertion&quot;)</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">array</span><span class="params">()</span> &#123;</span><br><span class="line">	assertArrayEquals(<span class="keyword">new</span> <span class="title class_">int</span>[]&#123;<span class="number">1</span>, <span class="number">2</span>&#125;, <span class="keyword">new</span> <span class="title class_">int</span>[] &#123;<span class="number">1</span>, <span class="number">2</span>&#125;);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h5 id="组合断言">组合断言</h5>
+<p><code>assertAll()</code>方法接受多个
+<code>org.junit.jupiter.api.Executable</code>
+函数式接口的实例作为要验证的断言，可以通过 lambda
+表达式很容易的提供这些断言。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Test</span></span><br><span class="line"><span class="meta">@DisplayName(&quot;assert all&quot;)</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">all</span><span class="params">()</span> &#123;</span><br><span class="line"> assertAll(<span class="string">&quot;Math&quot;</span>,</span><br><span class="line">    () -&gt; assertEquals(<span class="number">2</span>, <span class="number">1</span> + <span class="number">1</span>),</span><br><span class="line">    () -&gt; assertTrue(<span class="number">1</span> &gt; <span class="number">0</span>)</span><br><span class="line"> );</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h5 id="异常断言">异常断言</h5>
+<p>在JUnit4时期，想要测试方法的异常情况时，需要用<code>@Rule</code>注解的<code>ExpectedException</code>变量还是比较麻烦的。而JUnit5提供了一种新的断言方式<code>Assertions.assertThrows()</code>，配合函数式编程就可以进行使用。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Test</span></span><br><span class="line"><span class="meta">@DisplayName(&quot;异常测试&quot;)</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">exceptionTest</span><span class="params">()</span> &#123;</span><br><span class="line">    <span class="type">ArithmeticException</span> <span class="variable">exception</span> <span class="operator">=</span> Assertions.assertThrows(</span><br><span class="line">           <span class="comment">//扔出断言异常</span></span><br><span class="line">            ArithmeticException.class, () -&gt; System.out.println(<span class="number">1</span> % <span class="number">0</span>));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h5 id="超时断言">超时断言</h5>
+<p>JUnit5还提供了Assertions.assertTimeout()为测试方法设置了超时时间。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Test</span></span><br><span class="line"><span class="meta">@DisplayName(&quot;超时测试&quot;)</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">timeoutTest</span><span class="params">()</span> &#123;</span><br><span class="line">    <span class="comment">//如果测试方法时间超过1s将会异常</span></span><br><span class="line">    Assertions.assertTimeout(Duration.ofMillis(<span class="number">1000</span>), () -&gt; Thread.sleep(<span class="number">500</span>));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h5 id="快速失败">快速失败</h5>
+<p>通过 fail 方法直接使得测试失败。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Test</span></span><br><span class="line"><span class="meta">@DisplayName(&quot;fail&quot;)</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">shouldFail</span><span class="params">()</span> &#123;</span><br><span class="line">	fail(<span class="string">&quot;This should fail&quot;</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="前置条件">3、前置条件</h4>
+<p>Unit 5
+中的前置条件（assumptions【假设】）类似于断言，不同之处在于不满足的<strong>断言assertions</strong>会使得测试方法失败，而<strong>不满足的前置条件只会使得测试方法的执行终止</strong>。</p>
+<p>前置条件可以看成是测试方法执行的前提，当该前提不满足时，就没有继续执行的必要。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@DisplayName(&quot;前置条件&quot;)</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">AssumptionsTest</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> <span class="type">String</span> <span class="variable">environment</span> <span class="operator">=</span> <span class="string">&quot;DEV&quot;</span>;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Test</span></span><br><span class="line">    <span class="meta">@DisplayName(&quot;simple&quot;)</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">simpleAssume</span><span class="params">()</span> &#123;</span><br><span class="line">        assumeTrue(Objects.equals(<span class="built_in">this</span>.environment, <span class="string">&quot;DEV&quot;</span>));</span><br><span class="line">        assumeFalse(() -&gt; Objects.equals(<span class="built_in">this</span>.environment, <span class="string">&quot;PROD&quot;</span>));</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Test</span></span><br><span class="line">    <span class="meta">@DisplayName(&quot;assume then do&quot;)</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">assumeThenDo</span><span class="params">()</span> &#123;</span><br><span class="line">        assumingThat(</span><br><span class="line">            Objects.equals(<span class="built_in">this</span>.environment, <span class="string">&quot;DEV&quot;</span>),</span><br><span class="line">            () -&gt; System.out.println(<span class="string">&quot;In DEV&quot;</span>)</span><br><span class="line">        );</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><code>assumeTrue</code> 和 <code>assumFalse</code> 确保给定的条件为
+<code>true</code> 或
+<code>false</code>，不满足条件会使得测试执行终止。</p>
+<p><code>assumingThat</code> 的参数是表示条件的布尔值和对应的 Executable
+接口的实现对象。只有条件满足时，<code>Executable</code>
+对象才会被执行；当条件不满足时，测试执行并不会终止。</p>
+<h4 id="嵌套测试">4、嵌套测试</h4>
+<p><a
+target="_blank" rel="noopener" href="https://junit.org/junit5/docs/current/user-guide/#writing-tests-nested">官方文档
+- Nested Tests</a></p>
+<p>JUnit 5 可以通过 Java 中的内部类和<code>@Nested</code>
+注解实现嵌套测试，从而可以更好的把相关的测试方法组织在一起。在内部类中可以使用<code>@BeforeEach</code>
+和<code>@AfterEach</code>注解，而且嵌套的层次没有限制。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@DisplayName(&quot;A stack&quot;)</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">TestingAStackDemo</span> &#123;</span><br><span class="line"></span><br><span class="line">    Stack&lt;Object&gt; stack;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Test</span></span><br><span class="line">    <span class="meta">@DisplayName(&quot;is instantiated with new Stack()&quot;)</span></span><br><span class="line">    <span class="keyword">void</span> <span class="title function_">isInstantiatedWithNew</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="keyword">new</span> <span class="title class_">Stack</span>&lt;&gt;();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Nested</span></span><br><span class="line">    <span class="meta">@DisplayName(&quot;when new&quot;)</span></span><br><span class="line">    <span class="keyword">class</span> <span class="title class_">WhenNew</span> &#123;</span><br><span class="line"></span><br><span class="line">        <span class="meta">@BeforeEach</span></span><br><span class="line">        <span class="keyword">void</span> <span class="title function_">createNewStack</span><span class="params">()</span> &#123;</span><br><span class="line">            stack = <span class="keyword">new</span> <span class="title class_">Stack</span>&lt;&gt;();</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="meta">@Test</span></span><br><span class="line">        <span class="meta">@DisplayName(&quot;is empty&quot;)</span></span><br><span class="line">        <span class="keyword">void</span> <span class="title function_">isEmpty</span><span class="params">()</span> &#123;</span><br><span class="line">            assertTrue(stack.isEmpty());</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="meta">@Test</span></span><br><span class="line">        <span class="meta">@DisplayName(&quot;throws EmptyStackException when popped&quot;)</span></span><br><span class="line">        <span class="keyword">void</span> <span class="title function_">throwsExceptionWhenPopped</span><span class="params">()</span> &#123;</span><br><span class="line">            assertThrows(EmptyStackException.class, stack::pop);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="meta">@Test</span></span><br><span class="line">        <span class="meta">@DisplayName(&quot;throws EmptyStackException when peeked&quot;)</span></span><br><span class="line">        <span class="keyword">void</span> <span class="title function_">throwsExceptionWhenPeeked</span><span class="params">()</span> &#123;</span><br><span class="line">            assertThrows(EmptyStackException.class, stack::peek);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="meta">@Nested</span></span><br><span class="line">        <span class="meta">@DisplayName(&quot;after pushing an element&quot;)</span></span><br><span class="line">        <span class="keyword">class</span> <span class="title class_">AfterPushing</span> &#123;</span><br><span class="line"></span><br><span class="line">            <span class="type">String</span> <span class="variable">anElement</span> <span class="operator">=</span> <span class="string">&quot;an element&quot;</span>;</span><br><span class="line"></span><br><span class="line">            <span class="meta">@BeforeEach</span></span><br><span class="line">            <span class="keyword">void</span> <span class="title function_">pushAnElement</span><span class="params">()</span> &#123;</span><br><span class="line">                stack.push(anElement);</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            <span class="meta">@Test</span></span><br><span class="line">            <span class="meta">@DisplayName(&quot;it is no longer empty&quot;)</span></span><br><span class="line">            <span class="keyword">void</span> <span class="title function_">isNotEmpty</span><span class="params">()</span> &#123;</span><br><span class="line">                assertFalse(stack.isEmpty());</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            <span class="meta">@Test</span></span><br><span class="line">            <span class="meta">@DisplayName(&quot;returns the element when popped and is empty&quot;)</span></span><br><span class="line">            <span class="keyword">void</span> <span class="title function_">returnElementWhenPopped</span><span class="params">()</span> &#123;</span><br><span class="line">                assertEquals(anElement, stack.pop());</span><br><span class="line">                assertTrue(stack.isEmpty());</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            <span class="meta">@Test</span></span><br><span class="line">            <span class="meta">@DisplayName(&quot;returns the element when peeked but remains not empty&quot;)</span></span><br><span class="line">            <span class="keyword">void</span> <span class="title function_">returnElementWhenPeeked</span><span class="params">()</span> &#123;</span><br><span class="line">                assertEquals(anElement, stack.peek());</span><br><span class="line">                assertFalse(stack.isEmpty());</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="单元测试-参数化测试">5、单元测试-参数化测试</h4>
+<p><a
+target="_blank" rel="noopener" href="https://junit.org/junit5/docs/current/user-guide/#writing-tests-parameterized-tests">官方文档
+- Parameterized Tests</a></p>
+<p>参数化测试是JUnit5很重要的一个新特性，它使得用不同的参数多次运行测试成为了可能，也为我们的单元测试带来许多便利。</p>
+<p>利用@ValueSource等注解，指定入参，我们将可以使用不同的参数进行多次单元测试，而不需要每新增一个参数就新增一个单元测试，省去了很多冗余代码。</p>
+<p>利用<strong><span class="citation"
+data-cites="ValueSource">@ValueSource</span></strong>等注解，指定入参，我们将可以使用不同的参数进行多次单元测试，而不需要每新增一个参数就新增一个单元测试，省去了很多冗余代码。</p>
+<ul>
+<li><strong><span class="citation"
+data-cites="ValueSource">@ValueSource</span></strong>:
+为参数化测试指定入参来源，支持八大基础类以及String类型,Class类型</li>
+<li><strong><span class="citation"
+data-cites="NullSource">@NullSource</span></strong>:
+表示为参数化测试提供一个null的入参</li>
+<li><strong><span class="citation"
+data-cites="EnumSource">@EnumSource</span></strong>:
+表示为参数化测试提供一个枚举入参</li>
+<li><strong><span class="citation"
+data-cites="CsvFileSource">@CsvFileSource</span></strong>：表示读取指定CSV文件内容作为参数化测试入参</li>
+<li><strong><span class="citation"
+data-cites="MethodSource">@MethodSource</span></strong>：表示读取指定方法的返回值作为参数化测试入参(注意方法返回需要是一个流)</li>
+</ul>
+<p>当然如果参数化测试仅仅只能做到指定普通的入参还达不到让我觉得惊艳的地步。让我真正感到他的强大之处的地方在于他可以支持外部的各类入参。如:CSV,YML,JSON
+文件甚至方法的返回值也可以作为入参。只需要去实现<strong><code>ArgumentsProvider</code></strong>接口，任何外部文件都可以作为它的入参。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@ParameterizedTest</span></span><br><span class="line"><span class="meta">@ValueSource(strings = &#123;&quot;one&quot;, &quot;two&quot;, &quot;three&quot;&#125;)</span></span><br><span class="line"><span class="meta">@DisplayName(&quot;参数化测试1&quot;)</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">parameterizedTest1</span><span class="params">(String string)</span> &#123;</span><br><span class="line">    System.out.println(string);</span><br><span class="line">    Assertions.assertTrue(StringUtils.isNotBlank(string));</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="meta">@ParameterizedTest</span></span><br><span class="line"><span class="meta">@MethodSource(&quot;method&quot;)</span>    <span class="comment">//指定方法名</span></span><br><span class="line"><span class="meta">@DisplayName(&quot;方法来源参数&quot;)</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">testWithExplicitLocalMethodSource</span><span class="params">(String name)</span> &#123;</span><br><span class="line">    System.out.println(name);</span><br><span class="line">    Assertions.assertNotNull(name);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">static</span> Stream&lt;String&gt; <span class="title function_">method</span><span class="params">()</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> Stream.of(<span class="string">&quot;apple&quot;</span>, <span class="string">&quot;banana&quot;</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+    </div>
+
+    
+    
+    
+      
+  <div class="popular-posts-header">相关文章</div>
+  <ul class="popular-posts">
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2022\12\05\0496c1c14e1c\" rel="bookmark">SpringBoot2【核心功能】——Chap5 Web开发场景</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2022\12\05\8c3575776f2f\" rel="bookmark">SpringBoot2【核心功能】——Chap4 配置文件YAML</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2022\12\04\4e9e8b501870\" rel="bookmark">SpringBoot2【基础入门】——Chap3 最佳实践</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2022\12\04\fb4e64940906\" rel="bookmark">SpringBoot2【基础入门】——Chap1 基础入门</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2022\12\04\b79928678bf4\" rel="bookmark">SpringBoot2【基础入门】——Chap2 底层注解</a></div>
+    </li>
+  </ul>
+
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/SpringBoot2/" rel="tag"># SpringBoot2</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2022/12/05/0496c1c14e1c/" rel="prev" title="SpringBoot2【核心功能】——Chap5 Web开发场景">
+                  <i class="fa fa-chevron-left"></i> SpringBoot2【核心功能】——Chap5 Web开发场景
+                </a>
+            </div>
+            <div class="post-nav-item">
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments utterances-container"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Fantast</span>
+</div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+    <span title="站点总字数">986k</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">45:38</span>
+  </span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script><script src="/js/bookmark.js"></script>
+
+  
+<script src="https://cdn.jsdelivr.net/npm/hexo-generator-searchdb@1.4.0/dist/search.js" integrity="sha256-vXZMYLEqsROAXkEw93GGIvaB2ab+QW6w3+1ahD9nXXA=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdn.jsdelivr.net/npm/mathjax@3.2.0/es5/tex-mml-chtml.js","integrity":"sha256-r+3itOMtGGjap0x+10hu6jW/gZCzxHsoKrOd7gyRSGY="}}</script>
+<script src="/js/third-party/math/mathjax.js"></script>
+
+
+<script class="next-config" data-name="utterances" type="application/json">{"enable":true,"repo":"Fantast416/myblog-comment","issue_term":"pathname","theme":"github-light"}</script>
+<script src="/js/third-party/comments/utterances.js"></script>
+
+</body>
+</html>

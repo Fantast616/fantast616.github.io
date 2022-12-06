@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.2.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css" integrity="sha256-mUZM63G8m73Mcidfrv5E+Y61y7a12O5mW4ezU3bxqW4=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"blog.fantast.top","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.9.0","exturl":false,"sidebar":{"position":"left","width":250,"display":"always","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":true,"color":"#222","save":"manual"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"utterances","storage":true,"lazyload":false,"nav":null,"activeClass":"utterances"},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+<meta name="description" content="SpringMVC Chap2——RequestMapping注解与视图">
+<meta property="og:type" content="article">
+<meta property="og:title" content="SpringMVC Chap2——RequestMapping注解与视图">
+<meta property="og:url" content="https://blog.fantast.top/2022/11/28/be94a86770d8/index.html">
+<meta property="og:site_name" content="Fantast&#39;s Blog">
+<meta property="og:description" content="SpringMVC Chap2——RequestMapping注解与视图">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2022-11-28T05:44:19.000Z">
+<meta property="article:modified_time" content="2022-11-28T07:45:34.000Z">
+<meta property="article:author" content="Fantast">
+<meta property="article:tag" content="SpringMVC">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://blog.fantast.top/2022/11/28/be94a86770d8/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://blog.fantast.top/2022/11/28/be94a86770d8/","path":"2022/11/28/be94a86770d8/","title":"SpringMVC Chap2——RequestMapping注解与视图"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>SpringMVC Chap2——RequestMapping注解与视图 | Fantast's Blog</title>
+  
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<link rel="alternate" href="/atom.xml" title="Fantast's Blog" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Fantast's Blog</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li>
+        <li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li>
+        <li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li>
+        <li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li>
+        <li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%80%E6%B3%A8%E8%A7%A3%E5%8A%9F%E8%83%BD"><span class="nav-text">一、注解功能：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BA%8C%E6%B3%A8%E8%A7%A3%E4%BD%8D%E7%BD%AE"><span class="nav-text">二、注解位置：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%89%E6%B3%A8%E8%A7%A3%E7%9A%84value%E4%B8%8Emethod%E5%B1%9E%E6%80%A7"><span class="nav-text">三、注解的value与method属性：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9B%9B%E6%B3%A8%E8%A7%A3%E7%9A%84params%E4%B8%8Eheaders%E5%B1%9E%E6%80%A7"><span class="nav-text">四、注解的params与headers属性：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BA%94%E4%B8%80%E4%BA%9B%E5%8D%A0%E4%BD%8D%E7%AC%A6%E4%B8%8E%E6%A8%A1%E7%B3%8A%E5%8C%B9%E9%85%8D%E8%B7%AF%E5%BE%84"><span class="nav-text">五、一些占位符与模糊匹配路径：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%AD%E5%9C%A8%E6%8E%A7%E5%88%B6%E5%99%A8%E6%96%B9%E6%B3%95%E4%B8%AD%E8%8E%B7%E5%8F%96%E8%AF%B7%E6%B1%82%E5%8F%82%E6%95%B0"><span class="nav-text">六、在控制器方法中获取请求参数：</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%80%9A%E8%BF%87servlet-api"><span class="nav-text">1、通过Servlet API:</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%8E%A7%E5%88%B6%E5%99%A8%E5%BD%A2%E5%8F%82"><span class="nav-text">2、控制器形参：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%85%B6%E4%BB%96%E6%96%B9%E6%B3%95"><span class="nav-text">3、其他方法：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%8E%B7%E5%8F%96%E8%AF%B7%E6%B1%82%E5%8F%82%E6%95%B0%E4%B9%B1%E7%A0%81%E6%80%8E%E4%B9%88%E5%8A%9E"><span class="nav-text">4、获取请求参数乱码怎么办？</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%83%E8%BF%94%E5%9B%9E%E8%AF%B7%E6%B1%82%E7%9A%84%E6%95%B0%E6%8D%AE%E5%9F%9F%E5%AF%B9%E8%B1%A1%E5%85%B1%E4%BA%AB%E6%95%B0%E6%8D%AE"><span class="nav-text">七、返回请求的数据（域对象共享数据）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%ABspringmvc%E4%B8%AD%E7%9A%84%E8%A7%86%E5%9B%BE"><span class="nav-text">八、SpringMVC中的视图：</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%BD%AC%E5%8F%91%E8%A7%86%E5%9B%BE"><span class="nav-text">1、转发视图</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%87%8D%E5%AE%9A%E5%90%91%E8%A7%86%E5%9B%BE"><span class="nav-text">2、重定向视图</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%A7%86%E5%9B%BE%E6%8E%A7%E5%88%B6%E5%99%A8-view-controller"><span class="nav-text">3、视图控制器 view-controller</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Fantast"
+      src="/images/avatar.webp">
+  <p class="site-author-name" itemprop="name">Fantast</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">198</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">50</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">110</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/fantast416" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;fantast416" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:fantast416@gmail.com" title="E-Mail → mailto:fantast416@gmail.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll site-overview-item animated">
+    <div class="links-of-blogroll-title"><i class="fa fa-globe fa-fw"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://www.zhihu.com/people/shuo-shuo-3-41" title="https:&#x2F;&#x2F;www.zhihu.com&#x2F;people&#x2F;shuo-shuo-3-41" rel="noopener" target="_blank">ZhiHu</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="http://www.next.zju.edu.cn/" title="http:&#x2F;&#x2F;www.next.zju.edu.cn&#x2F;" rel="noopener" target="_blank">NextLab</a>
+        </li>
+    </ul>
+  </div>
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://blog.fantast.top/2022/11/28/be94a86770d8/">
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.webp">
+      <meta itemprop="name" content="Fantast">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Fantast's Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          SpringMVC Chap2——RequestMapping注解与视图
+        </h1>
+
+        <div class="post-meta-container">
+          
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2022-11-28 13:44:19 / 修改时间：15:45:34" itemprop="dateCreated datePublished" datetime="2022-11-28T13:44:19+08:00">2022-11-28</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E2%91%A8-%E5%B7%A5%E7%A8%8B%E7%B1%BB%E7%AC%94%E8%AE%B0/" itemprop="url" rel="index"><span itemprop="name">⑨ 工程类笔记</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E2%91%A8-%E5%B7%A5%E7%A8%8B%E7%B1%BB%E7%AC%94%E8%AE%B0/SpringMVC/" itemprop="url" rel="index"><span itemprop="name">SpringMVC</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>6.7k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>19 分钟</span>
+    </span>
+</div>
+
+            <div class="post-description">SpringMVC Chap2——RequestMapping注解与视图</div>
+            <div class="post-remind">Google Chrome is recommended, otherwise the image size may be wrong</div>
+            <div class="post-remind">FireFox is not recommended,Because it does not support the image zoom property</div>
+        </div>
+        
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h3 id="一注解功能">一、注解功能：</h3>
+<p>​ <span class="citation"
+data-cites="RequestMapping注解的作用就是将请求和处理请求的控制器方法关联起来">@RequestMapping注解的作用就是将请求和处理请求的控制器方法关联起来</span>，建立映射关系。SpringMVC
+接收到指定的请求，就会来找到在映射关系中对应的控制器方法来处理这个请求。</p>
+<h3 id="二注解位置">二、注解位置：</h3>
+<p><span class="citation"
+data-cites="RequestMapping标识一个类">@RequestMapping标识一个类</span>：设置映射请求的请求路径的初始信息
+<span class="citation"
+data-cites="RequestMapping标识一个方法">@RequestMapping标识一个方法</span>：设置映射请求请求路径的具体信息</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Controller</span></span><br><span class="line"><span class="meta">@RequestMapping(&quot;/test&quot;)</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">RequestMappingController</span> &#123;</span><br><span class="line">    <span class="comment">//此时请求映射所映射的请求的请求路径为：/test/testRequestMapping</span></span><br><span class="line">    <span class="meta">@RequestMapping(&quot;/testRequestMapping&quot;)</span></span><br><span class="line">    <span class="keyword">public</span> String <span class="title function_">testRequestMapping</span><span class="params">()</span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="string">&quot;success&quot;</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="三注解的value与method属性">三、注解的value与method属性：</h3>
+<ul>
+<li><span class="citation"
+data-cites="RequestMapping注解的value属性">@RequestMapping注解的value属性</span><strong>是一个字符串类型的数组，表示该请求映射能够匹配多个请求地址所对应的请求</strong></li>
+<li><span class="citation"
+data-cites="RequestMapping注解的value属性必须设置">@RequestMapping注解的value属性必须设置</span>，至少通过请求地址匹配请求映射</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@RequestMapping(</span></span><br><span class="line"><span class="meta">    value = &#123;&quot;/testRequestMapping&quot;, &quot;/test&quot;&#125;,</span></span><br><span class="line"><span class="meta">    method = &#123;RequestMethod.GET, RequestMethod.POST&#125;</span></span><br><span class="line"><span class="meta">)</span></span><br><span class="line"><span class="keyword">public</span> String <span class="title function_">testRequestMapping</span><span class="params">()</span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="string">&quot;success&quot;</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>也可以使用派生注解：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">处理get请求的映射--&gt;@GetMapping</span><br><span class="line">处理post请求的映射--&gt;@PostMapping</span><br><span class="line">处理put请求的映射--&gt;@PutMapping</span><br><span class="line">处理delete请求的映射--&gt;@DeleteMapping</span><br></pre></td></tr></table></figure>
+<h3
+id="四注解的params与headers属性">四、注解的params与headers属性：</h3>
+<ul>
+<li>通过HTTP请求的params和headers来匹配请求，从而完成映射</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@RequestMapping(</span></span><br><span class="line"><span class="meta">    value = &#123;&quot;/testRequestMapping&quot;, &quot;/test&quot;&#125;</span></span><br><span class="line"><span class="meta">    ,method = &#123;RequestMethod.GET, RequestMethod.POST&#125;</span></span><br><span class="line"><span class="meta">    ,params = &#123;&quot;username&quot;,&quot;password!=123456&quot;&#125;</span></span><br><span class="line"><span class="meta">    ,headers = &#123;&quot;Host=localhost:8080&quot;&#125;</span></span><br><span class="line"><span class="meta">)</span></span><br><span class="line"><span class="keyword">public</span> String <span class="title function_">testRequestMapping</span><span class="params">()</span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="string">&quot;success&quot;</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="五一些占位符与模糊匹配路径">五、一些占位符与模糊匹配路径：</h3>
+<ul>
+<li>？：表示任意的单个字符</li>
+<li>*：表示任意的0个或多个字符</li>
+<li>**：表示任意的一层或多层目录**</li>
+<li>注意：在使用*<em>时，只能使用/*</em>/xxx的方式</li>
+</ul>
+<p>​
+SpringMVC路径中的占位符常用于RESTful风格中，当请求路径中将某些数据通过路径的方式传输到服务器中，就可以在相应的@RequestMapping注解的value属性中通过占位符{xxx}表示传输的数据，再通过@PathVariable注解，将占位符所表示的数据赋值给控制器方法的形参。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@RequestMapping(&quot;/testRest/&#123;id&#125;/&#123;username&#125;&quot;)</span></span><br><span class="line"><span class="keyword">public</span> String <span class="title function_">testRest</span><span class="params">(<span class="meta">@PathVariable(&quot;id&quot;)</span> String id, <span class="meta">@PathVariable(&quot;username&quot;)</span> String username)</span>&#123;</span><br><span class="line">    System.out.println(<span class="string">&quot;id:&quot;</span>+id+<span class="string">&quot;,username:&quot;</span>+username);</span><br><span class="line">    <span class="keyword">return</span> <span class="string">&quot;success&quot;</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//最终输出的内容为--&gt;id:1,username:admin</span></span><br></pre></td></tr></table></figure>
+<h3
+id="六在控制器方法中获取请求参数">六、在控制器方法中获取请求参数：</h3>
+<h4 id="通过servlet-api">1、通过Servlet API:</h4>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@RequestMapping(&quot;/testParam&quot;)</span></span><br><span class="line">    <span class="keyword">public</span> String <span class="title function_">testParam</span><span class="params">(HttpServletRequest request)</span>&#123;</span><br><span class="line">    <span class="type">String</span> <span class="variable">username</span> <span class="operator">=</span> request.getParameter(<span class="string">&quot;username&quot;</span>);</span><br><span class="line">    <span class="type">String</span> <span class="variable">password</span> <span class="operator">=</span> request.getParameter(<span class="string">&quot;password&quot;</span>);</span><br><span class="line">    System.out.println(<span class="string">&quot;username:&quot;</span>+username+<span class="string">&quot;,password:&quot;</span>+password);</span><br><span class="line">    <span class="keyword">return</span> <span class="string">&quot;success&quot;</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="控制器形参">2、控制器形参：</h4>
+<p>​
+在控制器方法的形参位置，设置和请求参数同名的形参，当浏览器发送请求，匹配到请求映射时，在DispatcherServlet中就会将请求参数赋值给相应的形参</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@RequestMapping(&quot;/testParam&quot;)</span></span><br><span class="line"><span class="keyword">public</span> String <span class="title function_">testParam</span><span class="params">(String username, String password)</span>&#123;</span><br><span class="line">    System.out.println(<span class="string">&quot;username:&quot;</span>+username+<span class="string">&quot;,password:&quot;</span>+password);</span><br><span class="line">    <span class="keyword">return</span> <span class="string">&quot;success&quot;</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="其他方法">3、其他方法：</h4>
+<ul>
+<li><p><span class="citation"
+data-cites="RequestParam是将请求参数和控制器方法的形参创建映射关系">@RequestParam是将请求参数和控制器方法的形参创建映射关系</span>，一共有三个属性：</p>
+<ul>
+<li>value：指定为形参赋值的请求参数的参数名</li>
+<li>required：设置是否必须传输此请求参数，默认值为true
+若设置为true时，则当前请求必须传输value所指定的请求参数，若没有传输该请求参数，且没有置
+defaultValue属性，则页面报错400：Required String parameter 'xxx' is not
+present；若设置为false，则当前请求不是必须传输value所指定的请求参数，若没有传输，则注解所标识的形参的值为null</li>
+<li>defaultValue：不管required属性值为true或false，当value所指定的请求参数没有传输或传输的值为""时，则使用默认值为形参赋值</li>
+</ul></li>
+<li><p><span class="citation"
+data-cites="RequestHeader是将请求头信息和控制器方法的形参创建映射关系">@RequestHeader是将请求头信息和控制器方法的形参创建映射关系</span></p></li>
+<li><p><span class="citation"
+data-cites="CookieValue是将cookie数据和控制器方法的形参创建映射关系">@CookieValue是将cookie数据和控制器方法的形参创建映射关系</span></p></li>
+<li><p>POJO获取请求参数：</p>
+<ul>
+<li>可以在控制器方法的形参位置设置一个实体类类型的形参，此时若浏览器传输的请求参数的参数名和实体类中的属性名一致，那么请求参数就会为此属性赋值</li>
+</ul></li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@RequestMapping(&quot;/testpojo&quot;)</span></span><br><span class="line"><span class="keyword">public</span> String <span class="title function_">testPOJO</span><span class="params">(User user)</span>&#123;</span><br><span class="line">    System.out.println(user);</span><br><span class="line">    <span class="keyword">return</span> <span class="string">&quot;success&quot;</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//最终结果--&gt;User&#123;id=null, username=&#x27;张三&#x27;, password=&#x27;123&#x27;, age=23, sex=&#x27;男&#x27;,</span></span><br><span class="line">email=<span class="string">&#x27;123@qq.com&#x27;</span>&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="获取请求参数乱码怎么办">4、获取请求参数乱码怎么办？</h4>
+<p>​
+可以使用SpringMVC提供的编码过滤器CharacterEncodingFilter，但是必须在web.xml中进行注册。</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">&lt;!--配置springMVC的编码过滤器--&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">filter</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">filter-name</span>&gt;</span>CharacterEncodingFilter<span class="tag">&lt;/<span class="name">filter-name</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">filterclass</span>&gt;</span></span><br><span class="line">		org.springframework.web.filter.CharacterEncodingFilter</span><br><span class="line">    <span class="tag">&lt;/<span class="name">filter-class</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">init-param</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">param-name</span>&gt;</span>encoding<span class="tag">&lt;/<span class="name">param-name</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">param-value</span>&gt;</span>UTF-8<span class="tag">&lt;/<span class="name">param-value</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;/<span class="name">init-param</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">init-param</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">param-name</span>&gt;</span>forceResponseEncoding<span class="tag">&lt;/<span class="name">param-name</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">param-value</span>&gt;</span>true<span class="tag">&lt;/<span class="name">param-value</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">init-param</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">filter</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">filter-mapping</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">filter-name</span>&gt;</span>CharacterEncodingFilter<span class="tag">&lt;/<span class="name">filter-name</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">url-pattern</span>&gt;</span>/*<span class="tag">&lt;/<span class="name">url-pattern</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">filter-mapping</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<ul>
+<li>SpringMVC中处理编码的过滤器一定要配置到其他过滤器之前，否则无效</li>
+</ul>
+<h3
+id="七返回请求的数据域对象共享数据">七、返回请求的数据（域对象共享数据）</h3>
+<ul>
+<li><p>(request,session[浏览器开启到浏览器关闭],servlet
+context[服务器开启到服务器关闭])</p></li>
+<li><p>request域共享数据</p></li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@RequestMapping(&quot;/testServletAPI&quot;)</span></span><br><span class="line"><span class="keyword">public</span> String <span class="title function_">testServletAPI</span><span class="params">(HttpServletRequest request)</span>&#123;</span><br><span class="line">    request.setAttribute(<span class="string">&quot;testScope&quot;</span>, <span class="string">&quot;hello,servletAPI&quot;</span>);</span><br><span class="line">    <span class="keyword">return</span> <span class="string">&quot;success&quot;</span>;  <span class="comment">//视图名</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@RequestMapping(&quot;/testModel&quot;)</span></span><br><span class="line"><span class="keyword">public</span> String <span class="title function_">testModel</span><span class="params">(Model model)</span>&#123;</span><br><span class="line">    model.addAttribute(<span class="string">&quot;testScope&quot;</span>, <span class="string">&quot;hello,Model&quot;</span>);</span><br><span class="line">    <span class="keyword">return</span> <span class="string">&quot;success&quot;</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@RequestMapping(&quot;/testMap&quot;)</span></span><br><span class="line"><span class="keyword">public</span> String <span class="title function_">testMap</span><span class="params">(Map&lt;String, Object&gt; map)</span>&#123;</span><br><span class="line">    map.put(<span class="string">&quot;testScope&quot;</span>, <span class="string">&quot;hello,Map&quot;</span>);</span><br><span class="line">    <span class="keyword">return</span> <span class="string">&quot;success&quot;</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@RequestMapping(&quot;/testModelMap&quot;)</span></span><br><span class="line"><span class="keyword">public</span> String <span class="title function_">testModelMap</span><span class="params">(ModelMap modelMap)</span>&#123;</span><br><span class="line">    modelMap.addAttribute(<span class="string">&quot;testScope&quot;</span>, <span class="string">&quot;hello,ModelMap&quot;</span>);</span><br><span class="line">    <span class="keyword">return</span> <span class="string">&quot;success&quot;</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>session域共享数据</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@RequestMapping(&quot;/testSession&quot;)</span></span><br><span class="line"><span class="keyword">public</span> String <span class="title function_">testSession</span><span class="params">(HttpSession session)</span>&#123;</span><br><span class="line">    session.setAttribute(<span class="string">&quot;testSessionScope&quot;</span>, <span class="string">&quot;hello,session&quot;</span>);</span><br><span class="line">    <span class="keyword">return</span> <span class="string">&quot;success&quot;</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>application域共享数据</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@RequestMapping(&quot;/testApplication&quot;)</span></span><br><span class="line"><span class="keyword">public</span> String <span class="title function_">testApplication</span><span class="params">(HttpSession session)</span>&#123;</span><br><span class="line">    <span class="type">ServletContext</span> <span class="variable">application</span> <span class="operator">=</span> session.getServletContext();</span><br><span class="line">    application.setAttribute(<span class="string">&quot;testApplicationScope&quot;</span>, <span class="string">&quot;hello,application&quot;</span>);</span><br><span class="line">    <span class="keyword">return</span> <span class="string">&quot;success&quot;</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="八springmvc中的视图">八、SpringMVC中的视图：</h3>
+<p>​
+SpringMVC中的视图是View接口，视图的作用渲染数据，将模型Model中的数据展示给用户</p>
+<ul>
+<li>当控制器方法中所设置的视图名称没有任何前缀时，此时的视图名称会被SpringMVC配置文件中所配置
+的视图解析器解析，视图名称拼接视图前缀和视图后缀所得到的最终路径，会通过转发的方式实现跳转</li>
+</ul>
+<h4 id="转发视图">1、转发视图</h4>
+<ul>
+<li><p>场景：你想要跳转至某个其他的请求，而不是直接跳转至某个固定的视图解析器对应的HTML页面</p></li>
+<li><p>SpringMVC中默认的转发视图是InternalResourceView</p></li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@RequestMapping(&quot;/testHello&quot;)</span></span><br><span class="line"><span class="keyword">public</span> String <span class="title function_">testForward</span><span class="params">()</span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="string">&quot;index&quot;</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">@RequestMapping(&quot;/testForward&quot;)</span></span><br><span class="line"><span class="keyword">public</span> String <span class="title function_">testForward</span><span class="params">()</span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="string">&quot;forward:/testHello&quot;</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>当控制器方法中所设置的视图名称以"forward:"为前缀时，创建InternalResourceView视图，此时的视
+图名称不会被SpringMVC配置文件中所配置的视图解析器解析，而是会将前缀"forward:"去掉，剩余部
+分作为最终路径通过转发的方式实现跳转</li>
+</ul>
+<h4 id="重定向视图">2、重定向视图</h4>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@RequestMapping(&quot;/testHello&quot;)</span></span><br><span class="line"><span class="keyword">public</span> String <span class="title function_">testForward</span><span class="params">()</span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="string">&quot;index&quot;</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="meta">@RequestMapping(&quot;/testRedirect&quot;)</span></span><br><span class="line"><span class="keyword">public</span> String <span class="title function_">testRedirect</span><span class="params">()</span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="string">&quot;redirect:/testHello&quot;</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>转发和重定向的区别：
+<ul>
+<li>转发：算浏览器的一次请求，转发是由服务器进行转发的</li>
+<li>重定向：算浏览器的两次请求，浏览器会再去请求重定向的地址。</li>
+</ul></li>
+</ul>
+<h4 id="视图控制器-view-controller">3、视图控制器 view-controller</h4>
+<p>​
+当控制器方法中，仅仅用来实现页面跳转，即只需要设置视图名称时，可以将处理器方法使用viewcontroller
+标签进行表示.</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">&lt;!--</span></span><br><span class="line"><span class="comment">path：设置处理的请求地址</span></span><br><span class="line"><span class="comment">view-name：设置请求地址所对应的视图名称</span></span><br><span class="line"><span class="comment">--&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">mvc:view-controller</span> <span class="attr">path</span>=<span class="string">&quot;/testView&quot;</span> <span class="attr">view-name</span>=<span class="string">&quot;success&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">mvc:view-controller</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>​
+当SpringMVC中设置任何一个view-controller时，其他控制器中的请求映射将全部失效，此时需要在SpringMVC的核心配置文件中设置开启mvc注解驱动的标签：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">mvc:annotation-driven</span> /&gt;</span></span><br></pre></td></tr></table></figure>
+
+    </div>
+
+    
+    
+    
+      
+  <div class="popular-posts-header">相关文章</div>
+  <ul class="popular-posts">
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2022\11\28\3bf313b3626c\" rel="bookmark">SpringMVC Chap6——SpringMVC 常见组件与执行流程</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2022\11\28\88fd99a9bc39\" rel="bookmark">SpringMVC Chap5——SpringMVC 完全注解开发</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2022\11\28\29f1ae58afdc\" rel="bookmark">SpringMVC Chap3——SpringMVC RestFul风格与消息转换机制（Json与Java对象互转）</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2022\11\28\0fcd9a57a1e6\" rel="bookmark">SpringMVC Chap4——SpringMVC 文件上传和下载、拦截器和异常处理</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2022\11\28\7fbe0f73c350\" rel="bookmark">SpringMVC Chap1——简介与入门</a></div>
+    </li>
+  </ul>
+
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/SpringMVC/" rel="tag"># SpringMVC</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2022/11/28/7fbe0f73c350/" rel="prev" title="SpringMVC Chap1——简介与入门">
+                  <i class="fa fa-chevron-left"></i> SpringMVC Chap1——简介与入门
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2022/11/28/0fcd9a57a1e6/" rel="next" title="SpringMVC Chap4——SpringMVC 文件上传和下载、拦截器和异常处理">
+                  SpringMVC Chap4——SpringMVC 文件上传和下载、拦截器和异常处理 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments utterances-container"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Fantast</span>
+</div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+    <span title="站点总字数">986k</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">45:38</span>
+  </span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script><script src="/js/bookmark.js"></script>
+
+  
+<script src="https://cdn.jsdelivr.net/npm/hexo-generator-searchdb@1.4.0/dist/search.js" integrity="sha256-vXZMYLEqsROAXkEw93GGIvaB2ab+QW6w3+1ahD9nXXA=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdn.jsdelivr.net/npm/mathjax@3.2.0/es5/tex-mml-chtml.js","integrity":"sha256-r+3itOMtGGjap0x+10hu6jW/gZCzxHsoKrOd7gyRSGY="}}</script>
+<script src="/js/third-party/math/mathjax.js"></script>
+
+
+<script class="next-config" data-name="utterances" type="application/json">{"enable":true,"repo":"Fantast416/myblog-comment","issue_term":"pathname","theme":"github-light"}</script>
+<script src="/js/third-party/comments/utterances.js"></script>
+
+</body>
+</html>

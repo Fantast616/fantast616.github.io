@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.2.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css" integrity="sha256-mUZM63G8m73Mcidfrv5E+Y61y7a12O5mW4ezU3bxqW4=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"blog.fantast.top","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.9.0","exturl":false,"sidebar":{"position":"left","width":250,"display":"always","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":true,"color":"#222","save":"manual"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"utterances","storage":true,"lazyload":false,"nav":null,"activeClass":"utterances"},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+<meta name="description" content="SpringMVC Chap3——SpringMVC RestFul风格与HttpMessageConverter">
+<meta property="og:type" content="article">
+<meta property="og:title" content="SpringMVC Chap3——SpringMVC RestFul风格与消息转换机制（Json与Java对象互转）">
+<meta property="og:url" content="https://blog.fantast.top/2022/11/28/29f1ae58afdc/index.html">
+<meta property="og:site_name" content="Fantast&#39;s Blog">
+<meta property="og:description" content="SpringMVC Chap3——SpringMVC RestFul风格与HttpMessageConverter">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2022-11-28T07:46:19.000Z">
+<meta property="article:modified_time" content="2022-11-28T08:08:28.000Z">
+<meta property="article:author" content="Fantast">
+<meta property="article:tag" content="SpringMVC">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://blog.fantast.top/2022/11/28/29f1ae58afdc/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://blog.fantast.top/2022/11/28/29f1ae58afdc/","path":"2022/11/28/29f1ae58afdc/","title":"SpringMVC Chap3——SpringMVC RestFul风格与消息转换机制（Json与Java对象互转）"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>SpringMVC Chap3——SpringMVC RestFul风格与消息转换机制（Json与Java对象互转） | Fantast's Blog</title>
+  
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<link rel="alternate" href="/atom.xml" title="Fantast's Blog" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Fantast's Blog</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li>
+        <li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li>
+        <li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li>
+        <li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li>
+        <li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%80restful"><span class="nav-text">一、RESTFUL：</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#restful%E7%9A%84%E5%AE%9E%E7%8E%B0"><span class="nav-text">1、RESTFUL的实现:</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#hiddenhttpmethodfilter"><span class="nav-text">2、HiddenHttpMethodFilter</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BA%8Crestful%E7%A4%BA%E4%BE%8B"><span class="nav-text">二、RESTFUL示例：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%89httpmessageconverter"><span class="nav-text">三、HttpMessageConverter</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#requestbody"><span class="nav-text">1、@RequestBody</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#requestentity"><span class="nav-text">2、RequestEntity</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#responsebody"><span class="nav-text">3、@ResponseBody</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#springmvc%E5%A4%84%E7%90%86json"><span class="nav-text">4、SpringMVC处理json：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%A4%84%E7%90%86ajaxaxios"><span class="nav-text">5、处理Ajax：（Axios）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#restcontroller%E6%B3%A8%E8%A7%A3"><span class="nav-text">6、@RestController注解：</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Fantast"
+      src="/images/avatar.webp">
+  <p class="site-author-name" itemprop="name">Fantast</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">198</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">50</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">110</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/fantast416" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;fantast416" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:fantast416@gmail.com" title="E-Mail → mailto:fantast416@gmail.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll site-overview-item animated">
+    <div class="links-of-blogroll-title"><i class="fa fa-globe fa-fw"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://www.zhihu.com/people/shuo-shuo-3-41" title="https:&#x2F;&#x2F;www.zhihu.com&#x2F;people&#x2F;shuo-shuo-3-41" rel="noopener" target="_blank">ZhiHu</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="http://www.next.zju.edu.cn/" title="http:&#x2F;&#x2F;www.next.zju.edu.cn&#x2F;" rel="noopener" target="_blank">NextLab</a>
+        </li>
+    </ul>
+  </div>
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://blog.fantast.top/2022/11/28/29f1ae58afdc/">
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.webp">
+      <meta itemprop="name" content="Fantast">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Fantast's Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          SpringMVC Chap3——SpringMVC RestFul风格与消息转换机制（Json与Java对象互转）
+        </h1>
+
+        <div class="post-meta-container">
+          
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2022-11-28 15:46:19 / 修改时间：16:08:28" itemprop="dateCreated datePublished" datetime="2022-11-28T15:46:19+08:00">2022-11-28</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E2%91%A8-%E5%B7%A5%E7%A8%8B%E7%B1%BB%E7%AC%94%E8%AE%B0/" itemprop="url" rel="index"><span itemprop="name">⑨ 工程类笔记</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E2%91%A8-%E5%B7%A5%E7%A8%8B%E7%B1%BB%E7%AC%94%E8%AE%B0/SpringMVC/" itemprop="url" rel="index"><span itemprop="name">SpringMVC</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>5.8k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>16 分钟</span>
+    </span>
+</div>
+
+            <div class="post-description">SpringMVC Chap3——SpringMVC RestFul风格与HttpMessageConverter</div>
+            <div class="post-remind">Google Chrome is recommended, otherwise the image size may be wrong</div>
+            <div class="post-remind">FireFox is not recommended,Because it does not support the image zoom property</div>
+        </div>
+        
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h3 id="一restful">一、RESTFUL：</h3>
+<ul>
+<li><p>Representational State
+Transfer，表现层（视图+控制层）<strong>资源状态转移</strong></p></li>
+<li><p>资源是一种看待服务器的方式，即，将服务器看作是由很多离散的资源组成。每个资源是服务器上一个
+可命名的抽象概念</p></li>
+<li><p>资源的表述可以有多种格式，例如HTML/XML/JSON/纯文本/图片/视频/音频等等。资源的表述格
+式可以通过协商机制来确定。请求-响应方向的表述通常使用不同的格式</p></li>
+<li><p>状态转移说的是：在客户端和服务器端之间转移（transfer）代表资源状态的表述。通过转移和操作资
+源的表述，来间接实现操作资源的目的。</p></li>
+</ul>
+<h4 id="restful的实现">1、RESTFUL的实现:</h4>
+<ul>
+<li><p>它们分别对应四种基本操作：GET 用来获取资源，POST
+用来新建资源，PUT 用来更新资源，DELETE 用来删除资源</p></li>
+<li><p>REST 风格提倡 URL
+地址使用统一的风格设计，<strong>从前到后各个单词使用斜杠分开，不使用问号键值对方式携带请求参数，而是将要发送给服务器的数据作为
+URL 地址的一部分，以保证整体风格的一致性</strong></p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20221128160019703.png" /></p></li>
+</ul>
+<h4 id="hiddenhttpmethodfilter">2、HiddenHttpMethodFilter</h4>
+<p>由于浏览器只支持发送get和post方式的请求，那么该如何发送put和delete请求呢？</p>
+<ul>
+<li>SpringMVC 提供了 HiddenHttpMethodFilter 帮助我们将 POST 请求转换为
+DELETE 或 PUT 请求</li>
+</ul>
+<p>在web.xml中注册HiddenHttpMethodFilter</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">filter</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">filter-name</span>&gt;</span>HiddenHttpMethodFilter<span class="tag">&lt;/<span class="name">filter-name</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">filter-class</span>&gt;</span>org.springframework.web.filter.HiddenHttpMethodFilter<span class="tag">&lt;/<span class="name">filterclass</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">filter</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">filter-mapping</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">filter-name</span>&gt;</span>HiddenHttpMethodFilter<span class="tag">&lt;/<span class="name">filter-name</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">url-pattern</span>&gt;</span>/*<span class="tag">&lt;/<span class="name">url-pattern</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">filter-mapping</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>注意：HiddenHttpMethodFilter 处理put和delete请求的条件：</p>
+<ul>
+<li>当前请求的请求方式必须为post</li>
+<li>当前请求必须传输请求参数_method_</li>
+<li>满足以上条件，HiddenHttpMethodFilter
+过滤器就会将当前请求的请求方式转换为请求参数
+_method的值，因此请求参数_method的值才是最终的请求方式</li>
+</ul>
+<h3 id="二restful示例">二、RESTFUL示例：</h3>
+<ul>
+<li><p>示例功能：查询</p>
+<ul>
+<li><p>控制器</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@RequestMapping(value = &quot;/employee&quot;, method = RequestMethod.GET)</span></span><br><span class="line"><span class="keyword">public</span> String <span class="title function_">getEmployeeList</span><span class="params">(Model model)</span>&#123;</span><br><span class="line">    Collection&lt;Employee&gt; employeeList = employeeDao.getAll();</span><br><span class="line">    model.addAttribute(<span class="string">&quot;employeeList&quot;</span>, employeeList);</span><br><span class="line">    <span class="keyword">return</span> <span class="string">&quot;employee_list&quot;</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+<li><p>html页面</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">html</span> <span class="attr">lang</span>=<span class="string">&quot;en&quot;</span> <span class="attr">xmlns:th</span>=<span class="string">&quot;http://www.thymeleaf.org&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">head</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">meta</span> <span class="attr">charset</span>=<span class="string">&quot;UTF-8&quot;</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">title</span>&gt;</span>Employee Info<span class="tag">&lt;/<span class="name">title</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">script</span> <span class="attr">type</span>=<span class="string">&quot;text/javascript&quot;</span> <span class="attr">th:src</span>=<span class="string">&quot;@&#123;/static/js/vue.js&#125;&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">head</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">body</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">table</span> <span class="attr">border</span>=<span class="string">&quot;1&quot;</span> <span class="attr">cellpadding</span>=<span class="string">&quot;0&quot;</span> <span class="attr">cellspacing</span>=<span class="string">&quot;0&quot;</span> <span class="attr">style</span>=<span class="string">&quot;text-align:center;&quot;</span> <span class="attr">id</span>=<span class="string">&quot;dataTable&quot;</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">tr</span> <span class="attr">th:each</span>=<span class="string">&quot;employee : $&#123;employeeList&#125;&quot;</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">td</span> <span class="attr">th:text</span>=<span class="string">&quot;$&#123;employee.id&#125;&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">td</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">td</span> <span class="attr">th:text</span>=<span class="string">&quot;$&#123;employee.lastName&#125;&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">td</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">td</span> <span class="attr">th:text</span>=<span class="string">&quot;$&#123;employee.email&#125;&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">td</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">td</span> <span class="attr">th:text</span>=<span class="string">&quot;$&#123;employee.gender&#125;&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">td</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">td</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">a</span> <span class="attr">th:href</span>=<span class="string">&quot;@&#123;&#x27;/employee/&#x27;+$&#123;employee.id&#125;&#125;&quot;</span>&gt;</span>update<span class="tag">&lt;/<span class="name">a</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">table</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">body</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">html</span>&gt;</span></span><br></pre></td></tr></table></figure></li>
+</ul></li>
+<li><p>示例功能：删除：</p></li>
+</ul>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">&lt;!-- 作用：通过超链接控制表单的提交，将post请求转换为delete请求 --&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">form</span> <span class="attr">id</span>=<span class="string">&quot;delete_form&quot;</span> <span class="attr">method</span>=<span class="string">&quot;post&quot;</span>&gt;</span></span><br><span class="line">    <span class="comment">&lt;!-- HiddenHttpMethodFilter要求：必须传输_method请求参数，并且值为最终的请求方式 --&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">&quot;hidden&quot;</span> <span class="attr">name</span>=<span class="string">&quot;_method&quot;</span> <span class="attr">value</span>=<span class="string">&quot;delete&quot;</span>/&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">form</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<ul>
+<li>通过vue来处理点击事件：</li>
+</ul>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">&lt;script type=<span class="string">&quot;text/javascript&quot;</span>&gt;</span><br><span class="line">    <span class="keyword">var</span> vue = <span class="keyword">new</span> <span class="title class_">Vue</span>(&#123;</span><br><span class="line">    <span class="attr">el</span>:<span class="string">&quot;#dataTable&quot;</span>,</span><br><span class="line">    <span class="attr">methods</span>:&#123;</span><br><span class="line">        <span class="comment">//event表示当前事件</span></span><br><span class="line">        <span class="attr">deleteEmployee</span>:<span class="keyword">function</span> (<span class="params">event</span>) &#123;</span><br><span class="line">            <span class="comment">//通过id获取表单标签</span></span><br><span class="line">            <span class="keyword">var</span> delete_form = <span class="variable language_">document</span>.<span class="title function_">getElementById</span>(<span class="string">&quot;delete_form&quot;</span>);</span><br><span class="line">            <span class="comment">//将触发事件的超链接的href属性为表单的action属性赋值</span></span><br><span class="line">            delete_form.<span class="property">action</span> = event.<span class="property">target</span>.<span class="property">href</span>;</span><br><span class="line">            <span class="comment">//提交表单</span></span><br><span class="line">            delete_form.<span class="title function_">submit</span>();</span><br><span class="line">            <span class="comment">//阻止超链接的默认跳转行为</span></span><br><span class="line">            event.<span class="title function_">preventDefault</span>();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;);</span><br><span class="line">&lt;/script&gt;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>服务器端：控制器方法：</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@RequestMapping(value = &quot;/employee/&#123;id&#125;&quot;, method = RequestMethod.DELETE)</span></span><br><span class="line"><span class="keyword">public</span> String <span class="title function_">deleteEmployee</span><span class="params">(<span class="meta">@PathVariable(&quot;id&quot;)</span> Integer id)</span>&#123;</span><br><span class="line">    employeeDao.delete(id);</span><br><span class="line">    <span class="keyword">return</span> <span class="string">&quot;redirect:/employee&quot;</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="三httpmessageconverter">三、HttpMessageConverter</h3>
+<ul>
+<li>HttpMessageConverter，报文信息转换器，将请求报文转换为Java对象，或将Java对象转换为响应报
+文。</li>
+<li>HttpMessageConverter提供了两个注解和两个类型：<span class="citation"
+data-cites="RequestBody">@RequestBody</span>，<span class="citation"
+data-cites="ResponseBody">@ResponseBody</span>，RequestEntity，ResponseEntity</li>
+</ul>
+<h4 id="requestbody">1、<span class="citation"
+data-cites="RequestBody">@RequestBody</span></h4>
+<p>​ <span class="citation"
+data-cites="RequestBody可以获取请求体">@RequestBody可以获取请求体</span>，需要在控制器方法设置一个形参，使用@RequestBody进行标识，当前请求的请求体就会为当前注解所标识的形参赋值</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@RequestMapping(&quot;/testRequestBody&quot;)</span></span><br><span class="line"><span class="keyword">public</span> String <span class="title function_">testRequestBody</span><span class="params">(<span class="meta">@RequestBody</span> String requestBody)</span>&#123;</span><br><span class="line">    System.out.println(<span class="string">&quot;requestBody:&quot;</span>+requestBody);</span><br><span class="line">    <span class="keyword">return</span> <span class="string">&quot;success&quot;</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">requestBody:username=admin&amp;password=123456</span><br></pre></td></tr></table></figure>
+<h4 id="requestentity">2、RequestEntity</h4>
+<p>​
+RequestEntity封装请求报文的一种类型，需要在控制器方法的形参中设置该类型的形参，当前请求的
+请求报文就会赋值给该形参，可以通过getHeaders()获取请求头信息，通过getBody()获取请求体信息</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@RequestMapping(&quot;/testRequestEntity&quot;)</span></span><br><span class="line"><span class="keyword">public</span> String <span class="title function_">testRequestEntity</span><span class="params">(RequestEntity&lt;String&gt; requestEntity)</span>&#123;</span><br><span class="line">    System.out.println(<span class="string">&quot;requestHeader:&quot;</span>+requestEntity.getHeaders());</span><br><span class="line">    System.out.println(<span class="string">&quot;requestBody:&quot;</span>+requestEntity.getBody());</span><br><span class="line">    <span class="keyword">return</span> <span class="string">&quot;success&quot;</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="responsebody">3、<span class="citation"
+data-cites="ResponseBody">@ResponseBody</span></h4>
+<p><span class="citation"
+data-cites="ResponseBody用于标识一个控制器方法">@ResponseBody用于标识一个控制器方法</span>，可以将该方法的返回值直接作为响应报文的响应体响应到浏览器</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@RequestMapping(&quot;/testResponseBody&quot;)</span></span><br><span class="line"><span class="meta">@ResponseBody</span></span><br><span class="line"><span class="keyword">public</span> String <span class="title function_">testResponseBody</span><span class="params">()</span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="string">&quot;success&quot;</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//浏览器页面会显示  success</span></span><br></pre></td></tr></table></figure>
+<h4 id="springmvc处理json">4、SpringMVC处理json：</h4>
+<ul>
+<li>导入依赖：</li>
+</ul>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>com.fasterxml.jackson.core<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>jackson-databind<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>2.12.1<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<ul>
+<li>在SpringMVC的核心配置文件中开启mvc的注解驱动，此时在HandlerAdaptor中会自动装配一个消
+息转换器：MappingJackson2HttpMessageConverter，可以将响应到浏览器的Java对象转换为Json格
+式的字符串</li>
+</ul>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">mvc:annotation-driven</span> /&gt;</span></span><br></pre></td></tr></table></figure>
+<ul>
+<li>在处理器方法上使用@ResponseBody注解进行标识,将Java对象直接作为控制器方法的返回值返回，就会自动转换为Json格式的字符串</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@RequestMapping(&quot;/testResponseUser&quot;)</span></span><br><span class="line"><span class="meta">@ResponseBody</span></span><br><span class="line"><span class="keyword">public</span> User <span class="title function_">testResponseUser</span><span class="params">()</span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> <span class="title class_">User</span>(<span class="number">1001</span>,<span class="string">&quot;admin&quot;</span>,<span class="string">&quot;123456&quot;</span>,<span class="number">23</span>,<span class="string">&quot;男&quot;</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span><span class="attr">&quot;id&quot;</span><span class="punctuation">:</span><span class="number">1001</span><span class="punctuation">,</span><span class="attr">&quot;username&quot;</span><span class="punctuation">:</span><span class="string">&quot;admin&quot;</span><span class="punctuation">,</span><span class="attr">&quot;password&quot;</span><span class="punctuation">:</span><span class="string">&quot;123456&quot;</span><span class="punctuation">,</span><span class="attr">&quot;age&quot;</span><span class="punctuation">:</span><span class="number">23</span><span class="punctuation">,</span><span class="attr">&quot;sex&quot;</span><span class="punctuation">:</span><span class="string">&quot;男&quot;</span><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+<h4 id="处理ajaxaxios">5、处理Ajax：（Axios）</h4>
+<ul>
+<li>vue和axios发送的请求为：</li>
+</ul>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="title function_">axios</span>(&#123;</span><br><span class="line">    <span class="attr">method</span>:<span class="string">&quot;post&quot;</span>,</span><br><span class="line">    <span class="attr">url</span>:event.<span class="property">target</span>.<span class="property">href</span>,</span><br><span class="line">    <span class="attr">params</span>:&#123;</span><br><span class="line">        <span class="attr">username</span>:<span class="string">&quot;admin&quot;</span>,</span><br><span class="line">        <span class="attr">password</span>:<span class="string">&quot;123456&quot;</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;).<span class="title function_">then</span>(<span class="keyword">function</span> (<span class="params">response</span>) &#123;</span><br><span class="line">    <span class="title function_">alert</span>(response.<span class="property">data</span>);</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@RequestMapping(&quot;/testAjax&quot;)</span></span><br><span class="line"><span class="meta">@ResponseBody</span></span><br><span class="line"><span class="keyword">public</span> String <span class="title function_">testAjax</span><span class="params">(String username, String password)</span>&#123;</span><br><span class="line">    System.out.println(<span class="string">&quot;username:&quot;</span>+username+<span class="string">&quot;,password:&quot;</span>+password);</span><br><span class="line">    <span class="keyword">return</span> <span class="string">&quot;hello,ajax&quot;</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="restcontroller注解">6、<span class="citation"
+data-cites="RestController注解">@RestController注解</span>：</h4>
+<p>​ 标识在控制器的类上，就相当于：</p>
+<ul>
+<li>为类添加了@Controller注解</li>
+<li>并且为其中的每个方法添加了@ResponseBody注解</li>
+</ul>
+
+    </div>
+
+    
+    
+    
+      
+  <div class="popular-posts-header">相关文章</div>
+  <ul class="popular-posts">
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2022\11\28\3bf313b3626c\" rel="bookmark">SpringMVC Chap6——SpringMVC 常见组件与执行流程</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2022\11\28\88fd99a9bc39\" rel="bookmark">SpringMVC Chap5——SpringMVC 完全注解开发</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2022\11\28\0fcd9a57a1e6\" rel="bookmark">SpringMVC Chap4——SpringMVC 文件上传和下载、拦截器和异常处理</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2022\11\28\be94a86770d8\" rel="bookmark">SpringMVC Chap2——RequestMapping注解与视图</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2022\11\28\7fbe0f73c350\" rel="bookmark">SpringMVC Chap1——简介与入门</a></div>
+    </li>
+  </ul>
+
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/SpringMVC/" rel="tag"># SpringMVC</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2022/11/28/0fcd9a57a1e6/" rel="prev" title="SpringMVC Chap4——SpringMVC 文件上传和下载、拦截器和异常处理">
+                  <i class="fa fa-chevron-left"></i> SpringMVC Chap4——SpringMVC 文件上传和下载、拦截器和异常处理
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2022/11/28/88fd99a9bc39/" rel="next" title="SpringMVC Chap5——SpringMVC 完全注解开发">
+                  SpringMVC Chap5——SpringMVC 完全注解开发 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments utterances-container"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Fantast</span>
+</div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+    <span title="站点总字数">986k</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">45:38</span>
+  </span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script><script src="/js/bookmark.js"></script>
+
+  
+<script src="https://cdn.jsdelivr.net/npm/hexo-generator-searchdb@1.4.0/dist/search.js" integrity="sha256-vXZMYLEqsROAXkEw93GGIvaB2ab+QW6w3+1ahD9nXXA=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdn.jsdelivr.net/npm/mathjax@3.2.0/es5/tex-mml-chtml.js","integrity":"sha256-r+3itOMtGGjap0x+10hu6jW/gZCzxHsoKrOd7gyRSGY="}}</script>
+<script src="/js/third-party/math/mathjax.js"></script>
+
+
+<script class="next-config" data-name="utterances" type="application/json">{"enable":true,"repo":"Fantast416/myblog-comment","issue_term":"pathname","theme":"github-light"}</script>
+<script src="/js/third-party/comments/utterances.js"></script>
+
+</body>
+</html>

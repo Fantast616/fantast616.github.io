@@ -1,0 +1,606 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.2.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css" integrity="sha256-mUZM63G8m73Mcidfrv5E+Y61y7a12O5mW4ezU3bxqW4=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"blog.fantast.top","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.9.0","exturl":false,"sidebar":{"position":"left","width":250,"display":"always","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":true,"color":"#222","save":"manual"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"utterances","storage":true,"lazyload":false,"nav":null,"activeClass":"utterances"},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+<meta name="description" content="Maven Chap3——使用Maven IDEA环境">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Maven Chap3——使用Maven IDEA环境">
+<meta property="og:url" content="https://blog.fantast.top/2022/11/26/672a767ba264/index.html">
+<meta property="og:site_name" content="Fantast&#39;s Blog">
+<meta property="og:description" content="Maven Chap3——使用Maven IDEA环境">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2022-11-26T14:38:19.000Z">
+<meta property="article:modified_time" content="2022-11-27T03:55:59.440Z">
+<meta property="article:author" content="Fantast">
+<meta property="article:tag" content="Maven">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://blog.fantast.top/2022/11/26/672a767ba264/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://blog.fantast.top/2022/11/26/672a767ba264/","path":"2022/11/26/672a767ba264/","title":"Maven Chap3——使用Maven IDEA环境"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Maven Chap3——使用Maven IDEA环境 | Fantast's Blog</title>
+  
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<link rel="alternate" href="/atom.xml" title="Fantast's Blog" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Fantast's Blog</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li>
+        <li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li>
+        <li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li>
+        <li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li>
+        <li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%80%E5%88%9B%E5%BB%BA%E7%88%B6%E5%B7%A5%E7%A8%8B"><span class="nav-text">一、创建父工程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BA%8C%E5%88%9B%E5%BB%BAjava%E6%A8%A1%E5%9D%97%E5%B7%A5%E7%A8%8B"><span class="nav-text">二、创建JAVA模块工程：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%89%E5%88%9B%E5%BB%BAweb%E6%A8%A1%E5%9D%97%E5%B7%A5%E7%A8%8B"><span class="nav-text">三、创建Web模块工程</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%9B%B8%E5%85%B3web%E8%AE%BE%E5%AE%9A"><span class="nav-text">1、相关Web设定：</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9B%9B%E4%B8%80%E4%BA%9B%E5%85%B6%E4%BB%96%E6%93%8D%E4%BD%9C"><span class="nav-text">四、一些其他操作：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BA%94%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F%E6%A6%82%E5%BF%B5"><span class="nav-text">五、生命周期概念：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%AD%E6%8F%92%E4%BB%B6%E5%92%8C%E7%9B%AE%E6%A0%87"><span class="nav-text">六、插件和目标：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%83%E4%BB%93%E5%BA%93"><span class="nav-text">七、仓库：</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Fantast"
+      src="/images/avatar.webp">
+  <p class="site-author-name" itemprop="name">Fantast</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">198</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">50</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">110</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/fantast416" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;fantast416" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:fantast416@gmail.com" title="E-Mail → mailto:fantast416@gmail.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll site-overview-item animated">
+    <div class="links-of-blogroll-title"><i class="fa fa-globe fa-fw"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://www.zhihu.com/people/shuo-shuo-3-41" title="https:&#x2F;&#x2F;www.zhihu.com&#x2F;people&#x2F;shuo-shuo-3-41" rel="noopener" target="_blank">ZhiHu</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="http://www.next.zju.edu.cn/" title="http:&#x2F;&#x2F;www.next.zju.edu.cn&#x2F;" rel="noopener" target="_blank">NextLab</a>
+        </li>
+    </ul>
+  </div>
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://blog.fantast.top/2022/11/26/672a767ba264/">
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.webp">
+      <meta itemprop="name" content="Fantast">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Fantast's Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Maven Chap3——使用Maven IDEA环境
+        </h1>
+
+        <div class="post-meta-container">
+          
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2022-11-26 22:38:19" itemprop="dateCreated datePublished" datetime="2022-11-26T22:38:19+08:00">2022-11-26</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2022-11-27 11:55:59" itemprop="dateModified" datetime="2022-11-27T11:55:59+08:00">2022-11-27</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E2%91%A8-%E5%B7%A5%E7%A8%8B%E7%B1%BB%E7%AC%94%E8%AE%B0/" itemprop="url" rel="index"><span itemprop="name">⑨ 工程类笔记</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E2%91%A8-%E5%B7%A5%E7%A8%8B%E7%B1%BB%E7%AC%94%E8%AE%B0/Maven/" itemprop="url" rel="index"><span itemprop="name">Maven</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>2k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>6 分钟</span>
+    </span>
+</div>
+
+            <div class="post-description">Maven Chap3——使用Maven IDEA环境</div>
+            <div class="post-remind">Google Chrome is recommended, otherwise the image size may be wrong</div>
+            <div class="post-remind">FireFox is not recommended,Because it does not support the image zoom property</div>
+        </div>
+        
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h3 id="一创建父工程">一、创建父工程</h3>
+<ul>
+<li><p>创建一个maven的project</p></li>
+<li><p>开启自动导入，因为 Project、Module 新创建或 pom.xml
+每次修改时都应该让 IDEA 重新加载 Maven 信息。这对 Maven
+目录结构认定、Java 源程序编译、依赖 jar
+包的导入都有非常关键的影响。</p></li>
+<li><p>另外也可以通过 IDEA 的 Settings 设置来开启：</p></li>
+</ul>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/image-20221126224236617.png" /></p>
+<ul>
+<li>每次创建 Project 后都需要设置 Maven 家目录位置，</li>
+<li>否则 IDEA 将使用内置的 Maven
+核心程序（不稳定）并使用默认的本地仓库位置。配置之后，IDEA
+会根据我们在这里指定的 Maven 家目录自动识别到我们在 settings.xml
+配置文件中指定的本地仓库。</li>
+</ul>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/image-20221126224741288.png" /></p>
+<h3 id="二创建java模块工程">二、创建JAVA模块工程：</h3>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/image-20221126224858569.png" /></p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/image-20221126224903591.png" /></p>
+<h3 id="三创建web模块工程">三、创建Web模块工程</h3>
+<ul>
+<li><p>按照前面的同样操作创建模块，<strong>此时</strong>这个模块其实还是一个<strong>Java模块</strong>。</p></li>
+<li><p>修改打包方式</p></li>
+</ul>
+<h4 id="相关web设定">1、相关Web设定：</h4>
+<p>首先打开项目结构菜单</p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/image-20221126225025008.png" /></p>
+<p>然后到 Facets 下查看 IDEA 是否已经帮我们自动生成了 Web
+设定。正常来说只要我们确实设置了打包方式为 war，那么 IDEA 2019
+版就会自动生成 Web 设定。</p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/image-20221126225036625.png" /></p>
+<p>另外，对于 IDEA 2018 诸版本没有自动生成 Web
+设定，那么请参照下面两图，我们自己创建：</p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/image-20221126225044844.png" /></p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/image-20221126225050661.png" /></p>
+<ul>
+<li>借助IDEA生成web.xml</li>
+</ul>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/image-20221126225102853.png" /></p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/image-20221126225109037.png" /></p>
+<ul>
+<li><p>设置Web资源的根目录：</p></li>
+<li><p>结合 Maven 的目录结构，Web 资源的根目录需要设置为 src/main/webapp
+目录。</p></li>
+</ul>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/image-20221126225130334.png" /></p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/image-20221126225138583.png" /></p>
+<h3 id="四一些其他操作">四、一些其他操作：</h3>
+<ul>
+<li>IDEA中可以直接执行Maven命令，如果需要的话</li>
+<li>可以在IDEA中查看某个模块的依赖信息</li>
+<li>导入工程：
+<ul>
+<li>Git</li>
+<li>工程目录，记得设置Maven home directory</li>
+</ul></li>
+<li>导入模块：
+<ul>
+<li>先将模块复制到我们的目录下</li>
+<li>然后通过Project Settings - Modules - Import Module 选中
+为Maven模块即可</li>
+<li>完成导入后，需要修改刚才导入的module中pox.xml的父工程坐标为我们现有的父工程坐标</li>
+</ul></li>
+</ul>
+<h3 id="五生命周期概念">五、生命周期概念：</h3>
+<p>​ 为了让构建过程自动化完成，Maven
+设定了三个生命周期，生命周期中的每一个环节对应构建过程中的一个操作。</p>
+<table>
+<colgroup>
+<col style="width: 14%" />
+<col style="width: 14%" />
+<col style="width: 71%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>生命周期名称</th>
+<th style="text-align: center;">作用</th>
+<th>各个环节</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Clean</td>
+<td style="text-align: center;">清理操作相关</td>
+<td>pre-clean<br />clean <br />post-clean</td>
+</tr>
+<tr class="even">
+<td>Site</td>
+<td style="text-align: center;">生成站点相关</td>
+<td>pre-site <br />site<br />post-site <br />deploy-site</td>
+</tr>
+<tr class="odd">
+<td>Default</td>
+<td style="text-align: center;">主要构建过程</td>
+<td>validate<br />generate-sources<br />process-sources<br />generate-resources<br />process-resources
+复制并处理资源文件，至目标目录，准备打包。 <br />compile 编译项目 main
+目录下的源代码<br />process-classes <br />generate-test-sources
+<br />process-test-sources <br />generate-test-resources
+<br />process-test-resources 复制并处理资源文件，至目标测试目录。
+<br />test-compile 编译测试源代码。 <br />process-test-classes test
+使用合适的单元测试框架运行测试。这些测试代码不会被打包或部署。<br />prepare-package
+package 接受编译好的代码，打包成可发布的格式，如JAR。
+<br />pre-integration-test <br />integration-test
+<br />post-integration-test <br />verify
+<br />install将包安装至本地仓库，以让其它项目依赖。
+<br />deploy将最终的包复制到远程的仓库，以让其它开发人员共享；或者部署到服务器上运行（需借助插件，例如：cargo）。</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>前面三个生命周期彼此是独立的。</li>
+<li>在任何一个生命周期内部，执行任何一个具体环节的操作，都是从本周期最初的位置开始执行，直到指定的地方。</li>
+</ul>
+<p>Maven
+之所以这么设计其实就是为了提高构建过程的自动化程度：让使用者只关心最终要干的即可，过程中的各个环节是自动执行的</p>
+<h3 id="六插件和目标">六、插件和目标：</h3>
+<ul>
+<li><p>Maven 的核心程序仅仅负责宏观调度，不做具体工作。具体工作都是由
+Maven 插件完成的。例如：编译就是由 maven-compiler-plugin-3.1.jar
+插件来执行的</p></li>
+<li><p>一个插件可以对应多个目标，而每一个目标都和生命周期中的某一个环节对应。</p>
+<p>Default 生命周期中有 compile 和 test-compile
+两个和编译相关的环节，这两个环节对应 compile 和 test-compile
+两个目标，而这两个目标都是由 maven-compiler-plugin-3.1.jar
+插件来执行的。</p></li>
+</ul>
+<h3 id="七仓库">七、仓库：</h3>
+<ul>
+<li>本地仓库：在当前电脑上，为电脑上所有 Maven 工程服务</li>
+<li>远程仓库：需要联网
+<ul>
+<li>局域网：我们自己搭建的 Maven 私服，例如使用 Nexus 技术。</li>
+<li>Internet
+<ul>
+<li>中央仓库</li>
+<li>镜像仓库：内容和中央仓库保持一致，但是能够分担中央仓库的负载，同时让用户能够就近访问提高下载速度，例如：Nexus
+aliyun</li>
+</ul></li>
+</ul></li>
+</ul>
+<p>建议：不要中央仓库和阿里云镜像混用，否则 jar
+包来源不纯，彼此冲突。</p>
+
+    </div>
+
+    
+    
+    
+      
+  <div class="popular-posts-header">相关文章</div>
+  <ul class="popular-posts">
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2022\11\27\d75a3ba3c1a2\" rel="bookmark">Maven Chap4——Maven单一架构案例</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2022\11\24\857b065dd01a\" rel="bookmark">Chap2 Maven的命令行使用</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2022\11\24\d526879dd1ca\" rel="bookmark">Maven Chap1——概述与解压和配置</a></div>
+    </li>
+  </ul>
+
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Maven/" rel="tag"># Maven</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2022/11/24/857b065dd01a/" rel="prev" title="Chap2 Maven的命令行使用">
+                  <i class="fa fa-chevron-left"></i> Chap2 Maven的命令行使用
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2022/11/27/d75a3ba3c1a2/" rel="next" title="Maven Chap4——Maven单一架构案例">
+                  Maven Chap4——Maven单一架构案例 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments utterances-container"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Fantast</span>
+</div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+    <span title="站点总字数">986k</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">45:38</span>
+  </span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script><script src="/js/bookmark.js"></script>
+
+  
+<script src="https://cdn.jsdelivr.net/npm/hexo-generator-searchdb@1.4.0/dist/search.js" integrity="sha256-vXZMYLEqsROAXkEw93GGIvaB2ab+QW6w3+1ahD9nXXA=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdn.jsdelivr.net/npm/mathjax@3.2.0/es5/tex-mml-chtml.js","integrity":"sha256-r+3itOMtGGjap0x+10hu6jW/gZCzxHsoKrOd7gyRSGY="}}</script>
+<script src="/js/third-party/math/mathjax.js"></script>
+
+
+<script class="next-config" data-name="utterances" type="application/json">{"enable":true,"repo":"Fantast416/myblog-comment","issue_term":"pathname","theme":"github-light"}</script>
+<script src="/js/third-party/comments/utterances.js"></script>
+
+</body>
+</html>

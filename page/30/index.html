@@ -157,18 +157,18 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">172</span>
+          <span class="site-state-item-count">198</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
           <a href="/categories/">
-        <span class="site-state-item-count">45</span>
+        <span class="site-state-item-count">50</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
           <a href="/tags/">
-        <span class="site-state-item-count">102</span>
+        <span class="site-state-item-count">110</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -228,7 +228,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://blog.fantast.top/2022/01/04/16c9f87609b5/">
+    <link itemprop="mainEntityOfPage" href="https://blog.fantast.top/2022/01/30/2e7ebd82e85d/">
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.webp">
       <meta itemprop="name" content="Fantast">
@@ -240,7 +240,7 @@
     </span>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
-          <a href="/2022/01/04/16c9f87609b5/" class="post-title-link" itemprop="url">机器学习基础系列笔记3——反卷积Deconvolution</a>
+          <a href="/2022/01/30/2e7ebd82e85d/" class="post-title-link" itemprop="url">java系列笔记4——java异常处理</a>
         </h2>
 
         <div class="post-meta-container">
@@ -252,14 +252,14 @@
       </span>
       <span class="post-meta-item-text">发表于</span>
 
-      <time title="创建时间：2022-01-04 09:31:19" itemprop="dateCreated datePublished" datetime="2022-01-04T09:31:19+08:00">2022-01-04</time>
+      <time title="创建时间：2022-01-30 17:30:19" itemprop="dateCreated datePublished" datetime="2022-01-30T17:30:19+08:00">2022-01-30</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2022-11-19 18:43:31" itemprop="dateModified" datetime="2022-11-19T18:43:31+08:00">2022-11-19</time>
+      <time title="修改时间：2022-11-19 18:44:25" itemprop="dateModified" datetime="2022-11-19T18:44:25+08:00">2022-11-19</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -267,11 +267,11 @@
       </span>
       <span class="post-meta-item-text">分类于</span>
         <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/%E2%91%A1-%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" itemprop="url" rel="index"><span itemprop="name">②  深度学习笔记</span></a>
+          <a href="/categories/%E2%91%A4-%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80%E7%B1%BB%E7%AC%94%E8%AE%B0/" itemprop="url" rel="index"><span itemprop="name">⑤  编程语言类笔记</span></a>
         </span>
           ，
         <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/%E2%91%A1-%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/Basic%E7%B3%BB%E5%88%97%E7%AC%94%E8%AE%B0/" itemprop="url" rel="index"><span itemprop="name">Basic系列笔记</span></a>
+          <a href="/categories/%E2%91%A4-%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80%E7%B1%BB%E7%AC%94%E8%AE%B0/java%E5%85%A5%E9%97%A8%E7%B3%BB%E5%88%97%E7%AC%94%E8%AE%B0/" itemprop="url" rel="index"><span itemprop="name">java入门系列笔记</span></a>
         </span>
     </span>
 
@@ -282,14 +282,14 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">本文字数：</span>
-      <span>1.3k</span>
+      <span>17k</span>
     </span>
     <span class="post-meta-item" title="阅读时长">
       <span class="post-meta-item-icon">
         <i class="far fa-clock"></i>
       </span>
       <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>4 分钟</span>
+      <span>46 分钟</span>
     </span>
 </div>
 
@@ -301,10 +301,10 @@
     
     
     <div class="post-body" itemprop="articleBody">
-          <p>Deconvolution常用于进行图像的上采样，恢复分辨率。又称Transposed-convolution或是Fractionally-strided convolution。</p>
+          <p>本篇笔记为java系列笔记关于java异常处理的笔记，包括捕获异常、抛出异常、自定义异常、断言、JDK Logging、Commons Logging、Log4j等内容</p>
           <!--noindex-->
             <div class="post-button">
-              <a class="btn" href="/2022/01/04/16c9f87609b5/">
+              <a class="btn" href="/2022/01/30/2e7ebd82e85d/">
                 阅读全文 &raquo;
               </a>
             </div>
@@ -337,7 +337,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://blog.fantast.top/2021/12/23/9bb28e693fc9/">
+    <link itemprop="mainEntityOfPage" href="https://blog.fantast.top/2022/01/30/5dc10d37c664/">
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.webp">
       <meta itemprop="name" content="Fantast">
@@ -349,7 +349,7 @@
     </span>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
-          <a href="/2021/12/23/9bb28e693fc9/" class="post-title-link" itemprop="url">ML2021课程系列笔记4——海森矩阵计算（课程作业）</a>
+          <a href="/2022/01/30/5dc10d37c664/" class="post-title-link" itemprop="url">java系列笔记3——java核心类</a>
         </h2>
 
         <div class="post-meta-container">
@@ -361,14 +361,14 @@
       </span>
       <span class="post-meta-item-text">发表于</span>
 
-      <time title="创建时间：2021-12-23 10:29:19" itemprop="dateCreated datePublished" datetime="2021-12-23T10:29:19+08:00">2021-12-23</time>
+      <time title="创建时间：2022-01-30 10:13:19" itemprop="dateCreated datePublished" datetime="2022-01-30T10:13:19+08:00">2022-01-30</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2022-11-19 18:43:31" itemprop="dateModified" datetime="2022-11-19T18:43:31+08:00">2022-11-19</time>
+      <time title="修改时间：2022-11-19 18:44:25" itemprop="dateModified" datetime="2022-11-19T18:44:25+08:00">2022-11-19</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -376,11 +376,11 @@
       </span>
       <span class="post-meta-item-text">分类于</span>
         <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/%E2%91%A1-%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" itemprop="url" rel="index"><span itemprop="name">②  深度学习笔记</span></a>
+          <a href="/categories/%E2%91%A4-%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80%E7%B1%BB%E7%AC%94%E8%AE%B0/" itemprop="url" rel="index"><span itemprop="name">⑤  编程语言类笔记</span></a>
         </span>
           ，
         <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/%E2%91%A1-%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/ML2021%E8%AF%BE%E7%A8%8B%E7%B3%BB%E5%88%97%E7%AC%94%E8%AE%B0/" itemprop="url" rel="index"><span itemprop="name">ML2021课程系列笔记</span></a>
+          <a href="/categories/%E2%91%A4-%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80%E7%B1%BB%E7%AC%94%E8%AE%B0/java%E5%85%A5%E9%97%A8%E7%B3%BB%E5%88%97%E7%AC%94%E8%AE%B0/" itemprop="url" rel="index"><span itemprop="name">java入门系列笔记</span></a>
         </span>
     </span>
 
@@ -391,14 +391,14 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">本文字数：</span>
-      <span>5k</span>
+      <span>21k</span>
     </span>
     <span class="post-meta-item" title="阅读时长">
       <span class="post-meta-item-icon">
         <i class="far fa-clock"></i>
       </span>
       <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>14 分钟</span>
+      <span>59 分钟</span>
     </span>
 </div>
 
@@ -410,10 +410,10 @@
     
     
     <div class="post-body" itemprop="articleBody">
-          <p>该篇记录了海森矩阵相关计算的代码</p>
+          <p>本篇笔记为java系列笔记关于java核心类的笔记，包括字符串、编码、StringBuilder、StringJoiner、包装、JavaBean、枚举、记录、BigInteger、BigDecimal、常用工具类等内容。</p>
           <!--noindex-->
             <div class="post-button">
-              <a class="btn" href="/2021/12/23/9bb28e693fc9/">
+              <a class="btn" href="/2022/01/30/5dc10d37c664/">
                 阅读全文 &raquo;
               </a>
             </div>
@@ -446,7 +446,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://blog.fantast.top/2021/12/20/cedd3c9597c5/">
+    <link itemprop="mainEntityOfPage" href="https://blog.fantast.top/2022/01/29/3f72f5c3506a/">
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.webp">
       <meta itemprop="name" content="Fantast">
@@ -458,7 +458,7 @@
     </span>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
-          <a href="/2021/12/20/cedd3c9597c5/" class="post-title-link" itemprop="url">ML2021课程系列笔记3——卷积神经网络CNN</a>
+          <a href="/2022/01/29/3f72f5c3506a/" class="post-title-link" itemprop="url">java系列笔记2——java面向对象编程基础</a>
         </h2>
 
         <div class="post-meta-container">
@@ -470,14 +470,14 @@
       </span>
       <span class="post-meta-item-text">发表于</span>
 
-      <time title="创建时间：2021-12-20 10:29:19" itemprop="dateCreated datePublished" datetime="2021-12-20T10:29:19+08:00">2021-12-20</time>
+      <time title="创建时间：2022-01-29 11:34:19" itemprop="dateCreated datePublished" datetime="2022-01-29T11:34:19+08:00">2022-01-29</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2022-11-19 18:43:31" itemprop="dateModified" datetime="2022-11-19T18:43:31+08:00">2022-11-19</time>
+      <time title="修改时间：2022-11-19 18:44:25" itemprop="dateModified" datetime="2022-11-19T18:44:25+08:00">2022-11-19</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -485,11 +485,11 @@
       </span>
       <span class="post-meta-item-text">分类于</span>
         <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/%E2%91%A1-%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" itemprop="url" rel="index"><span itemprop="name">②  深度学习笔记</span></a>
+          <a href="/categories/%E2%91%A4-%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80%E7%B1%BB%E7%AC%94%E8%AE%B0/" itemprop="url" rel="index"><span itemprop="name">⑤  编程语言类笔记</span></a>
         </span>
           ，
         <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/%E2%91%A1-%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/ML2021%E8%AF%BE%E7%A8%8B%E7%B3%BB%E5%88%97%E7%AC%94%E8%AE%B0/" itemprop="url" rel="index"><span itemprop="name">ML2021课程系列笔记</span></a>
+          <a href="/categories/%E2%91%A4-%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80%E7%B1%BB%E7%AC%94%E8%AE%B0/java%E5%85%A5%E9%97%A8%E7%B3%BB%E5%88%97%E7%AC%94%E8%AE%B0/" itemprop="url" rel="index"><span itemprop="name">java入门系列笔记</span></a>
         </span>
     </span>
 
@@ -500,7 +500,225 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">本文字数：</span>
-      <span>4.3k</span>
+      <span>23k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>1:04</span>
+    </span>
+</div>
+
+        </div>
+        
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <p>本篇笔记为java系列笔记面向对象编程内容，包含java程序类、构造、重载、继承、多态、抽象、接口、静态、包、作用域、内部类等多个需要注意的基础知识点</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2022/01/29/3f72f5c3506a/">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      
+
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://blog.fantast.top/2022/01/28/3f464858b7bd/">
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.webp">
+      <meta itemprop="name" content="Fantast">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Fantast's Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2022/01/28/3f464858b7bd/" class="post-title-link" itemprop="url">java系列笔记1——java基础</a>
+        </h2>
+
+        <div class="post-meta-container">
+          
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2022-01-28 23:34:19" itemprop="dateCreated datePublished" datetime="2022-01-28T23:34:19+08:00">2022-01-28</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2022-11-19 18:44:25" itemprop="dateModified" datetime="2022-11-19T18:44:25+08:00">2022-11-19</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E2%91%A4-%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80%E7%B1%BB%E7%AC%94%E8%AE%B0/" itemprop="url" rel="index"><span itemprop="name">⑤  编程语言类笔记</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E2%91%A4-%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80%E7%B1%BB%E7%AC%94%E8%AE%B0/java%E5%85%A5%E9%97%A8%E7%B3%BB%E5%88%97%E7%AC%94%E8%AE%B0/" itemprop="url" rel="index"><span itemprop="name">java入门系列笔记</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>5.9k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>16 分钟</span>
+    </span>
+</div>
+
+        </div>
+        
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <p>本篇笔记为java系列笔记基础内容，包含java程序基本结构、数据类型、浮点数、字符、数组、输入输出、引用类型变量、Switch表达式、Yield返回值、For each循环等多个需要注意的基础知识点</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2022/01/28/3f464858b7bd/">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      
+
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://blog.fantast.top/2022/01/27/7d2ace115a28/">
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.webp">
+      <meta itemprop="name" content="Fantast">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Fantast's Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2022/01/27/7d2ace115a28/" class="post-title-link" itemprop="url">《UniFormer:Unifying Convolution and Self-attention for Visual Recognition》</a>
+        </h2>
+
+        <div class="post-meta-container">
+          
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2022-01-27 18:12:19" itemprop="dateCreated datePublished" datetime="2022-01-27T18:12:19+08:00">2022-01-27</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2022-11-19 18:43:51" itemprop="dateModified" datetime="2022-11-19T18:43:51+08:00">2022-11-19</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E2%91%A2-%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB%E7%AC%94%E8%AE%B0/" itemprop="url" rel="index"><span itemprop="name">③  论文阅读笔记</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E2%91%A2-%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB%E7%AC%94%E8%AE%B0/CV%E7%9B%B8%E5%85%B3%E8%AE%BA%E6%96%87/" itemprop="url" rel="index"><span itemprop="name">CV相关论文</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>4.4k</span>
     </span>
     <span class="post-meta-item" title="阅读时长">
       <span class="post-meta-item-icon">
@@ -519,228 +737,10 @@
     
     
     <div class="post-body" itemprop="articleBody">
-          <p>该篇记录了一个用于影像处理的非常经典的网络架构：CNN网络，其中阐明了CNN架构的设计过程以及设计理念，同时也提及了如何设计网络架构能够更好的为我们的机器学习任务目标进行服务。</p>
+          <p>提出了UniFormer，将3D卷积和时空自注意力机制结合在一个简洁的transformer结构中。能够同时处理局部冗余和全局依赖，其主要包括三个模块：Dynamic Position Embedding( DPE )\Multi-Head Relation Aggregator ( MHRA )\Feed-Forward Network( FFN )</p>
           <!--noindex-->
             <div class="post-button">
-              <a class="btn" href="/2021/12/20/cedd3c9597c5/">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      
-
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://blog.fantast.top/2021/12/19/8dab9ca264e4/">
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.webp">
-      <meta itemprop="name" content="Fantast">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Fantast's Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2021/12/19/8dab9ca264e4/" class="post-title-link" itemprop="url">ML2021课程系列笔记2——机器学习训练任务攻略</a>
-        </h2>
-
-        <div class="post-meta-container">
-          
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2021-12-19 10:29:19" itemprop="dateCreated datePublished" datetime="2021-12-19T10:29:19+08:00">2021-12-19</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2022-11-19 18:43:31" itemprop="dateModified" datetime="2022-11-19T18:43:31+08:00">2022-11-19</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/%E2%91%A1-%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" itemprop="url" rel="index"><span itemprop="name">②  深度学习笔记</span></a>
-        </span>
-          ，
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/%E2%91%A1-%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/ML2021%E8%AF%BE%E7%A8%8B%E7%B3%BB%E5%88%97%E7%AC%94%E8%AE%B0/" itemprop="url" rel="index"><span itemprop="name">ML2021课程系列笔记</span></a>
-        </span>
-    </span>
-
-  
-    <span class="post-meta-break"></span>
-    <span class="post-meta-item" title="本文字数">
-      <span class="post-meta-item-icon">
-        <i class="far fa-file-word"></i>
-      </span>
-      <span class="post-meta-item-text">本文字数：</span>
-      <span>11k</span>
-    </span>
-    <span class="post-meta-item" title="阅读时长">
-      <span class="post-meta-item-icon">
-        <i class="far fa-clock"></i>
-      </span>
-      <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>30 分钟</span>
-    </span>
-</div>
-
-        </div>
-        
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <p>本篇为机器学习训练任务攻略,其中将会介绍一些机器学习深度学习训练过程中，容易发生的一些问题例如ModelBias,OverFitting等，以及经常使用的用于Optimization的一些基础Tricks</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2021/12/19/8dab9ca264e4/">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      
-
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://blog.fantast.top/2021/12/17/d3d6f910aaf2/">
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.webp">
-      <meta itemprop="name" content="Fantast">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Fantast's Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2021/12/17/d3d6f910aaf2/" class="post-title-link" itemprop="url">ML2021课程系列笔记1——DeepLearning基本介绍</a>
-        </h2>
-
-        <div class="post-meta-container">
-          
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2021-12-17 19:17:19" itemprop="dateCreated datePublished" datetime="2021-12-17T19:17:19+08:00">2021-12-17</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2022-11-19 18:43:31" itemprop="dateModified" datetime="2022-11-19T18:43:31+08:00">2022-11-19</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/%E2%91%A1-%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" itemprop="url" rel="index"><span itemprop="name">②  深度学习笔记</span></a>
-        </span>
-          ，
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/%E2%91%A1-%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/ML2021%E8%AF%BE%E7%A8%8B%E7%B3%BB%E5%88%97%E7%AC%94%E8%AE%B0/" itemprop="url" rel="index"><span itemprop="name">ML2021课程系列笔记</span></a>
-        </span>
-    </span>
-
-  
-    <span class="post-meta-break"></span>
-    <span class="post-meta-item" title="本文字数">
-      <span class="post-meta-item-icon">
-        <i class="far fa-file-word"></i>
-      </span>
-      <span class="post-meta-item-text">本文字数：</span>
-      <span>4k</span>
-    </span>
-    <span class="post-meta-item" title="阅读时长">
-      <span class="post-meta-item-icon">
-        <i class="far fa-clock"></i>
-      </span>
-      <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>11 分钟</span>
-    </span>
-</div>
-
-        </div>
-        
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <p>本篇为DeepLearning基础相关概念的介绍，Machine Learning整体的过程就是以下的三个基本步骤：1、Function with Unknown Parameters（构建函数）2、Define Loss From Training Data（定义损失） 3、Optimization（优化参数）。本篇将围绕这三个步骤进行简单讲解：</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2021/12/17/d3d6f910aaf2/">
+              <a class="btn" href="/2022/01/27/7d2ace115a28/">
                 阅读全文 &raquo;
               </a>
             </div>
@@ -766,7 +766,7 @@
 
 
   <nav class="pagination">
-    <a class="extend prev" rel="prev" href="/page/29/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/29/">29</a><span class="page-number current">30</span><a class="page-number" href="/page/31/">31</a><span class="space">&hellip;</span><a class="page-number" href="/page/35/">35</a><a class="extend next" rel="next" href="/page/31/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
+    <a class="extend prev" rel="prev" href="/page/29/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/29/">29</a><span class="page-number current">30</span><a class="page-number" href="/page/31/">31</a><span class="space">&hellip;</span><a class="page-number" href="/page/40/">40</a><a class="extend next" rel="next" href="/page/31/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
   </nav>
 
 </div>
@@ -789,13 +789,13 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-line"></i>
     </span>
-    <span title="站点总字数">838k</span>
+    <span title="站点总字数">986k</span>
   </span>
   <span class="post-meta-item">
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">38:48</span>
+    <span title="站点阅读时长">45:38</span>
   </span>
 </div>
 <div class="busuanzi-count">
