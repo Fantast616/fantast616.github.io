@@ -1,0 +1,601 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.2.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css" integrity="sha256-mUZM63G8m73Mcidfrv5E+Y61y7a12O5mW4ezU3bxqW4=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"blog.fantast.top","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.9.0","exturl":false,"sidebar":{"position":"left","width":250,"display":"always","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":true,"color":"#222","save":"manual"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"utterances","storage":true,"lazyload":false,"nav":null,"activeClass":"utterances"},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+<meta name="description" content="知识图谱——知识图谱的存储与查询">
+<meta property="og:type" content="article">
+<meta property="og:title" content="知识图谱——知识图谱的存储与查询">
+<meta property="og:url" content="https://blog.fantast.top/2022/12/21/40e02339b7ea/index.html">
+<meta property="og:site_name" content="Fantast&#39;s Blog">
+<meta property="og:description" content="知识图谱——知识图谱的存储与查询">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2022-12-21T00:13:19.000Z">
+<meta property="article:modified_time" content="2022-12-21T12:02:53.150Z">
+<meta property="article:author" content="Fantast">
+<meta property="article:tag" content="course">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://blog.fantast.top/2022/12/21/40e02339b7ea/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://blog.fantast.top/2022/12/21/40e02339b7ea/","path":"2022/12/21/40e02339b7ea/","title":"知识图谱——知识图谱的存储与查询"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>知识图谱——知识图谱的存储与查询 | Fantast's Blog</title>
+  
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<link rel="alternate" href="/atom.xml" title="Fantast's Blog" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Fantast's Blog</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li>
+        <li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li>
+        <li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li>
+        <li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li>
+        <li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%80%E5%9F%BA%E4%BA%8E%E5%85%B3%E7%B3%BB%E5%9E%8B%E6%95%B0%E6%8D%AE%E5%BA%93%E7%9A%84%E7%9F%A5%E8%AF%86%E5%9B%BE%E8%B0%B1%E5%AD%98%E5%82%A8"><span class="nav-text">一、基于关系型数据库的知识图谱存储</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%9B%BE%E7%BB%93%E6%9E%84%E6%A8%A1%E5%9E%8B"><span class="nav-text">1、图结构模型：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%B1%9E%E6%80%A7%E8%A1%A8%E5%AD%98%E5%82%A8property-tables"><span class="nav-text">3、属性表存储：Property Tables：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BA%8C%E5%85%83%E8%A1%A8"><span class="nav-text">4、二元表：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%85%A8%E7%B4%A2%E5%BC%95%E7%BB%93%E6%9E%84-exhaustive-indexing"><span class="nav-text">5、全索引结构 Exhaustive
+Indexing:</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-text">6、总结：</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BA%8C%E5%9F%BA%E4%BA%8E%E5%8E%9F%E7%94%9F%E5%9B%BE%E6%95%B0%E6%8D%AE%E5%BA%93%E7%9A%84%E7%9F%A5%E8%AF%86%E5%9B%BE%E8%B0%B1%E5%AD%98%E5%82%A8"><span class="nav-text">二、基于原生图数据库的知识图谱存储</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E9%9C%80%E8%A6%81%E5%9B%BE%E6%95%B0%E6%8D%AE%E5%BA%93"><span class="nav-text">1、为什么需要图数据库？</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%9B%BE%E6%95%B0%E6%8D%AE%E5%BA%93%E7%9A%84%E4%BC%98%E5%8A%BF"><span class="nav-text">2、图数据库的优势：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#neo4j%E5%9B%BE%E6%95%B0%E6%8D%AE%E5%BA%93"><span class="nav-text">3、Neo4j图数据库：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BB%80%E4%B9%88%E6%97%B6%E5%80%99%E4%BD%BF%E7%94%A8%E5%9B%BE%E6%95%B0%E6%8D%AE%E5%BA%93"><span class="nav-text">4、什么时候使用图数据库？</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%89%E5%8E%9F%E7%94%9F%E5%9B%BE%E6%95%B0%E6%8D%AE%E5%BA%93%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86"><span class="nav-text">三、原生图数据库实现原理：</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%9F%A5%E8%AF%A2%E5%A4%8D%E6%9D%82%E5%BA%A6"><span class="nav-text">1、查询复杂度：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%89%A9%E7%90%86%E5%AD%98%E5%82%A8"><span class="nav-text">2、物理存储：</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9B%9B%E7%9F%A5%E8%AF%86%E5%9B%BE%E8%B0%B1%E5%AD%98%E5%82%A8%E7%9A%84%E9%80%89%E6%8B%A9"><span class="nav-text">四、知识图谱存储的选择：</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Fantast"
+      src="/images/avatar.webp">
+  <p class="site-author-name" itemprop="name">Fantast</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">204</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">52</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">110</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/fantast416" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;fantast416" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:fantast416@gmail.com" title="E-Mail → mailto:fantast416@gmail.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll site-overview-item animated">
+    <div class="links-of-blogroll-title"><i class="fa fa-globe fa-fw"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://www.zhihu.com/people/shuo-shuo-3-41" title="https:&#x2F;&#x2F;www.zhihu.com&#x2F;people&#x2F;shuo-shuo-3-41" rel="noopener" target="_blank">ZhiHu</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="http://www.next.zju.edu.cn/" title="http:&#x2F;&#x2F;www.next.zju.edu.cn&#x2F;" rel="noopener" target="_blank">NextLab</a>
+        </li>
+    </ul>
+  </div>
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://blog.fantast.top/2022/12/21/40e02339b7ea/">
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.webp">
+      <meta itemprop="name" content="Fantast">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Fantast's Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          知识图谱——知识图谱的存储与查询
+        </h1>
+
+        <div class="post-meta-container">
+          
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2022-12-21 08:13:19 / 修改时间：20:02:53" itemprop="dateCreated datePublished" datetime="2022-12-21T08:13:19+08:00">2022-12-21</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E2%93%BE-%E8%AF%BE%E7%A8%8B%E7%AC%94%E8%AE%B0/" itemprop="url" rel="index"><span itemprop="name">⓾ 课程笔记</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E2%93%BE-%E8%AF%BE%E7%A8%8B%E7%AC%94%E8%AE%B0/%E7%9F%A5%E8%AF%86%E5%9B%BE%E8%B0%B1/" itemprop="url" rel="index"><span itemprop="name">知识图谱</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>2k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>5 分钟</span>
+    </span>
+</div>
+
+            <div class="post-description">知识图谱——知识图谱的存储与查询</div>
+            <div class="post-remind">Google Chrome is recommended, otherwise the image size may be wrong</div>
+            <div class="post-remind">FireFox is not recommended,Because it does not support the image zoom property</div>
+        </div>
+        
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h3
+id="一基于关系型数据库的知识图谱存储">一、基于关系型数据库的知识图谱存储</h3>
+<ul>
+<li>知识图谱的存储需要综合考虑知识结构、图的特点、索引和查询优化等问题。</li>
+<li>典型的知识图谱存储引擎分为基于关系数据库的存储和基于原生图的存储。</li>
+<li>图数据库存储并非必须，例如Wikidata项目后端是MySQL实现的。</li>
+</ul>
+<h4 id="图结构模型">1、图结构模型：</h4>
+<ul>
+<li><p>属性图和RDF图模型实际上都是有向标记图:</p></li>
+<li><p>图上的查询语言：SPARQL</p>
+<ul>
+<li>查询计算问题－》可以转换为－》子图匹配问题</li>
+</ul></li>
+</ul>
+<p><img
+src="C:\Users\Fantast\AppData\Roaming\Typora\typora-user-images\image-20221221130101874.png"
+alt="image-20221221130101874" /> #### 2、最简单的存储方式：</p>
+<ul>
+<li>利用三元组创建一张关系型数据库的表，但是这样会导致查询效率极低，会有很多的self-join操作</li>
+</ul>
+<h4 id="属性表存储property-tables">3、属性表存储：Property Tables：</h4>
+<ul>
+<li>仍然基于传统关系数据库</li>
+<li>基本思想是以实体类型为中心，把属于同一个实体类型的属性组织为一个表，即属性表进行存储。</li>
+<li>但是因为知识图谱和实体数据不同，同一个实体类型的属性可能很不相同，所以可能出现很多空值。</li>
+<li><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/image-20221221130700203.png" /></li>
+</ul>
+<h4 id="二元表">4、二元表：</h4>
+<ul>
+<li>二元表也称为垂直划分表，也是基于关系数据库实现的三元组存储方式。</li>
+<li>基本思想是对三元组按属性分组，为每个属性在关系数据库中建立一个包含（subject、Object）两列的表。</li>
+<li>由于一个知识图谱中属性数量是有限的，表的总体数量是可控的。</li>
+<li>优点是没有空值、也不需要聚类、对于Subject-Subject-Join操作性能好。</li>
+<li>缺点是Insert性能损耗高、并且Subject-Object Join性能差。</li>
+</ul>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/image-20221221130854523.png" /></p>
+<h4 id="全索引结构-exhaustive-indexing">5、全索引结构 Exhaustive
+Indexing:</h4>
+<ul>
+<li><p>性能最好的存储方式是基于全索引结构的存储，典型的实现包括RDF-3X,
+Hexastore等。</p></li>
+<li><p>这种方法也仅维护一张包含(Subject, Predicate,
+Object）的表，但增加多个方面的优化手段。</p>
+<ul>
+<li>第一个优化手段是建立Mapping
+Table，即将所有的字符串首先映射到唯一的数字ID，这一将大大压缩存储空间。</li>
+</ul>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/image-20221221131022916.png" /></p>
+<ul>
+<li>进一步建立六种索引： SPO, SOP, PSO, POS, OPS,
+OSP，即分别建立Subject-Predicate-Object;
+Subject-Object-Predicate；Predicate-Subject-Object
+等六个方面的全索引，显然多种形式的索引覆盖了多个维度的图查询需求。</li>
+<li>同时三元组基于字符串排序，并利用clustered B+
+tree树来组织索引以进一步优化索引检索的效率</li>
+</ul></li>
+</ul>
+<h4 id="总结">6、总结：</h4>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/image-20221221131156389.png" /></p>
+<h3
+id="二基于原生图数据库的知识图谱存储">二、基于原生图数据库的知识图谱存储</h3>
+<h4 id="为什么需要图数据库">1、为什么需要图数据库？</h4>
+<ul>
+<li><p>关系模型将语义关联关系隐藏在外键结构中，无显示表达，并带来关联查询与计算的复杂性</p></li>
+<li><p>数据来源多样性带来大量离群数据（Outlier
+Data），导致数据集的宏观结构愈发复杂和不规整，对于包含大量离群数据的场景，关系模型将造成大量表连接、稀疏行和非空处理</p></li>
+<li><p>互联网的开放世界假设要求数据模型满足高动态和去中心化的扩增数据的能力，<strong>关系模型对表结构的范式要求限制了Schema层的动态性</strong></p></li>
+<li><p>在关系型数据库中，处理多跳查询非常复杂。以及一些场景，不适合用关系型模型来进行</p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/image-20221221153415529.png" /></p></li>
+</ul>
+<p>而知识图谱，需要更加丰富的语义表达能力以及关联查询、关联推理能力。以及像外键而言，没有办法处理自反关系。</p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/image-20221221153526785.png" /></p>
+<h4 id="图数据库的优势">2、图数据库的优势：</h4>
+<figure>
+<img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/image-20221221153651845.png"
+alt="image-20221221153651845" />
+<figcaption aria-hidden="true">image-20221221153651845</figcaption>
+</figure>
+<p>利用图的邻接表来建立索引：</p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/image-20221221153744054.png" /></p>
+<ul>
+<li>自然表达：
+<ul>
+<li>图是十分自然的描述事物关系的方式，更加接近于人脑对客观事物的记忆方式</li>
+</ul></li>
+<li>易于扩展
+<ul>
+<li>图模型更加易于适应变化，例如在图中，临时希望获取历史订单，只需新增边即可</li>
+</ul></li>
+<li>复杂关联查询</li>
+<li>多跳查询性能优化</li>
+</ul>
+<h4 id="neo4j图数据库">3、Neo4j图数据库：</h4>
+<ul>
+<li>属性图是图数据库Neo4J实现的图结构表示模型，在工业界有广泛应用在属性图的术语中，属性图是由顶点（Vertex），边（Edge），标签（Label），关系类型还有属性（Property）组成的有向图</li>
+<li>在属性图中，节点和关系是最重要的实体。节点上包含属性，属性可以以任何键值形式存在</li>
+<li>提供了图查询语言：Cypher</li>
+</ul>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/image-20221221153950344.png" /></p>
+<h4 id="什么时候使用图数据库">4、什么时候使用图数据库？</h4>
+<ul>
+<li>高性能关系查询
+<ul>
+<li>需要快速遍历许多复杂关系的任何用例。这实际上包括欺诈检测，社交网络分析，网络和数据库基础设施等。</li>
+</ul></li>
+<li>模型的灵活性
+<ul>
+<li>任何依赖于添加新数据而不会中断现有查询池的用例。模型灵活性包括链接元数据，版本控制数据和不断添加新关系。</li>
+</ul></li>
+<li>快速和复杂的分析规则
+<ul>
+<li>当必须执行许多复杂的规则时，例如子图的比较。这包括推荐，相似度计算和主数据管理。</li>
+</ul></li>
+</ul>
+<h3 id="三原生图数据库实现原理">三、原生图数据库实现原理：</h3>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/image-20221221154426857.png" /></p>
+<h4 id="查询复杂度">1、查询复杂度：</h4>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/image-20221221154516395.png" /></p>
+<h4 id="物理存储">2、物理存储：</h4>
+<ul>
+<li>暂略</li>
+</ul>
+<h3 id="四知识图谱存储的选择">四、知识图谱存储的选择：</h3>
+<ul>
+<li>知识图谱存储方式的选择需要综合考虑性能、动态扩展、实施成本等多方面综合因素
+息</li>
+<li>区分原生图存储和非原生图存储：
+<ul>
+<li>原生图存储在复杂关联查询和图计算方面有性能优势</li>
+<li>非原生图存储兼容已有工具集通常学习和协调成本会低息</li>
+</ul></li>
+<li>区分RDF图存储和属性图存储：
+<ul>
+<li>RDF存储一般支持推理</li>
+<li>属性图存储通常具有更好的图分析性能优势</li>
+</ul></li>
+<li>在大规模处理情况下，需要考虑与底层大数据存储引擎和上层图计算引擎集成需求</li>
+</ul>
+
+    </div>
+
+    
+    
+    
+      
+  <div class="popular-posts-header">相关文章</div>
+  <ul class="popular-posts">
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2022\12\22\e2f2fc751121\" rel="bookmark">知识图谱——知识图谱的智能问答系统</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2022\12\21\de86117222a4\" rel="bookmark">知识图谱——知识图谱的抽取和构建</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2022\12\20\3e6c4bf0efa1\" rel="bookmark">知识图谱——知识图谱的技术内涵与知识的表示</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2022\12\16\01d290994d84\" rel="bookmark">精益创业</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2022\10\12\f71a1b069441\" rel="bookmark">电子信息工程中数学模型与方法——单元2 系统辨识</a></div>
+    </li>
+  </ul>
+
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/course/" rel="tag"># course</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2022/12/20/3e6c4bf0efa1/" rel="prev" title="知识图谱——知识图谱的技术内涵与知识的表示">
+                  <i class="fa fa-chevron-left"></i> 知识图谱——知识图谱的技术内涵与知识的表示
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2022/12/21/de86117222a4/" rel="next" title="知识图谱——知识图谱的抽取和构建">
+                  知识图谱——知识图谱的抽取和构建 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments utterances-container"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Fantast</span>
+</div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+    <span title="站点总字数">997k</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">46:08</span>
+  </span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script><script src="/js/bookmark.js"></script>
+
+  
+<script src="https://cdn.jsdelivr.net/npm/hexo-generator-searchdb@1.4.0/dist/search.js" integrity="sha256-vXZMYLEqsROAXkEw93GGIvaB2ab+QW6w3+1ahD9nXXA=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdn.jsdelivr.net/npm/mathjax@3.2.0/es5/tex-mml-chtml.js","integrity":"sha256-r+3itOMtGGjap0x+10hu6jW/gZCzxHsoKrOd7gyRSGY="}}</script>
+<script src="/js/third-party/math/mathjax.js"></script>
+
+
+<script class="next-config" data-name="utterances" type="application/json">{"enable":true,"repo":"Fantast416/myblog-comment","issue_term":"pathname","theme":"github-light"}</script>
+<script src="/js/third-party/comments/utterances.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,752 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.2.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css" integrity="sha256-mUZM63G8m73Mcidfrv5E+Y61y7a12O5mW4ezU3bxqW4=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"blog.fantast.top","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.9.0","exturl":false,"sidebar":{"position":"left","width":250,"display":"always","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":true,"color":"#222","save":"manual"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"utterances","storage":true,"lazyload":false,"nav":null,"activeClass":"utterances"},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+<meta name="description" content="知识图谱——知识图谱的技术内涵与知识的表示。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="知识图谱——知识图谱的技术内涵与知识的表示">
+<meta property="og:url" content="https://blog.fantast.top/2022/12/20/3e6c4bf0efa1/index.html">
+<meta property="og:site_name" content="Fantast&#39;s Blog">
+<meta property="og:description" content="知识图谱——知识图谱的技术内涵与知识的表示。">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2022-12-20T11:13:19.000Z">
+<meta property="article:modified_time" content="2022-12-21T12:02:27.250Z">
+<meta property="article:author" content="Fantast">
+<meta property="article:tag" content="course">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://blog.fantast.top/2022/12/20/3e6c4bf0efa1/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://blog.fantast.top/2022/12/20/3e6c4bf0efa1/","path":"2022/12/20/3e6c4bf0efa1/","title":"知识图谱——知识图谱的技术内涵与知识的表示"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>知识图谱——知识图谱的技术内涵与知识的表示 | Fantast's Blog</title>
+  
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<link rel="alternate" href="/atom.xml" title="Fantast's Blog" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Fantast's Blog</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li>
+        <li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li>
+        <li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li>
+        <li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li>
+        <li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%80%E7%9F%A5%E8%AF%86%E5%9B%BE%E8%B0%B1%E7%9A%84%E6%8A%80%E6%9C%AF%E5%86%85%E6%B6%B5%E6%8A%80%E6%9C%AF%E8%A6%81%E7%B4%A0%E5%A6%82%E4%B8%8B"><span class="nav-text">一、知识图谱的技术内涵，技术要素如下：</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%A1%A8%E7%A4%BA%E5%9F%BA%E4%BA%8E%E5%9B%BE%E7%9A%84%E7%9F%A5%E8%AF%86%E8%A1%A8%E7%A4%BA"><span class="nav-text">1、表示：基于图的知识表示：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%AD%98%E5%82%A8%E5%9B%BE%E6%95%B0%E6%8D%AE%E5%AD%98%E5%82%A8%E4%B8%8E%E6%9F%A5%E8%AF%A2"><span class="nav-text">2、存储：图数据存储与查询：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%8A%BD%E5%8F%96"><span class="nav-text">3、抽取：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%9E%8D%E5%90%88"><span class="nav-text">4、融合：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%8E%A8%E7%90%86"><span class="nav-text">5、推理：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%97%AE%E7%AD%94"><span class="nav-text">6、问答：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%88%86%E6%9E%90"><span class="nav-text">7、分析：</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BA%8C%E4%BB%80%E4%B9%88%E6%98%AF%E7%9F%A5%E8%AF%86%E8%A1%A8%E7%A4%BA"><span class="nav-text">二、什么是知识表示？</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF%E7%9F%A5%E8%AF%86%E8%A1%A8%E7%A4%BA"><span class="nav-text">1、什么是知识表示？</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%9F%A5%E8%AF%86%E8%A1%A8%E7%A4%BA%E7%9A%84%E5%BD%A2%E5%BC%8F"><span class="nav-text">2、知识表示的形式：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%9F%A5%E8%AF%86%E7%9A%84%E5%90%91%E9%87%8F%E8%A1%A8%E7%A4%BA%E5%8F%AF%E4%BB%A5%E4%BF%83%E8%BF%9B%E5%A4%9A%E7%A7%8D%E6%A8%A1%E6%80%81%E7%9A%84%E8%9E%8D%E5%90%88"><span class="nav-text">3、知识的向量表示可以促进多种模态的融合：</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%89%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD%E5%8E%86%E5%8F%B2%E5%8F%91%E5%B1%95%E4%B8%AD%E7%9A%84%E7%9F%A5%E8%AF%86%E8%A1%A8%E7%A4%BA"><span class="nav-text">三、人工智能历史发展中的知识表示：</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%8F%8F%E8%BF%B0%E9%80%BB%E8%BE%91description-logic"><span class="nav-text">1、描述逻辑：Description Logic</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#horn-logic"><span class="nav-text">2、Horn Logic</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%80%E9%98%B6%E8%B0%93%E8%AF%8D%E9%80%BB%E8%BE%91%E4%BC%98%E7%BC%BA%E7%82%B9%E6%AF%94%E8%BE%83"><span class="nav-text">3、一阶谓词逻辑优缺点比较：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BA%A7%E7%94%9F%E5%BC%8F%E7%B3%BB%E7%BB%9Fproduction-systems"><span class="nav-text">4、产生式系统：Production
+Systems</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%A1%86%E6%9E%B6%E7%B3%BB%E7%BB%9Fframe-system"><span class="nav-text">5、框架系统：Frame System</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#semantic-network-%E8%AF%AD%E4%B9%89%E7%BD%91%E7%BB%9C"><span class="nav-text">6、Semantic Network 语义网络：</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9B%9B%E7%9F%A5%E8%AF%86%E5%9B%BE%E8%B0%B1%E7%9A%84%E7%AC%A6%E5%8F%B7%E8%A1%A8%E7%A4%BA%E6%96%B9%E6%B3%95"><span class="nav-text">四、知识图谱的符号表示方法：</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#property-graph-%E5%B1%9E%E6%80%A7%E5%9B%BE"><span class="nav-text">1、Property Graph 属性图：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#rdf-resouce-description-framework-%E8%B5%84%E6%BA%90%E6%8F%8F%E8%BF%B0%E6%A1%86%E6%9E%B6"><span class="nav-text">2、RDF: Resouce
+Description Framework 资源描述框架</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#owl-%E6%9C%AC%E4%BD%93%E8%AF%AD%E8%A8%80"><span class="nav-text">3、OWL 本体语言：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%87%A0%E7%A7%8D%E6%A8%A1%E5%BC%8F%E7%9A%84%E6%AF%94%E8%BE%83"><span class="nav-text">4、几种模式的比较：</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BA%94%E7%9F%A5%E8%AF%86%E5%9B%BE%E8%B0%B1%E7%9A%84%E5%90%91%E9%87%8F%E8%A1%A8%E7%A4%BA%E6%96%B9%E6%B3%95"><span class="nav-text">五、知识图谱的向量表示方法：</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%AF%8D%E5%90%91%E9%87%8F%E8%A1%A8%E7%A4%BA"><span class="nav-text">1、词向量表示：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%9F%A5%E8%AF%86%E5%9B%BE%E8%B0%B1%E5%B5%8C%E5%85%A5"><span class="nav-text">2、知识图谱嵌入：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%A6%82%E4%BD%95%E8%AF%84%E4%BC%B0%E7%9F%A5%E8%AF%86%E5%9B%BE%E8%B0%B1%E5%B5%8C%E5%85%A5%E6%A8%A1%E5%9E%8B%E7%9A%84%E5%A5%BD%E5%9D%8F"><span class="nav-text">3、如何评估知识图谱嵌入模型的好坏？</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%B0%8F%E7%BB%93"><span class="nav-text">4、小结：</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Fantast"
+      src="/images/avatar.webp">
+  <p class="site-author-name" itemprop="name">Fantast</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">204</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">52</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">110</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/fantast416" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;fantast416" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:fantast416@gmail.com" title="E-Mail → mailto:fantast416@gmail.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll site-overview-item animated">
+    <div class="links-of-blogroll-title"><i class="fa fa-globe fa-fw"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://www.zhihu.com/people/shuo-shuo-3-41" title="https:&#x2F;&#x2F;www.zhihu.com&#x2F;people&#x2F;shuo-shuo-3-41" rel="noopener" target="_blank">ZhiHu</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="http://www.next.zju.edu.cn/" title="http:&#x2F;&#x2F;www.next.zju.edu.cn&#x2F;" rel="noopener" target="_blank">NextLab</a>
+        </li>
+    </ul>
+  </div>
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://blog.fantast.top/2022/12/20/3e6c4bf0efa1/">
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.webp">
+      <meta itemprop="name" content="Fantast">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Fantast's Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          知识图谱——知识图谱的技术内涵与知识的表示
+        </h1>
+
+        <div class="post-meta-container">
+          
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2022-12-20 19:13:19" itemprop="dateCreated datePublished" datetime="2022-12-20T19:13:19+08:00">2022-12-20</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2022-12-21 20:02:27" itemprop="dateModified" datetime="2022-12-21T20:02:27+08:00">2022-12-21</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E2%93%BE-%E8%AF%BE%E7%A8%8B%E7%AC%94%E8%AE%B0/" itemprop="url" rel="index"><span itemprop="name">⓾ 课程笔记</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E2%93%BE-%E8%AF%BE%E7%A8%8B%E7%AC%94%E8%AE%B0/%E7%9F%A5%E8%AF%86%E5%9B%BE%E8%B0%B1/" itemprop="url" rel="index"><span itemprop="name">知识图谱</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>3.6k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>10 分钟</span>
+    </span>
+</div>
+
+            <div class="post-description">知识图谱——知识图谱的技术内涵与知识的表示。</div>
+            <div class="post-remind">Google Chrome is recommended, otherwise the image size may be wrong</div>
+            <div class="post-remind">FireFox is not recommended,Because it does not support the image zoom property</div>
+        </div>
+        
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h3
+id="一知识图谱的技术内涵技术要素如下">一、知识图谱的技术内涵，技术要素如下：</h3>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/image-20221220190413420.png" /></p>
+<ul>
+<li>表示
+<ul>
+<li>属性图表示、RDF图模型、OWL本体建模</li>
+</ul></li>
+<li>存储
+<ul>
+<li>关系图存储、原生图存储</li>
+</ul></li>
+<li>抽取
+<ul>
+<li>概念抽取、实体识别、关系抽取、事件抽取</li>
+</ul></li>
+<li>融合
+<ul>
+<li>尸体对其、本体映射</li>
+</ul></li>
+<li>推理
+<ul>
+<li>符号推理、规则推理、图推理、神经网络推理</li>
+</ul></li>
+<li>问答
+<ul>
+<li>问句理解、语义解析、答案生成</li>
+</ul></li>
+<li>分析
+<ul>
+<li>图算法、图嵌入、图神经网络、图可视化</li>
+</ul></li>
+<li>其他
+<ul>
+<li>众包、Scene Graph  Semantic loT</li>
+</ul></li>
+</ul>
+<h4 id="表示基于图的知识表示">1、表示：基于图的知识表示：</h4>
+<ul>
+<li>有向标记图——三元组</li>
+</ul>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/image-20221220190158469.png" /></p>
+<h4 id="存储图数据存储与查询">2、存储：图数据存储与查询：</h4>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/image-20221220190424474.png" /></p>
+<h4 id="抽取">3、抽取：</h4>
+<p>​
+一般而言都是按照已经确定了的schema，通过结构化数据快速冷启动。之后再通过多种渠道如半结构化数据、文本数据进行抽取补充。</p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/image-20221220192416472.png" /></p>
+<h4 id="融合">4、融合：</h4>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/image-20221220193852387.png" /></p>
+<h4 id="推理">5、推理：</h4>
+<p>​ 利用图谱中已经存在的关系和事实推理图谱中尚没有存在的关系和事实。</p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/image-20221220193911303.png" /></p>
+<h4 id="问答">6、问答：</h4>
+<p>​ 问题解析、语义表示、语义匹配、查询推理等等<img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/image-20221220193931612.png" /></p>
+<h4 id="分析">7、分析：</h4>
+<p>​ 利用图算法与图神经网络对知识进行分析</p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/image-20221220194013214.png" /></p>
+<h3 id="二什么是知识表示">二、什么是知识表示？</h3>
+<h4 id="什么是知识表示">1、什么是知识表示？</h4>
+<ul>
+<li>用易于计算机处理的方式来描述人脑的知识的方法，KR不是数据格式、不等同于数据结构、也不是编程语言，对于人工智能而言，数据与知识的区别在于KR支持推理。</li>
+<li>知识表示的五个用途如下：建立万物的概念标识，然后去进行抽象、确定概念模型，随后就可以进行推理和计算（易于被机器处理），同时知识表示需要易于被人理解，可解释性。</li>
+</ul>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/image-20221220201526459.png" /></p>
+<h4 id="知识表示的形式">2、知识表示的形式：</h4>
+<ul>
+<li>符号表示：不易于刻画隐式的特点，RDF，
+<ul>
+<li>显示知识、强逻辑约束、易于解释、推理不易扩展</li>
+</ul></li>
+<li>参数化向量表示：比如Tensor，各种Embedding，神经网络表示等
+<ul>
+<li>隐式知识、弱逻辑约束、不易解释、对接神经网络。</li>
+</ul></li>
+</ul>
+<h4
+id="知识的向量表示可以促进多种模态的融合">3、知识的向量表示可以促进多种模态的融合：</h4>
+<ul>
+<li>自然语言：为句子中的每个词学一个向量表示</li>
+<li>知识图谱：为每个实体和关系学习一个向量表示</li>
+<li>图像视频：为视觉中的每个对象学习一个向量表示</li>
+</ul>
+<p>智能的精华是怎样实现推理，推理的关键是形式化逻辑。</p>
+<p>大脑中并没有符号和图像的存储，而是一些Big Activity
+Vectors之间相互发生作用。</p>
+<h3
+id="三人工智能历史发展中的知识表示">三、人工智能历史发展中的知识表示：</h3>
+<h4 id="描述逻辑description-logic">1、描述逻辑：Description Logic</h4>
+<p>​
+描述逻辑是一阶谓词逻辑的可判定子集，主要用于描述本体概念和属性，对于本体知识库的构建提供了便捷的表达形式，是与知识图谱最密切相关的知识表示方法之一。</p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/image-20221220202534263.png" /></p>
+<p>​ 由描述逻辑形成的知识库往往有两部分：</p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/image-20221220202612486.png" /></p>
+<h4 id="horn-logic">2、Horn Logic</h4>
+<p>​ 是一阶谓词逻辑的子集，主要特点是表达形式简单，复杂度低。</p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/image-20221220202640860.png" /></p>
+<h4 id="一阶谓词逻辑优缺点比较">3、一阶谓词逻辑优缺点比较：</h4>
+<ul>
+<li>优点
+<ul>
+<li>接近自然语言，容易被接受，且易于表示精确知识</li>
+<li>有严格的形式定义和推理规则，易于精确实现</li>
+</ul></li>
+<li>缺点
+<ul>
+<li>无法表示不确定性知识，难以表示启发性知识及元知识</li>
+<li>组合爆炸，经常出现事实、规则等的组合爆炸，导致效率低，推理复杂度通常较高</li>
+<li>是以人的逻辑为主导的表示方式，可能并不适合机器，机器可能有自己的逻辑表示。</li>
+</ul></li>
+</ul>
+<h4 id="产生式系统production-systems">4、产生式系统：Production
+Systems</h4>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/image-20221220202959942.png" /></p>
+<ul>
+<li>优点：
+<ul>
+<li>自然性：产生式系统采用人类常用的因果关系知识表示形式，既直观、自然，又便于进行推理。</li>
+<li>模块性：产生式规则形式相同，易于模块化管理。有效性：能表示确定性知识、不确定性知识、启发性知识、过程性知识等。</li>
+<li>清晰性：产生式有固定的格式，既便于规则设计，又易于对规则库中的知识进行一致性、完整性检测。</li>
+</ul></li>
+<li>缺点：
+<ul>
+<li>效率不高：产生式系统求解问题的过程是一个反复进行“匹配一冲突消解一执行”的过程。而规则库一般都比较大，匹配又十分费时，因此其工作效率不高。</li>
+<li>在求解复杂问题时容易引起组合爆炸。</li>
+<li>不能表达结构性知识：产生式系统对具有结构关系的知识无能为力，它不能把具有结构关系的事物间的区别与联系表示出来。</li>
+</ul></li>
+</ul>
+<h4 id="框架系统frame-system">5、框架系统：Frame System</h4>
+<p>​
+框架理论的基本思想：认为人们对现实世界中事物的认识都是以一种类似于框架的结构存储在记忆中。当面临一个新事物时，就从记忆中找出一个合适的框架，并根据实际情况对其细节加以修改、补充，从而形成对当前事物的认识。
+<img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/image-20221220203050651.png" /></p>
+<ul>
+<li>优点
+<ul>
+<li>对于知识的描述完整和全面；</li>
+<li>基于框架的知识库质量高；</li>
+<li>框架允许数值计算。</li>
+</ul></li>
+<li>缺点
+<ul>
+<li>框架构建成本高，质量要求高；</li>
+<li>框架的表达形式不灵活，很难同其它形</li>
+</ul></li>
+</ul>
+<h4 id="semantic-network-语义网络">6、Semantic Network 语义网络：</h4>
+<p>​ WordNet 主要定义了名词、动词、形容词和副词之间的语义关系。例如名词
+之间的上下位关系（如：“猫科动物”是“猫”的上位词），动词之间的蕴
+含关系（如：“打鼾”蕴含着“睡眠”）等。</p>
+<ul>
+<li>优点：
+<ul>
+<li>结构性：语义网络是一种结构化的知识表示方法，它能把事物的属性以及事物间的各种语义联想显式地表示出来。</li>
+<li>联想性：最初是作为人类联想记忆模型提出来的。</li>
+<li>自然性：直观地把事物的属性及其语义联系表示出来，便于理解，自然语言与语义网络的转换比较容易实现，故语义网络表示法在自然语言理解系统中应用最为广泛。</li>
+</ul></li>
+<li>缺点：
+<ul>
+<li>非严格性：语义网络没有公认的形式表示体系。一个给定的语义网络所表达的含义完全依赖于处理程序如何对它进行解释。</li>
+<li>通过推理网络而实现的推理不能保证其正确性。支持全称量词和存在量词的语义网络在逻辑上是不充分的，不能保证不存在二义性。</li>
+<li>处理上的复杂性：语义网络表示知识的手段多种多样，灵活性高，但由于表示形式不一致使得处理复杂性高，对知识的检索相对复杂。</li>
+</ul></li>
+</ul>
+<h3 id="四知识图谱的符号表示方法">四、知识图谱的符号表示方法：</h3>
+<h4 id="property-graph-属性图">1、Property Graph 属性图：</h4>
+<p>Neo4j实现的图结构表示模型：</p>
+<ul>
+<li>属性图的优点是表达方式非常灵活，例如，它允许为边增加属性，非常便于表示多元关系</li>
+<li>属性图的存储充分利用图的结构进行优化，因而在查询计算方面具有较高优势</li>
+<li>属性图的缺点是缺乏工业标准规范的支持，由于不关注更深层的语义表达，也不支持符号逻辑推理</li>
+</ul>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/image-20221221083313156.png" /></p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/image-20221221083328747.png" /></p>
+<h4 id="rdf-resouce-description-framework-资源描述框架">2、RDF: Resouce
+Description Framework 资源描述框架</h4>
+<ul>
+<li>面向Web的语义数据标准</li>
+<li>基本组成单元：一个三元组包含一组声明：以恶简单的逻辑表达式或者声明</li>
+</ul>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/image-20221221083518425.png" /></p>
+<ul>
+<li>多个三元组头尾连接：组成了RDF图</li>
+</ul>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/image-20221221083607370.png" /></p>
+<p>有了RDF所定义的这些关系名词：比如subClassOf等等，就可以进行简单的推理：</p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/image-20221221083700515.png" /></p>
+<h4 id="owl-本体语言">3、OWL 本体语言：</h4>
+<ul>
+<li>其可以看作RDF的扩展，刻画更复杂的类型、属性等</li>
+<li>可以声明等价关系</li>
+<li>可以声明属性的传递性</li>
+<li>声明两个属性互反</li>
+<li>声明属性的函数行</li>
+<li>声明属性的对成型</li>
+<li>声明属性的局部约束：全称限定</li>
+<li>声明属性的局部约束：存在限定、基数限定</li>
+<li>声明相交的类等等</li>
+</ul>
+<h4 id="几种模式的比较">4、几种模式的比较：</h4>
+<ul>
+<li>属性图 vs RDF vs OWL
+<ul>
+<li>属性 图是工业界最常见的图谱建模方法，属性图数据库充分利用图结
+构特点做了性能优化，实用度高，但不支持符号推理。</li>
+<li>RDF 是 W3C 推动的语义数据交换标准与规范，有更严格的语义逻辑基础，
+支持推理，并兼容更复杂的本体表示语言 OWL 。</li>
+<li>在三元组无法满足语义表示需要时， OWL 作为一种完备的本体语言，
+提供了更多可供选用的语义表达构件。</li>
+<li>描述逻辑可以为知识图谱的表示与建模提供理论基础。描述逻辑之于知识图谱，好比关系代数之于关系数据库。</li>
+</ul></li>
+</ul>
+<h3 id="五知识图谱的向量表示方法">五、知识图谱的向量表示方法：</h3>
+<h4 id="词向量表示">1、词向量表示：</h4>
+<ul>
+<li><p>最初：One-Hot Encoding / Bag-of-words</p></li>
+<li><p>词的语义由什么决定？</p>
+<ul>
+<li>词是符号化的，词的语义由它被使用的上下文确定（分布式语义模型）</li>
+</ul></li>
+<li><p>使用Word Embedding词嵌入形式：</p></li>
+</ul>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/image-20221221084935857.png" /></p>
+<ul>
+<li>词向量学习模型距离：CBoW 等</li>
+<li>使用Word
+Embedding表示的词可以发现：许多相似的词在某些维度上会有一定的相关性和相似性，而One-Hot
+Encoding则不可能实现</li>
+</ul>
+<h4 id="知识图谱嵌入">2、知识图谱嵌入：</h4>
+<p>​
+我们发现：如果用Rome的向量减去Paris的向量，和Italy向量减去France向量得到的结果向量类似，这是因为其存在一个隐含的is-capital-of的关系。</p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/image-20221221085249111.png" /></p>
+<ul>
+<li><p>知识图谱嵌入模型1：TransE</p>
+<p>给定一组三元关系组，他们应该满足向量相加的关系</p></li>
+</ul>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/image-20221221085440985.png" /></p>
+<p>​
+对于每个三元组(h,r,t)的优化设置目标：让真实存在的三元组得分尽可能高。</p>
+<p>​ 负样本的构造：随机伪造h或t</p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/image-20221221085526130.png" /></p>
+<p>​ 这样得到优化的向量空间，应该是满足的。</p>
+<ul>
+<li>知识图谱嵌入模型2：DistMult</li>
+</ul>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/image-20221221085712894.png" /></p>
+<h4
+id="如何评估知识图谱嵌入模型的好坏">3、如何评估知识图谱嵌入模型的好坏？</h4>
+<ul>
+<li>利用推理问题来评估：给定hr预测t,给定rt预测h</li>
+</ul>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/image-20221221085741371.png" /></p>
+<h4 id="小结">4、小结：</h4>
+<ul>
+<li><p>现实的知识图谱项目由于规模化构建的需要
+常常降低表示的逻辑严格性目前较为常见的知识图谱实践包括 RDF
+图模型和属性图模型</p></li>
+<li><p>尽管很多知识图谱并没有应用复杂的知识表示框架 Schema
+工程对于知识图谱的构建仍然是基础性和必要性的工作
+高质量的知识图谱构建通常从Schema 设计开始 。</p></li>
+<li><p>知识 图谱
+的表示学习是符号表示与神经网络相结合比较自然且有前景的方向 。
+知识的向量表示有利于刻画那些隐含不明确的知识
+同时基于神经网络和表示学习实现的推理一定程度上可以解决传统符号推理所面临的鲁棒性不高不容易扩展等众多问题</p></li>
+<li><p>图模型是更加接近于人脑认知和自然语言的数据模型 RDF
+作为一种知识图谱表示框架的参考标准 向上对接 OWL
+等更丰富的语义表示和推理能力 向下对接简化后的属性图数据库以及图计算引擎
+仍然是最值得重视的知识图谱表示框架</p></li>
+</ul>
+
+    </div>
+
+    
+    
+    
+      
+  <div class="popular-posts-header">相关文章</div>
+  <ul class="popular-posts">
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2022\12\22\e2f2fc751121\" rel="bookmark">知识图谱——知识图谱的智能问答系统</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2022\12\21\de86117222a4\" rel="bookmark">知识图谱——知识图谱的抽取和构建</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2022\12\21\40e02339b7ea\" rel="bookmark">知识图谱——知识图谱的存储与查询</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2022\12\16\01d290994d84\" rel="bookmark">精益创业</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2022\10\12\f71a1b069441\" rel="bookmark">电子信息工程中数学模型与方法——单元2 系统辨识</a></div>
+    </li>
+  </ul>
+
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/course/" rel="tag"># course</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2022/12/16/01d290994d84/" rel="prev" title="精益创业">
+                  <i class="fa fa-chevron-left"></i> 精益创业
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2022/12/21/40e02339b7ea/" rel="next" title="知识图谱——知识图谱的存储与查询">
+                  知识图谱——知识图谱的存储与查询 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments utterances-container"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Fantast</span>
+</div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+    <span title="站点总字数">997k</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">46:08</span>
+  </span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script><script src="/js/bookmark.js"></script>
+
+  
+<script src="https://cdn.jsdelivr.net/npm/hexo-generator-searchdb@1.4.0/dist/search.js" integrity="sha256-vXZMYLEqsROAXkEw93GGIvaB2ab+QW6w3+1ahD9nXXA=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdn.jsdelivr.net/npm/mathjax@3.2.0/es5/tex-mml-chtml.js","integrity":"sha256-r+3itOMtGGjap0x+10hu6jW/gZCzxHsoKrOd7gyRSGY="}}</script>
+<script src="/js/third-party/math/mathjax.js"></script>
+
+
+<script class="next-config" data-name="utterances" type="application/json">{"enable":true,"repo":"Fantast416/myblog-comment","issue_term":"pathname","theme":"github-light"}</script>
+<script src="/js/third-party/comments/utterances.js"></script>
+
+</body>
+</html>

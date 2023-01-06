@@ -47,6 +47,664 @@
       </tags>
   </entry>
   <entry>
+    <title>云原生快速入门系列Chap3——容器云理论</title>
+    <url>/2023/01/06/1a5b880ea6b8/</url>
+    <content><![CDATA[<div class="hbe hbe-container" id="hexo-blog-encrypt" data-wpm="Oh, this is an invalid password. Check and try again, please." data-whm="OOPS, these decrypted content may changed, but you can still have a look.">
+  <script id="hbeData" type="hbeData" data-hmacdigest="2a985e9878dbd14c21334e845313db4679f47ef6fe62b1d41d52d7779488968c">38995ea17bb52bf586ed96e3e716424d3ee790719229cb091566b588700ccfd486f8ebc44d8af8c65c1630267a0ef4dd256d24f27a55df7b6ef11029b1d22d1d</script>
+  <div class="hbe hbe-content">
+    <div class="hbe hbe-input hbe-input-default">
+      <input class="hbe hbe-input-field hbe-input-field-default" type="password" id="hbePass">
+      <label class="hbe hbe-input-label hbe-input-label-default" for="hbePass">
+        <span class="hbe hbe-input-label-content hbe-input-label-content-default">Hey, password is required here.</span>
+      </label>
+    </div>
+  </div>
+</div>
+<script data-pjax src="/lib/hbe.js"></script><link href="/css/hbe.style.css" rel="stylesheet" type="text/css">]]></content>
+      <categories>
+        <category>⑨ 工程类笔记</category>
+        <category>云原生入门</category>
+      </categories>
+      <tags>
+        <tag>Cloud Native</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>知识图谱——知识图谱的智能问答系统</title>
+    <url>/2022/12/22/e2f2fc751121/</url>
+    <content><![CDATA[<h3 id="一智能问答系统的基本概念">一、智能问答系统的基本概念：</h3>
+<p>​
+一个完善的智能问答系统需要有足够强大的语言理解能力和知识问答推理能力。</p>
+<p><img
+src="C:\Users\Fantast\AppData\Roaming\Typora\typora-user-images\image-20221222093706275.png" /></p>
+<p><img
+src="C:\Users\Fantast\AppData\Roaming\Typora\typora-user-images\image-20221222093712804.png" /></p>
+<h4 id="智能问答的分类">1、智能问答的分类：</h4>
+<ul>
+<li>按答案来源分：</li>
+</ul>
+<p><img
+src="C:\Users\Fantast\AppData\Roaming\Typora\typora-user-images\image-20221222093810419.png" /></p>
+<ul>
+<li>按问句类型分：</li>
+</ul>
+<p><img
+src="C:\Users\Fantast\AppData\Roaming\Typora\typora-user-images\image-20221222093842229.png" /></p>
+]]></content>
+      <categories>
+        <category>⓾ 课程笔记</category>
+        <category>知识图谱</category>
+      </categories>
+      <tags>
+        <tag>course</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>知识图谱——知识图谱的抽取和构建</title>
+    <url>/2022/12/21/de86117222a4/</url>
+    <content><![CDATA[<h3 id="一知识工程">一、知识工程：</h3>
+<ul>
+<li><p>符号主义的核心思想</p>
+<ul>
+<li>人工智能源于数理逻辑</li>
+<li>智能的本质是符号的操作和运算</li>
+</ul></li>
+<li><p>知识工程是以知识为处理对象，研究知识系统的知识表示、处理和应用的方法和开发工具的学科</p></li>
+<li><p>传统知识工程的特点：规则明确、边界清晰、应用封闭的领域应用广泛</p></li>
+<li><p>传统的知识工程通过专家来进行人工获取知识，但是这样存在知识获取的瓶颈。所以我们需要尽可能通过机器自主获取知识。通过知识构建逻辑，形成模型。</p></li>
+</ul>
+<h4 id="知识图谱工程">1、知识图谱工程：</h4>
+<p>​ 其是简化的知识工程，更注重自动化获取，数据的规模</p>
+<p><img
+src="C:\Users\Fantast\AppData\Roaming\Typora\typora-user-images\image-20221221202314068.png" /></p>
+<p>​ 其数据来源可以是结构化数据、半结构化数据、纯文本数据。</p>
+<ul>
+<li>可以从文本获取知识、也可以从视觉图像中获取知识
+<ul>
+<li>包含：命名实体识别、术语抽取、关系抽取、事件抽取</li>
+</ul></li>
+<li>知识图谱就是新一代的知识工程</li>
+</ul>
+<h3 id="二知识抽取实体识别与分类">二、知识抽取——实体识别与分类：</h3>
+<h4 id="定义">1、定义：</h4>
+<p>​ 从文本中识别实体边界及其类型</p>
+<p><img
+src="C:\Users\Fantast\AppData\Roaming\Typora\typora-user-images\image-20221221210614485.png" /></p>
+<h4 id="实体识别的常用方法">2、实体识别的常用方法</h4>
+<ul>
+<li><p>定义正则表达式——文本的规则</p>
+<ul>
+<li>优点：准确，有些实体识别只能依靠规则</li>
+<li>缺点：需要语言学知识、费力、可移植性不好</li>
+</ul></li>
+<li><p>基于序列标注的方法：</p>
+<ul>
+<li>首先确定实体识别的序列标签体系，</li>
+<li>通过机器学习，训练一个分类器，来进行序列的标注。</li>
+</ul>
+<p><img
+src="C:\Users\Fantast\AppData\Roaming\Typora\typora-user-images\image-20221221211141859.png" /></p></li>
+<li><p>常见序列标注模型：HMM 隐马尔可夫模型</p></li>
+<li><p>求观测序列的概率：前向后向算法</p></li>
+<li><p>模型参数的估计与学习——EM算法</p></li>
+<li><p>解码隐藏状态序列——维特比算法</p></li>
+<li><p>常见序列预测模型——CRF条件随机场</p></li>
+<li><p>基于深度学习的实体识别方法—BiLSTM+CRF</p></li>
+<li><p>基于预训练语言模型的实体识别——BERT</p></li>
+</ul>
+<h3 id="三知识抽取关系抽取">三、知识抽取——关系抽取：</h3>
+<ul>
+<li><p>从文本中抽取三元关系组</p></li>
+<li><p>实体关系抽取的任务定义：</p>
+<ul>
+<li>从文本中抽取出两个或者多个实体之间的语义关系</li>
+<li>从文本获取知识图谱三元组的主要技术手段，通常被用于知识图谱的补全</li>
+</ul></li>
+<li><p>方法概览：</p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/image-20221222091802736.png" /></p></li>
+</ul>
+<h3 id="四知识抽取属性补全">四、知识抽取——属性补全：</h3>
+<ul>
+<li>一个事物若干属性的取值来对这个事物进行多维度的描述</li>
+<li>属性补全
+<ul>
+<li>对实体拥有的属性及属性值进行补全</li>
+</ul></li>
+</ul>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/image-20221222092018707.png" /></p>
+<h3 id="五知识抽取概念抽取">五、知识抽取——概念抽取：</h3>
+<h4 id="概念抽取的任务定义">1、概念抽取的任务定义：</h4>
+<p>​
+一般isA关系、subclassOf关系。比如说从浙江大学这个实体中抽取出概念—高校。</p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/image-20221222092320172.png" /></p>
+<h4 id="概念的价值">2、概念的价值：</h4>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/image-20221222092415533.png" /></p>
+<h4 id="概念的上下位关系">3、概念的上下位关系：</h4>
+<ul>
+<li>实体、概念通常基于词汇进行表达</li>
+<li>实体与概念，概念与概念之间的关系属于自然语言处理中的语言上下位关系
+<ul>
+<li>A isA B，通常称A是B的下位词，B是A的上位词</li>
+</ul></li>
+<li>概念抽取并构建成无环图的过程又被称为Taxonomy</li>
+</ul>
+<h4 id="概念的抽取方法">4、概念的抽取方法：</h4>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/image-20221222092618103.png" /></p>
+<ul>
+<li>概念知识的应用：搜索</li>
+</ul>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/image-20221222092705368.png" /></p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/image-20221222092716634.png" /></p>
+<h3 id="六知识抽取事件识别与抽取">六、知识抽取——事件识别与抽取</h3>
+<h4 id="事件的定义">1、事件的定义</h4>
+<ul>
+<li>事件是发生在某个特定的时间点或时间段、某个特定的地域范围内，由一个或者多个角色参与的一个或者多个动作组成的事情或者状态的改变
+<ul>
+<li>不同的动作或者状态的改变代表不同类型的事件</li>
+<li>同一个类型的事件中不同的要素代表了不同的事件实例</li>
+<li>同一个类型的事件中不同粒度的要素代表不同粒度的事件实例</li>
+</ul></li>
+</ul>
+<h4 id="事件抽取的步骤">2、事件抽取的步骤</h4>
+<ul>
+<li>从无结构文本中自动抽取结构化事件知识：
+<ul>
+<li>什么人/组织，什么时间，在什么地方，做了什么事</li>
+<li>总共有以下两步：</li>
+</ul></li>
+</ul>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/image-20221222092938920.png" /></p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/image-20221222093012074.png" /></p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/image-20221222093020069.png" /></p>
+<h4 id="事件抽取的方法">2、事件抽取的方法：</h4>
+]]></content>
+      <categories>
+        <category>⓾ 课程笔记</category>
+        <category>知识图谱</category>
+      </categories>
+      <tags>
+        <tag>course</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>知识图谱——知识图谱的存储与查询</title>
+    <url>/2022/12/21/40e02339b7ea/</url>
+    <content><![CDATA[<h3
+id="一基于关系型数据库的知识图谱存储">一、基于关系型数据库的知识图谱存储</h3>
+<ul>
+<li>知识图谱的存储需要综合考虑知识结构、图的特点、索引和查询优化等问题。</li>
+<li>典型的知识图谱存储引擎分为基于关系数据库的存储和基于原生图的存储。</li>
+<li>图数据库存储并非必须，例如Wikidata项目后端是MySQL实现的。</li>
+</ul>
+<h4 id="图结构模型">1、图结构模型：</h4>
+<ul>
+<li><p>属性图和RDF图模型实际上都是有向标记图:</p></li>
+<li><p>图上的查询语言：SPARQL</p>
+<ul>
+<li>查询计算问题－》可以转换为－》子图匹配问题</li>
+</ul></li>
+</ul>
+<p><img
+src="C:\Users\Fantast\AppData\Roaming\Typora\typora-user-images\image-20221221130101874.png"
+alt="image-20221221130101874" /> #### 2、最简单的存储方式：</p>
+<ul>
+<li>利用三元组创建一张关系型数据库的表，但是这样会导致查询效率极低，会有很多的self-join操作</li>
+</ul>
+<h4 id="属性表存储property-tables">3、属性表存储：Property Tables：</h4>
+<ul>
+<li>仍然基于传统关系数据库</li>
+<li>基本思想是以实体类型为中心，把属于同一个实体类型的属性组织为一个表，即属性表进行存储。</li>
+<li>但是因为知识图谱和实体数据不同，同一个实体类型的属性可能很不相同，所以可能出现很多空值。</li>
+<li><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/image-20221221130700203.png" /></li>
+</ul>
+<h4 id="二元表">4、二元表：</h4>
+<ul>
+<li>二元表也称为垂直划分表，也是基于关系数据库实现的三元组存储方式。</li>
+<li>基本思想是对三元组按属性分组，为每个属性在关系数据库中建立一个包含（subject、Object）两列的表。</li>
+<li>由于一个知识图谱中属性数量是有限的，表的总体数量是可控的。</li>
+<li>优点是没有空值、也不需要聚类、对于Subject-Subject-Join操作性能好。</li>
+<li>缺点是Insert性能损耗高、并且Subject-Object Join性能差。</li>
+</ul>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/image-20221221130854523.png" /></p>
+<h4 id="全索引结构-exhaustive-indexing">5、全索引结构 Exhaustive
+Indexing:</h4>
+<ul>
+<li><p>性能最好的存储方式是基于全索引结构的存储，典型的实现包括RDF-3X,
+Hexastore等。</p></li>
+<li><p>这种方法也仅维护一张包含(Subject, Predicate,
+Object）的表，但增加多个方面的优化手段。</p>
+<ul>
+<li>第一个优化手段是建立Mapping
+Table，即将所有的字符串首先映射到唯一的数字ID，这一将大大压缩存储空间。</li>
+</ul>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/image-20221221131022916.png" /></p>
+<ul>
+<li>进一步建立六种索引： SPO, SOP, PSO, POS, OPS,
+OSP，即分别建立Subject-Predicate-Object;
+Subject-Object-Predicate；Predicate-Subject-Object
+等六个方面的全索引，显然多种形式的索引覆盖了多个维度的图查询需求。</li>
+<li>同时三元组基于字符串排序，并利用clustered B+
+tree树来组织索引以进一步优化索引检索的效率</li>
+</ul></li>
+</ul>
+<h4 id="总结">6、总结：</h4>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/image-20221221131156389.png" /></p>
+<h3
+id="二基于原生图数据库的知识图谱存储">二、基于原生图数据库的知识图谱存储</h3>
+<h4 id="为什么需要图数据库">1、为什么需要图数据库？</h4>
+<ul>
+<li><p>关系模型将语义关联关系隐藏在外键结构中，无显示表达，并带来关联查询与计算的复杂性</p></li>
+<li><p>数据来源多样性带来大量离群数据（Outlier
+Data），导致数据集的宏观结构愈发复杂和不规整，对于包含大量离群数据的场景，关系模型将造成大量表连接、稀疏行和非空处理</p></li>
+<li><p>互联网的开放世界假设要求数据模型满足高动态和去中心化的扩增数据的能力，<strong>关系模型对表结构的范式要求限制了Schema层的动态性</strong></p></li>
+<li><p>在关系型数据库中，处理多跳查询非常复杂。以及一些场景，不适合用关系型模型来进行</p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/image-20221221153415529.png" /></p></li>
+</ul>
+<p>而知识图谱，需要更加丰富的语义表达能力以及关联查询、关联推理能力。以及像外键而言，没有办法处理自反关系。</p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/image-20221221153526785.png" /></p>
+<h4 id="图数据库的优势">2、图数据库的优势：</h4>
+<figure>
+<img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/image-20221221153651845.png"
+alt="image-20221221153651845" />
+<figcaption aria-hidden="true">image-20221221153651845</figcaption>
+</figure>
+<p>利用图的邻接表来建立索引：</p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/image-20221221153744054.png" /></p>
+<ul>
+<li>自然表达：
+<ul>
+<li>图是十分自然的描述事物关系的方式，更加接近于人脑对客观事物的记忆方式</li>
+</ul></li>
+<li>易于扩展
+<ul>
+<li>图模型更加易于适应变化，例如在图中，临时希望获取历史订单，只需新增边即可</li>
+</ul></li>
+<li>复杂关联查询</li>
+<li>多跳查询性能优化</li>
+</ul>
+<h4 id="neo4j图数据库">3、Neo4j图数据库：</h4>
+<ul>
+<li>属性图是图数据库Neo4J实现的图结构表示模型，在工业界有广泛应用在属性图的术语中，属性图是由顶点（Vertex），边（Edge），标签（Label），关系类型还有属性（Property）组成的有向图</li>
+<li>在属性图中，节点和关系是最重要的实体。节点上包含属性，属性可以以任何键值形式存在</li>
+<li>提供了图查询语言：Cypher</li>
+</ul>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/image-20221221153950344.png" /></p>
+<h4 id="什么时候使用图数据库">4、什么时候使用图数据库？</h4>
+<ul>
+<li>高性能关系查询
+<ul>
+<li>需要快速遍历许多复杂关系的任何用例。这实际上包括欺诈检测，社交网络分析，网络和数据库基础设施等。</li>
+</ul></li>
+<li>模型的灵活性
+<ul>
+<li>任何依赖于添加新数据而不会中断现有查询池的用例。模型灵活性包括链接元数据，版本控制数据和不断添加新关系。</li>
+</ul></li>
+<li>快速和复杂的分析规则
+<ul>
+<li>当必须执行许多复杂的规则时，例如子图的比较。这包括推荐，相似度计算和主数据管理。</li>
+</ul></li>
+</ul>
+<h3 id="三原生图数据库实现原理">三、原生图数据库实现原理：</h3>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/image-20221221154426857.png" /></p>
+<h4 id="查询复杂度">1、查询复杂度：</h4>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/image-20221221154516395.png" /></p>
+<h4 id="物理存储">2、物理存储：</h4>
+<ul>
+<li>暂略</li>
+</ul>
+<h3 id="四知识图谱存储的选择">四、知识图谱存储的选择：</h3>
+<ul>
+<li>知识图谱存储方式的选择需要综合考虑性能、动态扩展、实施成本等多方面综合因素
+息</li>
+<li>区分原生图存储和非原生图存储：
+<ul>
+<li>原生图存储在复杂关联查询和图计算方面有性能优势</li>
+<li>非原生图存储兼容已有工具集通常学习和协调成本会低息</li>
+</ul></li>
+<li>区分RDF图存储和属性图存储：
+<ul>
+<li>RDF存储一般支持推理</li>
+<li>属性图存储通常具有更好的图分析性能优势</li>
+</ul></li>
+<li>在大规模处理情况下，需要考虑与底层大数据存储引擎和上层图计算引擎集成需求</li>
+</ul>
+]]></content>
+      <categories>
+        <category>⓾ 课程笔记</category>
+        <category>知识图谱</category>
+      </categories>
+      <tags>
+        <tag>course</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>知识图谱——知识图谱的技术内涵与知识的表示</title>
+    <url>/2022/12/20/3e6c4bf0efa1/</url>
+    <content><![CDATA[<h3
+id="一知识图谱的技术内涵技术要素如下">一、知识图谱的技术内涵，技术要素如下：</h3>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/image-20221220190413420.png" /></p>
+<ul>
+<li>表示
+<ul>
+<li>属性图表示、RDF图模型、OWL本体建模</li>
+</ul></li>
+<li>存储
+<ul>
+<li>关系图存储、原生图存储</li>
+</ul></li>
+<li>抽取
+<ul>
+<li>概念抽取、实体识别、关系抽取、事件抽取</li>
+</ul></li>
+<li>融合
+<ul>
+<li>尸体对其、本体映射</li>
+</ul></li>
+<li>推理
+<ul>
+<li>符号推理、规则推理、图推理、神经网络推理</li>
+</ul></li>
+<li>问答
+<ul>
+<li>问句理解、语义解析、答案生成</li>
+</ul></li>
+<li>分析
+<ul>
+<li>图算法、图嵌入、图神经网络、图可视化</li>
+</ul></li>
+<li>其他
+<ul>
+<li>众包、Scene Graph  Semantic loT</li>
+</ul></li>
+</ul>
+<h4 id="表示基于图的知识表示">1、表示：基于图的知识表示：</h4>
+<ul>
+<li>有向标记图——三元组</li>
+</ul>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/image-20221220190158469.png" /></p>
+<h4 id="存储图数据存储与查询">2、存储：图数据存储与查询：</h4>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/image-20221220190424474.png" /></p>
+<h4 id="抽取">3、抽取：</h4>
+<p>​
+一般而言都是按照已经确定了的schema，通过结构化数据快速冷启动。之后再通过多种渠道如半结构化数据、文本数据进行抽取补充。</p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/image-20221220192416472.png" /></p>
+<h4 id="融合">4、融合：</h4>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/image-20221220193852387.png" /></p>
+<h4 id="推理">5、推理：</h4>
+<p>​ 利用图谱中已经存在的关系和事实推理图谱中尚没有存在的关系和事实。</p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/image-20221220193911303.png" /></p>
+<h4 id="问答">6、问答：</h4>
+<p>​ 问题解析、语义表示、语义匹配、查询推理等等<img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/image-20221220193931612.png" /></p>
+<h4 id="分析">7、分析：</h4>
+<p>​ 利用图算法与图神经网络对知识进行分析</p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/image-20221220194013214.png" /></p>
+<h3 id="二什么是知识表示">二、什么是知识表示？</h3>
+<h4 id="什么是知识表示">1、什么是知识表示？</h4>
+<ul>
+<li>用易于计算机处理的方式来描述人脑的知识的方法，KR不是数据格式、不等同于数据结构、也不是编程语言，对于人工智能而言，数据与知识的区别在于KR支持推理。</li>
+<li>知识表示的五个用途如下：建立万物的概念标识，然后去进行抽象、确定概念模型，随后就可以进行推理和计算（易于被机器处理），同时知识表示需要易于被人理解，可解释性。</li>
+</ul>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/image-20221220201526459.png" /></p>
+<h4 id="知识表示的形式">2、知识表示的形式：</h4>
+<ul>
+<li>符号表示：不易于刻画隐式的特点，RDF，
+<ul>
+<li>显示知识、强逻辑约束、易于解释、推理不易扩展</li>
+</ul></li>
+<li>参数化向量表示：比如Tensor，各种Embedding，神经网络表示等
+<ul>
+<li>隐式知识、弱逻辑约束、不易解释、对接神经网络。</li>
+</ul></li>
+</ul>
+<h4
+id="知识的向量表示可以促进多种模态的融合">3、知识的向量表示可以促进多种模态的融合：</h4>
+<ul>
+<li>自然语言：为句子中的每个词学一个向量表示</li>
+<li>知识图谱：为每个实体和关系学习一个向量表示</li>
+<li>图像视频：为视觉中的每个对象学习一个向量表示</li>
+</ul>
+<p>智能的精华是怎样实现推理，推理的关键是形式化逻辑。</p>
+<p>大脑中并没有符号和图像的存储，而是一些Big Activity
+Vectors之间相互发生作用。</p>
+<h3
+id="三人工智能历史发展中的知识表示">三、人工智能历史发展中的知识表示：</h3>
+<h4 id="描述逻辑description-logic">1、描述逻辑：Description Logic</h4>
+<p>​
+描述逻辑是一阶谓词逻辑的可判定子集，主要用于描述本体概念和属性，对于本体知识库的构建提供了便捷的表达形式，是与知识图谱最密切相关的知识表示方法之一。</p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/image-20221220202534263.png" /></p>
+<p>​ 由描述逻辑形成的知识库往往有两部分：</p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/image-20221220202612486.png" /></p>
+<h4 id="horn-logic">2、Horn Logic</h4>
+<p>​ 是一阶谓词逻辑的子集，主要特点是表达形式简单，复杂度低。</p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/image-20221220202640860.png" /></p>
+<h4 id="一阶谓词逻辑优缺点比较">3、一阶谓词逻辑优缺点比较：</h4>
+<ul>
+<li>优点
+<ul>
+<li>接近自然语言，容易被接受，且易于表示精确知识</li>
+<li>有严格的形式定义和推理规则，易于精确实现</li>
+</ul></li>
+<li>缺点
+<ul>
+<li>无法表示不确定性知识，难以表示启发性知识及元知识</li>
+<li>组合爆炸，经常出现事实、规则等的组合爆炸，导致效率低，推理复杂度通常较高</li>
+<li>是以人的逻辑为主导的表示方式，可能并不适合机器，机器可能有自己的逻辑表示。</li>
+</ul></li>
+</ul>
+<h4 id="产生式系统production-systems">4、产生式系统：Production
+Systems</h4>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/image-20221220202959942.png" /></p>
+<ul>
+<li>优点：
+<ul>
+<li>自然性：产生式系统采用人类常用的因果关系知识表示形式，既直观、自然，又便于进行推理。</li>
+<li>模块性：产生式规则形式相同，易于模块化管理。有效性：能表示确定性知识、不确定性知识、启发性知识、过程性知识等。</li>
+<li>清晰性：产生式有固定的格式，既便于规则设计，又易于对规则库中的知识进行一致性、完整性检测。</li>
+</ul></li>
+<li>缺点：
+<ul>
+<li>效率不高：产生式系统求解问题的过程是一个反复进行“匹配一冲突消解一执行”的过程。而规则库一般都比较大，匹配又十分费时，因此其工作效率不高。</li>
+<li>在求解复杂问题时容易引起组合爆炸。</li>
+<li>不能表达结构性知识：产生式系统对具有结构关系的知识无能为力，它不能把具有结构关系的事物间的区别与联系表示出来。</li>
+</ul></li>
+</ul>
+<h4 id="框架系统frame-system">5、框架系统：Frame System</h4>
+<p>​
+框架理论的基本思想：认为人们对现实世界中事物的认识都是以一种类似于框架的结构存储在记忆中。当面临一个新事物时，就从记忆中找出一个合适的框架，并根据实际情况对其细节加以修改、补充，从而形成对当前事物的认识。
+<img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/image-20221220203050651.png" /></p>
+<ul>
+<li>优点
+<ul>
+<li>对于知识的描述完整和全面；</li>
+<li>基于框架的知识库质量高；</li>
+<li>框架允许数值计算。</li>
+</ul></li>
+<li>缺点
+<ul>
+<li>框架构建成本高，质量要求高；</li>
+<li>框架的表达形式不灵活，很难同其它形</li>
+</ul></li>
+</ul>
+<h4 id="semantic-network-语义网络">6、Semantic Network 语义网络：</h4>
+<p>​ WordNet 主要定义了名词、动词、形容词和副词之间的语义关系。例如名词
+之间的上下位关系（如：“猫科动物”是“猫”的上位词），动词之间的蕴
+含关系（如：“打鼾”蕴含着“睡眠”）等。</p>
+<ul>
+<li>优点：
+<ul>
+<li>结构性：语义网络是一种结构化的知识表示方法，它能把事物的属性以及事物间的各种语义联想显式地表示出来。</li>
+<li>联想性：最初是作为人类联想记忆模型提出来的。</li>
+<li>自然性：直观地把事物的属性及其语义联系表示出来，便于理解，自然语言与语义网络的转换比较容易实现，故语义网络表示法在自然语言理解系统中应用最为广泛。</li>
+</ul></li>
+<li>缺点：
+<ul>
+<li>非严格性：语义网络没有公认的形式表示体系。一个给定的语义网络所表达的含义完全依赖于处理程序如何对它进行解释。</li>
+<li>通过推理网络而实现的推理不能保证其正确性。支持全称量词和存在量词的语义网络在逻辑上是不充分的，不能保证不存在二义性。</li>
+<li>处理上的复杂性：语义网络表示知识的手段多种多样，灵活性高，但由于表示形式不一致使得处理复杂性高，对知识的检索相对复杂。</li>
+</ul></li>
+</ul>
+<h3 id="四知识图谱的符号表示方法">四、知识图谱的符号表示方法：</h3>
+<h4 id="property-graph-属性图">1、Property Graph 属性图：</h4>
+<p>Neo4j实现的图结构表示模型：</p>
+<ul>
+<li>属性图的优点是表达方式非常灵活，例如，它允许为边增加属性，非常便于表示多元关系</li>
+<li>属性图的存储充分利用图的结构进行优化，因而在查询计算方面具有较高优势</li>
+<li>属性图的缺点是缺乏工业标准规范的支持，由于不关注更深层的语义表达，也不支持符号逻辑推理</li>
+</ul>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/image-20221221083313156.png" /></p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/image-20221221083328747.png" /></p>
+<h4 id="rdf-resouce-description-framework-资源描述框架">2、RDF: Resouce
+Description Framework 资源描述框架</h4>
+<ul>
+<li>面向Web的语义数据标准</li>
+<li>基本组成单元：一个三元组包含一组声明：以恶简单的逻辑表达式或者声明</li>
+</ul>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/image-20221221083518425.png" /></p>
+<ul>
+<li>多个三元组头尾连接：组成了RDF图</li>
+</ul>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/image-20221221083607370.png" /></p>
+<p>有了RDF所定义的这些关系名词：比如subClassOf等等，就可以进行简单的推理：</p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/image-20221221083700515.png" /></p>
+<h4 id="owl-本体语言">3、OWL 本体语言：</h4>
+<ul>
+<li>其可以看作RDF的扩展，刻画更复杂的类型、属性等</li>
+<li>可以声明等价关系</li>
+<li>可以声明属性的传递性</li>
+<li>声明两个属性互反</li>
+<li>声明属性的函数行</li>
+<li>声明属性的对成型</li>
+<li>声明属性的局部约束：全称限定</li>
+<li>声明属性的局部约束：存在限定、基数限定</li>
+<li>声明相交的类等等</li>
+</ul>
+<h4 id="几种模式的比较">4、几种模式的比较：</h4>
+<ul>
+<li>属性图 vs RDF vs OWL
+<ul>
+<li>属性 图是工业界最常见的图谱建模方法，属性图数据库充分利用图结
+构特点做了性能优化，实用度高，但不支持符号推理。</li>
+<li>RDF 是 W3C 推动的语义数据交换标准与规范，有更严格的语义逻辑基础，
+支持推理，并兼容更复杂的本体表示语言 OWL 。</li>
+<li>在三元组无法满足语义表示需要时， OWL 作为一种完备的本体语言，
+提供了更多可供选用的语义表达构件。</li>
+<li>描述逻辑可以为知识图谱的表示与建模提供理论基础。描述逻辑之于知识图谱，好比关系代数之于关系数据库。</li>
+</ul></li>
+</ul>
+<h3 id="五知识图谱的向量表示方法">五、知识图谱的向量表示方法：</h3>
+<h4 id="词向量表示">1、词向量表示：</h4>
+<ul>
+<li><p>最初：One-Hot Encoding / Bag-of-words</p></li>
+<li><p>词的语义由什么决定？</p>
+<ul>
+<li>词是符号化的，词的语义由它被使用的上下文确定（分布式语义模型）</li>
+</ul></li>
+<li><p>使用Word Embedding词嵌入形式：</p></li>
+</ul>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/image-20221221084935857.png" /></p>
+<ul>
+<li>词向量学习模型距离：CBoW 等</li>
+<li>使用Word
+Embedding表示的词可以发现：许多相似的词在某些维度上会有一定的相关性和相似性，而One-Hot
+Encoding则不可能实现</li>
+</ul>
+<h4 id="知识图谱嵌入">2、知识图谱嵌入：</h4>
+<p>​
+我们发现：如果用Rome的向量减去Paris的向量，和Italy向量减去France向量得到的结果向量类似，这是因为其存在一个隐含的is-capital-of的关系。</p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/image-20221221085249111.png" /></p>
+<ul>
+<li><p>知识图谱嵌入模型1：TransE</p>
+<p>给定一组三元关系组，他们应该满足向量相加的关系</p></li>
+</ul>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/image-20221221085440985.png" /></p>
+<p>​
+对于每个三元组(h,r,t)的优化设置目标：让真实存在的三元组得分尽可能高。</p>
+<p>​ 负样本的构造：随机伪造h或t</p>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/image-20221221085526130.png" /></p>
+<p>​ 这样得到优化的向量空间，应该是满足的。</p>
+<ul>
+<li>知识图谱嵌入模型2：DistMult</li>
+</ul>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/image-20221221085712894.png" /></p>
+<h4
+id="如何评估知识图谱嵌入模型的好坏">3、如何评估知识图谱嵌入模型的好坏？</h4>
+<ul>
+<li>利用推理问题来评估：给定hr预测t,给定rt预测h</li>
+</ul>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/image-20221221085741371.png" /></p>
+<h4 id="小结">4、小结：</h4>
+<ul>
+<li><p>现实的知识图谱项目由于规模化构建的需要
+常常降低表示的逻辑严格性目前较为常见的知识图谱实践包括 RDF
+图模型和属性图模型</p></li>
+<li><p>尽管很多知识图谱并没有应用复杂的知识表示框架 Schema
+工程对于知识图谱的构建仍然是基础性和必要性的工作
+高质量的知识图谱构建通常从Schema 设计开始 。</p></li>
+<li><p>知识 图谱
+的表示学习是符号表示与神经网络相结合比较自然且有前景的方向 。
+知识的向量表示有利于刻画那些隐含不明确的知识
+同时基于神经网络和表示学习实现的推理一定程度上可以解决传统符号推理所面临的鲁棒性不高不容易扩展等众多问题</p></li>
+<li><p>图模型是更加接近于人脑认知和自然语言的数据模型 RDF
+作为一种知识图谱表示框架的参考标准 向上对接 OWL
+等更丰富的语义表示和推理能力 向下对接简化后的属性图数据库以及图计算引擎
+仍然是最值得重视的知识图谱表示框架</p></li>
+</ul>
+]]></content>
+      <categories>
+        <category>⓾ 课程笔记</category>
+        <category>知识图谱</category>
+      </categories>
+      <tags>
+        <tag>course</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>精益创业</title>
     <url>/2022/12/16/01d290994d84/</url>
     <content><![CDATA[<h4 id="创业的本质是什么">1、创业的本质是什么？</h4>
@@ -875,6 +1533,91 @@ data-cites="EqualsAndHashCode在编译时产生Hash函数">@EqualsAndHashCode在
       </tags>
   </entry>
   <entry>
+    <title>SpringBoot2【基础入门】——Chap2 底层注解</title>
+    <url>/2022/12/04/b79928678bf4/</url>
+    <content><![CDATA[<h3 id="一configuration-配置类">一、<span class="citation"
+data-cites="Configuration">@Configuration</span> 配置类：</h3>
+<ul>
+<li>基本使用：</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 1、配置类里面使用<span class="doctag">@Bean</span>标注在方法上给容器注册组件，默认也是单实例的</span></span><br><span class="line"><span class="comment"> * 2、配置类本身也是组件</span></span><br><span class="line"><span class="comment"> * 3、proxyBeanMethods：代理bean的方法</span></span><br><span class="line"><span class="comment"> *      Full(proxyBeanMethods = true)（保证每个<span class="doctag">@Bean</span>方法被调用多少次返回的组件都是单实例的）（默认）</span></span><br><span class="line"><span class="comment"> *      Lite(proxyBeanMethods = false)（每个<span class="doctag">@Bean</span>方法被调用多少次返回的组件都是新创建的）</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="meta">@Configuration(proxyBeanMethods = false)</span> <span class="comment">//告诉SpringBoot这是一个配置类 == 配置文件</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">MyConfig</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Bean</span> <span class="comment">//给容器中添加组件。以方法名作为组件的id。返回类型就是组件类型。返回的值，就是组件在容器中的实例</span></span><br><span class="line">    <span class="keyword">public</span> User <span class="title function_">user01</span><span class="params">()</span>&#123;</span><br><span class="line">        <span class="type">User</span> <span class="variable">zhangsan</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">User</span>(<span class="string">&quot;zhangsan&quot;</span>, <span class="number">18</span>);</span><br><span class="line">        <span class="comment">//user组件依赖了Pet组件（Full(proxyBeanMethods = true)模式）</span></span><br><span class="line">        zhangsan.setPet(tomcatPet());</span><br><span class="line">        <span class="comment">//如果Lite(proxyBeanMethods = false)那么实际上user组件并没有依赖下方的pet组件</span></span><br><span class="line">        <span class="keyword">return</span> zhangsan;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Bean(&quot;tom&quot;)</span></span><br><span class="line">    <span class="keyword">public</span> Pet <span class="title function_">tomcatPet</span><span class="params">()</span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> <span class="title class_">Pet</span>(<span class="string">&quot;tomcat&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>测试代码：</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="meta">@SpringBootConfiguration</span></span><br><span class="line"><span class="meta">@EnableAutoConfiguration</span></span><br><span class="line"><span class="meta">@ComponentScan(&quot;com.atguigu.boot&quot;)</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">MainApplication</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;</span><br><span class="line">    <span class="comment">//1、返回我们IOC容器</span></span><br><span class="line">        <span class="type">ConfigurableApplicationContext</span> <span class="variable">run</span> <span class="operator">=</span> SpringApplication.run(MainApplication.class, args);</span><br><span class="line"></span><br><span class="line">    <span class="comment">//2、查看容器里面的组件</span></span><br><span class="line">        String[] names = run.getBeanDefinitionNames();</span><br><span class="line">        <span class="keyword">for</span> (String name : names) &#123;</span><br><span class="line">            System.out.println(name);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//3、从容器中获取组件</span></span><br><span class="line">        <span class="type">Pet</span> <span class="variable">tom01</span> <span class="operator">=</span> run.getBean(<span class="string">&quot;tom&quot;</span>, Pet.class);</span><br><span class="line">        <span class="type">Pet</span> <span class="variable">tom02</span> <span class="operator">=</span> run.getBean(<span class="string">&quot;tom&quot;</span>, Pet.class);</span><br><span class="line">        System.out.println(<span class="string">&quot;组件：&quot;</span>+(tom01 == tom02));</span><br><span class="line"></span><br><span class="line">    <span class="comment">//4、@Configuration(proxyBeanMethods = true)本身调用拿到的就是代理对象，如果@Configuration(proxyBeanMethods = false)本身拿到的并不是代理对象com.atguigu.boot.config.MyConfig$$EnhancerBySpringCGLIB$$51f1e1ca@1654a892</span></span><br><span class="line">        <span class="type">MyConfig</span> <span class="variable">bean</span> <span class="operator">=</span> run.getBean(MyConfig.class);</span><br><span class="line">        System.out.println(bean);</span><br><span class="line"></span><br><span class="line">    <span class="comment">//如果@Configuration(proxyBeanMethods = true)代理对象调用方法。SpringBoot总会检查这个组件是否在容器中有，就会保持组件单实例</span></span><br><span class="line">        <span class="type">User</span> <span class="variable">user</span> <span class="operator">=</span> bean.user01();</span><br><span class="line">        <span class="type">User</span> <span class="variable">user1</span> <span class="operator">=</span> bean.user01();</span><br><span class="line">        System.out.println(user == user1);</span><br><span class="line"></span><br><span class="line">        <span class="type">User</span> <span class="variable">user01</span> <span class="operator">=</span> run.getBean(<span class="string">&quot;user01&quot;</span>, User.class);</span><br><span class="line">        <span class="type">Pet</span> <span class="variable">tom</span> <span class="operator">=</span> run.getBean(<span class="string">&quot;tom&quot;</span>, Pet.class);</span><br><span class="line"></span><br><span class="line">        System.out.println(<span class="string">&quot;用户的宠物：&quot;</span>+(user01.getPet() == tom));</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>最佳实践：
+<ul>
+<li>配置
+类组件之间<strong>无依赖关系</strong>用Lite模式加速容器启动过程，减少判断</li>
+<li>配置
+类组件之间<strong>有依赖关系</strong>，方法会被调用得到之前单实例组件，用Full模式（默认）</li>
+</ul></li>
+<li><code>Alt + Ins</code>:生成getter，setter、构造器等代码。</li>
+<li><code>Ctrl + Alt + B</code>:查看类的具体实现代码。</li>
+</ul>
+<h3 id="二import导入组件">二、<span class="citation"
+data-cites="Import导入组件">@Import导入组件</span>：</h3>
+<ul>
+<li><span class="citation" data-cites="Bean">@Bean</span>、<span
+class="citation" data-cites="Component">@Component</span>、<span
+class="citation" data-cites="Controller">@Controller</span>、<span
+class="citation" data-cites="Service">@Service</span>、<span
+class="citation"
+data-cites="Repository">@Repository</span>，它们是Spring的基本标签，在Spring
+Boot中并未改变它们原来的功能。</li>
+<li><span class="citation"
+data-cites="Import">@Import</span>({User.class, DBHelper.class})</li>
+<li>其会给容器中<strong>自动创建出这两个类型的组件</strong>、默认组件的名字就是全类名,其需要在容器中的组件类上进行标注</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="meta">@Import(&#123;User.class, DBHelper.class&#125;)</span></span><br><span class="line"><span class="meta">@Configuration(proxyBeanMethods = false)</span> <span class="comment">//告诉SpringBoot这是一个配置类 == 配置文件</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">MyConfig</span> &#123;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>如何测试：</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"></span><br><span class="line"><span class="comment">//1、返回我们IOC容器</span></span><br><span class="line"><span class="type">ConfigurableApplicationContext</span> <span class="variable">run</span> <span class="operator">=</span> SpringApplication.run(MainApplication.class, args);</span><br><span class="line"></span><br><span class="line"><span class="comment">//...</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//5、获取组件</span></span><br><span class="line">String[] beanNamesForType = run.getBeanNamesForType(User.class);</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> (String s : beanNamesForType) &#123;</span><br><span class="line">    System.out.println(s);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="type">DBHelper</span> <span class="variable">bean1</span> <span class="operator">=</span> run.getBean(DBHelper.class);</span><br><span class="line">System.out.println(bean1);</span><br></pre></td></tr></table></figure>
+<h3 id="三conditional条件装配">三、<span class="citation"
+data-cites="Conditional条件装配">@Conditional条件装配</span></h3>
+<ul>
+<li>满足Conditional指定的条件，则进行组件注入</li>
+<li>其有非常多的子注解，以@ConditionalOnMissingBean举例说明</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="meta">@Configuration(proxyBeanMethods = false)</span></span><br><span class="line"><span class="meta">@ConditionalOnMissingBean(name = &quot;tom&quot;)</span><span class="comment">//没有tom名字的Bean时，MyConfig类的Bean才能生效。</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">MyConfig</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Bean</span></span><br><span class="line">    <span class="keyword">public</span> User <span class="title function_">user01</span><span class="params">()</span>&#123;</span><br><span class="line">        <span class="type">User</span> <span class="variable">zhangsan</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">User</span>(<span class="string">&quot;zhangsan&quot;</span>, <span class="number">18</span>);</span><br><span class="line">        zhangsan.setPet(tomcatPet());</span><br><span class="line">        <span class="keyword">return</span> zhangsan;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Bean(&quot;tom22&quot;)</span></span><br><span class="line">    <span class="keyword">public</span> Pet <span class="title function_">tomcatPet</span><span class="params">()</span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> <span class="title class_">Pet</span>(<span class="string">&quot;tomcat&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;</span><br><span class="line">    <span class="comment">//1、返回我们IOC容器</span></span><br><span class="line">    <span class="type">ConfigurableApplicationContext</span> <span class="variable">run</span> <span class="operator">=</span> SpringApplication.run(MainApplication.class, args);</span><br><span class="line"></span><br><span class="line">    <span class="comment">//2、查看容器里面的组件</span></span><br><span class="line">    String[] names = run.getBeanDefinitionNames();</span><br><span class="line">    <span class="keyword">for</span> (String name : names) &#123;</span><br><span class="line">        System.out.println(name);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="type">boolean</span> <span class="variable">tom</span> <span class="operator">=</span> run.containsBean(<span class="string">&quot;tom&quot;</span>);</span><br><span class="line">    System.out.println(<span class="string">&quot;容器中Tom组件：&quot;</span>+tom);<span class="comment">//false</span></span><br><span class="line"></span><br><span class="line">    <span class="type">boolean</span> <span class="variable">user01</span> <span class="operator">=</span> run.containsBean(<span class="string">&quot;user01&quot;</span>);</span><br><span class="line">    System.out.println(<span class="string">&quot;容器中user01组件：&quot;</span>+user01);<span class="comment">//true</span></span><br><span class="line"></span><br><span class="line">    <span class="type">boolean</span> <span class="variable">tom22</span> <span class="operator">=</span> run.containsBean(<span class="string">&quot;tom22&quot;</span>);</span><br><span class="line">    System.out.println(<span class="string">&quot;容器中tom22组件：&quot;</span>+tom22);<span class="comment">//true</span></span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="四底层注解-importresource导入spring配置文件">四、底层注解-<span
+class="citation"
+data-cites="ImportResource导入Spring配置文件">@ImportResource导入Spring配置文件</span></h3>
+<p>比如，公司使用bean.xml文件生成配置bean，然而你为了省事，想继续复用bean.xml，<span
+class="citation"
+data-cites="ImportResource粉墨登场">@ImportResource粉墨登场</span>。</p>
+<p>bean.xml：</p>
+<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version=<span class="string">&quot;1.0&quot;</span> encoding=<span class="string">&quot;UTF-8&quot;</span>?&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">beans</span> <span class="attr">...</span>&quot;&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">&quot;haha&quot;</span> <span class="attr">class</span>=<span class="string">&quot;com.lun.boot.bean.User&quot;</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;name&quot;</span> <span class="attr">value</span>=<span class="string">&quot;zhangsan&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;age&quot;</span> <span class="attr">value</span>=<span class="string">&quot;18&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">bean</span>&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">&quot;hehe&quot;</span> <span class="attr">class</span>=<span class="string">&quot;com.lun.boot.bean.Pet&quot;</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;name&quot;</span> <span class="attr">value</span>=<span class="string">&quot;tomcat&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">bean</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">beans</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>使用方法：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="meta">@ImportResource(&quot;classpath:beans.xml&quot;)</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">MyConfig</span> &#123;</span><br><span class="line">...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>测试类：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;</span><br><span class="line">    <span class="comment">//1、返回我们IOC容器</span></span><br><span class="line">    <span class="type">ConfigurableApplicationContext</span> <span class="variable">run</span> <span class="operator">=</span> SpringApplication.run(MainApplication.class, args);</span><br><span class="line"></span><br><span class="line">	<span class="type">boolean</span> <span class="variable">haha</span> <span class="operator">=</span> run.containsBean(<span class="string">&quot;haha&quot;</span>);</span><br><span class="line">	<span class="type">boolean</span> <span class="variable">hehe</span> <span class="operator">=</span> run.containsBean(<span class="string">&quot;hehe&quot;</span>);</span><br><span class="line">	System.out.println(<span class="string">&quot;haha：&quot;</span>+haha);<span class="comment">//true</span></span><br><span class="line">	System.out.println(<span class="string">&quot;hehe：&quot;</span>+hehe);<span class="comment">//true</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="五configurationproperties配置绑定">五、<span class="citation"
+data-cites="ConfigurationProperties配置绑定">@ConfigurationProperties配置绑定</span></h3>
+<ul>
+<li><p>读取properties文件中的内容，并且把它封装到JavaBean中，以供随时使用</p></li>
+<li><p>Spring Boot一种配置配置绑定：<span class="citation"
+data-cites="ConfigurationProperties">@ConfigurationProperties</span> +
+<span class="citation" data-cites="Component">@Component</span></p></li>
+<li><p>假设有配置文件application.properties</p></li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">mycar.brand=BYD</span><br><span class="line">mycar.price=100000</span><br></pre></td></tr></table></figure>
+<ul>
+<li>只有在容器中的组件，才会拥有SpringBoot提供的强大功能</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="meta">@ConfigurationProperties(prefix = &quot;mycar&quot;)</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Car</span> &#123;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+]]></content>
+      <categories>
+        <category>⑨ 工程类笔记</category>
+        <category>SpringBoot2</category>
+      </categories>
+      <tags>
+        <tag>SpringBoot2</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>SpringBoot2【基础入门】——Chap1 基础入门</title>
     <url>/2022/12/04/fb4e64940906/</url>
     <content><![CDATA[<h3 id="一spring生态圈">一、Spring生态圈：</h3>
@@ -999,91 +1742,6 @@ data-cites="SpringBootApplication">@SpringBootApplication</span>(scanBasePackage
 有一个叫做spring-boot-autoconfigure的包里面</p></li>
 </ul></li>
 </ul>
-]]></content>
-      <categories>
-        <category>⑨ 工程类笔记</category>
-        <category>SpringBoot2</category>
-      </categories>
-      <tags>
-        <tag>SpringBoot2</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>SpringBoot2【基础入门】——Chap2 底层注解</title>
-    <url>/2022/12/04/b79928678bf4/</url>
-    <content><![CDATA[<h3 id="一configuration-配置类">一、<span class="citation"
-data-cites="Configuration">@Configuration</span> 配置类：</h3>
-<ul>
-<li>基本使用：</li>
-</ul>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 1、配置类里面使用<span class="doctag">@Bean</span>标注在方法上给容器注册组件，默认也是单实例的</span></span><br><span class="line"><span class="comment"> * 2、配置类本身也是组件</span></span><br><span class="line"><span class="comment"> * 3、proxyBeanMethods：代理bean的方法</span></span><br><span class="line"><span class="comment"> *      Full(proxyBeanMethods = true)（保证每个<span class="doctag">@Bean</span>方法被调用多少次返回的组件都是单实例的）（默认）</span></span><br><span class="line"><span class="comment"> *      Lite(proxyBeanMethods = false)（每个<span class="doctag">@Bean</span>方法被调用多少次返回的组件都是新创建的）</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="meta">@Configuration(proxyBeanMethods = false)</span> <span class="comment">//告诉SpringBoot这是一个配置类 == 配置文件</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">MyConfig</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Bean</span> <span class="comment">//给容器中添加组件。以方法名作为组件的id。返回类型就是组件类型。返回的值，就是组件在容器中的实例</span></span><br><span class="line">    <span class="keyword">public</span> User <span class="title function_">user01</span><span class="params">()</span>&#123;</span><br><span class="line">        <span class="type">User</span> <span class="variable">zhangsan</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">User</span>(<span class="string">&quot;zhangsan&quot;</span>, <span class="number">18</span>);</span><br><span class="line">        <span class="comment">//user组件依赖了Pet组件（Full(proxyBeanMethods = true)模式）</span></span><br><span class="line">        zhangsan.setPet(tomcatPet());</span><br><span class="line">        <span class="comment">//如果Lite(proxyBeanMethods = false)那么实际上user组件并没有依赖下方的pet组件</span></span><br><span class="line">        <span class="keyword">return</span> zhangsan;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Bean(&quot;tom&quot;)</span></span><br><span class="line">    <span class="keyword">public</span> Pet <span class="title function_">tomcatPet</span><span class="params">()</span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> <span class="title class_">Pet</span>(<span class="string">&quot;tomcat&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<ul>
-<li>测试代码：</li>
-</ul>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="meta">@SpringBootConfiguration</span></span><br><span class="line"><span class="meta">@EnableAutoConfiguration</span></span><br><span class="line"><span class="meta">@ComponentScan(&quot;com.atguigu.boot&quot;)</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">MainApplication</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;</span><br><span class="line">    <span class="comment">//1、返回我们IOC容器</span></span><br><span class="line">        <span class="type">ConfigurableApplicationContext</span> <span class="variable">run</span> <span class="operator">=</span> SpringApplication.run(MainApplication.class, args);</span><br><span class="line"></span><br><span class="line">    <span class="comment">//2、查看容器里面的组件</span></span><br><span class="line">        String[] names = run.getBeanDefinitionNames();</span><br><span class="line">        <span class="keyword">for</span> (String name : names) &#123;</span><br><span class="line">            System.out.println(name);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//3、从容器中获取组件</span></span><br><span class="line">        <span class="type">Pet</span> <span class="variable">tom01</span> <span class="operator">=</span> run.getBean(<span class="string">&quot;tom&quot;</span>, Pet.class);</span><br><span class="line">        <span class="type">Pet</span> <span class="variable">tom02</span> <span class="operator">=</span> run.getBean(<span class="string">&quot;tom&quot;</span>, Pet.class);</span><br><span class="line">        System.out.println(<span class="string">&quot;组件：&quot;</span>+(tom01 == tom02));</span><br><span class="line"></span><br><span class="line">    <span class="comment">//4、@Configuration(proxyBeanMethods = true)本身调用拿到的就是代理对象，如果@Configuration(proxyBeanMethods = false)本身拿到的并不是代理对象com.atguigu.boot.config.MyConfig$$EnhancerBySpringCGLIB$$51f1e1ca@1654a892</span></span><br><span class="line">        <span class="type">MyConfig</span> <span class="variable">bean</span> <span class="operator">=</span> run.getBean(MyConfig.class);</span><br><span class="line">        System.out.println(bean);</span><br><span class="line"></span><br><span class="line">    <span class="comment">//如果@Configuration(proxyBeanMethods = true)代理对象调用方法。SpringBoot总会检查这个组件是否在容器中有，就会保持组件单实例</span></span><br><span class="line">        <span class="type">User</span> <span class="variable">user</span> <span class="operator">=</span> bean.user01();</span><br><span class="line">        <span class="type">User</span> <span class="variable">user1</span> <span class="operator">=</span> bean.user01();</span><br><span class="line">        System.out.println(user == user1);</span><br><span class="line"></span><br><span class="line">        <span class="type">User</span> <span class="variable">user01</span> <span class="operator">=</span> run.getBean(<span class="string">&quot;user01&quot;</span>, User.class);</span><br><span class="line">        <span class="type">Pet</span> <span class="variable">tom</span> <span class="operator">=</span> run.getBean(<span class="string">&quot;tom&quot;</span>, Pet.class);</span><br><span class="line"></span><br><span class="line">        System.out.println(<span class="string">&quot;用户的宠物：&quot;</span>+(user01.getPet() == tom));</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<ul>
-<li>最佳实践：
-<ul>
-<li>配置
-类组件之间<strong>无依赖关系</strong>用Lite模式加速容器启动过程，减少判断</li>
-<li>配置
-类组件之间<strong>有依赖关系</strong>，方法会被调用得到之前单实例组件，用Full模式（默认）</li>
-</ul></li>
-<li><code>Alt + Ins</code>:生成getter，setter、构造器等代码。</li>
-<li><code>Ctrl + Alt + B</code>:查看类的具体实现代码。</li>
-</ul>
-<h3 id="二import导入组件">二、<span class="citation"
-data-cites="Import导入组件">@Import导入组件</span>：</h3>
-<ul>
-<li><span class="citation" data-cites="Bean">@Bean</span>、<span
-class="citation" data-cites="Component">@Component</span>、<span
-class="citation" data-cites="Controller">@Controller</span>、<span
-class="citation" data-cites="Service">@Service</span>、<span
-class="citation"
-data-cites="Repository">@Repository</span>，它们是Spring的基本标签，在Spring
-Boot中并未改变它们原来的功能。</li>
-<li><span class="citation"
-data-cites="Import">@Import</span>({User.class, DBHelper.class})</li>
-<li>其会给容器中<strong>自动创建出这两个类型的组件</strong>、默认组件的名字就是全类名,其需要在容器中的组件类上进行标注</li>
-</ul>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="meta">@Import(&#123;User.class, DBHelper.class&#125;)</span></span><br><span class="line"><span class="meta">@Configuration(proxyBeanMethods = false)</span> <span class="comment">//告诉SpringBoot这是一个配置类 == 配置文件</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">MyConfig</span> &#123;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<ul>
-<li>如何测试：</li>
-</ul>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"></span><br><span class="line"><span class="comment">//1、返回我们IOC容器</span></span><br><span class="line"><span class="type">ConfigurableApplicationContext</span> <span class="variable">run</span> <span class="operator">=</span> SpringApplication.run(MainApplication.class, args);</span><br><span class="line"></span><br><span class="line"><span class="comment">//...</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//5、获取组件</span></span><br><span class="line">String[] beanNamesForType = run.getBeanNamesForType(User.class);</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> (String s : beanNamesForType) &#123;</span><br><span class="line">    System.out.println(s);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="type">DBHelper</span> <span class="variable">bean1</span> <span class="operator">=</span> run.getBean(DBHelper.class);</span><br><span class="line">System.out.println(bean1);</span><br></pre></td></tr></table></figure>
-<h3 id="三conditional条件装配">三、<span class="citation"
-data-cites="Conditional条件装配">@Conditional条件装配</span></h3>
-<ul>
-<li>满足Conditional指定的条件，则进行组件注入</li>
-<li>其有非常多的子注解，以@ConditionalOnMissingBean举例说明</li>
-</ul>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="meta">@Configuration(proxyBeanMethods = false)</span></span><br><span class="line"><span class="meta">@ConditionalOnMissingBean(name = &quot;tom&quot;)</span><span class="comment">//没有tom名字的Bean时，MyConfig类的Bean才能生效。</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">MyConfig</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Bean</span></span><br><span class="line">    <span class="keyword">public</span> User <span class="title function_">user01</span><span class="params">()</span>&#123;</span><br><span class="line">        <span class="type">User</span> <span class="variable">zhangsan</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">User</span>(<span class="string">&quot;zhangsan&quot;</span>, <span class="number">18</span>);</span><br><span class="line">        zhangsan.setPet(tomcatPet());</span><br><span class="line">        <span class="keyword">return</span> zhangsan;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Bean(&quot;tom22&quot;)</span></span><br><span class="line">    <span class="keyword">public</span> Pet <span class="title function_">tomcatPet</span><span class="params">()</span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> <span class="title class_">Pet</span>(<span class="string">&quot;tomcat&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;</span><br><span class="line">    <span class="comment">//1、返回我们IOC容器</span></span><br><span class="line">    <span class="type">ConfigurableApplicationContext</span> <span class="variable">run</span> <span class="operator">=</span> SpringApplication.run(MainApplication.class, args);</span><br><span class="line"></span><br><span class="line">    <span class="comment">//2、查看容器里面的组件</span></span><br><span class="line">    String[] names = run.getBeanDefinitionNames();</span><br><span class="line">    <span class="keyword">for</span> (String name : names) &#123;</span><br><span class="line">        System.out.println(name);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="type">boolean</span> <span class="variable">tom</span> <span class="operator">=</span> run.containsBean(<span class="string">&quot;tom&quot;</span>);</span><br><span class="line">    System.out.println(<span class="string">&quot;容器中Tom组件：&quot;</span>+tom);<span class="comment">//false</span></span><br><span class="line"></span><br><span class="line">    <span class="type">boolean</span> <span class="variable">user01</span> <span class="operator">=</span> run.containsBean(<span class="string">&quot;user01&quot;</span>);</span><br><span class="line">    System.out.println(<span class="string">&quot;容器中user01组件：&quot;</span>+user01);<span class="comment">//true</span></span><br><span class="line"></span><br><span class="line">    <span class="type">boolean</span> <span class="variable">tom22</span> <span class="operator">=</span> run.containsBean(<span class="string">&quot;tom22&quot;</span>);</span><br><span class="line">    System.out.println(<span class="string">&quot;容器中tom22组件：&quot;</span>+tom22);<span class="comment">//true</span></span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h3 id="四底层注解-importresource导入spring配置文件">四、底层注解-<span
-class="citation"
-data-cites="ImportResource导入Spring配置文件">@ImportResource导入Spring配置文件</span></h3>
-<p>比如，公司使用bean.xml文件生成配置bean，然而你为了省事，想继续复用bean.xml，<span
-class="citation"
-data-cites="ImportResource粉墨登场">@ImportResource粉墨登场</span>。</p>
-<p>bean.xml：</p>
-<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version=<span class="string">&quot;1.0&quot;</span> encoding=<span class="string">&quot;UTF-8&quot;</span>?&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">beans</span> <span class="attr">...</span>&quot;&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">&quot;haha&quot;</span> <span class="attr">class</span>=<span class="string">&quot;com.lun.boot.bean.User&quot;</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;name&quot;</span> <span class="attr">value</span>=<span class="string">&quot;zhangsan&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;age&quot;</span> <span class="attr">value</span>=<span class="string">&quot;18&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">bean</span>&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">&quot;hehe&quot;</span> <span class="attr">class</span>=<span class="string">&quot;com.lun.boot.bean.Pet&quot;</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;name&quot;</span> <span class="attr">value</span>=<span class="string">&quot;tomcat&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">bean</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">beans</span>&gt;</span></span><br></pre></td></tr></table></figure>
-<p>使用方法：</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="meta">@ImportResource(&quot;classpath:beans.xml&quot;)</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">MyConfig</span> &#123;</span><br><span class="line">...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>测试类：</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;</span><br><span class="line">    <span class="comment">//1、返回我们IOC容器</span></span><br><span class="line">    <span class="type">ConfigurableApplicationContext</span> <span class="variable">run</span> <span class="operator">=</span> SpringApplication.run(MainApplication.class, args);</span><br><span class="line"></span><br><span class="line">	<span class="type">boolean</span> <span class="variable">haha</span> <span class="operator">=</span> run.containsBean(<span class="string">&quot;haha&quot;</span>);</span><br><span class="line">	<span class="type">boolean</span> <span class="variable">hehe</span> <span class="operator">=</span> run.containsBean(<span class="string">&quot;hehe&quot;</span>);</span><br><span class="line">	System.out.println(<span class="string">&quot;haha：&quot;</span>+haha);<span class="comment">//true</span></span><br><span class="line">	System.out.println(<span class="string">&quot;hehe：&quot;</span>+hehe);<span class="comment">//true</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h3 id="五configurationproperties配置绑定">五、<span class="citation"
-data-cites="ConfigurationProperties配置绑定">@ConfigurationProperties配置绑定</span></h3>
-<ul>
-<li><p>读取properties文件中的内容，并且把它封装到JavaBean中，以供随时使用</p></li>
-<li><p>Spring Boot一种配置配置绑定：<span class="citation"
-data-cites="ConfigurationProperties">@ConfigurationProperties</span> +
-<span class="citation" data-cites="Component">@Component</span></p></li>
-<li><p>假设有配置文件application.properties</p></li>
-</ul>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">mycar.brand=BYD</span><br><span class="line">mycar.price=100000</span><br></pre></td></tr></table></figure>
-<ul>
-<li>只有在容器中的组件，才会拥有SpringBoot提供的强大功能</li>
-</ul>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="meta">@ConfigurationProperties(prefix = &quot;mycar&quot;)</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Car</span> &#123;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 ]]></content>
       <categories>
         <category>⑨ 工程类笔记</category>
@@ -1468,6 +2126,197 @@ src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-202211301104485
       </tags>
   </entry>
   <entry>
+    <title>MyBatis Chap1——简介与基本操作</title>
+    <url>/2022/11/29/ec35995347ad/</url>
+    <content><![CDATA[<h3 id="一mybatis简介与为何要使用">一、MyBatis简介与为何要使用？</h3>
+<ul>
+<li><p>传统的与数据库交互的方式：</p>
+<ul>
+<li><p>JDBC-&gt;DBUtils-&gt;JdbcTemplate
+自己封装一些小的工具，来简化使用</p></li>
+<li><p>SQL 夹杂在Java代码中耦合度高，导致硬编码内伤</p></li>
+<li><p>维护不易且实际开发需求中 SQL 有变化，频繁修改的情况多见</p></li>
+</ul></li>
+<li><p>Hibernate：全自动ORM框架，旨在消除Sql</p>
+<ul>
+<li>操作简便，开发效率高</li>
+<li>完全的黑箱操作，程序中的长难复杂 SQL 需要绕过框架</li>
+<li>反射操作太多，导致数据库性能下降</li>
+</ul></li>
+<li><p>MyBatis：半自动ORM框架</p>
+<ul>
+<li>支持定制化 SQL、存储过程以及高级映射的优秀的持久层框架</li>
+<li>避免了几乎所有的 JDBC 代码和手动设置参数以及获取结果集</li>
+<li>可以使用简单的XML或注解用于配置和原始映射，将接口和Java的POJO（Plain
+Old Java Objects，普通的Java对象）映射成数据库中的记录</li>
+<li>SQL 和 Java
+编码分开，功能边界清晰。Java代码专注业务、SQL语句专注数据</li>
+</ul></li>
+</ul>
+<h3 id="二快速上手指南">二、快速上手指南：</h3>
+<ul>
+<li>创建Maven工程</li>
+<li>引入依赖：</li>
+</ul>
+<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependencies</span>&gt;</span></span><br><span class="line">    <span class="comment">&lt;!-- Mybatis核心 --&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.mybatis<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>mybatis<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">version</span>&gt;</span>3.5.7<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="comment">&lt;!-- junit测试 --&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>junit<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>junit<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">version</span>&gt;</span>4.12<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">scope</span>&gt;</span>test<span class="tag">&lt;/<span class="name">scope</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="comment">&lt;!-- MySQL驱动 --&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>mysql<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>mysql-connector-java<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">version</span>&gt;</span>5.1.3<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependencies</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<ul>
+<li>创建MyBatis核心配置文件：</li>
+</ul>
+<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version=<span class="string">&quot;1.0&quot;</span> encoding=<span class="string">&quot;UTF-8&quot;</span> ?&gt;</span></span><br><span class="line"><span class="meta">&lt;!DOCTYPE <span class="keyword">configuration</span></span></span><br><span class="line"><span class="meta"><span class="keyword">PUBLIC</span> <span class="string">&quot;-//mybatis.org//DTD Config 3.0//EN&quot;</span></span></span><br><span class="line"><span class="meta"><span class="string">&quot;http://mybatis.org/dtd/mybatis-3-config.dtd&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">configuration</span>&gt;</span></span><br><span class="line">    <span class="comment">&lt;!--设置连接数据库的环境--&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">environments</span> <span class="attr">default</span>=<span class="string">&quot;development&quot;</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">environment</span> <span class="attr">id</span>=<span class="string">&quot;development&quot;</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">transactionManager</span> <span class="attr">type</span>=<span class="string">&quot;JDBC&quot;</span>/&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">dataSource</span> <span class="attr">type</span>=<span class="string">&quot;POOLED&quot;</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;driver&quot;</span> <span class="attr">value</span>=<span class="string">&quot;com.mysql.jdbc.Driver&quot;</span>/&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;url&quot;</span></span></span><br><span class="line"><span class="tag">                <span class="attr">value</span>=<span class="string">&quot;jdbc:mysql://localhost:3306/MyBatis&quot;</span>/&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;username&quot;</span> <span class="attr">value</span>=<span class="string">&quot;root&quot;</span>/&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;password&quot;</span> <span class="attr">value</span>=<span class="string">&quot;123456&quot;</span>/&gt;</span></span><br><span class="line">            <span class="tag">&lt;/<span class="name">dataSource</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;/<span class="name">environment</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">environments</span>&gt;</span></span><br><span class="line">    <span class="comment">&lt;!--引入映射文件--&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">mappers</span>&gt;</span></span><br><span class="line">     	<span class="tag">&lt;<span class="name">mapper</span> <span class="attr">resource</span>=<span class="string">&quot;mappers/UserMapper.xml&quot;</span>/&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">mappers</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">configuration</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<ul>
+<li>创建mapper接口，相当于以前的dao。但是区别在于，mapper仅仅是接口，我们不需要提供实现类。</li>
+</ul>
+<p><img
+src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20221129101242867.png" /></p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">interface</span> <span class="title class_">UserMapper</span> &#123;</span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">* 添加用户信息</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line">	<span class="type">int</span> <span class="title function_">insertUser</span><span class="params">()</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>创建MyBatis的ORM映射文件：
+<ul>
+<li>命名规则：
+<ul>
+<li>表所对应的实体类的类名+Mapper.xml</li>
+<li>例如：表t_user，映射的实体类为User，所对应的映射文件为UserMapper.xml</li>
+<li>因此<strong>一个映射文件对应一个实体类，对应一张表的操作</strong></li>
+<li><strong>MyBatis映射文件用于编写SQL，访问以及操作表中的数据</strong></li>
+<li>MyBatis映射文件存放的位置是src/main/resources/mappers目录下</li>
+</ul></li>
+<li>MyBatis中可以面向接口操作数据，<strong>要保证两个一致：</strong>
+<ul>
+<li>mapper接口的全类名和映射文件的命名空间（namespace）保持一致</li>
+<li>mapper接口中方法的方法名和映射文件中编写SQL的标签的id属性保持一致</li>
+</ul></li>
+</ul></li>
+</ul>
+<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version=<span class="string">&quot;1.0&quot;</span> encoding=<span class="string">&quot;UTF-8&quot;</span> ?&gt;</span></span><br><span class="line">    <span class="meta">&lt;!DOCTYPE <span class="keyword">mapper</span></span></span><br><span class="line"><span class="meta">    <span class="keyword">PUBLIC</span> <span class="string">&quot;-//mybatis.org//DTD Mapper 3.0//EN&quot;</span></span></span><br><span class="line"><span class="meta">    <span class="string">&quot;http://mybatis.org/dtd/mybatis-3-mapper.dtd&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">mapper</span> <span class="attr">namespace</span>=<span class="string">&quot;com.fantast.mybatis.mapper.UserMapper&quot;</span>&gt;</span></span><br><span class="line">    <span class="comment">&lt;!--int insertUser();--&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">insert</span> <span class="attr">id</span>=<span class="string">&quot;insertUser&quot;</span>&gt;</span></span><br><span class="line">    	insert into t_user values(null,&#x27;张三&#x27;,&#x27;123&#x27;,23,&#x27;女&#x27;)</span><br><span class="line">    <span class="tag">&lt;/<span class="name">insert</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">mapper</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<ul>
+<li>使用JUnit进行功能测试：</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">TestMapper</span> &#123;</span><br><span class="line">    <span class="meta">@Test</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">testMapper</span><span class="params">()</span> <span class="keyword">throws</span> IOException &#123;</span><br><span class="line">        <span class="comment">//读取MyBatis的核心配置文件</span></span><br><span class="line">        <span class="type">InputStream</span> <span class="variable">is</span> <span class="operator">=</span> Resources.getResourceAsStream(<span class="string">&quot;mybatis-config.xml&quot;</span>);</span><br><span class="line">		<span class="comment">//创建SqlSessionFactoryBuilder对象</span></span><br><span class="line">        <span class="type">SqlSessionFactoryBuilder</span> <span class="variable">sqlSessionFactoryBuilder</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">SqlSessionFactoryBuilder</span>();</span><br><span class="line">		<span class="comment">//通过核心配置文件所对应的字节输入流创建工厂类SqlSessionFactory，生产SqlSession对象</span></span><br><span class="line">        <span class="type">SqlSessionFactory</span> <span class="variable">sqlSessionFactory</span> <span class="operator">=</span> sqlSessionFactoryBuilder.build(is);</span><br><span class="line">        <span class="comment">//创建SqlSession对象，此时通过SqlSession对象所操作的sql都会自动提交</span></span><br><span class="line">        <span class="type">SqlSession</span> <span class="variable">sqlSession</span> <span class="operator">=</span> sqlSessionFactory.openSession(<span class="literal">true</span>);</span><br><span class="line">        <span class="comment">//通过代理模式创建UserMapper接口的代理实现类对象</span></span><br><span class="line">        <span class="type">UserMapper</span> <span class="variable">userMapper</span> <span class="operator">=</span> sqlSession.getMapper(UserMapper.class);</span><br><span class="line">        <span class="comment">//调用UserMapper接口中的方法，就可以根据UserMapper的全类名匹配元素文件，通过调用的方法名匹配映射文件中的SQL标签，并执行标签中的SQL语句</span></span><br><span class="line">        <span class="type">int</span> <span class="variable">result</span> <span class="operator">=</span> userMapper.insertUser();</span><br><span class="line">        <span class="comment">//sqlSession.commit();</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li><p>加入log4j日志：</p>
+<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>log4j<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>log4j<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>1.2.17<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version=<span class="string">&quot;1.0&quot;</span> encoding=<span class="string">&quot;UTF-8&quot;</span> ?&gt;</span></span><br><span class="line"><span class="meta">&lt;!DOCTYPE <span class="keyword">log4j</span>:configuration <span class="keyword">SYSTEM</span> <span class="string">&quot;log4j.dtd&quot;</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">log4j:configuration</span> <span class="attr">xmlns:log4j</span>=<span class="string">&quot;http://jakarta.apache.org/log4j/&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">appender</span> <span class="attr">name</span>=<span class="string">&quot;STDOUT&quot;</span> <span class="attr">class</span>=<span class="string">&quot;org.apache.log4j.ConsoleAppender&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">param</span> <span class="attr">name</span>=<span class="string">&quot;Encoding&quot;</span> <span class="attr">value</span>=<span class="string">&quot;UTF-8&quot;</span> /&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">layout</span> <span class="attr">class</span>=<span class="string">&quot;org.apache.log4j.PatternLayout&quot;</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">param</span> <span class="attr">name</span>=<span class="string">&quot;ConversionPattern&quot;</span> <span class="attr">value</span>=<span class="string">&quot;%-5p %d&#123;MM-dd HH:mm:ss,SSS&#125;</span></span></span><br><span class="line"><span class="string"><span class="tag">        %m (%F:%L) \n&quot;</span> /&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">layout</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">appender</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">logger</span> <span class="attr">name</span>=<span class="string">&quot;java.sql&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">level</span> <span class="attr">value</span>=<span class="string">&quot;debug&quot;</span> /&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">logger</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">logger</span> <span class="attr">name</span>=<span class="string">&quot;org.apache.ibatis&quot;</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">level</span> <span class="attr">value</span>=<span class="string">&quot;info&quot;</span> /&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">logger</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">root</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">level</span> <span class="attr">value</span>=<span class="string">&quot;debug&quot;</span> /&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">appender-ref</span> <span class="attr">ref</span>=<span class="string">&quot;STDOUT&quot;</span> /&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">root</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">log4j:configuration</span>&gt;</span></span><br></pre></td></tr></table></figure></li>
+<li><p>日志级别：</p>
+<ul>
+<li>FATAL(致命)&gt;ERROR(错误)&gt;WARN(警告)&gt;INFO(信息)&gt;DEBUG(调试)</li>
+</ul></li>
+</ul>
+<h3 id="三mybatis配置文件解释">三、MyBatis配置文件解释：</h3>
+<p>核心配置文件中的标签必须按照固定的顺序：</p>
+<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version=<span class="string">&quot;1.0&quot;</span> encoding=<span class="string">&quot;UTF-8&quot;</span> ?&gt;</span></span><br><span class="line"><span class="meta">&lt;!DOCTYPE <span class="keyword">configuration</span></span></span><br><span class="line"><span class="meta"><span class="keyword">PUBLIC</span> <span class="string">&quot;-//MyBatis.org//DTD Config 3.0//EN&quot;</span></span></span><br><span class="line"><span class="meta"><span class="string">&quot;http://MyBatis.org/dtd/MyBatis-3-config.dtd&quot;</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">configuration</span>&gt;</span></span><br><span class="line">    <span class="comment">&lt;!--引入properties文件，此时就可以$&#123;属性名&#125;的方式访问属性值--&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">properties</span> <span class="attr">resource</span>=<span class="string">&quot;jdbc.properties&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">properties</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">settings</span>&gt;</span></span><br><span class="line">        <span class="comment">&lt;!--将表中字段的下划线自动转换为驼峰--&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">setting</span> <span class="attr">name</span>=<span class="string">&quot;mapUnderscoreToCamelCase&quot;</span> <span class="attr">value</span>=<span class="string">&quot;true&quot;</span>/&gt;</span></span><br><span class="line">        <span class="comment">&lt;!--开启延迟加载--&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">setting</span> <span class="attr">name</span>=<span class="string">&quot;lazyLoadingEnabled&quot;</span> <span class="attr">value</span>=<span class="string">&quot;true&quot;</span>/&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">settings</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">typeAliases</span>&gt;</span></span><br><span class="line">    <span class="comment">&lt;!--</span></span><br><span class="line"><span class="comment">    typeAlias：设置某个具体的类型的别名</span></span><br><span class="line"><span class="comment">    属性：</span></span><br><span class="line"><span class="comment">    type：需要设置别名的类型的全类名</span></span><br><span class="line"><span class="comment">    alias：设置此类型的别名，若不设置此属性，该类型拥有默认的别名，即类名且不区分大小写</span></span><br><span class="line"><span class="comment">    若设置此属性，此时该类型的别名只能使用alias所设置的值,这个别名用于在映射xml里指明resultType</span></span><br><span class="line"><span class="comment">    --&gt;</span></span><br><span class="line">    <span class="comment">&lt;!--    &lt;typeAlias type=&quot;com.atguigu.mybatis.bean.User&quot;&gt;&lt;/typeAlias&gt;   --&gt;</span></span><br><span class="line">    <span class="comment">&lt;!--    &lt;typeAlias type=&quot;com.atguigu.mybatis.bean.User&quot; alias=&quot;abc&quot;&gt;&lt;/typeAlias&gt;     --&gt;</span></span><br><span class="line">        <span class="comment">&lt;!--以包为单位，设置该包下所有的类型都拥有默认的别名，即类，名且不区分大小写--&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">package</span> <span class="attr">name</span>=<span class="string">&quot;com.atguigu.mybatis.bean&quot;</span>/&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">typeAliases</span>&gt;</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment">&lt;!--</span></span><br><span class="line"><span class="comment">    environments：设置多个连接数据库的环境</span></span><br><span class="line"><span class="comment">    属性：</span></span><br><span class="line"><span class="comment">    default：设置默认使用的环境的id</span></span><br><span class="line"><span class="comment">    --&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">environments</span> <span class="attr">default</span>=<span class="string">&quot;mysql_test&quot;</span>&gt;</span></span><br><span class="line">        <span class="comment">&lt;!--</span></span><br><span class="line"><span class="comment">        environment：设置具体的连接数据库的环境信息</span></span><br><span class="line"><span class="comment">        属性：</span></span><br><span class="line"><span class="comment">        id：设置环境的唯一标识，可通过environments标签中的default设置某一个环境的id，</span></span><br><span class="line"><span class="comment">        表示默认使用的环境</span></span><br><span class="line"><span class="comment">        --&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">environment</span> <span class="attr">id</span>=<span class="string">&quot;mysql_test&quot;</span>&gt;</span></span><br><span class="line">        <span class="comment">&lt;!--</span></span><br><span class="line"><span class="comment">        transactionManager：设置事务管理方式</span></span><br><span class="line"><span class="comment">        属性：</span></span><br><span class="line"><span class="comment">        type：设置事务管理方式，type=&quot;JDBC|MANAGED&quot;</span></span><br><span class="line"><span class="comment">        type=&quot;JDBC&quot;：设置当前环境的事务管理都必须手动处理</span></span><br><span class="line"><span class="comment">        type=&quot;MANAGED&quot;：设置事务被管理，例如spring中的AOP</span></span><br><span class="line"><span class="comment">        --&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">transactionManager</span> <span class="attr">type</span>=<span class="string">&quot;JDBC&quot;</span>/&gt;</span></span><br><span class="line">            <span class="comment">&lt;!--</span></span><br><span class="line"><span class="comment">            dataSource：设置数据源</span></span><br><span class="line"><span class="comment">            属性：</span></span><br><span class="line"><span class="comment">            type：设置数据源的类型，type=&quot;POOLED|UNPOOLED|JNDI&quot;</span></span><br><span class="line"><span class="comment">            type=&quot;POOLED&quot;：使用数据库连接池，即会将创建的连接进行缓存，下次使用可以从</span></span><br><span class="line"><span class="comment">            缓存中直接获取，不需要重新创建</span></span><br><span class="line"><span class="comment">            type=&quot;UNPOOLED&quot;：不使用数据库连接池，即每次使用连接都需要重新创建</span></span><br><span class="line"><span class="comment">            type=&quot;JNDI&quot;：调用上下文中的数据源</span></span><br><span class="line"><span class="comment">            --&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">dataSource</span> <span class="attr">type</span>=<span class="string">&quot;POOLED&quot;</span>&gt;</span></span><br><span class="line">                <span class="comment">&lt;!--设置驱动类的全类名--&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;driver&quot;</span> <span class="attr">value</span>=<span class="string">&quot;$&#123;jdbc.driver&#125;&quot;</span>/&gt;</span></span><br><span class="line">                <span class="comment">&lt;!--设置连接数据库的连接地址--&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;url&quot;</span> <span class="attr">value</span>=<span class="string">&quot;$&#123;jdbc.url&#125;&quot;</span>/&gt;</span></span><br><span class="line">                <span class="comment">&lt;!--设置连接数据库的用户名--&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;username&quot;</span> <span class="attr">value</span>=<span class="string">&quot;$&#123;jdbc.username&#125;&quot;</span>/&gt;</span></span><br><span class="line">                <span class="comment">&lt;!--设置连接数据库的密码--&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;password&quot;</span> <span class="attr">value</span>=<span class="string">&quot;$&#123;jdbc.password&#125;&quot;</span>/&gt;</span></span><br><span class="line">        	<span class="tag">&lt;/<span class="name">dataSource</span>&gt;</span></span><br><span class="line">    	<span class="tag">&lt;/<span class="name">environment</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">environments</span>&gt;</span></span><br><span class="line">    <span class="comment">&lt;!--引入映射文件--&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">mappers</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">mapper</span> <span class="attr">resource</span>=<span class="string">&quot;UserMapper.xml&quot;</span>/&gt;</span></span><br><span class="line">        <span class="comment">&lt;!--</span></span><br><span class="line"><span class="comment">        以包为单位，将包下所有的映射文件引入核心配置文件</span></span><br><span class="line"><span class="comment">        注意：此方式必须保证mapper接口和mapper映射文件必须在相同的包下</span></span><br><span class="line"><span class="comment">        --&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">package</span> <span class="attr">name</span>=<span class="string">&quot;com.atguigu.mybatis.mapper&quot;</span>/&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">mappers</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">configuration</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<h3 id="四mybatis增删改查">四、MyBatis增删改查：</h3>
+<ul>
+<li>增</li>
+</ul>
+<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="comment">&lt;!--int insertUser();--&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">insert</span> <span class="attr">id</span>=<span class="string">&quot;insertUser&quot;</span>&gt;</span></span><br><span class="line">    insert into t_user values(null,&#x27;admin&#x27;,&#x27;123456&#x27;,23,&#x27;男&#x27;)</span><br><span class="line"><span class="tag">&lt;/<span class="name">insert</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<ul>
+<li>删</li>
+</ul>
+<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="comment">&lt;!--int deleteUser();--&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">delete</span> <span class="attr">id</span>=<span class="string">&quot;deleteUser&quot;</span>&gt;</span></span><br><span class="line">    delete from t_user where id = 7</span><br><span class="line"><span class="tag">&lt;/<span class="name">delete</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<ul>
+<li>改</li>
+</ul>
+<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="comment">&lt;!--int updateUser();--&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">update</span> <span class="attr">id</span>=<span class="string">&quot;updateUser&quot;</span>&gt;</span></span><br><span class="line">	update t_user set username=&#x27;ybc&#x27;,password=&#x27;123&#x27; where id = 6</span><br><span class="line"><span class="tag">&lt;/<span class="name">update</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<ul>
+<li>查询单个对象</li>
+</ul>
+<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">select</span> <span class="attr">id</span>=<span class="string">&quot;getUserById&quot;</span> <span class="attr">resultType</span>=<span class="string">&quot;com.atguigu.mybatis.bean.User&quot;</span>&gt;</span></span><br><span class="line">    select * from t_user where id = 2</span><br><span class="line"><span class="tag">&lt;/<span class="name">select</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<ul>
+<li>查询集合</li>
+</ul>
+<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="comment">&lt;!--List&lt;User&gt; getUserList();--&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">select</span> <span class="attr">id</span>=<span class="string">&quot;getUserList&quot;</span> <span class="attr">resultType</span>=<span class="string">&quot;com.atguigu.mybatis.bean.User&quot;</span>&gt;</span></span><br><span class="line">    select * from t_user</span><br><span class="line"><span class="tag">&lt;/<span class="name">select</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>1、查询的标签select必须设置属性resultType或resultMap，用于设置实体类和数据库表的映射
+关系</p>
+<ul>
+<li>resultType：自动映射，用于属性名和表中字段名一致的情况</li>
+<li>resultMap：自定义映射，用于一对多或多对一或字段名和属性名不一致的情况</li>
+</ul>
+<p>2、当查询的数据为多条时，不能使用实体类作为返回值，只能使用集合，否则会抛出异常TooManyResultsException；但是若查询的数据只有一条，可以使用实体类或集合作为返回值</p>
+<h3 id="五mybatis获取参数值">五、MyBatis获取参数值：</h3>
+<p>​ 实际上就是在SQL语句中，获取Mapper接口中传入的参数。</p>
+<ul>
+<li><p>两种方式：</p>
+<ul>
+<li>${}的本质就是字符串拼接，需要注意SQL注入问题与手动写单引号</li>
+<li>#{}的本质就是占位符赋值，推荐</li>
+</ul></li>
+<li><p>示例：</p>
+<ul>
+<li><p>UserMapper.xml文件</p>
+<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">select</span> <span class="attr">id</span>=<span class="string">&quot;getUserByUserName&quot;</span> <span class="attr">resultType</span>=<span class="string">&quot;User&quot;</span>&gt;</span></span><br><span class="line">	select * from user where username = #&#123;username&#125;</span><br><span class="line"><span class="tag">&lt;/<span class="name">select</span>&gt;</span></span><br></pre></td></tr></table></figure></li>
+<li><p>接口类：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">User <span class="title function_">getUserByUserName</span><span class="params">(String username)</span>;</span><br></pre></td></tr></table></figure></li>
+</ul></li>
+</ul>
+<h4 id="多个传入参数">1、多个传入参数：</h4>
+<p>​
+MyBatis会自动将这些参数放在一个map集合中，以arg0,arg1...为键，以参数为值；因此只需要通过${}和#{}访问map集合的键就可以获取相对应的值</p>
+<ul>
+<li><p>UserMapper.xml文件</p>
+<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">select</span> <span class="attr">id</span>=<span class="string">&quot;checkLogin&quot;</span> <span class="attr">resultType</span>=<span class="string">&quot;User&quot;</span>&gt;</span></span><br><span class="line">	select * from user where username = #&#123;arg0&#125; and userpassword = #&#123;arg1&#125;</span><br><span class="line"><span class="tag">&lt;/<span class="name">select</span>&gt;</span></span><br></pre></td></tr></table></figure></li>
+<li><p>接口类：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">User <span class="title function_">checkLogin</span><span class="params">(String username,String userpassword)</span>;</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h4 id="map集合类型的参数">2、map集合类型的参数：</h4>
+<p>​
+若mapper接口中的方法需要的参数为多个时，此时可以手动创建map集合，将这些数据放在map中</p>
+<p>​ 只需要通过${}和#{}访问map集合的键就可以获取相对应的值</p>
+<ul>
+<li><p>UserMapper.xml文件</p>
+<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">select</span> <span class="attr">id</span>=<span class="string">&quot;checkLogin&quot;</span> <span class="attr">resultType</span>=<span class="string">&quot;User&quot;</span>&gt;</span></span><br><span class="line">	select * from user where username = #&#123;username&#125; and userpassword = #&#123;userpassword&#125;</span><br><span class="line"><span class="tag">&lt;/<span class="name">select</span>&gt;</span></span><br></pre></td></tr></table></figure></li>
+<li><p>接口类：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">User <span class="title function_">checkLogin</span><span class="params">(Map&lt;String,Object&gt; map)</span>;</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h4 id="实体类型的参数">3、实体类型的参数</h4>
+<p>​
+若mapper接口中的方法参数为实体类对象时，此时可以使用${}和#{}，通过访问实体类对象中的属性名获取属性值</p>
+<p>​
+<strong>此处，注意实际上并不是直接通过成员变量获取，而是通过set和get方法获取对应的属性。
+</strong></p>
+<ul>
+<li><p>UserMapper.xml文件</p>
+<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">select</span> <span class="attr">id</span>=<span class="string">&quot;insertUser&quot;</span> <span class="attr">resultType</span>=<span class="string">&quot;User&quot;</span>&gt;</span></span><br><span class="line">	insert into user values(null,#&#123;username&#125;,#&#123;password&#125;,#&#123;age&#125;)</span><br><span class="line"><span class="tag">&lt;/<span class="name">select</span>&gt;</span></span><br></pre></td></tr></table></figure></li>
+<li><p>接口类：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="type">int</span> <span class="title function_">checkLogin</span><span class="params">(User user)</span>;</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h4
+id="通过param注解标识mapper接口中的方法参数">4、通过@Param注解标识mapper接口中的方法参数</h4>
+<ul>
+<li><p>UserMapper.xml文件</p>
+<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">select</span> <span class="attr">id</span>=<span class="string">&quot;insertUser&quot;</span> <span class="attr">resultType</span>=<span class="string">&quot;User&quot;</span>&gt;</span></span><br><span class="line">	insert into user values(null,#&#123;username&#125;,#&#123;password&#125;)</span><br><span class="line"><span class="tag">&lt;/<span class="name">select</span>&gt;</span></span><br></pre></td></tr></table></figure></li>
+<li><p>接口类：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">User <span class="title function_">checkLogin</span><span class="params">(<span class="meta">@Param(&quot;username&quot;)</span> String username,<span class="meta">@Param(&quot;password&quot;)</span> String userpassword)</span>;</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h3 id="六各种查询类型">六、各种查询类型：</h3>
+<h4 id="实体类对象">1、实体类对象</h4>
+<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="comment">&lt;!--User getUserById(@Param(&quot;id&quot;) int id);--&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">select</span> <span class="attr">id</span>=<span class="string">&quot;getUserById&quot;</span> <span class="attr">resultType</span>=<span class="string">&quot;User&quot;</span>&gt;</span></span><br><span class="line">select * from t_user where id = #&#123;id&#125;</span><br><span class="line"><span class="tag">&lt;/<span class="name">select</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<h4 id="查询list集合">2、查询List集合</h4>
+<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="comment">&lt;!--List&lt;User&gt; getUserList();--&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">select</span> <span class="attr">id</span>=<span class="string">&quot;getUserList&quot;</span> <span class="attr">resultType</span>=<span class="string">&quot;User&quot;</span>&gt;</span></span><br><span class="line">    select * from t_user</span><br><span class="line"><span class="tag">&lt;/<span class="name">select</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<h4 id="查询单个数据">3、查询单个数据</h4>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">* 查询用户的总记录数</span></span><br><span class="line"><span class="comment">* <span class="doctag">@return</span></span></span><br><span class="line"><span class="comment">* 在MyBatis中，对于Java中常用的类型都设置了类型别名</span></span><br><span class="line"><span class="comment">* 例如：java.lang.Integer--&gt;int|integer</span></span><br><span class="line"><span class="comment">* 例如：int--&gt;_int|_integer</span></span><br><span class="line"><span class="comment">* 例如：Map--&gt;map,List--&gt;list</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"><span class="type">int</span> <span class="title function_">getCount</span><span class="params">()</span>;</span><br></pre></td></tr></table></figure>
+<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="comment">&lt;!--int getCount();--&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">select</span> <span class="attr">id</span>=<span class="string">&quot;getCount&quot;</span> <span class="attr">resultType</span>=<span class="string">&quot;_integer&quot;</span>&gt;</span></span><br><span class="line">select count(id) from t_user</span><br><span class="line"><span class="tag">&lt;/<span class="name">select</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<h4 id="查询一条数据map">4、查询一条数据——Map</h4>
+<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="comment">&lt;!--Map&lt;String, Object&gt; getUserToMap(@Param(&quot;id&quot;) int id);--&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">select</span> <span class="attr">id</span>=<span class="string">&quot;getUserToMap&quot;</span> <span class="attr">resultType</span>=<span class="string">&quot;map&quot;</span>&gt;</span></span><br><span class="line">	select * from t_user where id = #&#123;id&#125;</span><br><span class="line"><span class="tag">&lt;/<span class="name">select</span>&gt;</span></span><br><span class="line"><span class="comment">&lt;!--结果：&#123;password=123456, sex=男, id=1, age=23, username=admin&#125;--&gt;</span></span><br></pre></td></tr></table></figure>
+<h4 id="查询多条数据map列表">5、查询多条数据——Map列表</h4>
+<ul>
+<li>Method1</li>
+</ul>
+<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="comment">&lt;!--List&lt;Map&lt;String, Object&gt;&gt; getAllUserToMap();--&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">select</span> <span class="attr">id</span>=<span class="string">&quot;getAllUserToMap&quot;</span> <span class="attr">resultType</span>=<span class="string">&quot;map&quot;</span>&gt;</span></span><br><span class="line">    select * from t_user</span><br><span class="line"><span class="tag">&lt;/<span class="name">select</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<ul>
+<li>Method2</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">* 查询所有用户信息为map集合</span></span><br><span class="line"><span class="comment">* <span class="doctag">@return</span></span></span><br><span class="line"><span class="comment">* 将表中的数据以map集合的方式查询，一条数据对应一个map；若有多条数据，就会产生多个map集合，并</span></span><br><span class="line"><span class="comment">且最终要以一个map的方式返回数据，此时需要通过<span class="doctag">@MapKey</span>注解设置map集合的键，值是每条数据所对应的</span></span><br><span class="line"><span class="comment">map集合</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"><span class="meta">@MapKey(&quot;id&quot;)</span></span><br><span class="line">Map&lt;String, Object&gt; <span class="title function_">getAllUserToMap</span><span class="params">()</span>;</span><br></pre></td></tr></table></figure>
+<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="comment">&lt;!--Map&lt;String, Object&gt; getAllUserToMap();--&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">select</span> <span class="attr">id</span>=<span class="string">&quot;getAllUserToMap&quot;</span> <span class="attr">resultType</span>=<span class="string">&quot;map&quot;</span>&gt;</span></span><br><span class="line">select * from t_user</span><br><span class="line"><span class="tag">&lt;/<span class="name">select</span>&gt;</span></span><br><span class="line">结果：</span><br><span class="line"><span class="comment">&lt;!--</span></span><br><span class="line"><span class="comment">&#123;</span></span><br><span class="line"><span class="comment">1=&#123;password=123456, sex=男, id=1, age=23, username=admin&#125;,</span></span><br><span class="line"><span class="comment">2=&#123;password=123456, sex=男, id=2, age=23, username=张三&#125;,</span></span><br><span class="line"><span class="comment">3=&#123;password=123456, sex=男, id=3, age=23, username=张三&#125;</span></span><br><span class="line"><span class="comment">&#125;</span></span><br><span class="line"><span class="comment">--&gt;</span></span><br></pre></td></tr></table></figure>
+]]></content>
+      <categories>
+        <category>⑨ 工程类笔记</category>
+        <category>MyBatis</category>
+      </categories>
+      <tags>
+        <tag>MyBatis</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>MyBatisPlus Chap1——简介与基本操作</title>
     <url>/2022/11/29/4b24005dfff4/</url>
     <content><![CDATA[<h3 id="一mybatisplus简介与基本操作">一、MyBatisPlus简介与基本操作</h3>
@@ -1725,197 +2574,6 @@ src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/image-20221205204055244.png" 
 </ul></li>
 </ul>
 <h4 id="section"></h4>
-]]></content>
-      <categories>
-        <category>⑨ 工程类笔记</category>
-        <category>MyBatis</category>
-      </categories>
-      <tags>
-        <tag>MyBatis</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>MyBatis Chap1——简介与基本操作</title>
-    <url>/2022/11/29/ec35995347ad/</url>
-    <content><![CDATA[<h3 id="一mybatis简介与为何要使用">一、MyBatis简介与为何要使用？</h3>
-<ul>
-<li><p>传统的与数据库交互的方式：</p>
-<ul>
-<li><p>JDBC-&gt;DBUtils-&gt;JdbcTemplate
-自己封装一些小的工具，来简化使用</p></li>
-<li><p>SQL 夹杂在Java代码中耦合度高，导致硬编码内伤</p></li>
-<li><p>维护不易且实际开发需求中 SQL 有变化，频繁修改的情况多见</p></li>
-</ul></li>
-<li><p>Hibernate：全自动ORM框架，旨在消除Sql</p>
-<ul>
-<li>操作简便，开发效率高</li>
-<li>完全的黑箱操作，程序中的长难复杂 SQL 需要绕过框架</li>
-<li>反射操作太多，导致数据库性能下降</li>
-</ul></li>
-<li><p>MyBatis：半自动ORM框架</p>
-<ul>
-<li>支持定制化 SQL、存储过程以及高级映射的优秀的持久层框架</li>
-<li>避免了几乎所有的 JDBC 代码和手动设置参数以及获取结果集</li>
-<li>可以使用简单的XML或注解用于配置和原始映射，将接口和Java的POJO（Plain
-Old Java Objects，普通的Java对象）映射成数据库中的记录</li>
-<li>SQL 和 Java
-编码分开，功能边界清晰。Java代码专注业务、SQL语句专注数据</li>
-</ul></li>
-</ul>
-<h3 id="二快速上手指南">二、快速上手指南：</h3>
-<ul>
-<li>创建Maven工程</li>
-<li>引入依赖：</li>
-</ul>
-<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependencies</span>&gt;</span></span><br><span class="line">    <span class="comment">&lt;!-- Mybatis核心 --&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.mybatis<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>mybatis<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">version</span>&gt;</span>3.5.7<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="comment">&lt;!-- junit测试 --&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>junit<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>junit<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">version</span>&gt;</span>4.12<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">scope</span>&gt;</span>test<span class="tag">&lt;/<span class="name">scope</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="comment">&lt;!-- MySQL驱动 --&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>mysql<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>mysql-connector-java<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">version</span>&gt;</span>5.1.3<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependencies</span>&gt;</span></span><br></pre></td></tr></table></figure>
-<ul>
-<li>创建MyBatis核心配置文件：</li>
-</ul>
-<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version=<span class="string">&quot;1.0&quot;</span> encoding=<span class="string">&quot;UTF-8&quot;</span> ?&gt;</span></span><br><span class="line"><span class="meta">&lt;!DOCTYPE <span class="keyword">configuration</span></span></span><br><span class="line"><span class="meta"><span class="keyword">PUBLIC</span> <span class="string">&quot;-//mybatis.org//DTD Config 3.0//EN&quot;</span></span></span><br><span class="line"><span class="meta"><span class="string">&quot;http://mybatis.org/dtd/mybatis-3-config.dtd&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">configuration</span>&gt;</span></span><br><span class="line">    <span class="comment">&lt;!--设置连接数据库的环境--&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">environments</span> <span class="attr">default</span>=<span class="string">&quot;development&quot;</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">environment</span> <span class="attr">id</span>=<span class="string">&quot;development&quot;</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">transactionManager</span> <span class="attr">type</span>=<span class="string">&quot;JDBC&quot;</span>/&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">dataSource</span> <span class="attr">type</span>=<span class="string">&quot;POOLED&quot;</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;driver&quot;</span> <span class="attr">value</span>=<span class="string">&quot;com.mysql.jdbc.Driver&quot;</span>/&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;url&quot;</span></span></span><br><span class="line"><span class="tag">                <span class="attr">value</span>=<span class="string">&quot;jdbc:mysql://localhost:3306/MyBatis&quot;</span>/&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;username&quot;</span> <span class="attr">value</span>=<span class="string">&quot;root&quot;</span>/&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;password&quot;</span> <span class="attr">value</span>=<span class="string">&quot;123456&quot;</span>/&gt;</span></span><br><span class="line">            <span class="tag">&lt;/<span class="name">dataSource</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;/<span class="name">environment</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">environments</span>&gt;</span></span><br><span class="line">    <span class="comment">&lt;!--引入映射文件--&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">mappers</span>&gt;</span></span><br><span class="line">     	<span class="tag">&lt;<span class="name">mapper</span> <span class="attr">resource</span>=<span class="string">&quot;mappers/UserMapper.xml&quot;</span>/&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">mappers</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">configuration</span>&gt;</span></span><br></pre></td></tr></table></figure>
-<ul>
-<li>创建mapper接口，相当于以前的dao。但是区别在于，mapper仅仅是接口，我们不需要提供实现类。</li>
-</ul>
-<p><img
-src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20221129101242867.png" /></p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">interface</span> <span class="title class_">UserMapper</span> &#123;</span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">* 添加用户信息</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line">	<span class="type">int</span> <span class="title function_">insertUser</span><span class="params">()</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<ul>
-<li>创建MyBatis的ORM映射文件：
-<ul>
-<li>命名规则：
-<ul>
-<li>表所对应的实体类的类名+Mapper.xml</li>
-<li>例如：表t_user，映射的实体类为User，所对应的映射文件为UserMapper.xml</li>
-<li>因此<strong>一个映射文件对应一个实体类，对应一张表的操作</strong></li>
-<li><strong>MyBatis映射文件用于编写SQL，访问以及操作表中的数据</strong></li>
-<li>MyBatis映射文件存放的位置是src/main/resources/mappers目录下</li>
-</ul></li>
-<li>MyBatis中可以面向接口操作数据，<strong>要保证两个一致：</strong>
-<ul>
-<li>mapper接口的全类名和映射文件的命名空间（namespace）保持一致</li>
-<li>mapper接口中方法的方法名和映射文件中编写SQL的标签的id属性保持一致</li>
-</ul></li>
-</ul></li>
-</ul>
-<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version=<span class="string">&quot;1.0&quot;</span> encoding=<span class="string">&quot;UTF-8&quot;</span> ?&gt;</span></span><br><span class="line">    <span class="meta">&lt;!DOCTYPE <span class="keyword">mapper</span></span></span><br><span class="line"><span class="meta">    <span class="keyword">PUBLIC</span> <span class="string">&quot;-//mybatis.org//DTD Mapper 3.0//EN&quot;</span></span></span><br><span class="line"><span class="meta">    <span class="string">&quot;http://mybatis.org/dtd/mybatis-3-mapper.dtd&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">mapper</span> <span class="attr">namespace</span>=<span class="string">&quot;com.fantast.mybatis.mapper.UserMapper&quot;</span>&gt;</span></span><br><span class="line">    <span class="comment">&lt;!--int insertUser();--&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">insert</span> <span class="attr">id</span>=<span class="string">&quot;insertUser&quot;</span>&gt;</span></span><br><span class="line">    	insert into t_user values(null,&#x27;张三&#x27;,&#x27;123&#x27;,23,&#x27;女&#x27;)</span><br><span class="line">    <span class="tag">&lt;/<span class="name">insert</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">mapper</span>&gt;</span></span><br></pre></td></tr></table></figure>
-<ul>
-<li>使用JUnit进行功能测试：</li>
-</ul>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">TestMapper</span> &#123;</span><br><span class="line">    <span class="meta">@Test</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">testMapper</span><span class="params">()</span> <span class="keyword">throws</span> IOException &#123;</span><br><span class="line">        <span class="comment">//读取MyBatis的核心配置文件</span></span><br><span class="line">        <span class="type">InputStream</span> <span class="variable">is</span> <span class="operator">=</span> Resources.getResourceAsStream(<span class="string">&quot;mybatis-config.xml&quot;</span>);</span><br><span class="line">		<span class="comment">//创建SqlSessionFactoryBuilder对象</span></span><br><span class="line">        <span class="type">SqlSessionFactoryBuilder</span> <span class="variable">sqlSessionFactoryBuilder</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">SqlSessionFactoryBuilder</span>();</span><br><span class="line">		<span class="comment">//通过核心配置文件所对应的字节输入流创建工厂类SqlSessionFactory，生产SqlSession对象</span></span><br><span class="line">        <span class="type">SqlSessionFactory</span> <span class="variable">sqlSessionFactory</span> <span class="operator">=</span> sqlSessionFactoryBuilder.build(is);</span><br><span class="line">        <span class="comment">//创建SqlSession对象，此时通过SqlSession对象所操作的sql都会自动提交</span></span><br><span class="line">        <span class="type">SqlSession</span> <span class="variable">sqlSession</span> <span class="operator">=</span> sqlSessionFactory.openSession(<span class="literal">true</span>);</span><br><span class="line">        <span class="comment">//通过代理模式创建UserMapper接口的代理实现类对象</span></span><br><span class="line">        <span class="type">UserMapper</span> <span class="variable">userMapper</span> <span class="operator">=</span> sqlSession.getMapper(UserMapper.class);</span><br><span class="line">        <span class="comment">//调用UserMapper接口中的方法，就可以根据UserMapper的全类名匹配元素文件，通过调用的方法名匹配映射文件中的SQL标签，并执行标签中的SQL语句</span></span><br><span class="line">        <span class="type">int</span> <span class="variable">result</span> <span class="operator">=</span> userMapper.insertUser();</span><br><span class="line">        <span class="comment">//sqlSession.commit();</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<ul>
-<li><p>加入log4j日志：</p>
-<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>log4j<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>log4j<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>1.2.17<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
-<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version=<span class="string">&quot;1.0&quot;</span> encoding=<span class="string">&quot;UTF-8&quot;</span> ?&gt;</span></span><br><span class="line"><span class="meta">&lt;!DOCTYPE <span class="keyword">log4j</span>:configuration <span class="keyword">SYSTEM</span> <span class="string">&quot;log4j.dtd&quot;</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">log4j:configuration</span> <span class="attr">xmlns:log4j</span>=<span class="string">&quot;http://jakarta.apache.org/log4j/&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">appender</span> <span class="attr">name</span>=<span class="string">&quot;STDOUT&quot;</span> <span class="attr">class</span>=<span class="string">&quot;org.apache.log4j.ConsoleAppender&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">param</span> <span class="attr">name</span>=<span class="string">&quot;Encoding&quot;</span> <span class="attr">value</span>=<span class="string">&quot;UTF-8&quot;</span> /&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">layout</span> <span class="attr">class</span>=<span class="string">&quot;org.apache.log4j.PatternLayout&quot;</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">param</span> <span class="attr">name</span>=<span class="string">&quot;ConversionPattern&quot;</span> <span class="attr">value</span>=<span class="string">&quot;%-5p %d&#123;MM-dd HH:mm:ss,SSS&#125;</span></span></span><br><span class="line"><span class="string"><span class="tag">        %m (%F:%L) \n&quot;</span> /&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">layout</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">appender</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">logger</span> <span class="attr">name</span>=<span class="string">&quot;java.sql&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">level</span> <span class="attr">value</span>=<span class="string">&quot;debug&quot;</span> /&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">logger</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">logger</span> <span class="attr">name</span>=<span class="string">&quot;org.apache.ibatis&quot;</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">level</span> <span class="attr">value</span>=<span class="string">&quot;info&quot;</span> /&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">logger</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">root</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">level</span> <span class="attr">value</span>=<span class="string">&quot;debug&quot;</span> /&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">appender-ref</span> <span class="attr">ref</span>=<span class="string">&quot;STDOUT&quot;</span> /&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">root</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">log4j:configuration</span>&gt;</span></span><br></pre></td></tr></table></figure></li>
-<li><p>日志级别：</p>
-<ul>
-<li>FATAL(致命)&gt;ERROR(错误)&gt;WARN(警告)&gt;INFO(信息)&gt;DEBUG(调试)</li>
-</ul></li>
-</ul>
-<h3 id="三mybatis配置文件解释">三、MyBatis配置文件解释：</h3>
-<p>核心配置文件中的标签必须按照固定的顺序：</p>
-<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version=<span class="string">&quot;1.0&quot;</span> encoding=<span class="string">&quot;UTF-8&quot;</span> ?&gt;</span></span><br><span class="line"><span class="meta">&lt;!DOCTYPE <span class="keyword">configuration</span></span></span><br><span class="line"><span class="meta"><span class="keyword">PUBLIC</span> <span class="string">&quot;-//MyBatis.org//DTD Config 3.0//EN&quot;</span></span></span><br><span class="line"><span class="meta"><span class="string">&quot;http://MyBatis.org/dtd/MyBatis-3-config.dtd&quot;</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">configuration</span>&gt;</span></span><br><span class="line">    <span class="comment">&lt;!--引入properties文件，此时就可以$&#123;属性名&#125;的方式访问属性值--&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">properties</span> <span class="attr">resource</span>=<span class="string">&quot;jdbc.properties&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">properties</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">settings</span>&gt;</span></span><br><span class="line">        <span class="comment">&lt;!--将表中字段的下划线自动转换为驼峰--&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">setting</span> <span class="attr">name</span>=<span class="string">&quot;mapUnderscoreToCamelCase&quot;</span> <span class="attr">value</span>=<span class="string">&quot;true&quot;</span>/&gt;</span></span><br><span class="line">        <span class="comment">&lt;!--开启延迟加载--&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">setting</span> <span class="attr">name</span>=<span class="string">&quot;lazyLoadingEnabled&quot;</span> <span class="attr">value</span>=<span class="string">&quot;true&quot;</span>/&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">settings</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">typeAliases</span>&gt;</span></span><br><span class="line">    <span class="comment">&lt;!--</span></span><br><span class="line"><span class="comment">    typeAlias：设置某个具体的类型的别名</span></span><br><span class="line"><span class="comment">    属性：</span></span><br><span class="line"><span class="comment">    type：需要设置别名的类型的全类名</span></span><br><span class="line"><span class="comment">    alias：设置此类型的别名，若不设置此属性，该类型拥有默认的别名，即类名且不区分大小写</span></span><br><span class="line"><span class="comment">    若设置此属性，此时该类型的别名只能使用alias所设置的值,这个别名用于在映射xml里指明resultType</span></span><br><span class="line"><span class="comment">    --&gt;</span></span><br><span class="line">    <span class="comment">&lt;!--    &lt;typeAlias type=&quot;com.atguigu.mybatis.bean.User&quot;&gt;&lt;/typeAlias&gt;   --&gt;</span></span><br><span class="line">    <span class="comment">&lt;!--    &lt;typeAlias type=&quot;com.atguigu.mybatis.bean.User&quot; alias=&quot;abc&quot;&gt;&lt;/typeAlias&gt;     --&gt;</span></span><br><span class="line">        <span class="comment">&lt;!--以包为单位，设置该包下所有的类型都拥有默认的别名，即类，名且不区分大小写--&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">package</span> <span class="attr">name</span>=<span class="string">&quot;com.atguigu.mybatis.bean&quot;</span>/&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">typeAliases</span>&gt;</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment">&lt;!--</span></span><br><span class="line"><span class="comment">    environments：设置多个连接数据库的环境</span></span><br><span class="line"><span class="comment">    属性：</span></span><br><span class="line"><span class="comment">    default：设置默认使用的环境的id</span></span><br><span class="line"><span class="comment">    --&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">environments</span> <span class="attr">default</span>=<span class="string">&quot;mysql_test&quot;</span>&gt;</span></span><br><span class="line">        <span class="comment">&lt;!--</span></span><br><span class="line"><span class="comment">        environment：设置具体的连接数据库的环境信息</span></span><br><span class="line"><span class="comment">        属性：</span></span><br><span class="line"><span class="comment">        id：设置环境的唯一标识，可通过environments标签中的default设置某一个环境的id，</span></span><br><span class="line"><span class="comment">        表示默认使用的环境</span></span><br><span class="line"><span class="comment">        --&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">environment</span> <span class="attr">id</span>=<span class="string">&quot;mysql_test&quot;</span>&gt;</span></span><br><span class="line">        <span class="comment">&lt;!--</span></span><br><span class="line"><span class="comment">        transactionManager：设置事务管理方式</span></span><br><span class="line"><span class="comment">        属性：</span></span><br><span class="line"><span class="comment">        type：设置事务管理方式，type=&quot;JDBC|MANAGED&quot;</span></span><br><span class="line"><span class="comment">        type=&quot;JDBC&quot;：设置当前环境的事务管理都必须手动处理</span></span><br><span class="line"><span class="comment">        type=&quot;MANAGED&quot;：设置事务被管理，例如spring中的AOP</span></span><br><span class="line"><span class="comment">        --&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">transactionManager</span> <span class="attr">type</span>=<span class="string">&quot;JDBC&quot;</span>/&gt;</span></span><br><span class="line">            <span class="comment">&lt;!--</span></span><br><span class="line"><span class="comment">            dataSource：设置数据源</span></span><br><span class="line"><span class="comment">            属性：</span></span><br><span class="line"><span class="comment">            type：设置数据源的类型，type=&quot;POOLED|UNPOOLED|JNDI&quot;</span></span><br><span class="line"><span class="comment">            type=&quot;POOLED&quot;：使用数据库连接池，即会将创建的连接进行缓存，下次使用可以从</span></span><br><span class="line"><span class="comment">            缓存中直接获取，不需要重新创建</span></span><br><span class="line"><span class="comment">            type=&quot;UNPOOLED&quot;：不使用数据库连接池，即每次使用连接都需要重新创建</span></span><br><span class="line"><span class="comment">            type=&quot;JNDI&quot;：调用上下文中的数据源</span></span><br><span class="line"><span class="comment">            --&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">dataSource</span> <span class="attr">type</span>=<span class="string">&quot;POOLED&quot;</span>&gt;</span></span><br><span class="line">                <span class="comment">&lt;!--设置驱动类的全类名--&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;driver&quot;</span> <span class="attr">value</span>=<span class="string">&quot;$&#123;jdbc.driver&#125;&quot;</span>/&gt;</span></span><br><span class="line">                <span class="comment">&lt;!--设置连接数据库的连接地址--&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;url&quot;</span> <span class="attr">value</span>=<span class="string">&quot;$&#123;jdbc.url&#125;&quot;</span>/&gt;</span></span><br><span class="line">                <span class="comment">&lt;!--设置连接数据库的用户名--&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;username&quot;</span> <span class="attr">value</span>=<span class="string">&quot;$&#123;jdbc.username&#125;&quot;</span>/&gt;</span></span><br><span class="line">                <span class="comment">&lt;!--设置连接数据库的密码--&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;password&quot;</span> <span class="attr">value</span>=<span class="string">&quot;$&#123;jdbc.password&#125;&quot;</span>/&gt;</span></span><br><span class="line">        	<span class="tag">&lt;/<span class="name">dataSource</span>&gt;</span></span><br><span class="line">    	<span class="tag">&lt;/<span class="name">environment</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">environments</span>&gt;</span></span><br><span class="line">    <span class="comment">&lt;!--引入映射文件--&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">mappers</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">mapper</span> <span class="attr">resource</span>=<span class="string">&quot;UserMapper.xml&quot;</span>/&gt;</span></span><br><span class="line">        <span class="comment">&lt;!--</span></span><br><span class="line"><span class="comment">        以包为单位，将包下所有的映射文件引入核心配置文件</span></span><br><span class="line"><span class="comment">        注意：此方式必须保证mapper接口和mapper映射文件必须在相同的包下</span></span><br><span class="line"><span class="comment">        --&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">package</span> <span class="attr">name</span>=<span class="string">&quot;com.atguigu.mybatis.mapper&quot;</span>/&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">mappers</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">configuration</span>&gt;</span></span><br></pre></td></tr></table></figure>
-<h3 id="四mybatis增删改查">四、MyBatis增删改查：</h3>
-<ul>
-<li>增</li>
-</ul>
-<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="comment">&lt;!--int insertUser();--&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">insert</span> <span class="attr">id</span>=<span class="string">&quot;insertUser&quot;</span>&gt;</span></span><br><span class="line">    insert into t_user values(null,&#x27;admin&#x27;,&#x27;123456&#x27;,23,&#x27;男&#x27;)</span><br><span class="line"><span class="tag">&lt;/<span class="name">insert</span>&gt;</span></span><br></pre></td></tr></table></figure>
-<ul>
-<li>删</li>
-</ul>
-<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="comment">&lt;!--int deleteUser();--&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">delete</span> <span class="attr">id</span>=<span class="string">&quot;deleteUser&quot;</span>&gt;</span></span><br><span class="line">    delete from t_user where id = 7</span><br><span class="line"><span class="tag">&lt;/<span class="name">delete</span>&gt;</span></span><br></pre></td></tr></table></figure>
-<ul>
-<li>改</li>
-</ul>
-<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="comment">&lt;!--int updateUser();--&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">update</span> <span class="attr">id</span>=<span class="string">&quot;updateUser&quot;</span>&gt;</span></span><br><span class="line">	update t_user set username=&#x27;ybc&#x27;,password=&#x27;123&#x27; where id = 6</span><br><span class="line"><span class="tag">&lt;/<span class="name">update</span>&gt;</span></span><br></pre></td></tr></table></figure>
-<ul>
-<li>查询单个对象</li>
-</ul>
-<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">select</span> <span class="attr">id</span>=<span class="string">&quot;getUserById&quot;</span> <span class="attr">resultType</span>=<span class="string">&quot;com.atguigu.mybatis.bean.User&quot;</span>&gt;</span></span><br><span class="line">    select * from t_user where id = 2</span><br><span class="line"><span class="tag">&lt;/<span class="name">select</span>&gt;</span></span><br></pre></td></tr></table></figure>
-<ul>
-<li>查询集合</li>
-</ul>
-<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="comment">&lt;!--List&lt;User&gt; getUserList();--&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">select</span> <span class="attr">id</span>=<span class="string">&quot;getUserList&quot;</span> <span class="attr">resultType</span>=<span class="string">&quot;com.atguigu.mybatis.bean.User&quot;</span>&gt;</span></span><br><span class="line">    select * from t_user</span><br><span class="line"><span class="tag">&lt;/<span class="name">select</span>&gt;</span></span><br></pre></td></tr></table></figure>
-<p>1、查询的标签select必须设置属性resultType或resultMap，用于设置实体类和数据库表的映射
-关系</p>
-<ul>
-<li>resultType：自动映射，用于属性名和表中字段名一致的情况</li>
-<li>resultMap：自定义映射，用于一对多或多对一或字段名和属性名不一致的情况</li>
-</ul>
-<p>2、当查询的数据为多条时，不能使用实体类作为返回值，只能使用集合，否则会抛出异常TooManyResultsException；但是若查询的数据只有一条，可以使用实体类或集合作为返回值</p>
-<h3 id="五mybatis获取参数值">五、MyBatis获取参数值：</h3>
-<p>​ 实际上就是在SQL语句中，获取Mapper接口中传入的参数。</p>
-<ul>
-<li><p>两种方式：</p>
-<ul>
-<li>${}的本质就是字符串拼接，需要注意SQL注入问题与手动写单引号</li>
-<li>#{}的本质就是占位符赋值，推荐</li>
-</ul></li>
-<li><p>示例：</p>
-<ul>
-<li><p>UserMapper.xml文件</p>
-<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">select</span> <span class="attr">id</span>=<span class="string">&quot;getUserByUserName&quot;</span> <span class="attr">resultType</span>=<span class="string">&quot;User&quot;</span>&gt;</span></span><br><span class="line">	select * from user where username = #&#123;username&#125;</span><br><span class="line"><span class="tag">&lt;/<span class="name">select</span>&gt;</span></span><br></pre></td></tr></table></figure></li>
-<li><p>接口类：</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">User <span class="title function_">getUserByUserName</span><span class="params">(String username)</span>;</span><br></pre></td></tr></table></figure></li>
-</ul></li>
-</ul>
-<h4 id="多个传入参数">1、多个传入参数：</h4>
-<p>​
-MyBatis会自动将这些参数放在一个map集合中，以arg0,arg1...为键，以参数为值；因此只需要通过${}和#{}访问map集合的键就可以获取相对应的值</p>
-<ul>
-<li><p>UserMapper.xml文件</p>
-<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">select</span> <span class="attr">id</span>=<span class="string">&quot;checkLogin&quot;</span> <span class="attr">resultType</span>=<span class="string">&quot;User&quot;</span>&gt;</span></span><br><span class="line">	select * from user where username = #&#123;arg0&#125; and userpassword = #&#123;arg1&#125;</span><br><span class="line"><span class="tag">&lt;/<span class="name">select</span>&gt;</span></span><br></pre></td></tr></table></figure></li>
-<li><p>接口类：</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">User <span class="title function_">checkLogin</span><span class="params">(String username,String userpassword)</span>;</span><br></pre></td></tr></table></figure></li>
-</ul>
-<h4 id="map集合类型的参数">2、map集合类型的参数：</h4>
-<p>​
-若mapper接口中的方法需要的参数为多个时，此时可以手动创建map集合，将这些数据放在map中</p>
-<p>​ 只需要通过${}和#{}访问map集合的键就可以获取相对应的值</p>
-<ul>
-<li><p>UserMapper.xml文件</p>
-<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">select</span> <span class="attr">id</span>=<span class="string">&quot;checkLogin&quot;</span> <span class="attr">resultType</span>=<span class="string">&quot;User&quot;</span>&gt;</span></span><br><span class="line">	select * from user where username = #&#123;username&#125; and userpassword = #&#123;userpassword&#125;</span><br><span class="line"><span class="tag">&lt;/<span class="name">select</span>&gt;</span></span><br></pre></td></tr></table></figure></li>
-<li><p>接口类：</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">User <span class="title function_">checkLogin</span><span class="params">(Map&lt;String,Object&gt; map)</span>;</span><br></pre></td></tr></table></figure></li>
-</ul>
-<h4 id="实体类型的参数">3、实体类型的参数</h4>
-<p>​
-若mapper接口中的方法参数为实体类对象时，此时可以使用${}和#{}，通过访问实体类对象中的属性名获取属性值</p>
-<p>​
-<strong>此处，注意实际上并不是直接通过成员变量获取，而是通过set和get方法获取对应的属性。
-</strong></p>
-<ul>
-<li><p>UserMapper.xml文件</p>
-<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">select</span> <span class="attr">id</span>=<span class="string">&quot;insertUser&quot;</span> <span class="attr">resultType</span>=<span class="string">&quot;User&quot;</span>&gt;</span></span><br><span class="line">	insert into user values(null,#&#123;username&#125;,#&#123;password&#125;,#&#123;age&#125;)</span><br><span class="line"><span class="tag">&lt;/<span class="name">select</span>&gt;</span></span><br></pre></td></tr></table></figure></li>
-<li><p>接口类：</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="type">int</span> <span class="title function_">checkLogin</span><span class="params">(User user)</span>;</span><br></pre></td></tr></table></figure></li>
-</ul>
-<h4
-id="通过param注解标识mapper接口中的方法参数">4、通过@Param注解标识mapper接口中的方法参数</h4>
-<ul>
-<li><p>UserMapper.xml文件</p>
-<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">select</span> <span class="attr">id</span>=<span class="string">&quot;insertUser&quot;</span> <span class="attr">resultType</span>=<span class="string">&quot;User&quot;</span>&gt;</span></span><br><span class="line">	insert into user values(null,#&#123;username&#125;,#&#123;password&#125;)</span><br><span class="line"><span class="tag">&lt;/<span class="name">select</span>&gt;</span></span><br></pre></td></tr></table></figure></li>
-<li><p>接口类：</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">User <span class="title function_">checkLogin</span><span class="params">(<span class="meta">@Param(&quot;username&quot;)</span> String username,<span class="meta">@Param(&quot;password&quot;)</span> String userpassword)</span>;</span><br></pre></td></tr></table></figure></li>
-</ul>
-<h3 id="六各种查询类型">六、各种查询类型：</h3>
-<h4 id="实体类对象">1、实体类对象</h4>
-<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="comment">&lt;!--User getUserById(@Param(&quot;id&quot;) int id);--&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">select</span> <span class="attr">id</span>=<span class="string">&quot;getUserById&quot;</span> <span class="attr">resultType</span>=<span class="string">&quot;User&quot;</span>&gt;</span></span><br><span class="line">select * from t_user where id = #&#123;id&#125;</span><br><span class="line"><span class="tag">&lt;/<span class="name">select</span>&gt;</span></span><br></pre></td></tr></table></figure>
-<h4 id="查询list集合">2、查询List集合</h4>
-<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="comment">&lt;!--List&lt;User&gt; getUserList();--&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">select</span> <span class="attr">id</span>=<span class="string">&quot;getUserList&quot;</span> <span class="attr">resultType</span>=<span class="string">&quot;User&quot;</span>&gt;</span></span><br><span class="line">    select * from t_user</span><br><span class="line"><span class="tag">&lt;/<span class="name">select</span>&gt;</span></span><br></pre></td></tr></table></figure>
-<h4 id="查询单个数据">3、查询单个数据</h4>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">* 查询用户的总记录数</span></span><br><span class="line"><span class="comment">* <span class="doctag">@return</span></span></span><br><span class="line"><span class="comment">* 在MyBatis中，对于Java中常用的类型都设置了类型别名</span></span><br><span class="line"><span class="comment">* 例如：java.lang.Integer--&gt;int|integer</span></span><br><span class="line"><span class="comment">* 例如：int--&gt;_int|_integer</span></span><br><span class="line"><span class="comment">* 例如：Map--&gt;map,List--&gt;list</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"><span class="type">int</span> <span class="title function_">getCount</span><span class="params">()</span>;</span><br></pre></td></tr></table></figure>
-<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="comment">&lt;!--int getCount();--&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">select</span> <span class="attr">id</span>=<span class="string">&quot;getCount&quot;</span> <span class="attr">resultType</span>=<span class="string">&quot;_integer&quot;</span>&gt;</span></span><br><span class="line">select count(id) from t_user</span><br><span class="line"><span class="tag">&lt;/<span class="name">select</span>&gt;</span></span><br></pre></td></tr></table></figure>
-<h4 id="查询一条数据map">4、查询一条数据——Map</h4>
-<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="comment">&lt;!--Map&lt;String, Object&gt; getUserToMap(@Param(&quot;id&quot;) int id);--&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">select</span> <span class="attr">id</span>=<span class="string">&quot;getUserToMap&quot;</span> <span class="attr">resultType</span>=<span class="string">&quot;map&quot;</span>&gt;</span></span><br><span class="line">	select * from t_user where id = #&#123;id&#125;</span><br><span class="line"><span class="tag">&lt;/<span class="name">select</span>&gt;</span></span><br><span class="line"><span class="comment">&lt;!--结果：&#123;password=123456, sex=男, id=1, age=23, username=admin&#125;--&gt;</span></span><br></pre></td></tr></table></figure>
-<h4 id="查询多条数据map列表">5、查询多条数据——Map列表</h4>
-<ul>
-<li>Method1</li>
-</ul>
-<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="comment">&lt;!--List&lt;Map&lt;String, Object&gt;&gt; getAllUserToMap();--&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">select</span> <span class="attr">id</span>=<span class="string">&quot;getAllUserToMap&quot;</span> <span class="attr">resultType</span>=<span class="string">&quot;map&quot;</span>&gt;</span></span><br><span class="line">    select * from t_user</span><br><span class="line"><span class="tag">&lt;/<span class="name">select</span>&gt;</span></span><br></pre></td></tr></table></figure>
-<ul>
-<li>Method2</li>
-</ul>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">* 查询所有用户信息为map集合</span></span><br><span class="line"><span class="comment">* <span class="doctag">@return</span></span></span><br><span class="line"><span class="comment">* 将表中的数据以map集合的方式查询，一条数据对应一个map；若有多条数据，就会产生多个map集合，并</span></span><br><span class="line"><span class="comment">且最终要以一个map的方式返回数据，此时需要通过<span class="doctag">@MapKey</span>注解设置map集合的键，值是每条数据所对应的</span></span><br><span class="line"><span class="comment">map集合</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"><span class="meta">@MapKey(&quot;id&quot;)</span></span><br><span class="line">Map&lt;String, Object&gt; <span class="title function_">getAllUserToMap</span><span class="params">()</span>;</span><br></pre></td></tr></table></figure>
-<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="comment">&lt;!--Map&lt;String, Object&gt; getAllUserToMap();--&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">select</span> <span class="attr">id</span>=<span class="string">&quot;getAllUserToMap&quot;</span> <span class="attr">resultType</span>=<span class="string">&quot;map&quot;</span>&gt;</span></span><br><span class="line">select * from t_user</span><br><span class="line"><span class="tag">&lt;/<span class="name">select</span>&gt;</span></span><br><span class="line">结果：</span><br><span class="line"><span class="comment">&lt;!--</span></span><br><span class="line"><span class="comment">&#123;</span></span><br><span class="line"><span class="comment">1=&#123;password=123456, sex=男, id=1, age=23, username=admin&#125;,</span></span><br><span class="line"><span class="comment">2=&#123;password=123456, sex=男, id=2, age=23, username=张三&#125;,</span></span><br><span class="line"><span class="comment">3=&#123;password=123456, sex=男, id=3, age=23, username=张三&#125;</span></span><br><span class="line"><span class="comment">&#125;</span></span><br><span class="line"><span class="comment">--&gt;</span></span><br></pre></td></tr></table></figure>
 ]]></content>
       <categories>
         <category>⑨ 工程类笔记</category>
@@ -5416,6 +6074,14 @@ src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-202210311702453
 <li>架构如图所示：Registry镜像仓库，Containers容器，Images镜像</li>
 <li><img src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-20221101161524606.png" style="zoom:67%;" /></li>
 </ul></li>
+<li>相较于虚拟机，容器有着基于CPU 、内存的更 细粒度的资源调度，
+极大提升资源利用率：
+<ul>
+<li>业务系统不再附带虚拟机消耗及操作系统消耗， CPU 内存超分至 0.1
+核、128MB</li>
+<li>精细化资源池管理，通用资源、混部资源、应急资源，开通新业务将根据业务级别自动化调度，无需每次采购新机器；</li>
+<li>分时、分流量弹性伸缩，资源使用由“给多少用多少”转变为“用多少给多少”</li>
+</ul></li>
 </ul>
 <h4 id="docker容器化常用命令">4、Docker容器化常用命令</h4>
 <h5 id="镜像相关">1）镜像相关</h5>
@@ -8467,19 +9133,6 @@ NOT EXISTS关键字</h4>
       </tags>
   </entry>
   <entry>
-    <title>设计模式1</title>
-    <url>/2022/09/03/2ceecb19279d/</url>
-    <content><![CDATA[<h4 id="设计模式">1、设计模式</h4>
-]]></content>
-      <categories>
-        <category>⑥  基础类笔记</category>
-        <category>设计模式</category>
-      </categories>
-      <tags>
-        <tag>Database</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Chap1 Mysql基本查询内容</title>
     <url>/2022/09/03/7e7267227ba3/</url>
     <content><![CDATA[<h4 id="一些非关系型数据库">1、一些非关系型数据库</h4>
@@ -8639,6 +9292,19 @@ src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-202209051137400
       <categories>
         <category>⑥  基础类笔记</category>
         <category>数据库精简笔记</category>
+      </categories>
+      <tags>
+        <tag>Database</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>设计模式1</title>
+    <url>/2022/09/03/2ceecb19279d/</url>
+    <content><![CDATA[<h4 id="设计模式">1、设计模式</h4>
+]]></content>
+      <categories>
+        <category>⑥  基础类笔记</category>
+        <category>设计模式</category>
       </categories>
       <tags>
         <tag>Database</tag>
@@ -12835,29 +13501,6 @@ src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-202204121731375
       </tags>
   </entry>
   <entry>
-    <title>字体生成论文研究进度</title>
-    <url>/2022/04/01/f225f383e158/</url>
-    <content><![CDATA[<div class="hbe hbe-container" id="hexo-blog-encrypt" data-wpm="Oh, this is an invalid password. Check and try again, please." data-whm="OOPS, these decrypted content may changed, but you can still have a look.">
-  <script id="hbeData" type="hbeData" data-hmacdigest="f490f6d4eff128b6f8c23e395e0b13f44dd14e197fc50f16d44b6fec836d5931">1557a4d06c41b8b7cb942a6d0525c027cbeeadc10caf98a45705387558304bb469290ed727bac22c14368bef657fb469dfaa63f24918c0cff3b2760cd4c7e41d903d1a82d66af59312cac4cac46cf8eb876b40a6bca879a6bb5005f2de6cb7700621bad9f290d26f23d98ad7d10aad36bec4e6306e0626ed5b58ff9d6c87b6b9fb9358b7c8663eb4e3f6b73813f33f206cb37ad8174d4a8dec552525d1b17d29a7ff9a69af1c0464d7be2cd47663a8511470a8a9ecf52a3eea3d24def5ef2b867aabfebd01f658d97f48cb62241de8f7a8c19ea8bc92d6c680ec59bc38b048d425d487212984d3aa9277e8bafa990fdb34d8a30bc941854858dcbd2c49e5f28f21e8ba546f2f0da3365f940432813ee29c950135eadb5b7ed325594771d8ec8a9d1f3ad8cf5cc9eae23197303a55f47176df2e97551922502deccc82ba3a0d0fa712a9261862f2788aace95a046bffc7cce1f66e50a2c6021f4cfc9cd90935fbb6ec3c290ffa4add6317fab63a83f5691b98f8d19efca83ec4ffbd8614b8e7ac3a4260a007377813591b13e3737b007a82ef659ab4845a4799af73318bfedd75e021f0cee0157996154ee0b0d89a5481f558e1ea747d3de2bffa3166672fac1271864c41d9dbc04032d309ab8a8324d0df005f78c8f05a18e52d005529009028238e2e96252ca2ef67df0c8bb09b9894362b07c22ed169e86ba234b046d063a31a0dc8f90ad0cd26dc956e5280d31639778338271930a6aa2a2a4fcc6fe161b45a9a85fd07125410a1633279d8c785ab1913ad30f45a18498b3fb2829dd6f067a17c541be12a01e37c08c82707915cbfb4e002bf5025e5d81f5fa08ce6bf18c3184420ff1921e17f4126b1f10ebc8e7395006f2a552f0c0c37ef4b17c2138b950e4574c440a94e9bd4e400277723250738f15e2d9bbf5e2116f22848e8102dc33ac5d504f10f4a7f3d18f2687064f51f963e819f143fdf829a9d4db46e025d1d774c60ec1e91eca7e55241e8fe4fb65bb309cfa0f612aa9422a90d9ac32ece2d4ba42db909f0efd04c39637eb5e351870d5f1d12e57dda4f141f9f11058392e3f5f378451f43884cceaf6e78ec090bbf3eaf9f919ecc6d0d84b01f1be6501f387c8daacebaa9c608e9bcabc8790e3c1cb980add9e6fb12430856ede148fd91c08f7485709962926e803d404c3c7a7f38fd0ef69e9c4a32f491d49234a74432572a5090c296002c73df41a4ed7bcfd4bc6d23ba76427aa950f5128a0455186d99b9a09cf6789e31f76f8938a95d8e861be3b1f051b1af3a674a08677aa18071301825dcfb11697eae002fa97923a9ee69ad49ab4b3ba810ade6c531b4a79f4c0befa976492d07ded5cb76ace66549c6c40f7e4927fe047273209af3269d43d4905b4c271ce055d131103b7bc6bb7fe95d94f338b1e2a31a90e512eb78fbfe8469b69718a88307a747af389488f2d91fd56813772a3e6c47de32f4ae1e0fe965f791663fa3173d62c91644df73790f4ff69fba0170822a1ef6cb002f7e2a1179ec3c6ac8fb8f138ad559c2ffb4938d0a710d78d62ebb23944ae7255d6a6a3eecf42d65a95f6adb81f85952df61009dfc7477c9fe7228478a902c5fc3ddcb883dd4975a19f59ad4bf0b1ef764536efeecc05dcf770806e90809f6698e4575294da06eb572d6c224c03a0711d84ed672dde635e459697ba656dac1ba45a831f42bb618e0b8fec82eb048869dc25e32748d1cbd62069b10b52ea4a07640142bb989a33eadf9672c17a80e88328d20704a54fc7a2714c339717b286d7981e643ec7d4b6cc15c2e071390341a281de9143f1e24a1ba629221a707b69c80a2ca9f094c7d9ac03335d7e218eefe70f727e2722b8fb97393e0f9a6353fdb707beafa0f757512e806cc385fdcbb7a6bad6d0dde17bf69fe942694ead75e3fef7d1128d59bba906687e0fa41d2c5adda355b8beaab883286c47ad6a7935b4d036c683a27e003c07a6c671a4b5bf4ab53186d38e6b33062a44d06bad09cbc1fabe988b57e55f879cfc52a48a3122b85aa3cbdeb48fcdaaf94296cbc36c01e36baa2fe7f949bef7d33fa5ef3c4d389b202f0838b69bc5d0ed3f1394795785c66cd0a747454f5a1399b9d92c8f99a77cf57d076a26926921ff5c8197a4a885243cb34ce767b60e9f245801b12f26031a04fe4328d2797c2cf89401fd2175cd14c67aabbbd136babd04d29aa82d8ca0d1cafe077dad0cdf3388733c9ee25d4b35b64bba9e08d8c8ba76794d1fdaeb04698e65ca41db67949d35d2c397123ffc1952a230ab01eaab37b123d12c3b4ea86e1a35148bdd509196a1b11b94f7abc212664e048b6973f6bb0017907e7efbb27541b4d2e1d716e04bc604babb71480d50734739670e3223ccbcaa4262d018c9b95d0a836dc8fd0671aa9adbc636dccdf1a9900c72273a3e1c515a4388028aeafc9a40c278ba0412abf4015a3b12974704e0a2fe7c3cbb7ec3fc4daf29c429127f91fc7b7f506a0270cbdd3c58b07a637ddabc02b9221ed0ea1c8f0810fdd468017f05a24345cd00a3ba386fa7b8c518d992cf3aaf8a79f19a2ed8608c07d06f753c99c9aa3aa3533cf953e77c7bf1a618e2f27312484a43e066ee4bfe2d466bc6f4f8edab0c0ef1dbbc67ac4567d0d0caba0d28016e3ed175c99760f18ef52da6b4439ce583a602f770519a0e5b51afadd40555fafaa5ce1fca1fcad4719415e24768a8f20e499df0ae6470725b9eff2620b05c9e6e9ea3f5ebaf0ce68f61a7d490055fe37751d95d68377ab85ebc1d0a7fd7b442cb6072ceb86c0924a05b543e812d2e8e4f356401d7159fc7a21ac96260f4ae955820bca21c4acb3fdae05d173dace8314e19951f6f124fe423f91024cdf37d0e204543a3091c59d33fbdbda6c8972ac935b64eaba4fd416b03c03ba1dc8c55b8c11ecbc13d7fe7d0291e791da4f296d6e1d88a9ac411003fac452f1b46d269896cebb2c509719309ff7709c2cd9af21c774e3c9f08fb35395b94b26425fb5e45bf3e2c8280650041dffadffb2c34c5ed0e524f1dc9aa40fce6e468410537ba94cee8bcfbcbf0353f5a762a834ee2bb5c0e9a5c4dd8c917a847435444d4f9d33079bb6734eb4a98e22ad71346eec0132955e314951125e75f7103b7c3ef355592ad38c19a7c315215ac4b8be62211e9de5861e2d1dcee6a51090401dcdcb4099624335e58169a57268cfcb4d2f41e1dfa88f39c75b1695c70ae4fd6050beb6302eebaeb6d6a803830336ee92e95d2ce4e7a8b9b7aa5dd47bb6407ad3e36950c100aede82aebf699f08f70b62e1dfa50b01396f2be85393aa07852c093d7b69fa4862ce0ef60329ec0fcd416de1b9d479d7aa332de7dc01b474368e84d60f39161fc67f2b07f61b04be956424c8e451dad46365faafb4465f8d451e62d3fe766dfb221f1a70980d5758f476eef24ac1f8d2caac580b408f2171575e698c2fd12e466fc7d45cb653cebf8799ceb658e0dbf40bef8edc696a809d141f2b75348d04bab8aa089ff4248f83fd0779926e912ad6c82f6b0af284bc2cd9e11b54b429c868e90c07e73a6bd619916c9bc2e327868dd10a301093aee43d806daf59c6b8e7043afcf7cfdd3fa7ae79aad1b622e9bfb108e3a455828c2c2fec2104101521cee7d2475a55000b6d5c22054c591774eb3aae62e1db8707002ee75677a33b1d7f7a885a97311eceff5ef2cbdd7698da1e3c2fac51c933f96209442681db84800ee1d89ea7377c46c09e7daac64a025245fa6a595caf6d1929c1327f6467cc213fb500a3f68a35122feeb20bac0a103e4796e5dfb8be3735404e07d57f21e1348fe0d9c33509a6478ae6633e103ca91feacf073a3205b225347e66865afc10a701835c36f32300e7161c2994ab08de939bd5de7ab73b941d19c5fd8c09dfbf691bc63d2170d6906b84a0a8db17e19f4773d9ca159bcaf99eb65437489c4e700eda4d245f560522c07562701efd7c8e2e32f45babe30163086d26d47b39ac7e85626c206bc4237dfac9429ed9a86ab5d003ac6f72a4aa60275fc0e48421d9bf4a463b12ee7f177c2e24daf3b328674371add4a53541779ba630c65e9f9fffb20ca8ce56971110d7754ac06047715efc3686d26fe48f012fd58124b6d6df9ec48cde85e88186377aac90aa5127e8f713f6184b71ee8e4a292937f16f080beaefe3361bd75f5c388f7a38e78fbd4b02e1b29801f11145f9de4d3dbbd7755c69b6eddd0fce30fc4340b92632823672bc9e1487f20b709951f45df5d16177c7c4650d0d1c515d6aff984b4971bc82d6ad77e51e75e825b58b5d11aa8a0b3dda15bb83f31fd2e4e7510de5430181fece3add3b5eeb4933b3c3a3791a741a9f722104336308b335786f9fbf9b3f723eca78ead99c66989a6d670c4f1b258f8ac919a7f94d4c363e02d0416a0ae22fefde72d4735d0b80b8e8aa83644987f13c80ecfabd0ed22fa069f7acb2a83a24cedfafccaf394b9cf4c9b03ac2feb7031632e9fbb30b940ba4a0e2de53004caab755c9534e723b4cc6bcc60e54ad911b442d8b9c9a4a8f6763a9f081243659b47a24cc6338390d23946ee0164b30967142610116332f56cde7db6f2daeacb12c30c038bdb5237f3f9c42eb7dd663fa087736f22fdf05080ffa45fe5fb9c615ae00bbf09eb2510eb373a699e5f5962547d949689862216c4192b6ae6031ef9fd3aa371e9ca9a3295689c25e5fb79b99d346f6da797d002e75b3cdc00c57575d223f34bf68f08e7ab2eb4008c979f6383c9d477fb9a3e1ab53d13a91daa2f19a38e9fc0e12aa2a5df9c22d78b22a889184f0401b192f826ce9310b8c68a5598971c12eeabbc295b4d4453de6831141f45d571f5921b3f85079746c5155d3a35cc42a5fe4cc6977e840d6be74b53319b045596bcf749eed8da82be7f1c6f936c5de1b23f465e90d214b69041f532bd1dd88a43c4fcaa3008bfe9851b718fdaefb3e13250e68eeffcf81db7d34bb8f70fb9ffa88dff8e16ab79f8e1034c067123bc9fb66d14d6bf46afe66a0f450d5423746e937ed07bca09c57ba91ec9c5e5815bc5c8a32ea1db6c302a35facfb8bdc6b862e71d65636cefa270d95fa347c9823be59a0c9417f60d2ed67b8785f856ea2d9e048aa7268902e11598fda3bcd39f52adbcd44e268390bcf9973cb8b944fd1960b577687c5b4e86a2997f3e619715e007d9ab31dd677c4281c664ce7b5469f06e28e856f22ef62cfe95302a40fe42a16f666796e4e770901f21d721d63638b9f45c2313e20e0ac139157d80cf580afa4496f20fe85fc426cf8705f4be4919090758c3325de703e9d0081bbf50d2afbe83543b93c195e07def8f34776d11fb0c756ef40ede73663a12368fb3f1c4e55421fa946b797d882d273274ba821d71a6f93ecbc03aed844915bcd8aafa216a4726adc56a755251d806f7f83c4206ecb932cf420e5cd7bc7389e6854c8b015d71cef2b8a40ab49c471299fb802ff6e9b7c8430a07d90a77a920d501a09e9caba863221e29cb1e7231949327e29e907636f3d157108f4908a12b026dce46a1da809d45fdbf270b59e184d8628df5ce958b3adba4fae387965e478bcbab63a1421b7df5754fc27b5cc14646264d4ddffb063828e7e25bfdf83c581d58dd74788773ca428698b5d6fd46262d2f02555a14bac6a4ee60dc727713b5f85ebec1d23910f39ea85feaa7b7e6ab13f9dab626ad218f027fe2b43c5cdcbf53f6898b644bf13cad3d3bd7c14656660f0d327c052f012871e9c6bf41dc8457653df9ffcb0c26a696a8feb3c0a9952ddd025cde585204166ad2669f91c6a0a937c8562585b9003924622f7d2bc317389dc3ddec19c8980cc2e59d821ddba53615f061d262678b7b7713f52ea40ef12e4fe0ee5a9a338d66d6440c50c7eb13379ac3580da2574dd9fab111273ee68c1ac56b598cefdb154c1c4e78e00a7aa82b317883a5a6e689fd071b734b6c482b1dcfb190de4819724acf30499c192fc908c5721072b908635d509a5966c399809329acc0727066ab852eb2db99af278c804b3a4548374accabe91274035d7f15d46f8f76b16f9c4ef167c24042490da7fe0d3f6ee446976b118279397627ed23d5995aad439f7f5e1993f3f15e9c8bace901a6f7dcd62075705385653bf17476b369618af5a94c9e290fca4bf9fa0562a616bd1f515a0935bb9f102fa600629d195e85c45e1dcafabc243e295665f510bcf862a1f34fe24ec7f66cc1c5ed3a1001f042b0860fea84e0ce9e4397137ee8c1d174224d2dbb1343b7e9073821e3f3d296d4bfe4f760447631f6c36cbe35bc3571687572ad714d350bc6a4d850c8b229534f643b18079ab04f609daac0d626a3469b6f53fb36e1bf6fb9edba4f7759ef47108820e61ad2139ac5abebe02d143aee1aac859eb14b85d626ee563148799fbe718038e042a0bcacdc9f807c537e0f4998f30cc0cf89fed226e07964fb29ce934ebdcec140b9f7b05cce7d5c6a607e1a3d4919e572fe58874552607440919d5a4fd88d4f86ceb9297396da5945c558c9f7750b7ec161461cec373dcc2eb32ff3f50fe7556d4fc76b343340e04602142bd528b3133cf43ad5b284f27b69689c539642382163e59cfde59a816e68d1d26cf9cd9a79ef7b8dc2a6d42a39d6c13aa76620da6740bfc9bec628108a357576b397ed1fca004a6f9d73290b1cdfcff2fc60089dc6142a45e1aeb49e8c816a368156e10179cec538ef0ae075c2cda37644f59134e259da190cd1faee883136451af3c09869c47bf92fc20082f249a45a51cd2e06828b6b19c0bf5cc9cd31513b0cf8550f4663290c29a34c3340779df57a029784e443d0d83ecbe9b02ae27ed3ac8348ffc2ad0d6eb84ad5d3ec25c86d633913847b92d670d868a64526ffd2515dc88537f490558d11204bb6f212dad15d4d5c03891c3ef00861e44296410cb23e7b1fc01348557ca64d87cc840ca74fba4cd07f1f412eb85bad3033cc3631f6cbf81d7667200003767784947a38d0351bbc85dd08f8bddcc992d3a10ca8abba0c0f7b152e2ea35ee4bb1484338037a29ff9e00bc8fc8fe91949c23f759849675f8e95e7eb777da28c3600d8c322dd3e1323dfe13deac921e38053436260001746a5f67dc92fa29ddd5c9b34a83cd12008bfe0f1f0e7757f8ffc768fc3c4a01d00df7367ae93915596b1a7415403f0e84274454d2930edb66a303bdb10fabf7be9a8d5c3642e80236b49c5119740896226fc7518bc198fad8be3b031a0237599f821a060d07c668ad23073c4ebea6329e640b073a571c2991666b63a79ff019570c2c0b14c6afc336d992349894cca1db80e46204756d7d301e86d66f682e0d899607c5afdd8631ca51c941c2dd71348da367cbee6386cb27ef982731c92a72cad6ed6199f49ef7d65da85999695783ee29bc427f93cf15646eb6ed8d453aa193591e32bd861e7fac62265993eb5c8087132e3d8bea229f066841bf3ede3015695e0216d17ae0eada638d28e11bb5f76fe0da18809bfe83f21061ddcaa3b9835a1fa16d8d5ab9441ec3bbd64b22b36581b15525100f79e86e2217ab24505168b6710f7b1c4680b76a769de32aa6306c19a721a83b6df9f6690a8b43d25f491110259de1717a01db232c8bd56b36b5985923d3f5682db9b484cee9432f32d75fe8425ea0aa476ece0986d3755dbd475f95b15600b6bdd18e414e865bd952ca7e9d1032b774d0f0613905c016f906371784e0e4d48b39a7068aeb70ef5cd5c30c86756ccd01bdfb1ef076a6e76bf46888cc6e7eab8f10f26139f9abfd2cdd3a08fae5db925df506c9b30d0e7f8d10845debf4e9bdd4c9617fead37bab5d6cdabfc86893a3e0fe373de13860318f5e711f87a5168b09b6b630f9babe385e34a4822f48a1492841ff914a188052e5a26e2c0d3714fb7412390900d7036f4cd7cd2a017f4db9c2d5c5b224685d868c94e37f5352f7c17b14eb7bfc2ad380ac75f1a9d47038086cebd8b363107348251dd80c5baab6ce35bac1231949a43f7ac5b8aa9974ef49f8f728b464d8e948bc7a51349d0d79ce82b7457b15b626e3f483ce11453de74be0d9e68054321b537b57bd9b941854ae7e6171ceb4fb860f33dd478a0f23c4e57f8db51ee5d26b50164e696a842170998a6e401914b833e494b284d14afe73f2023be88b18e5c980fa4f4fa837134f582ea850d4d354a33da91d5d576eb17a2f00e4eb06e0847856ae845b64e200737b44a63c82d595e7c9673385f0cbfba514e73335e45bdf9de3a303d9087be57a7fdfa26f66197381eb977bf2f3e0538bb82e83137eb0b3003ae9e7ab65fa75611985ffcb8c5c18b5e920b89cc9745aa17f62c0b530390820d0bc2d70173bcba06443abbe645d320b3c3e57c0aaace8e0d1d0889791091ad7103cc6506f79142064cda2c34e1e89f8b141cfc812f03b71c89c686d2c2ac432ba11f3811e4e18b188b099d843e6e2c21d99bed95e5ddd12b51df0e84ecf8a5a9b0be4e0315bf702783d32283d28798846c15586a473268e8c61ca0f598190780c2c0b7d5db3e4b1fef37dd1a619979dc1ba9411f1f7867df2cc952f4925aab542d1bec25c3498d4618e141611daf17f0bfec0ebca2c3fe3a41d484fe198d6f13fdf1f6ad921d8257f6ea26a02cd8759e8be76aaa285b428a001a254b36dfeac65aa0b30798decccaa5983c8bfe2deaf163a6d1be4d8bfbb27a283d1a1331a979e4cdf9b216b1f82597c0cbaea4aeb5e3d062ece79e9ddd76040c02c7e0c0af4c091ff0d9056d46ce6b40e7730f9f151bab2fb7c8773a1160164d4b512748b5e0866c6b68ac494cb833506e7e2d7722315133fff8295841e1c672d5b18cc775c0be4605358ba1bfcfeef5d69de194ec9c9082e22e6c7ea9c168844d12f734f02080ecafb0d8a5446ec1661c9a80fc72829322c626df2d55c46355d958d1ded286c4cf163549c0fb5e9a9396dcd7eb857047538acdeaf4a4862a4994e38697664b31baa24861f7822c68e1f97d1f880d0308959f1605fed18589f412edd6c0e7fe0912d73337c4467fe4d299bc40efc863ef29666c2e1b094eafc88788b63a51ad5080013fe9b9922486ec3408dabb6aebc95291d8dee2bc120406161076049ddb71a3b87c7dd0b5e32c054ef38c73c3fdfc730d17062a2baaef8fdf19c15f0a5affda581cb0e07d39ce15f242bdff89ef539b69cefc691dae5259a2364dea76353298453e8751bf6193a0de6e0a6b0c678bece9ee54518c3d30ebe95c1df456101c9d52d149310f41bc2587584d102492d4864a6df55b60a2264602d30d02740edabb574b93b4c7ab23f0c30c89e60829972d663ae7b493726a15419b88a4812817de34ff4561b70638c909ec55debf03180f76564e807be3005f1a472477dd02062bef43d96cc9867dc1f2fd445b4d74d6901bccbc6d03f71eb88bc0a97055a9fdc796d25185083174d673420a1fed53642cc055878ec2059015fb8678ea9dfd4445f26d71fd529282e73880999058de5050258974c1f6949a66006f78dde2a097c3eb9c1ac863ef683662f77bb0a53677d87af675d2d93057c93233bcfb1b54f2eb5a7b432d30bf4b71af6833064c1d9381e58f50cfe334c31653bfffd099d84a37d5e544836fbe7e2bc19dbad13d3f7dad18e31f7e295f2ceac01fa39180dbf817b15efad01379a4bd6e81470b85a04862b48755e4f1d6c959b6d94114f27ebe0e24fcf8d3e40ff5da01b3b72a3d2d2d8a7ffbc4aeb5331d0d3684f8be5d4d48316026f45df634b8938c336799c27023833d67ed9363afc3dbdf3db0593a10b00cf24055d0348623540be1c30ffbbd43e9cb7f50d8605e44231c64df2a0b518a8a3110e908b53edbf83bdbd32c4e128d5fed12a2bee6220f0faaa0ec5f07c65edc6a88fe5fa5c5bc7f1ecbb0f362298b72facb48adb83c3d8d707ec3fc7883d6ab5f50b6d022555cdf3782c4b71718925e722f779e069b010a41437e6f85651ff5e8d3b8adbfa6606afac8966dce53909d08047034eff0fb8b03ed275b349f6e31667302ac4b4e1904f89374a1b4da0b8bb51806be747e13fb89b69d8f4cf1e8db8484233d3505a8dcb17a09f08354ecb2bf7e9abf243ac4a573545cddb60126260cdca26f4343e87a56a8c5ce95ddc7ba8f3c4690d3d0eaa4963aecce8fe4b2ecb740ea8ed140186040380d51ca7bf146405e7c20298468b66868c8c54bdc4ef20d5f930f512e20cfde7336608c54c094a4b26168fce225551305e53124cffdea17af778e5c91bfee4f54ffa3904dba95e12e2ab3410e2efc94f04919f322d57ada05f1766aba019df8dde45174f555df82dfd577d6bf1d0156361685934d5db47781ec306d21133bb804d681a6b8a59072c274d65931cffa1b580d7a28140a4248f8470e4fc4336c83deaa752eb4a71fd8fe541fc31f5f01aa00e0657c75989a4767a69f17d06229f5b2cea466c8a38d46c5000a24869c519decff81c1b6e96ad448000746e294bcde4d2e3fd5dbc28eca3d09c7a7a73ba2fea7be3f7d0c17a13de552af929df3d0fea29b75bc3b1a4c6146289df0c52a97f9b3e552a417a5ec88ac5067dfe368e457a004c35036a617da6f3434003905551fff6d77336b813b2af4b90f792ad486373403b0c80459dc29f5911ca89e940b15d7cc20b72c9e12dc4fcd0a258d8ff89bf75257fc0f9dbdaea4e4c8dfa776becbdbdc64b09a915b18d6960ad54e78238cba555358a0267ee39924846201f1233774283b22efd33f1fe14ef286a754c3cf7172c1981484a7ffe1673a6e30609ecb32909206cc1c3046401870d3b10fe2ebb04f05a62d09340784e91b170529497868e7fec0c7687da90f8c45a97716906368f169c728effdf3d94eaa6822ee2dfa6c0e4e7520d8bf2125e0ca416f299e26db08e71a4f0d353310950bd4eae7235292744b218dd4d6f22cd4c61eba3df2e6b1649ffe83207b46d46cf9816739178f1cb587a7ca1125d0c715cccd3d1ee2262d0edf724dd907412b1405c67c10cfd084984bf3c2ae470173aeca8459779910bed14b0ea8210f751db4d0b7cafb40ec5e156e271d8b2fe0ea84a252b894ff1fdec04b208774307a10b7d22cac0c453360a6fbe2497ad808707dc16343909e0acb4adddf342a881d29ec7f97533a921f3a53e8ee8d117f44787dee0b1a4869d0482250fffb5168d9f40cd36a852f11bd5857d3f46849578ecc2d849216f530fa16e7a36c13f7a648e76d22990a5875e55686b67c33968e6e549f5f943eb3d843305f01a0af7bd3579a3549dedddac797b9b7d20ddb7ceeb8d11d23aa6fad0e2e8c6b2befd812aaa8a220a3c69a4977d00f3efe1d0ee40bf0ccc98ae</script>
-  <div class="hbe hbe-content">
-    <div class="hbe hbe-input hbe-input-default">
-      <input class="hbe hbe-input-field hbe-input-field-default" type="password" id="hbePass">
-      <label class="hbe hbe-input-label hbe-input-label-default" for="hbePass">
-        <span class="hbe hbe-input-label-content hbe-input-label-content-default">Hey, password is required here.</span>
-      </label>
-    </div>
-  </div>
-</div>
-<script data-pjax src="/lib/hbe.js"></script><link href="/css/hbe.style.css" rel="stylesheet" type="text/css">]]></content>
-      <categories>
-        <category>①  项目笔记</category>
-        <category>字体生成项目</category>
-      </categories>
-      <tags>
-        <tag>Font Generation</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Java绘图机制与事件处理机制</title>
     <url>/2022/04/01/9d060fe0d5ae/</url>
     <content><![CDATA[<h4 id="一绘图机制">一、绘图机制：</h4>
@@ -12887,6 +13530,29 @@ src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/windows/image-202204121731375
       </categories>
       <tags>
         <tag>JPanel</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>字体生成论文研究进度</title>
+    <url>/2022/04/01/f225f383e158/</url>
+    <content><![CDATA[<div class="hbe hbe-container" id="hexo-blog-encrypt" data-wpm="Oh, this is an invalid password. Check and try again, please." data-whm="OOPS, these decrypted content may changed, but you can still have a look.">
+  <script id="hbeData" type="hbeData" data-hmacdigest="f490f6d4eff128b6f8c23e395e0b13f44dd14e197fc50f16d44b6fec836d5931">1557a4d06c41b8b7cb942a6d0525c027cbeeadc10caf98a45705387558304bb469290ed727bac22c14368bef657fb469dfaa63f24918c0cff3b2760cd4c7e41d903d1a82d66af59312cac4cac46cf8eb876b40a6bca879a6bb5005f2de6cb7700621bad9f290d26f23d98ad7d10aad36bec4e6306e0626ed5b58ff9d6c87b6b9fb9358b7c8663eb4e3f6b73813f33f206cb37ad8174d4a8dec552525d1b17d29a7ff9a69af1c0464d7be2cd47663a8511470a8a9ecf52a3eea3d24def5ef2b867aabfebd01f658d97f48cb62241de8f7a8c19ea8bc92d6c680ec59bc38b048d425d487212984d3aa9277e8bafa990fdb34d8a30bc941854858dcbd2c49e5f28f21e8ba546f2f0da3365f940432813ee29c950135eadb5b7ed325594771d8ec8a9d1f3ad8cf5cc9eae23197303a55f47176df2e97551922502deccc82ba3a0d0fa712a9261862f2788aace95a046bffc7cce1f66e50a2c6021f4cfc9cd90935fbb6ec3c290ffa4add6317fab63a83f5691b98f8d19efca83ec4ffbd8614b8e7ac3a4260a007377813591b13e3737b007a82ef659ab4845a4799af73318bfedd75e021f0cee0157996154ee0b0d89a5481f558e1ea747d3de2bffa3166672fac1271864c41d9dbc04032d309ab8a8324d0df005f78c8f05a18e52d005529009028238e2e96252ca2ef67df0c8bb09b9894362b07c22ed169e86ba234b046d063a31a0dc8f90ad0cd26dc956e5280d31639778338271930a6aa2a2a4fcc6fe161b45a9a85fd07125410a1633279d8c785ab1913ad30f45a18498b3fb2829dd6f067a17c541be12a01e37c08c82707915cbfb4e002bf5025e5d81f5fa08ce6bf18c3184420ff1921e17f4126b1f10ebc8e7395006f2a552f0c0c37ef4b17c2138b950e4574c440a94e9bd4e400277723250738f15e2d9bbf5e2116f22848e8102dc33ac5d504f10f4a7f3d18f2687064f51f963e819f143fdf829a9d4db46e025d1d774c60ec1e91eca7e55241e8fe4fb65bb309cfa0f612aa9422a90d9ac32ece2d4ba42db909f0efd04c39637eb5e351870d5f1d12e57dda4f141f9f11058392e3f5f378451f43884cceaf6e78ec090bbf3eaf9f919ecc6d0d84b01f1be6501f387c8daacebaa9c608e9bcabc8790e3c1cb980add9e6fb12430856ede148fd91c08f7485709962926e803d404c3c7a7f38fd0ef69e9c4a32f491d49234a74432572a5090c296002c73df41a4ed7bcfd4bc6d23ba76427aa950f5128a0455186d99b9a09cf6789e31f76f8938a95d8e861be3b1f051b1af3a674a08677aa18071301825dcfb11697eae002fa97923a9ee69ad49ab4b3ba810ade6c531b4a79f4c0befa976492d07ded5cb76ace66549c6c40f7e4927fe047273209af3269d43d4905b4c271ce055d131103b7bc6bb7fe95d94f338b1e2a31a90e512eb78fbfe8469b69718a88307a747af389488f2d91fd56813772a3e6c47de32f4ae1e0fe965f791663fa3173d62c91644df73790f4ff69fba0170822a1ef6cb002f7e2a1179ec3c6ac8fb8f138ad559c2ffb4938d0a710d78d62ebb23944ae7255d6a6a3eecf42d65a95f6adb81f85952df61009dfc7477c9fe7228478a902c5fc3ddcb883dd4975a19f59ad4bf0b1ef764536efeecc05dcf770806e90809f6698e4575294da06eb572d6c224c03a0711d84ed672dde635e459697ba656dac1ba45a831f42bb618e0b8fec82eb048869dc25e32748d1cbd62069b10b52ea4a07640142bb989a33eadf9672c17a80e88328d20704a54fc7a2714c339717b286d7981e643ec7d4b6cc15c2e071390341a281de9143f1e24a1ba629221a707b69c80a2ca9f094c7d9ac03335d7e218eefe70f727e2722b8fb97393e0f9a6353fdb707beafa0f757512e806cc385fdcbb7a6bad6d0dde17bf69fe942694ead75e3fef7d1128d59bba906687e0fa41d2c5adda355b8beaab883286c47ad6a7935b4d036c683a27e003c07a6c671a4b5bf4ab53186d38e6b33062a44d06bad09cbc1fabe988b57e55f879cfc52a48a3122b85aa3cbdeb48fcdaaf94296cbc36c01e36baa2fe7f949bef7d33fa5ef3c4d389b202f0838b69bc5d0ed3f1394795785c66cd0a747454f5a1399b9d92c8f99a77cf57d076a26926921ff5c8197a4a885243cb34ce767b60e9f245801b12f26031a04fe4328d2797c2cf89401fd2175cd14c67aabbbd136babd04d29aa82d8ca0d1cafe077dad0cdf3388733c9ee25d4b35b64bba9e08d8c8ba76794d1fdaeb04698e65ca41db67949d35d2c397123ffc1952a230ab01eaab37b123d12c3b4ea86e1a35148bdd509196a1b11b94f7abc212664e048b6973f6bb0017907e7efbb27541b4d2e1d716e04bc604babb71480d50734739670e3223ccbcaa4262d018c9b95d0a836dc8fd0671aa9adbc636dccdf1a9900c72273a3e1c515a4388028aeafc9a40c278ba0412abf4015a3b12974704e0a2fe7c3cbb7ec3fc4daf29c429127f91fc7b7f506a0270cbdd3c58b07a637ddabc02b9221ed0ea1c8f0810fdd468017f05a24345cd00a3ba386fa7b8c518d992cf3aaf8a79f19a2ed8608c07d06f753c99c9aa3aa3533cf953e77c7bf1a618e2f27312484a43e066ee4bfe2d466bc6f4f8edab0c0ef1dbbc67ac4567d0d0caba0d28016e3ed175c99760f18ef52da6b4439ce583a602f770519a0e5b51afadd40555fafaa5ce1fca1fcad4719415e24768a8f20e499df0ae6470725b9eff2620b05c9e6e9ea3f5ebaf0ce68f61a7d490055fe37751d95d68377ab85ebc1d0a7fd7b442cb6072ceb86c0924a05b543e812d2e8e4f356401d7159fc7a21ac96260f4ae955820bca21c4acb3fdae05d173dace8314e19951f6f124fe423f91024cdf37d0e204543a3091c59d33fbdbda6c8972ac935b64eaba4fd416b03c03ba1dc8c55b8c11ecbc13d7fe7d0291e791da4f296d6e1d88a9ac411003fac452f1b46d269896cebb2c509719309ff7709c2cd9af21c774e3c9f08fb35395b94b26425fb5e45bf3e2c8280650041dffadffb2c34c5ed0e524f1dc9aa40fce6e468410537ba94cee8bcfbcbf0353f5a762a834ee2bb5c0e9a5c4dd8c917a847435444d4f9d33079bb6734eb4a98e22ad71346eec0132955e314951125e75f7103b7c3ef355592ad38c19a7c315215ac4b8be62211e9de5861e2d1dcee6a51090401dcdcb4099624335e58169a57268cfcb4d2f41e1dfa88f39c75b1695c70ae4fd6050beb6302eebaeb6d6a803830336ee92e95d2ce4e7a8b9b7aa5dd47bb6407ad3e36950c100aede82aebf699f08f70b62e1dfa50b01396f2be85393aa07852c093d7b69fa4862ce0ef60329ec0fcd416de1b9d479d7aa332de7dc01b474368e84d60f39161fc67f2b07f61b04be956424c8e451dad46365faafb4465f8d451e62d3fe766dfb221f1a70980d5758f476eef24ac1f8d2caac580b408f2171575e698c2fd12e466fc7d45cb653cebf8799ceb658e0dbf40bef8edc696a809d141f2b75348d04bab8aa089ff4248f83fd0779926e912ad6c82f6b0af284bc2cd9e11b54b429c868e90c07e73a6bd619916c9bc2e327868dd10a301093aee43d806daf59c6b8e7043afcf7cfdd3fa7ae79aad1b622e9bfb108e3a455828c2c2fec2104101521cee7d2475a55000b6d5c22054c591774eb3aae62e1db8707002ee75677a33b1d7f7a885a97311eceff5ef2cbdd7698da1e3c2fac51c933f96209442681db84800ee1d89ea7377c46c09e7daac64a025245fa6a595caf6d1929c1327f6467cc213fb500a3f68a35122feeb20bac0a103e4796e5dfb8be3735404e07d57f21e1348fe0d9c33509a6478ae6633e103ca91feacf073a3205b225347e66865afc10a701835c36f32300e7161c2994ab08de939bd5de7ab73b941d19c5fd8c09dfbf691bc63d2170d6906b84a0a8db17e19f4773d9ca159bcaf99eb65437489c4e700eda4d245f560522c07562701efd7c8e2e32f45babe30163086d26d47b39ac7e85626c206bc4237dfac9429ed9a86ab5d003ac6f72a4aa60275fc0e48421d9bf4a463b12ee7f177c2e24daf3b328674371add4a53541779ba630c65e9f9fffb20ca8ce56971110d7754ac06047715efc3686d26fe48f012fd58124b6d6df9ec48cde85e88186377aac90aa5127e8f713f6184b71ee8e4a292937f16f080beaefe3361bd75f5c388f7a38e78fbd4b02e1b29801f11145f9de4d3dbbd7755c69b6eddd0fce30fc4340b92632823672bc9e1487f20b709951f45df5d16177c7c4650d0d1c515d6aff984b4971bc82d6ad77e51e75e825b58b5d11aa8a0b3dda15bb83f31fd2e4e7510de5430181fece3add3b5eeb4933b3c3a3791a741a9f722104336308b335786f9fbf9b3f723eca78ead99c66989a6d670c4f1b258f8ac919a7f94d4c363e02d0416a0ae22fefde72d4735d0b80b8e8aa83644987f13c80ecfabd0ed22fa069f7acb2a83a24cedfafccaf394b9cf4c9b03ac2feb7031632e9fbb30b940ba4a0e2de53004caab755c9534e723b4cc6bcc60e54ad911b442d8b9c9a4a8f6763a9f081243659b47a24cc6338390d23946ee0164b30967142610116332f56cde7db6f2daeacb12c30c038bdb5237f3f9c42eb7dd663fa087736f22fdf05080ffa45fe5fb9c615ae00bbf09eb2510eb373a699e5f5962547d949689862216c4192b6ae6031ef9fd3aa371e9ca9a3295689c25e5fb79b99d346f6da797d002e75b3cdc00c57575d223f34bf68f08e7ab2eb4008c979f6383c9d477fb9a3e1ab53d13a91daa2f19a38e9fc0e12aa2a5df9c22d78b22a889184f0401b192f826ce9310b8c68a5598971c12eeabbc295b4d4453de6831141f45d571f5921b3f85079746c5155d3a35cc42a5fe4cc6977e840d6be74b53319b045596bcf749eed8da82be7f1c6f936c5de1b23f465e90d214b69041f532bd1dd88a43c4fcaa3008bfe9851b718fdaefb3e13250e68eeffcf81db7d34bb8f70fb9ffa88dff8e16ab79f8e1034c067123bc9fb66d14d6bf46afe66a0f450d5423746e937ed07bca09c57ba91ec9c5e5815bc5c8a32ea1db6c302a35facfb8bdc6b862e71d65636cefa270d95fa347c9823be59a0c9417f60d2ed67b8785f856ea2d9e048aa7268902e11598fda3bcd39f52adbcd44e268390bcf9973cb8b944fd1960b577687c5b4e86a2997f3e619715e007d9ab31dd677c4281c664ce7b5469f06e28e856f22ef62cfe95302a40fe42a16f666796e4e770901f21d721d63638b9f45c2313e20e0ac139157d80cf580afa4496f20fe85fc426cf8705f4be4919090758c3325de703e9d0081bbf50d2afbe83543b93c195e07def8f34776d11fb0c756ef40ede73663a12368fb3f1c4e55421fa946b797d882d273274ba821d71a6f93ecbc03aed844915bcd8aafa216a4726adc56a755251d806f7f83c4206ecb932cf420e5cd7bc7389e6854c8b015d71cef2b8a40ab49c471299fb802ff6e9b7c8430a07d90a77a920d501a09e9caba863221e29cb1e7231949327e29e907636f3d157108f4908a12b026dce46a1da809d45fdbf270b59e184d8628df5ce958b3adba4fae387965e478bcbab63a1421b7df5754fc27b5cc14646264d4ddffb063828e7e25bfdf83c581d58dd74788773ca428698b5d6fd46262d2f02555a14bac6a4ee60dc727713b5f85ebec1d23910f39ea85feaa7b7e6ab13f9dab626ad218f027fe2b43c5cdcbf53f6898b644bf13cad3d3bd7c14656660f0d327c052f012871e9c6bf41dc8457653df9ffcb0c26a696a8feb3c0a9952ddd025cde585204166ad2669f91c6a0a937c8562585b9003924622f7d2bc317389dc3ddec19c8980cc2e59d821ddba53615f061d262678b7b7713f52ea40ef12e4fe0ee5a9a338d66d6440c50c7eb13379ac3580da2574dd9fab111273ee68c1ac56b598cefdb154c1c4e78e00a7aa82b317883a5a6e689fd071b734b6c482b1dcfb190de4819724acf30499c192fc908c5721072b908635d509a5966c399809329acc0727066ab852eb2db99af278c804b3a4548374accabe91274035d7f15d46f8f76b16f9c4ef167c24042490da7fe0d3f6ee446976b118279397627ed23d5995aad439f7f5e1993f3f15e9c8bace901a6f7dcd62075705385653bf17476b369618af5a94c9e290fca4bf9fa0562a616bd1f515a0935bb9f102fa600629d195e85c45e1dcafabc243e295665f510bcf862a1f34fe24ec7f66cc1c5ed3a1001f042b0860fea84e0ce9e4397137ee8c1d174224d2dbb1343b7e9073821e3f3d296d4bfe4f760447631f6c36cbe35bc3571687572ad714d350bc6a4d850c8b229534f643b18079ab04f609daac0d626a3469b6f53fb36e1bf6fb9edba4f7759ef47108820e61ad2139ac5abebe02d143aee1aac859eb14b85d626ee563148799fbe718038e042a0bcacdc9f807c537e0f4998f30cc0cf89fed226e07964fb29ce934ebdcec140b9f7b05cce7d5c6a607e1a3d4919e572fe58874552607440919d5a4fd88d4f86ceb9297396da5945c558c9f7750b7ec161461cec373dcc2eb32ff3f50fe7556d4fc76b343340e04602142bd528b3133cf43ad5b284f27b69689c539642382163e59cfde59a816e68d1d26cf9cd9a79ef7b8dc2a6d42a39d6c13aa76620da6740bfc9bec628108a357576b397ed1fca004a6f9d73290b1cdfcff2fc60089dc6142a45e1aeb49e8c816a368156e10179cec538ef0ae075c2cda37644f59134e259da190cd1faee883136451af3c09869c47bf92fc20082f249a45a51cd2e06828b6b19c0bf5cc9cd31513b0cf8550f4663290c29a34c3340779df57a029784e443d0d83ecbe9b02ae27ed3ac8348ffc2ad0d6eb84ad5d3ec25c86d633913847b92d670d868a64526ffd2515dc88537f490558d11204bb6f212dad15d4d5c03891c3ef00861e44296410cb23e7b1fc01348557ca64d87cc840ca74fba4cd07f1f412eb85bad3033cc3631f6cbf81d7667200003767784947a38d0351bbc85dd08f8bddcc992d3a10ca8abba0c0f7b152e2ea35ee4bb1484338037a29ff9e00bc8fc8fe91949c23f759849675f8e95e7eb777da28c3600d8c322dd3e1323dfe13deac921e38053436260001746a5f67dc92fa29ddd5c9b34a83cd12008bfe0f1f0e7757f8ffc768fc3c4a01d00df7367ae93915596b1a7415403f0e84274454d2930edb66a303bdb10fabf7be9a8d5c3642e80236b49c5119740896226fc7518bc198fad8be3b031a0237599f821a060d07c668ad23073c4ebea6329e640b073a571c2991666b63a79ff019570c2c0b14c6afc336d992349894cca1db80e46204756d7d301e86d66f682e0d899607c5afdd8631ca51c941c2dd71348da367cbee6386cb27ef982731c92a72cad6ed6199f49ef7d65da85999695783ee29bc427f93cf15646eb6ed8d453aa193591e32bd861e7fac62265993eb5c8087132e3d8bea229f066841bf3ede3015695e0216d17ae0eada638d28e11bb5f76fe0da18809bfe83f21061ddcaa3b9835a1fa16d8d5ab9441ec3bbd64b22b36581b15525100f79e86e2217ab24505168b6710f7b1c4680b76a769de32aa6306c19a721a83b6df9f6690a8b43d25f491110259de1717a01db232c8bd56b36b5985923d3f5682db9b484cee9432f32d75fe8425ea0aa476ece0986d3755dbd475f95b15600b6bdd18e414e865bd952ca7e9d1032b774d0f0613905c016f906371784e0e4d48b39a7068aeb70ef5cd5c30c86756ccd01bdfb1ef076a6e76bf46888cc6e7eab8f10f26139f9abfd2cdd3a08fae5db925df506c9b30d0e7f8d10845debf4e9bdd4c9617fead37bab5d6cdabfc86893a3e0fe373de13860318f5e711f87a5168b09b6b630f9babe385e34a4822f48a1492841ff914a188052e5a26e2c0d3714fb7412390900d7036f4cd7cd2a017f4db9c2d5c5b224685d868c94e37f5352f7c17b14eb7bfc2ad380ac75f1a9d47038086cebd8b363107348251dd80c5baab6ce35bac1231949a43f7ac5b8aa9974ef49f8f728b464d8e948bc7a51349d0d79ce82b7457b15b626e3f483ce11453de74be0d9e68054321b537b57bd9b941854ae7e6171ceb4fb860f33dd478a0f23c4e57f8db51ee5d26b50164e696a842170998a6e401914b833e494b284d14afe73f2023be88b18e5c980fa4f4fa837134f582ea850d4d354a33da91d5d576eb17a2f00e4eb06e0847856ae845b64e200737b44a63c82d595e7c9673385f0cbfba514e73335e45bdf9de3a303d9087be57a7fdfa26f66197381eb977bf2f3e0538bb82e83137eb0b3003ae9e7ab65fa75611985ffcb8c5c18b5e920b89cc9745aa17f62c0b530390820d0bc2d70173bcba06443abbe645d320b3c3e57c0aaace8e0d1d0889791091ad7103cc6506f79142064cda2c34e1e89f8b141cfc812f03b71c89c686d2c2ac432ba11f3811e4e18b188b099d843e6e2c21d99bed95e5ddd12b51df0e84ecf8a5a9b0be4e0315bf702783d32283d28798846c15586a473268e8c61ca0f598190780c2c0b7d5db3e4b1fef37dd1a619979dc1ba9411f1f7867df2cc952f4925aab542d1bec25c3498d4618e141611daf17f0bfec0ebca2c3fe3a41d484fe198d6f13fdf1f6ad921d8257f6ea26a02cd8759e8be76aaa285b428a001a254b36dfeac65aa0b30798decccaa5983c8bfe2deaf163a6d1be4d8bfbb27a283d1a1331a979e4cdf9b216b1f82597c0cbaea4aeb5e3d062ece79e9ddd76040c02c7e0c0af4c091ff0d9056d46ce6b40e7730f9f151bab2fb7c8773a1160164d4b512748b5e0866c6b68ac494cb833506e7e2d7722315133fff8295841e1c672d5b18cc775c0be4605358ba1bfcfeef5d69de194ec9c9082e22e6c7ea9c168844d12f734f02080ecafb0d8a5446ec1661c9a80fc72829322c626df2d55c46355d958d1ded286c4cf163549c0fb5e9a9396dcd7eb857047538acdeaf4a4862a4994e38697664b31baa24861f7822c68e1f97d1f880d0308959f1605fed18589f412edd6c0e7fe0912d73337c4467fe4d299bc40efc863ef29666c2e1b094eafc88788b63a51ad5080013fe9b9922486ec3408dabb6aebc95291d8dee2bc120406161076049ddb71a3b87c7dd0b5e32c054ef38c73c3fdfc730d17062a2baaef8fdf19c15f0a5affda581cb0e07d39ce15f242bdff89ef539b69cefc691dae5259a2364dea76353298453e8751bf6193a0de6e0a6b0c678bece9ee54518c3d30ebe95c1df456101c9d52d149310f41bc2587584d102492d4864a6df55b60a2264602d30d02740edabb574b93b4c7ab23f0c30c89e60829972d663ae7b493726a15419b88a4812817de34ff4561b70638c909ec55debf03180f76564e807be3005f1a472477dd02062bef43d96cc9867dc1f2fd445b4d74d6901bccbc6d03f71eb88bc0a97055a9fdc796d25185083174d673420a1fed53642cc055878ec2059015fb8678ea9dfd4445f26d71fd529282e73880999058de5050258974c1f6949a66006f78dde2a097c3eb9c1ac863ef683662f77bb0a53677d87af675d2d93057c93233bcfb1b54f2eb5a7b432d30bf4b71af6833064c1d9381e58f50cfe334c31653bfffd099d84a37d5e544836fbe7e2bc19dbad13d3f7dad18e31f7e295f2ceac01fa39180dbf817b15efad01379a4bd6e81470b85a04862b48755e4f1d6c959b6d94114f27ebe0e24fcf8d3e40ff5da01b3b72a3d2d2d8a7ffbc4aeb5331d0d3684f8be5d4d48316026f45df634b8938c336799c27023833d67ed9363afc3dbdf3db0593a10b00cf24055d0348623540be1c30ffbbd43e9cb7f50d8605e44231c64df2a0b518a8a3110e908b53edbf83bdbd32c4e128d5fed12a2bee6220f0faaa0ec5f07c65edc6a88fe5fa5c5bc7f1ecbb0f362298b72facb48adb83c3d8d707ec3fc7883d6ab5f50b6d022555cdf3782c4b71718925e722f779e069b010a41437e6f85651ff5e8d3b8adbfa6606afac8966dce53909d08047034eff0fb8b03ed275b349f6e31667302ac4b4e1904f89374a1b4da0b8bb51806be747e13fb89b69d8f4cf1e8db8484233d3505a8dcb17a09f08354ecb2bf7e9abf243ac4a573545cddb60126260cdca26f4343e87a56a8c5ce95ddc7ba8f3c4690d3d0eaa4963aecce8fe4b2ecb740ea8ed140186040380d51ca7bf146405e7c20298468b66868c8c54bdc4ef20d5f930f512e20cfde7336608c54c094a4b26168fce225551305e53124cffdea17af778e5c91bfee4f54ffa3904dba95e12e2ab3410e2efc94f04919f322d57ada05f1766aba019df8dde45174f555df82dfd577d6bf1d0156361685934d5db47781ec306d21133bb804d681a6b8a59072c274d65931cffa1b580d7a28140a4248f8470e4fc4336c83deaa752eb4a71fd8fe541fc31f5f01aa00e0657c75989a4767a69f17d06229f5b2cea466c8a38d46c5000a24869c519decff81c1b6e96ad448000746e294bcde4d2e3fd5dbc28eca3d09c7a7a73ba2fea7be3f7d0c17a13de552af929df3d0fea29b75bc3b1a4c6146289df0c52a97f9b3e552a417a5ec88ac5067dfe368e457a004c35036a617da6f3434003905551fff6d77336b813b2af4b90f792ad486373403b0c80459dc29f5911ca89e940b15d7cc20b72c9e12dc4fcd0a258d8ff89bf75257fc0f9dbdaea4e4c8dfa776becbdbdc64b09a915b18d6960ad54e78238cba555358a0267ee39924846201f1233774283b22efd33f1fe14ef286a754c3cf7172c1981484a7ffe1673a6e30609ecb32909206cc1c3046401870d3b10fe2ebb04f05a62d09340784e91b170529497868e7fec0c7687da90f8c45a97716906368f169c728effdf3d94eaa6822ee2dfa6c0e4e7520d8bf2125e0ca416f299e26db08e71a4f0d353310950bd4eae7235292744b218dd4d6f22cd4c61eba3df2e6b1649ffe83207b46d46cf9816739178f1cb587a7ca1125d0c715cccd3d1ee2262d0edf724dd907412b1405c67c10cfd084984bf3c2ae470173aeca8459779910bed14b0ea8210f751db4d0b7cafb40ec5e156e271d8b2fe0ea84a252b894ff1fdec04b208774307a10b7d22cac0c453360a6fbe2497ad808707dc16343909e0acb4adddf342a881d29ec7f97533a921f3a53e8ee8d117f44787dee0b1a4869d0482250fffb5168d9f40cd36a852f11bd5857d3f46849578ecc2d849216f530fa16e7a36c13f7a648e76d22990a5875e55686b67c33968e6e549f5f943eb3d843305f01a0af7bd3579a3549dedddac797b9b7d20ddb7ceeb8d11d23aa6fad0e2e8c6b2befd812aaa8a220a3c69a4977d00f3efe1d0ee40bf0ccc98ae</script>
+  <div class="hbe hbe-content">
+    <div class="hbe hbe-input hbe-input-default">
+      <input class="hbe hbe-input-field hbe-input-field-default" type="password" id="hbePass">
+      <label class="hbe hbe-input-label hbe-input-label-default" for="hbePass">
+        <span class="hbe hbe-input-label-content hbe-input-label-content-default">Hey, password is required here.</span>
+      </label>
+    </div>
+  </div>
+</div>
+<script data-pjax src="/lib/hbe.js"></script><link href="/css/hbe.style.css" rel="stylesheet" type="text/css">]]></content>
+      <categories>
+        <category>①  项目笔记</category>
+        <category>字体生成项目</category>
+      </categories>
+      <tags>
+        <tag>Font Generation</tag>
       </tags>
   </entry>
   <entry>
@@ -13538,8 +14204,8 @@ class="math inline">\(\lambda_{id2}\)</span> = { 10 , 7 , 50 , 1 }</p>
         <category>CV相关论文</category>
       </categories>
       <tags>
-        <tag>CNN</tag>
         <tag>Style Transfer</tag>
+        <tag>CNN</tag>
         <tag>Transformer</tag>
       </tags>
   </entry>
@@ -15343,6 +16009,47 @@ href="https://blog.fantast.top/2022/02/21/80b7b127a404/">图系列——矩阵�
       </tags>
   </entry>
   <entry>
+    <title>图系列——多余的边（DSU应用）</title>
+    <url>/2022/02/21/0f9e9b187c29/</url>
+    <content><![CDATA[<h4 id="剑指-offer-ii-118.-多余的边"><a
+href="https://leetcode-cn.com/problems/7LpjUW/">剑指 Offer II 118.
+多余的边</a></h4>
+<p>​ 树可以看成是一个连通且 无环 的 无向 图。</p>
+<p>​ 给定往一棵 n 个节点 (节点值 1～n)
+的树中添加一条边后的图。添加的边的两个顶点包含在 1 到 n
+中间，且这条附加的边不属于树中已存在的边。图的信息记录于长度为 n
+的二维数组 edges ，edges[i] = [ai, bi] 表示图中在 ai 和 bi
+之间存在一条边。</p>
+<p>​ 请找出一条可以删去的边，删除后可使得剩余部分是一个有着 n
+个节点的树。如果有多个答案，则返回数组 edges 中最后出现的边。</p>
+<p><strong>示例 1：</strong></p>
+<p><img src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/mac/1626676174-hOEVUL-image.png" style="zoom: 50%;" /></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">输入: edges = [[1,2],[1,3],[2,3]]</span><br><span class="line">输出: [2,3]</span><br></pre></td></tr></table></figure>
+<h5 id="解题思路"><strong>解题思路</strong>：</h5>
+<p>​
+一开始，我的思路是找到一种方法，能够判断一个图有无环。毫无疑问，我们可以使用拓扑排序去进行这个思路，但是这样子的话，对于每删掉一条边就要进行一次拓扑排序来判断，时间复杂度无疑是比较高的。</p>
+<p>​
+这个时候，查看官方解答，原来这类题目还可以使用<strong>并查集</strong>来做：</p>
+<p>​
+初始时，每个节点都属于不同的连通分量。遍历每一条边，判断这条边连接的两个顶点是否属于相同的连通分量。</p>
+<ul>
+<li>如果两个顶点属于不同的连通分量，则说明在遍历到当前的边之前，这两个顶点之间不连通，因此当前的边不会导致环出现，合并这两个顶点的连通分量。</li>
+<li>如果两个顶点属于相同的连通分量，则说明在遍历到当前的边之前，这两个顶点之间已经连通，因此当前的边导致环出现，为多余的边，将当前的边作为答案返回。</li>
+</ul>
+<h5 id="解题代码"><strong>解题代码</strong>：</h5>
+<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function">vector&lt;<span class="type">int</span>&gt; <span class="title">findRedundantConnection</span><span class="params">(vector&lt;vector&lt;<span class="type">int</span>&gt;&gt;&amp; edges)</span> </span>&#123;</span><br><span class="line">        <span class="function">vector&lt;<span class="type">int</span>&gt; <span class="title">root</span><span class="params">(<span class="number">1001</span>,<span class="number">-1</span>)</span></span>;</span><br><span class="line">        <span class="type">int</span> i;</span><br><span class="line">        <span class="keyword">for</span>(i =<span class="number">0</span>;i&lt;edges.<span class="built_in">size</span>();i++)&#123;</span><br><span class="line">            <span class="type">bool</span> res = <span class="built_in">unionTwo</span>(edges[i][<span class="number">0</span>],edges[i][<span class="number">1</span>],root);</span><br><span class="line">            <span class="keyword">if</span>(!res) <span class="keyword">break</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> edges[i]; </span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="type">int</span> <span class="title">getRoot</span><span class="params">(<span class="type">int</span> index,vector&lt;<span class="type">int</span>&gt; &amp;root)</span></span>&#123;</span><br><span class="line">        <span class="keyword">while</span>(root[index] != <span class="number">-1</span>)&#123;</span><br><span class="line">            index = root[index];</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> index;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="type">bool</span> <span class="title">unionTwo</span><span class="params">(<span class="type">int</span> index1,<span class="type">int</span> index2,vector&lt;<span class="type">int</span>&gt; &amp;root)</span></span>&#123;</span><br><span class="line">        <span class="type">int</span> root1 = <span class="built_in">getRoot</span>(index1,root);</span><br><span class="line">        <span class="type">int</span> root2 = <span class="built_in">getRoot</span>(index2,root);</span><br><span class="line">        <span class="keyword">if</span>(root1 != root2)&#123;</span><br><span class="line">            root[root1] = root2;</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">        &#125;<span class="keyword">else</span> <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">    &#125;  </span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+]]></content>
+      <categories>
+        <category>④ 算法类笔记</category>
+        <category>图系列</category>
+      </categories>
+      <tags>
+        <tag>leetcode</tag>
+        <tag>graph</tag>
+        <tag>DSU</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>图系列——矩阵中的距离</title>
     <url>/2022/02/21/80b7b127a404/</url>
     <content><![CDATA[<h4 id="剑指-offer-ii-107.-矩阵中的距离"><a
@@ -15402,47 +16109,6 @@ class="math inline">\(f(i,j)\)</span>中，再第二轮遍历的时候，只要�
         <tag>BFS</tag>
         <tag>dynamic programming</tag>
         <tag>graph</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>图系列——多余的边（DSU应用）</title>
-    <url>/2022/02/21/0f9e9b187c29/</url>
-    <content><![CDATA[<h4 id="剑指-offer-ii-118.-多余的边"><a
-href="https://leetcode-cn.com/problems/7LpjUW/">剑指 Offer II 118.
-多余的边</a></h4>
-<p>​ 树可以看成是一个连通且 无环 的 无向 图。</p>
-<p>​ 给定往一棵 n 个节点 (节点值 1～n)
-的树中添加一条边后的图。添加的边的两个顶点包含在 1 到 n
-中间，且这条附加的边不属于树中已存在的边。图的信息记录于长度为 n
-的二维数组 edges ，edges[i] = [ai, bi] 表示图中在 ai 和 bi
-之间存在一条边。</p>
-<p>​ 请找出一条可以删去的边，删除后可使得剩余部分是一个有着 n
-个节点的树。如果有多个答案，则返回数组 edges 中最后出现的边。</p>
-<p><strong>示例 1：</strong></p>
-<p><img src="https://mypic416.oss-cn-hangzhou.aliyuncs.com/mac/1626676174-hOEVUL-image.png" style="zoom: 50%;" /></p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">输入: edges = [[1,2],[1,3],[2,3]]</span><br><span class="line">输出: [2,3]</span><br></pre></td></tr></table></figure>
-<h5 id="解题思路"><strong>解题思路</strong>：</h5>
-<p>​
-一开始，我的思路是找到一种方法，能够判断一个图有无环。毫无疑问，我们可以使用拓扑排序去进行这个思路，但是这样子的话，对于每删掉一条边就要进行一次拓扑排序来判断，时间复杂度无疑是比较高的。</p>
-<p>​
-这个时候，查看官方解答，原来这类题目还可以使用<strong>并查集</strong>来做：</p>
-<p>​
-初始时，每个节点都属于不同的连通分量。遍历每一条边，判断这条边连接的两个顶点是否属于相同的连通分量。</p>
-<ul>
-<li>如果两个顶点属于不同的连通分量，则说明在遍历到当前的边之前，这两个顶点之间不连通，因此当前的边不会导致环出现，合并这两个顶点的连通分量。</li>
-<li>如果两个顶点属于相同的连通分量，则说明在遍历到当前的边之前，这两个顶点之间已经连通，因此当前的边导致环出现，为多余的边，将当前的边作为答案返回。</li>
-</ul>
-<h5 id="解题代码"><strong>解题代码</strong>：</h5>
-<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function">vector&lt;<span class="type">int</span>&gt; <span class="title">findRedundantConnection</span><span class="params">(vector&lt;vector&lt;<span class="type">int</span>&gt;&gt;&amp; edges)</span> </span>&#123;</span><br><span class="line">        <span class="function">vector&lt;<span class="type">int</span>&gt; <span class="title">root</span><span class="params">(<span class="number">1001</span>,<span class="number">-1</span>)</span></span>;</span><br><span class="line">        <span class="type">int</span> i;</span><br><span class="line">        <span class="keyword">for</span>(i =<span class="number">0</span>;i&lt;edges.<span class="built_in">size</span>();i++)&#123;</span><br><span class="line">            <span class="type">bool</span> res = <span class="built_in">unionTwo</span>(edges[i][<span class="number">0</span>],edges[i][<span class="number">1</span>],root);</span><br><span class="line">            <span class="keyword">if</span>(!res) <span class="keyword">break</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> edges[i]; </span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="type">int</span> <span class="title">getRoot</span><span class="params">(<span class="type">int</span> index,vector&lt;<span class="type">int</span>&gt; &amp;root)</span></span>&#123;</span><br><span class="line">        <span class="keyword">while</span>(root[index] != <span class="number">-1</span>)&#123;</span><br><span class="line">            index = root[index];</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> index;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="type">bool</span> <span class="title">unionTwo</span><span class="params">(<span class="type">int</span> index1,<span class="type">int</span> index2,vector&lt;<span class="type">int</span>&gt; &amp;root)</span></span>&#123;</span><br><span class="line">        <span class="type">int</span> root1 = <span class="built_in">getRoot</span>(index1,root);</span><br><span class="line">        <span class="type">int</span> root2 = <span class="built_in">getRoot</span>(index2,root);</span><br><span class="line">        <span class="keyword">if</span>(root1 != root2)&#123;</span><br><span class="line">            root[root1] = root2;</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">        &#125;<span class="keyword">else</span> <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">    &#125;  </span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
-]]></content>
-      <categories>
-        <category>④ 算法类笔记</category>
-        <category>图系列</category>
-      </categories>
-      <tags>
-        <tag>leetcode</tag>
-        <tag>graph</tag>
-        <tag>DSU</tag>
       </tags>
   </entry>
   <entry>
@@ -20853,9 +21519,9 @@ class="math inline">\(\alpha\)</span>是一个超参数，在训练我们的模�
         <category>CV相关论文</category>
       </categories>
       <tags>
+        <tag>GAN</tag>
         <tag>Transformer</tag>
         <tag>HandWritting Generation</tag>
-        <tag>GAN</tag>
       </tags>
   </entry>
   <entry>
