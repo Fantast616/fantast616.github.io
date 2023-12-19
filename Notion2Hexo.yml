@@ -1,0 +1,7 @@
+name: Notion2Hexo GitHub Pages
+
+on:
+  workflow_dispatch:
+  repository_dispatch:
+    types:
+      - notion_sync
